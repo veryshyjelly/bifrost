@@ -26,6 +26,8 @@ export function configuration(env = process.env) {
     pace: Number(env.DELIVERY_INTERVAL_MS || 1100),
     syncCron: env.SYNC_CRON || '0 * * * *',
     syncTimezone: env.SYNC_TIMEZONE || 'Asia/Kolkata',
+    commandTTL: Number(env.COMMAND_TTL_SECONDS || 60),
+    controlTTL: Number(env.CONTROL_TTL_SECONDS || 600),
   };
 }
 export type Config = ReturnType<typeof configuration>;
@@ -41,4 +43,5 @@ export function validate(c: Config) {
   if (c.management && !/^-\d+$/.test(c.management)) throw new Error('TELEGRAM_MANAGEMENT_CHAT_ID must be a group ID');
   if (!Number.isFinite(c.pace) || c.pace < 100) throw new Error('DELIVERY_INTERVAL_MS must be at least 100');
   cronSchedule(c.syncCron, c.syncTimezone);
+  for (const ttl of [c.commandTTL, c.controlTTL]) if (!Number.isSafeInteger(ttl) || ttl < 5 || ttl > 86400) throw new Error('Command lifetimes must be 5–86400 seconds');
 }

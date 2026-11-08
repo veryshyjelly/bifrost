@@ -75,8 +75,18 @@ Commands inside conversations:
 | `/delete` | Reply to a mapped message to request deletion on WhatsApp, subject to WhatsApp permissions |
 | `/react 👍` | Reply to a mapped message to set a WhatsApp reaction; `/react` clears it |
 | `/status` | Show counts, queue state, metadata schedule and last sync result |
+| `/clear log`, `/clear_log`, `/clear` | Remove recorded bot notices and command messages in the current Telegram chat/topic |
+| `/clear all`, `/clear_all` | Remove recorded Telegram messages in management **General** only |
 
 A successful outgoing reply schedules a read receipt. Merely receiving a Telegram relay does not mark WhatsApp read. Phone-originated sends are labeled and do not echo back.
+
+Commands addressed to another bot are ignored by Hermes. A member bot can handle commands explicitly addressed to its own username in a group; unqualified group commands belong to Hermes. Telegram join/leave, title and topic service events are not relayed. Editing a command does not execute it again or send it to WhatsApp.
+
+Commands and bot notices are temporary: they are deleted after **60 seconds**, with **10 minutes** for replies containing buttons or a group picker. Set `COMMAND_TTL_SECONDS` and `CONTROL_TTL_SECONDS` in `bridge.env` to change those lifetimes. Expiration survives restarts. WhatsApp conversation messages and attachments remain in the Telegram archive.
+
+`/clear log` clears notices in its current chat/topic without changing WhatsApp messages, bot bindings or delivery mappings. `/clear all` is available only in management General; other topics and mirrored groups keep their history. The bridge can remove only messages it has recorded, and Telegram normally permits deletion only within 48 hours. The completion notice reports older/protected messages or permission failures. Hermes needs **Delete Messages** in groups to remove the owner's commands and other bots' notices. Existing recorded history is indexed for manual clearing; it is not automatically expired on upgrade.
+
+The master and all registered member bots install their command menus on each configured startup. New bots also receive menus when their webhook is installed. Telegram's `/` autocomplete lists the commands; the extra `/clear_all` menu item is scoped to the management group and still checks for General when executed.
 
 ## WhatsApp metadata sync
 

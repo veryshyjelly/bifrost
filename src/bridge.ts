@@ -6,6 +6,7 @@ import { Media } from './media.ts';
 import { digest, sign, equal } from './config.ts';
 import type { Config, Json } from './config.ts';
 import { MetadataSync } from './sync.ts';
+import { TelegramControl, commandOf, serviceMessage } from './control.ts';
 
 const updates = ['message', 'edited_message', 'callback_query', 'my_chat_member', 'managed_bot', 'message_reaction', 'poll_answer'];
 const waEvents = ['message.received', 'message.sent', 'message.edited', 'message.revoked', 'message.reaction', 'poll.vote', 'session.status', 'session.disconnected', 'message.failed'];
@@ -16,9 +17,9 @@ const chunks = (text: string, length = 3800) => {
 };
 
 export class Bridge {
-  c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; busy = false;
+  c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; control: TelegramControl; busy = false;
   constructor(c: Config, store = new Store(c.db, c.key), api = new Api(c)) {
-    this.c = c; this.store = store; this.api = api; this.media = new Media(c, api); this.metadata = new MetadataSync(this);
+    this.c = c; this.store = store; this.api = api; this.media = new Media(c, api); this.metadata = new MetadataSync(this); this.control = new TelegramControl(this);
   }
   token(id: string) {
     if (id === 'master') return this.c.masterToken;
@@ -40,7 +41,7 @@ export class Bridge {
         && (!r.thread || Number(r.thread) === Number(message.message_thread_id || 0)));
     }
     const thread = message.chat.type === 'private' ? undefined : route ? route.thread
-      : message.is_topic_message || message.chat.is_forum ? message.message_thread_id : undefined;
+      : message.is_topic_message ? message.message_thread_id : undefined;
     return { route, thread, contact };
   }
   async effect(id: string, action: () => Promise<Json>): Promise<Json> {
@@ -64,12 +65,16 @@ export class Bridge {
   }
   acceptTelegram(bot: string, update: Json) {
     if (bot !== 'master' && !this.store.get('bot', bot)) throw new ApiError('Unknown bot', 404);
+    const observed = update.message || update.edited_message;
+    if (observed?.chat && (String(observed.chat.id) === this.c.owner || (observed.chat.type !== 'private' && (String(observed.chat.id) === this.c.management || this.telegramContext(bot, observed).route)))) this.control.observe(bot, observed);
     const actor = update.callback_query?.from || update.message?.from || update.edited_message?.from || update.message_reaction?.user || update.my_chat_member?.from || update.managed_bot?.user || update.poll_answer?.user;
     // Bot membership events have an administrator as actor; still require our owner.
     if (!actor || actor.is_bot || String(actor.id) !== this.c.owner) return false;
     if (!Number.isSafeInteger(update.update_id)) throw new ApiError('Invalid update', 400);
     const m = update.message || update.edited_message || update.callback_query?.message;
-    if (m?.chat?.type !== 'private' && bot !== 'master' && !update.my_chat_member && !update.callback_query) return false;
+    const recipient = m && commandOf(m)?.recipient;
+    const directed = !!recipient && recipient === this.store.get('bot', bot)?.username?.toLowerCase();
+    if (m?.chat?.type !== 'private' && bot !== 'master' && !update.my_chat_member && !update.callback_query && !directed) return false;
     const stream = m?.chat ? `tg:${m.chat.type === 'private' ? bot + ':' : ''}${m.chat.id}:${this.telegramContext(bot, m).thread || 0}` : `tg:${bot}`;
     return this.store.enqueue(`tg:${bot}:${update.update_id}`, stream, 'tg', { bot, update });
   }
@@ -97,6 +102,7 @@ export class Bridge {
         else if (job.type === 'tg') await this.telegram(job.payload.bot, job.payload.update, job.dedup);
         else if (job.type === 'history') await this.history(job.payload, job.dedup);
         else if (job.type === 'management') await this.manage(job.payload, job.dedup);
+        else if (job.type.startsWith('control-')) await this.control.process(job);
         else if (job.type.startsWith('sync-')) await this.metadata.process(job);
         else if (job.type === 'n8n') {
           const event = job.payload;
@@ -112,15 +118,20 @@ export class Bridge {
           if (run) this.store.put('sync-run', job.payload.run, { ...run, status: 'failed', error: error.message });
         }
         console.error(JSON.stringify({ event: 'job_failed', job: job.id, state, error: error.message }));
-        if (job.type !== 'n8n' && !(job.type === 'management' && ['delivery_problem', 'session_status'].includes(job.payload.type))) {
+        if (job.type !== 'n8n' && !job.type.startsWith('control-') && !(job.type === 'management' && ['delivery_problem', 'session_status'].includes(job.payload.type))) {
           this.management('delivery_problem', { job: job.id, state, error: error.message }, `failure:${job.id}:${job.attempts}`);
         }
       }
     } finally { this.busy = false; }
   }
-  async sendText(bot: string, chat: string, text: string, key: string, extra: Json = {}) {
+  async sendText(bot: string, chat: string, text: string, key: string, extra: Json = {}, kind = 'log') {
     const results: Json[] = [];
-    for (const [i, chunk] of chunks(text).entries()) results.push(await this.effect(`${key}:text:${i}`, () => this.api.tg(this.token(bot), 'sendMessage', { chat_id: chat, text: chunk || '[Empty message]', ...extra })));
+    for (const [i, chunk] of chunks(text).entries()) {
+      const receipt = await this.effect(`${key}:text:${i}`, () => this.api.tg(this.token(bot), 'sendMessage', { chat_id: chat, text: chunk || '[Empty message]', ...extra }));
+      if (kind === 'chat') this.control.track(bot, { ...receipt, ...(extra.message_thread_id ? { message_thread_id: extra.message_thread_id, is_topic_message: true } : {}) }, 'chat');
+      else this.control.reply(bot, receipt, extra);
+      results.push(receipt);
+    }
     return results;
   }
   async topic(chatId: string, name: string, key: string) {
@@ -179,13 +190,16 @@ export class Bridge {
     const extra: Json = { ...(thread ? { message_thread_id: thread } : {}) };
     const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).find(r => r.tg_chat === String(destination) && (!privateChat || bot === 'master' || r.bot === bot));
     if (quoted) extra.reply_parameters = { message_id: quoted.tg_id, allow_sending_without_reply: true };
-    const record = (result: Json, media = false) => this.store.map(chat, m.id, destination, result.message_id, bot, 'in', media);
+    const record = (result: Json, media = false) => {
+      this.store.map(chat, m.id, destination, result.message_id, bot, 'in', media);
+      this.control.track(bot, { ...result, ...(thread ? { message_thread_id: thread, is_topic_message: true } : {}) }, 'chat');
+    };
     if (['image', 'video', 'audio', 'voice', 'sticker', 'document'].includes(m.type)) {
       let attachment: Json;
       try { attachment = await this.media.fromWhatsApp(m); }
       catch (e) {
         if (!(e instanceof ApiError) || ![404, 413].includes(e.status)) throw e;
-        for (const r of await this.sendText(bot, destination, text + `\n[${m.type} unavailable: ${e.message}]`, key, extra)) record(r);
+        for (const r of await this.sendText(bot, destination, text + `\n[${m.type} unavailable: ${e.message}]`, key, extra, 'chat')) record(r);
         this.store.put('wa-complete', `${chat}:${m.id}`, true);
         return;
       }
@@ -199,7 +213,7 @@ export class Bridge {
         try { path = await this.media.convert(path); } catch { method = 'sendDocument'; field = 'document'; }
       }
       if (m.type === 'sticker' || text.length > 1000) {
-        for (const r of await this.sendText(bot, destination, text, key + ':label', extra)) record(r);
+        for (const r of await this.sendText(bot, destination, text, key + ':label', extra, 'chat')) record(r);
       }
       try {
         record(await this.effect(key + ':media', () => this.api.upload(this.token(bot), method, field, path, attachment.name,
@@ -210,23 +224,23 @@ export class Bridge {
           { chat_id: destination, ...extra, caption: (text + '\n[Original attachment; native presentation unavailable]').slice(0, 1000) })), true);
       }
     } else if (m.type === 'location' && m.location) {
-      for (const r of await this.sendText(bot, destination, text, key, extra)) record(r);
+      for (const r of await this.sendText(bot, destination, text, key, extra, 'chat')) record(r);
       record(await this.effect(key + ':location', () => this.api.tg(this.token(bot), 'sendLocation', { chat_id: destination, ...extra, latitude: m.location.latitude, longitude: m.location.longitude })));
     } else if (m.type === 'contact' && /BEGIN:VCARD/i.test(m.body || '')) {
       const name = /(?:^|\n)FN:(.+)/i.exec(m.body)?.[1]?.trim();
       const number = /(?:^|\n)TEL[^:]*:([+\d ()-]+)/i.exec(m.body)?.[1]?.trim();
       if (name && number) {
-        for (const r of await this.sendText(bot, destination, label, key + ':label', extra)) record(r);
+        for (const r of await this.sendText(bot, destination, label, key + ':label', extra, 'chat')) record(r);
         record(await this.effect(key + ':contact', () => this.api.tg(this.token(bot), 'sendContact', { chat_id: destination, ...extra, first_name: name, phone_number: number, vcard: m.body })));
-      } else for (const r of await this.sendText(bot, destination, text, key, extra)) record(r);
+      } else for (const r of await this.sendText(bot, destination, text, key, extra, 'chat')) record(r);
     } else if (m.type === 'poll' && m.poll) {
       const choices = m.poll.options.map((o: Json) => typeof o === 'string' ? o : o.name || o.text);
       const buttons = choices.slice(0, 12).map((choice: string) => [{ text: choice.slice(0, 64), callback_data: 'vote:' + this.action({ chat, message: m.id, choice, multiple: !!m.poll.allowMultipleAnswers }) }]);
       for (const r of await this.sendText(bot, destination, `${historical}${label}\n📊 ${m.poll.name}\n${choices.map((o: string, i: number) => `${i + 1}. ${o}`).join('\n')}`, key,
-        { ...extra, reply_markup: { inline_keyboard: buttons } })) record(r);
+        { ...extra, reply_markup: { inline_keyboard: buttons } }, 'chat')) record(r);
     } else {
       const fallback = ['text', 'contact'].includes(m.type) ? '' : `\n[${m.type || 'Unsupported message'}${m.call?.missed ? ' · missed' : ''}]`;
-      for (const r of await this.sendText(bot, destination, text + fallback, key, extra)) record(r);
+      for (const r of await this.sendText(bot, destination, text + fallback, key, extra, 'chat')) record(r);
     }
     this.store.put('wa-complete', `${chat}:${m.id}`, true);
   }
@@ -281,6 +295,7 @@ export class Bridge {
     if (!m) return;
     const chat = String(m.chat.id), text = m.text || m.caption || '';
     if (bot === 'master' && m.chat.type === 'private' && !update.edited_message && m.chat_shared) {
+      this.control.command(bot, m);
       const shared = m.chat_shared, request = this.store.get('chat-request', String(shared.request_id));
       if (!this.validMirrorRequest(request) || request.used || !/^-\d+$/.test(String(shared.chat_id))) {
         await this.sendText('master', chat, 'This group selection is no longer active. Use /group in the WhatsApp group’s inbox topic to start again.', key); return;
@@ -288,18 +303,13 @@ export class Bridge {
       this.management('link_group', { chatId: request.chatId, tgChat: String(shared.chat_id), requestId: String(shared.request_id) }, key);
       return;
     }
-    if (text.startsWith('/start') && m.chat.type === 'private') {
-      const parameter = /^\/start(?:@[A-Za-z0-9_]+)?\s+mirror_([a-f0-9-]+)$/.exec(text)?.[1];
-      if (bot === 'master' && parameter) { await this.beginMirrorGroup(parameter, key); return; }
-      if (bot !== 'master') {
-        const registered = this.store.get('bot', bot); registered.ready = true; this.store.put('bot', bot, registered);
-        const { contact } = this.telegramContext(bot, m);
-        await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact.'
-          : 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then return here.', key);
-      } else await this.sendText('master', chat, 'WhatsApp bridge ready. Use /inbox in your private forum group to configure it. In a conversation: /create, /read, /history, /keep, /mute, /ignore. Use /sync for current metadata, or /sync all here for every group and contact bot. Use /group in a WhatsApp group’s inbox topic to create or select its Telegram group. Reply to a message with /delete or /react 👍. Use /status to inspect delivery and the last metadata sync.', key);
-      return;
+    const parsed = commandOf(m);
+    if (parsed || text.trimStart().startsWith('/')) {
+      if (update.edited_message || !parsed) return;
+      return this.command(bot, m, key);
     }
-    if (text.startsWith('/') && !update.edited_message) return this.command(bot, m, key);
+    if (serviceMessage(m)) return;
+    if (update.edited_message && this.store.db.prepare("SELECT 1 FROM telegram_messages WHERE scope=? AND chat=? AND message=? AND kind='command'").get(this.control.scope(bot, chat), chat, m.message_id)) return;
     const { route, thread } = this.telegramContext(bot, m);
     if (!route || ['muted', 'ignored'].includes(route.mode)) return;
     const reply = m.reply_to_message && this.store.byTelegram(chat, m.reply_to_message.message_id, bot);
@@ -343,9 +353,34 @@ export class Bridge {
     this.management('mark_read', { chatId: route.chatId }, sendKey + ':read');
   }
   async command(bot: string, m: Json, key: string) {
-    const [raw, ...args] = (m.text || '').split(/\s+/), command = raw.split('@')[0].slice(1);
+    const parsed = commandOf(m);
+    if (!parsed || !(await this.control.addressed(bot, parsed, m.chat.type))) return;
+    this.control.command(bot, m);
+    const { name: command, args } = parsed;
     const { route, thread, contact } = this.telegramContext(bot, m);
     const chat = String(m.chat.id), extra = thread ? { message_thread_id: thread } : {};
+    if (command === 'start' && m.chat.type === 'private') {
+      const parameter = /^mirror_([a-f0-9-]+)$/.exec(args[0] || '')?.[1];
+      if (bot === 'master' && parameter) { await this.beginMirrorGroup(parameter, key); return; }
+      if (bot !== 'master') {
+        const registered = this.store.get('bot', bot); registered.ready = true; this.store.put('bot', bot, registered);
+        await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact.'
+          : 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then return here.', key);
+      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /sync all here for every group and contact bot. In a conversation: /create, /read, /history, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all works only in management General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
+      return;
+    }
+    if (command === 'start' && bot !== 'master') {
+      const registered = this.store.get('bot', bot);
+      await this.sendText(bot, chat, 'Open this member bot privately to chat with its WhatsApp contact.', key,
+        registered.username ? { ...extra, reply_markup: { inline_keyboard: [[{ text: 'Open private chat', url: `https://t.me/${registered.username}?start=bridge` }]] } } : extra); return;
+    }
+    if (['clear', 'clear_log', 'clear_all'].includes(command)) {
+      const mode = command === 'clear_all' ? 'all' : command === 'clear_log' ? 'log' : args[0] || 'log';
+      if (!['all', 'log'].includes(mode) || args.length > (command === 'clear' ? 1 : 0)) { await this.sendText(bot, chat, 'Use /clear log for notices, or /clear all in management General.', key, extra); return; }
+      if (mode === 'all' && !(bot === 'master' && chat === this.c.management && !thread)) { await this.sendText(bot, chat, '/clear all is available only in management General. Use /clear log here to remove bot notices.', key, extra); return; }
+      this.control.queueClear(bot, m, mode);
+      await this.sendText(bot, chat, `Clearing ${mode === 'all' ? 'recorded Telegram messages in management General' : 'bot notices in this chat/topic'} in the background. Telegram limits deletion to messages under 48 hours old.`, key, extra); return;
+    }
     if (command === 'inbox' && bot === 'master') {
       const details = await this.api.tg(this.token('master'), 'getChat', { chat_id: chat });
       if (!details.is_forum || chat !== this.c.management) {
@@ -366,16 +401,20 @@ export class Bridge {
       this.management('sync_metadata', { scope: 'group', id: request.chatId, notify: { bot, chat, thread } }, key);
       await this.sendText(bot, chat, 'Checking group permissions and queuing its metadata sync.', key, extra); return;
     }
+    if (command === 'start' && bot === 'master') {
+      await this.sendText(bot, chat, 'Use /create while replying to a participant, /sync for metadata, /group for a mirror group, or /clear log for notices. Use /clear all only in management General. Open Hermes privately for full help.', key, extra); return;
+    }
     if (command === 'sync' && bot === 'master' && (args[0] === 'all' || (m.chat.type === 'private' && !args[0]) || (chat === this.c.management && !thread && !args[0]))) {
       if ((args[0] && args[0] !== 'all') || !(m.chat.type === 'private' || chat === this.c.management)) { await this.sendText(bot, chat, 'Use /sync all in your private chat with Hermes or in the management group.', key, extra); return; }
       this.management('sync_metadata', { scope: 'all', notify: { bot, chat, thread } }, key);
       await this.sendText(bot, chat, 'Metadata sync queued. WhatsApp group and contact details will be checked in the background.', key, extra); return;
     }
-    if (command === 'sync' && bot !== 'master' && m.chat.type === 'private') {
+    if (command === 'sync' && bot !== 'master') {
       if (args.length) { await this.sendText(bot, chat, 'Use /sync here for this contact, or /sync all in your private chat with the master bot.', key); return; }
-      if (!contact) { await this.sendText(bot, chat, 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then run /sync here again.', key); return; }
       // A member bot can be bound before this contact has a one-to-one inbox topic.
-      this.management('sync_metadata', { scope: 'contact', id: contact.id, notify: { bot, chat } }, key);
+      const bound = contact || this.store.all('contact').find(c => c.bot === bot);
+      if (!bound) { await this.sendText(bot, chat, 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then run /sync here again.', key, extra); return; }
+      this.management('sync_metadata', { scope: 'contact', id: bound.id, notify: { bot, chat, ...(thread ? { thread } : {}) } }, key);
       await this.sendText(bot, chat, 'Metadata sync queued for this contact.', key); return;
     }
     if (command === 'link' && bot === 'master' && chat !== this.c.management && ['group', 'supergroup'].includes(m.chat.type)) {
@@ -560,6 +599,8 @@ export class Bridge {
     return { configured: !!(this.c.masterToken && this.c.owner && this.c.management && this.c.openwaKey && this.c.session),
       bots: this.store.all('bot').length, conversations: this.store.all('route').length,
       metadataSync: { cron: this.c.syncCron, timezone: this.c.syncTimezone, last: this.store.get('sync-status', 'last') || null },
+      telegramControls: { commandTTLSeconds: this.c.commandTTL, buttonTTLSeconds: this.c.controlTTL,
+        cleanupProblems: this.store.db.prepare('SELECT count(*) AS n FROM telegram_messages WHERE deleted=0 AND error IS NOT NULL').get()!.n },
       jobs: this.store.db.prepare('SELECT state,count(*) AS count FROM jobs GROUP BY state').all() };
   }
   async migrateBot(bot: string) {
@@ -573,5 +614,6 @@ export class Bridge {
   async installWebhook(bot: string) {
     await this.migrateBot(bot);
     await this.api.tg(this.token(bot), 'setWebhook', { url: `${this.c.callback}/webhooks/telegram/${bot}`, secret_token: this.webhookSecret(bot), allowed_updates: updates, drop_pending_updates: false });
+    await this.control.install(bot);
   }
 }

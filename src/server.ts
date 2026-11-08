@@ -67,6 +67,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   server.listen(c.port, '0.0.0.0', () => {
     console.log(JSON.stringify({ event: 'listening', port: c.port, configured: bridge.status().configured }));
     timer = setInterval(() => { if (bridge.status().configured) void bridge.tick(); }, c.pace);
+    if (bridge.status().configured) bridge.control.startup();
   });
   const cleanup = setInterval(() => void bridge.media.clean().catch(() => console.error('{"event":"media_cleanup_failed"}')), 3600000);
   const schedule = () => { try { bridge.metadata.cron(); } catch { console.error('{"event":"metadata_schedule_failed"}'); } };

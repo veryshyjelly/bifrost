@@ -23,6 +23,12 @@ export class Store {
         PRIMARY KEY(bot,tg_chat,tg_id));
       CREATE INDEX IF NOT EXISTS messages_wa ON messages(wa_chat,wa_id);
       CREATE TABLE IF NOT EXISTS aliases (alias TEXT PRIMARY KEY, canonical TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS telegram_messages (
+        seq INTEGER PRIMARY KEY, scope TEXT NOT NULL, chat TEXT NOT NULL, message INTEGER NOT NULL,
+        bot TEXT NOT NULL, thread INTEGER NOT NULL DEFAULT 0, kind TEXT NOT NULL,
+        date INTEGER NOT NULL, expires INTEGER NOT NULL DEFAULT 0, deleted INTEGER NOT NULL DEFAULT 0, error TEXT,
+        UNIQUE(scope,chat,message));
+      CREATE INDEX IF NOT EXISTS telegram_messages_chat ON telegram_messages(scope,chat,thread,seq);
     `);
     // A process may have died after a remote send but before persisting its receipt.
     if (recover) this.db.exec("UPDATE effects SET state='uncertain' WHERE state='sending'; UPDATE jobs SET state='pending' WHERE state='running'");
@@ -45,16 +51,16 @@ export class Store {
     if (existing && existing.canonical !== canonical) throw new Error('Conflicting contact identity; manual review required');
     this.db.prepare('INSERT OR IGNORE INTO aliases VALUES(?,?)').run(alias, canonical);
   }
-  enqueue(dedup: string, stream: string, type: string, payload: Json) {
-    return !!this.db.prepare('INSERT OR IGNORE INTO jobs(dedup,stream,type,payload,created) VALUES(?,?,?,?,?)')
-      .run(dedup, stream, type, JSON.stringify(payload), Date.now()).changes;
+  enqueue(dedup: string, stream: string, type: string, payload: Json, due = 0) {
+    return !!this.db.prepare('INSERT OR IGNORE INTO jobs(dedup,stream,type,payload,created,due) VALUES(?,?,?,?,?,?)')
+      .run(dedup, stream, type, JSON.stringify(payload), Date.now(), due).changes;
   }
   next(): Json {
     const row = this.db.prepare(`SELECT * FROM jobs j WHERE state='pending' AND due<=?
       AND NOT EXISTS (SELECT 1 FROM jobs p WHERE p.stream=j.stream AND p.id<j.id AND p.state IN ('pending','running','uncertain','failed'))
       AND (j.type!='sync-finish' OR NOT EXISTS (SELECT 1 FROM jobs t WHERE t.type IN ('sync-start','sync-target')
         AND json_extract(t.payload,'$.run')=json_extract(j.payload,'$.run') AND t.state IN ('pending','running')))
-      ORDER BY CASE WHEN j.type LIKE 'sync-%' THEN 1 ELSE 0 END,id LIMIT 1`).get(Date.now());
+      ORDER BY CASE WHEN j.type LIKE 'control-%' THEN 2 WHEN j.type LIKE 'sync-%' THEN 1 ELSE 0 END,id LIMIT 1`).get(Date.now());
     if (!row) return undefined;
     this.db.prepare("UPDATE jobs SET state='running',attempts=attempts+1 WHERE id=?").run(row.id);
     return { ...row, attempts: Number(row.attempts) + 1, payload: JSON.parse(row.payload as string) };
