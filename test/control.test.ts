@@ -96,6 +96,16 @@ test('interactive command replies get a longer lifetime', async t => {
   assert.ok(Number(row.expires) - Number(row.date) >= 99000);
 });
 
+test('observing a member-bot notice through Hermes keeps its expiration and owner-only execution checks', async t => {
+  const { bridge, store, api } = fixture(t);
+  const [receipt] = await bridge.sendText('42', '-200', 'Member bot notice', 'member-notice');
+  assert.equal(bridge.acceptTelegram('master', { update_id: 1, message: receipt }), false);
+  const row = store.db.prepare('SELECT kind,expires FROM telegram_messages WHERE message=?').get(receipt.message_id)!;
+  assert.equal(row.kind, 'log'); assert.ok(Number(row.expires) > Date.now());
+  assert.equal(api.calls.filter(c => c.method === 'sendMessage').length, 1);
+  assert.ok(!api.calls.some(c => c.method.startsWith('messages/')));
+});
+
 test('/clear log removes local notices and command messages, preserving chat messages, bindings and mappings', async t => {
   const { bridge, store, api } = fixture(t);
   bridge.control.track('master', message(10, 'Old notice'), 'log');

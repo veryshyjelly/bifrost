@@ -40,7 +40,9 @@ export class TelegramControl {
   }
   observe(bot: string, m: Json) {
     const protectedMessage = m.supergroup_chat_created || m.channel_chat_created || m.forum_topic_created;
-    this.track(bot, m, protectedMessage ? 'protected' : serviceMessage(m) ? 'service' : commandOf(m) ? 'command' : 'chat');
+    const sender = String(m.from?.id), master = String(this.b.store.get('telegram-identity', 'master')?.id || this.b.c.masterToken.split(':')[0]);
+    const bridgeBot = m.from?.is_bot && (sender === master || this.b.store.get('bot', sender));
+    this.track(bot, m, protectedMessage ? 'protected' : serviceMessage(m) ? 'service' : bridgeBot ? 'log' : commandOf(m) ? 'command' : 'chat');
   }
   command(bot: string, m: Json) { this.track(bot, m, 'command', Date.now() + this.b.c.commandTTL * 1000); }
   reply(bot: string, receipt: Json, extra: Json) {
