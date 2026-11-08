@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "node": "26.13.0",
+  "n8n": {
+    "version": "2.47.0",
+    "image": "docker.n8n.io/n8nio/n8n:2.47.0",
+    "currentHomeImage": "local/n8n:2.47.0-876ca6b544-jenkins-predefined"
+  },
+  "openwa": {
+    "version": "0.29.1",
+    "repository": "https://github.com/rmyndharis/OpenWA.git",
+    "commit": "79d7f865e0518cb2d210deb28a84dcb0f4f39e66",
+    "engine": "whatsapp-web.js"
+  },
+  "telegramBotApi": {
+    "version": "10.3",
+    "repository": "https://github.com/tdlib/telegram-bot-api.git",
+    "commit": "e3e9dd8e5b3d7ab8537cd5a10dc31d5ffa8f82d1"
+  },
+  "dockerComposeMinimum": "2.30.0"
+}

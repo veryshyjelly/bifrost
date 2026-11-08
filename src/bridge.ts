@@ -1,0 +1,577 @@
+import { randomUUID, randomInt } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { Store } from './store.ts';
+import { Api, ApiError } from './api.ts';
+import { Media } from './media.ts';
+import { digest, sign, equal } from './config.ts';
+import type { Config, Json } from './config.ts';
+import { MetadataSync } from './sync.ts';
+
+const updates = ['message', 'edited_message', 'callback_query', 'my_chat_member', 'managed_bot', 'message_reaction', 'poll_answer'];
+const waEvents = ['message.received', 'message.sent', 'message.edited', 'message.revoked', 'message.reaction', 'poll.vote', 'session.status', 'session.disconnected', 'message.failed'];
+const chunks = (text: string, length = 3800) => {
+  const result: string[] = []; let current = '';
+  for (const char of text) { if (current.length + char.length > length) { result.push(current); current = ''; } current += char; }
+  if (current || !result.length) result.push(current); return result;
+};
+
+export class Bridge {
+  c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; busy = false;
+  constructor(c: Config, store = new Store(c.db, c.key), api = new Api(c)) {
+    this.c = c; this.store = store; this.api = api; this.media = new Media(c, api); this.metadata = new MetadataSync(this);
+  }
+  token(id: string) {
+    if (id === 'master') return this.c.masterToken;
+    const bot = this.store.get('bot', id);
+    if (!bot) throw new ApiError('Unregistered bot', 404);
+    return this.store.unseal(bot.token);
+  }
+  webhookSecret(id: string) { return sign(id, this.c.admin); }
+  telegramContext(bot: string, message: Json) {
+    const chat = String(message.chat.id);
+    let route: Json, contact: Json;
+    if (message.chat.type === 'private') {
+      contact = this.store.all('contact').find(c => c.bot === bot);
+      route = contact && this.store.get('route', contact.id);
+    } else {
+      // A mirror without a configured topic covers the whole group. Telegram can
+      // include a reply-thread ID even when this group has no forum topics.
+      route = this.store.all('route').find(r => String(r.tgChat) === chat
+        && (!r.thread || Number(r.thread) === Number(message.message_thread_id || 0)));
+    }
+    const thread = message.chat.type === 'private' ? undefined : route ? route.thread
+      : message.is_topic_message || message.chat.is_forum ? message.message_thread_id : undefined;
+    return { route, thread, contact };
+  }
+  async effect(id: string, action: () => Promise<Json>): Promise<Json> {
+    const effect = this.store.db.prepare('SELECT * FROM effects WHERE id=?').get(id);
+    if (effect?.state === 'done') return JSON.parse(effect.result as string);
+    if (effect?.state === 'uncertain' || effect?.state === 'sending') throw new ApiError('Uncertain external delivery; review before retrying', 0, false, true);
+    this.store.db.prepare("INSERT INTO effects(id,state) VALUES(?,'sending') ON CONFLICT(id) DO UPDATE SET state='sending'").run(id);
+    try {
+      const result = await action();
+      this.store.db.prepare("UPDATE effects SET state='done',result=? WHERE id=?").run(JSON.stringify(result ?? null), id);
+      return result;
+    } catch (e) {
+      this.store.db.prepare('UPDATE effects SET state=? WHERE id=?').run(e instanceof ApiError && !e.uncertain ? 'pending' : 'uncertain', id);
+      throw e;
+    }
+  }
+  acceptWhatsApp(payload: Json) {
+    if (payload.sessionId !== this.c.session || !waEvents.includes(payload.event) || !payload.idempotencyKey || !payload.data) throw new ApiError('Unexpected OpenWA event or session', 400);
+    const m = payload.data;
+    return this.store.enqueue('ow:' + payload.idempotencyKey, 'wa:' + (m.chatId || 'session'), 'wa', payload);
+  }
+  acceptTelegram(bot: string, update: Json) {
+    if (bot !== 'master' && !this.store.get('bot', bot)) throw new ApiError('Unknown bot', 404);
+    const actor = update.callback_query?.from || update.message?.from || update.edited_message?.from || update.message_reaction?.user || update.my_chat_member?.from || update.managed_bot?.user || update.poll_answer?.user;
+    // Bot membership events have an administrator as actor; still require our owner.
+    if (!actor || actor.is_bot || String(actor.id) !== this.c.owner) return false;
+    if (!Number.isSafeInteger(update.update_id)) throw new ApiError('Invalid update', 400);
+    const m = update.message || update.edited_message || update.callback_query?.message;
+    if (m?.chat?.type !== 'private' && bot !== 'master' && !update.my_chat_member && !update.callback_query) return false;
+    const stream = m?.chat ? `tg:${m.chat.type === 'private' ? bot + ':' : ''}${m.chat.id}:${this.telegramContext(bot, m).thread || 0}` : `tg:${bot}`;
+    return this.store.enqueue(`tg:${bot}:${update.update_id}`, stream, 'tg', { bot, update });
+  }
+  management(type: string, data: Json, dedup: string) {
+    this.store.enqueue('n8n:' + dedup, 'n8n:' + dedup, 'n8n', { id: dedup, type, data, at: Date.now() });
+  }
+  acceptManagement(event: Json) {
+    const { signature, ...body } = event;
+    if (typeof signature !== 'string' || !equal(signature, sign(JSON.stringify(body), this.c.admin)) || Math.abs(Date.now() - body.at) > 7 * 86400000) throw new ApiError('Invalid management signature', 401);
+    return this.store.enqueue('management:' + body.id, 'management:' + body.id, 'management', body);
+  }
+  async tick() {
+    if (this.busy) return;
+    this.busy = true;
+    try {
+      const job = this.store.next(); if (!job) return;
+      try {
+        if (job.type === 'wa') {
+          try { await this.whatsApp(job.payload, job.dedup); }
+          catch (e) {
+            if (!(e instanceof ApiError) || e.service !== 'telegram' || e.status !== 403) throw e;
+            await this.whatsApp({ ...job.payload, forceMaster: true }, job.dedup);
+          }
+        }
+        else if (job.type === 'tg') await this.telegram(job.payload.bot, job.payload.update, job.dedup);
+        else if (job.type === 'history') await this.history(job.payload, job.dedup);
+        else if (job.type === 'management') await this.manage(job.payload, job.dedup);
+        else if (job.type.startsWith('sync-')) await this.metadata.process(job);
+        else if (job.type === 'n8n') {
+          const event = job.payload;
+          await this.api.request(this.c.n8n, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...event, signature: sign(JSON.stringify(event), this.c.admin) }) });
+        }
+        this.store.finish(job.id);
+      } catch (e) {
+        const error = e instanceof ApiError ? e : new ApiError('Internal processing error; inspect local service logs', 0, false, true);
+        const state = error.uncertain ? 'uncertain' : error.retry && job.attempts < 8 ? 'pending' : 'failed';
+        this.store.fail(job.id, state, error.message, Math.max(error.delay, Math.min(300000, 1000 * 2 ** job.attempts)));
+        if (['sync-start', 'sync-finish'].includes(job.type) && state !== 'pending') {
+          const run = this.store.get('sync-run', job.payload.run);
+          if (run) this.store.put('sync-run', job.payload.run, { ...run, status: 'failed', error: error.message });
+        }
+        console.error(JSON.stringify({ event: 'job_failed', job: job.id, state, error: error.message }));
+        if (job.type !== 'n8n' && !(job.type === 'management' && ['delivery_problem', 'session_status'].includes(job.payload.type))) {
+          this.management('delivery_problem', { job: job.id, state, error: error.message }, `failure:${job.id}:${job.attempts}`);
+        }
+      }
+    } finally { this.busy = false; }
+  }
+  async sendText(bot: string, chat: string, text: string, key: string, extra: Json = {}) {
+    const results: Json[] = [];
+    for (const [i, chunk] of chunks(text).entries()) results.push(await this.effect(`${key}:text:${i}`, () => this.api.tg(this.token(bot), 'sendMessage', { chat_id: chat, text: chunk || '[Empty message]', ...extra })));
+    return results;
+  }
+  async topic(chatId: string, name: string, key: string) {
+    let route = this.store.get('route', chatId);
+    if (route) return route;
+    if (!this.c.management) throw new ApiError('Management forum group has not been configured', 409, true);
+    const topic = await this.effect(`${key}:topic`, () => this.api.tg(this.token('master'), 'createForumTopic', { chat_id: this.c.management, name: name.slice(0, 128) || chatId }));
+    route = { chatId, name, tgChat: this.c.management, thread: topic.message_thread_id,
+      mode: !chatId.endsWith('@g.us') && this.store.get('contact', chatId)?.bot ? 'dedicated' : 'inbox', history: false };
+    this.store.put('route', chatId, route);
+    this.management('new_conversation', { chatId }, 'new:' + chatId);
+    return route;
+  }
+  async preferred(sender: string, tgChat: string, privateChat = false) {
+    const contact = this.store.get('contact', sender), bot = contact?.bot && this.store.get('bot', contact.bot);
+    if (!bot) return 'master';
+    if (privateChat) return bot.ready ? String(contact.bot) : 'master';
+    try {
+      const member = await this.api.tg(this.token('master'), 'getChatMember', { chat_id: tgChat, user_id: Number(contact.bot) });
+      return ['member', 'administrator', 'creator'].includes(member.status) ? String(contact.bot) : 'master';
+    } catch (e) { if (e instanceof ApiError && e.status === 400) return 'master'; throw e; }
+  }
+  async whatsApp(event: Json, key: string) {
+    const m = event.data;
+    if (event.event.startsWith('session.') || event.event === 'message.failed') {
+      this.management('session_status', { event: event.event, status: m.status || 'changed' }, key); return;
+    }
+    if (['message.edited', 'message.revoked', 'message.reaction', 'poll.vote'].includes(event.event)) return this.waChange(event, key);
+    if (!m.id || !m.chatId || m.isStatusBroadcast || ['channel', 'status', 'broadcast'].includes(m.kind)) return;
+    const rawSender = m.isGroup ? m.author || m.from : m.chatId;
+    const sender = m.senderPhone && !m.fromMe ? `${m.senderPhone}@c.us` : this.store.canonical(rawSender);
+    if (m.senderPhone && rawSender?.endsWith('@lid')) this.store.alias(rawSender, sender);
+    const chat = this.store.canonical(m.chatId);
+    if (this.store.get('revoked', `${chat}:${m.id}`)) return;
+    const edit = this.store.get('latest-edit', `${chat}:${m.id}`);
+    if (edit) m.body = edit.body;
+    if (this.store.get('wa-complete', `${chat}:${m.id}`) || this.store.byWhatsApp(chat, m.id).some(row => row.direction === 'out')) return;
+    const contact = this.store.get('contact', sender) || {};
+    this.store.put('contact', sender, { ...contact, name: contact.metadataSyncedAt ? contact.name : m.contact?.name || m.contact?.pushName || m.contact?.shortName || contact.name || sender });
+    this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name });
+    const route = await this.topic(chat, m.isGroup ? m.chatName || chat : this.store.get('contact', sender).name, key);
+    if (['muted', 'ignored'].includes(route.mode)) return;
+    const privateChat = route.mode === 'dedicated';
+    const snapshotKey = key + (event.forceMaster ? ':fallback' : '');
+    const snapshot = this.store.get('delivery-target', snapshotKey);
+    const bot = snapshot?.bot || (m.fromMe || event.forceMaster ? 'master' : await this.preferred(sender, route.tgChat, privateChat));
+    // A dedicated bot not yet started falls back to the management topic.
+    const destination = snapshot?.destination || (privateChat && bot !== 'master' ? this.c.owner : route.tgChat);
+    const thread = snapshot ? snapshot.thread : privateChat && bot !== 'master' ? undefined : route.thread;
+    this.store.put('delivery-target', snapshotKey, { bot, destination, thread });
+    // Message ids and file ids in private chats are scoped to each bot.
+    key += `:to:${bot}:${destination}`;
+    const label = m.fromMe ? 'You · sent from WhatsApp' : this.store.get('contact', sender)?.name || sender;
+    const historical = event.historical ? `[History · ${new Date(m.timestamp * 1000).toISOString()}]\n` : '';
+    const text = `${historical}${label}\n${m.body || ''}`;
+    const extra: Json = { ...(thread ? { message_thread_id: thread } : {}) };
+    const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).find(r => r.tg_chat === String(destination) && (!privateChat || bot === 'master' || r.bot === bot));
+    if (quoted) extra.reply_parameters = { message_id: quoted.tg_id, allow_sending_without_reply: true };
+    const record = (result: Json, media = false) => this.store.map(chat, m.id, destination, result.message_id, bot, 'in', media);
+    if (['image', 'video', 'audio', 'voice', 'sticker', 'document'].includes(m.type)) {
+      let attachment: Json;
+      try { attachment = await this.media.fromWhatsApp(m); }
+      catch (e) {
+        if (!(e instanceof ApiError) || ![404, 413].includes(e.status)) throw e;
+        for (const r of await this.sendText(bot, destination, text + `\n[${m.type} unavailable: ${e.message}]`, key, extra)) record(r);
+        this.store.put('wa-complete', `${chat}:${m.id}`, true);
+        return;
+      }
+      let method = ({ image: 'sendPhoto', video: 'sendVideo', audio: 'sendAudio', voice: 'sendVoice', sticker: 'sendSticker', document: 'sendDocument' } as Json)[m.type];
+      let field = ({ image: 'photo', video: 'video', audio: 'audio', voice: 'voice', sticker: 'sticker', document: 'document' } as Json)[m.type];
+      let path = attachment.path;
+      if (m.type === 'voice' && !m.media?.mimetype?.includes('ogg')) {
+        try { path = await this.media.convert(path, true); } catch { method = 'sendDocument'; field = 'document'; }
+      }
+      if (m.type === 'image' && m.media?.mimetype && !/image\/(jpeg|png)/.test(m.media.mimetype)) {
+        try { path = await this.media.convert(path); } catch { method = 'sendDocument'; field = 'document'; }
+      }
+      if (m.type === 'sticker' || text.length > 1000) {
+        for (const r of await this.sendText(bot, destination, text, key + ':label', extra)) record(r);
+      }
+      try {
+        record(await this.effect(key + ':media', () => this.api.upload(this.token(bot), method, field, path, attachment.name,
+          { chat_id: destination, ...extra, ...(m.type === 'sticker' ? {} : { caption: text.slice(0, 1000) }) })), true);
+      } catch (e) {
+        if (!(e instanceof ApiError) || ![400, 415].includes(e.status) || method === 'sendDocument') throw e;
+        record(await this.effect(key + ':original', () => this.api.upload(this.token(bot), 'sendDocument', 'document', attachment.path, attachment.name,
+          { chat_id: destination, ...extra, caption: (text + '\n[Original attachment; native presentation unavailable]').slice(0, 1000) })), true);
+      }
+    } else if (m.type === 'location' && m.location) {
+      for (const r of await this.sendText(bot, destination, text, key, extra)) record(r);
+      record(await this.effect(key + ':location', () => this.api.tg(this.token(bot), 'sendLocation', { chat_id: destination, ...extra, latitude: m.location.latitude, longitude: m.location.longitude })));
+    } else if (m.type === 'contact' && /BEGIN:VCARD/i.test(m.body || '')) {
+      const name = /(?:^|\n)FN:(.+)/i.exec(m.body)?.[1]?.trim();
+      const number = /(?:^|\n)TEL[^:]*:([+\d ()-]+)/i.exec(m.body)?.[1]?.trim();
+      if (name && number) {
+        for (const r of await this.sendText(bot, destination, label, key + ':label', extra)) record(r);
+        record(await this.effect(key + ':contact', () => this.api.tg(this.token(bot), 'sendContact', { chat_id: destination, ...extra, first_name: name, phone_number: number, vcard: m.body })));
+      } else for (const r of await this.sendText(bot, destination, text, key, extra)) record(r);
+    } else if (m.type === 'poll' && m.poll) {
+      const choices = m.poll.options.map((o: Json) => typeof o === 'string' ? o : o.name || o.text);
+      const buttons = choices.slice(0, 12).map((choice: string) => [{ text: choice.slice(0, 64), callback_data: 'vote:' + this.action({ chat, message: m.id, choice, multiple: !!m.poll.allowMultipleAnswers }) }]);
+      for (const r of await this.sendText(bot, destination, `${historical}${label}\n📊 ${m.poll.name}\n${choices.map((o: string, i: number) => `${i + 1}. ${o}`).join('\n')}`, key,
+        { ...extra, reply_markup: { inline_keyboard: buttons } })) record(r);
+    } else {
+      const fallback = ['text', 'contact'].includes(m.type) ? '' : `\n[${m.type || 'Unsupported message'}${m.call?.missed ? ' · missed' : ''}]`;
+      for (const r of await this.sendText(bot, destination, text + fallback, key, extra)) record(r);
+    }
+    this.store.put('wa-complete', `${chat}:${m.id}`, true);
+  }
+  action(data: Json) {
+    const id = randomUUID().slice(0, 12); this.store.put('action', id, data); return id;
+  }
+  async waChange(event: Json, key: string) {
+    const m = event.data, chat = this.store.canonical(m.chatId || ''), id = m.revokedId || m.pollMessageId || m.messageId || m.id;
+    if (event.event === 'message.revoked') this.store.put('revoked', `${chat}:${id}`, true);
+    if (event.event === 'message.edited') {
+      this.store.put('latest-edit', `${chat}:${id}`, { body: m.body || m.newBody || m.text || '' });
+      if (this.store.get('outbound-edit', `${chat}:${id}`) === digest(m.body || '')) return;
+    }
+    const rows = this.store.byWhatsApp(chat, id);
+    for (const [i, row] of rows.entries()) {
+      const extra = { chat_id: row.tg_chat, message_id: row.tg_id };
+      if (event.event === 'message.edited' || event.event === 'message.revoked') {
+        const name = this.store.get('wamessage', `${chat}:${id}`)?.name || 'WhatsApp';
+        const text = event.event === 'message.revoked' ? '[Deleted on WhatsApp]' : `${name} · edited\n${m.body || m.newBody || m.text || ''}`;
+        try { await this.effect(`${key}:edit:${i}`, () => this.api.tg(this.token(row.bot), row.media ? 'editMessageCaption' : 'editMessageText', { ...extra, [row.media ? 'caption' : 'text']: text.slice(0, row.media ? 1000 : 4000) })); }
+        catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; await this.sendText('master', row.tg_chat, text, `${key}:notice:${i}`, { reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } }); }
+        if (event.event === 'message.revoked' && row.media) {
+          try { await this.effect(`${key}:delete:${i}`, () => this.api.tg(this.token(row.bot), 'deleteMessage', extra)); }
+          catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; }
+        }
+      } else {
+        const text = event.event === 'poll.vote' ? `[Poll vote · ${m.voterId}] ${(m.selectedOptions || []).join(', ') || 'cleared'}` : `[Reaction · ${m.senderId || 'WhatsApp'}] ${m.reaction || 'removed'}`;
+        await this.sendText('master', row.tg_chat, text, `${key}:reaction:${i}`, { reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } });
+      }
+    }
+  }
+  async telegram(bot: string, update: Json, key: string) {
+    if (update.managed_bot) return this.registerBot(update.managed_bot, key);
+    const m = update.message || update.edited_message;
+    if (m?.managed_bot_created && bot === 'master') return this.registerBot({ user: m.from, bot: m.managed_bot_created.bot }, key);
+    if (update.my_chat_member) return; // Membership is checked live before selecting a participant bot.
+    if (update.callback_query) {
+      const q = update.callback_query;
+      try { await this.api.tg(this.token(bot), 'answerCallbackQuery', { callback_query_id: q.id }); }
+      catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; }
+      const [operation, id] = (q.data || '').split(':');
+      const action = this.store.get('action', id);
+      if (!action) return;
+      this.management('operator_action', { operation, ...action }, key);
+      return;
+    }
+    if (update.message_reaction) {
+      const r = update.message_reaction, map = this.store.byTelegram(r.chat.id, r.message_id, bot);
+      if (map) await this.effect(key + ':react', () => this.api.ow('messages/react', { chatId: map.wa_chat, messageId: map.wa_id, emoji: r.new_reaction?.[0]?.emoji || '' }));
+      return;
+    }
+    if (!m) return;
+    const chat = String(m.chat.id), text = m.text || m.caption || '';
+    if (bot === 'master' && m.chat.type === 'private' && !update.edited_message && m.chat_shared) {
+      const shared = m.chat_shared, request = this.store.get('chat-request', String(shared.request_id));
+      if (!this.validMirrorRequest(request) || request.used || !/^-\d+$/.test(String(shared.chat_id))) {
+        await this.sendText('master', chat, 'This group selection is no longer active. Use /group in the WhatsApp group’s inbox topic to start again.', key); return;
+      }
+      this.management('link_group', { chatId: request.chatId, tgChat: String(shared.chat_id), requestId: String(shared.request_id) }, key);
+      return;
+    }
+    if (text.startsWith('/start') && m.chat.type === 'private') {
+      const parameter = /^\/start(?:@[A-Za-z0-9_]+)?\s+mirror_([a-f0-9-]+)$/.exec(text)?.[1];
+      if (bot === 'master' && parameter) { await this.beginMirrorGroup(parameter, key); return; }
+      if (bot !== 'master') {
+        const registered = this.store.get('bot', bot); registered.ready = true; this.store.put('bot', bot, registered);
+        const { contact } = this.telegramContext(bot, m);
+        await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact.'
+          : 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then return here.', key);
+      } else await this.sendText('master', chat, 'WhatsApp bridge ready. Use /inbox in your private forum group to configure it. In a conversation: /create, /read, /history, /keep, /mute, /ignore. Use /sync for current metadata, or /sync all here for every group and contact bot. Use /group in a WhatsApp group’s inbox topic to create or select its Telegram group. Reply to a message with /delete or /react 👍. Use /status to inspect delivery and the last metadata sync.', key);
+      return;
+    }
+    if (text.startsWith('/') && !update.edited_message) return this.command(bot, m, key);
+    const { route, thread } = this.telegramContext(bot, m);
+    if (!route || ['muted', 'ignored'].includes(route.mode)) return;
+    const reply = m.reply_to_message && this.store.byTelegram(chat, m.reply_to_message.message_id, bot);
+    if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Reply belongs to a different WhatsApp conversation', 400);
+    const quotedMessageId = reply?.wa_id;
+    const mapped = this.store.byTelegram(chat, m.message_id, bot);
+    if (update.edited_message) {
+      if (mapped?.direction === 'out') {
+        await this.effect(key + ':edit', () => this.api.ow('messages/edit', { chatId: mapped.wa_chat, messageId: mapped.wa_id, text }));
+        this.store.put('outbound-edit', `${mapped.wa_chat}:${mapped.wa_id}`, digest(text));
+      }
+      return;
+    }
+    if (mapped) return;
+    const sendKey = `send:${m.chat.type === 'private' ? bot + ':' : ''}${chat}:${m.message_id}`;
+    const mentions: string[] = [];
+    const waText = text.replace(/@([a-zA-Z0-9_]+)/g, (match: string, username: string) => {
+      const target = this.store.all('bot').find(b => b.username?.toLowerCase() === username.toLowerCase());
+      const contact = target && this.store.all('contact').find(c => c.bot === target.id);
+      if (!contact?.id.endsWith('@c.us')) return match;
+      mentions.push(contact.id); return '@' + contact.id.split('@')[0];
+    });
+    let result: Json;
+    const attachment = await this.media.fromTelegram(this.token(bot), m);
+    if (attachment) {
+      const method = ({ photo: 'send-image', video: 'send-video', video_note: 'send-video', animation: 'send-video', audio: 'send-audio', voice: 'send-audio', sticker: attachment.mime === 'image/webp' ? 'send-sticker' : 'send-document', document: 'send-document' } as Json)[attachment.kind];
+      const bytes = await readFile(attachment.path);
+      result = await this.effect(sendKey, () => this.api.ow('messages/' + method, {
+        chatId: route.chatId, base64: bytes.toString('base64'), mimetype: attachment.mime,
+        filename: attachment.name, caption: waText || undefined, quotedMessageId, mentions,
+        ...(attachment.kind === 'voice' ? { ptt: true } : {}),
+      }, digest(sendKey)));
+    } else if (m.location) result = await this.effect(sendKey, () => this.api.ow('messages/send-location', { chatId: route.chatId, latitude: m.location.latitude, longitude: m.location.longitude }, digest(sendKey)));
+    else if (m.contact) result = await this.effect(sendKey, () => this.api.ow('messages/send-contact', { chatId: route.chatId, contactName: [m.contact.first_name, m.contact.last_name].filter(Boolean).join(' '), contactNumber: m.contact.phone_number }, digest(sendKey)));
+    else if (m.poll) result = await this.effect(sendKey, () => this.api.ow('messages/send-poll', { chatId: route.chatId, name: m.poll.question, options: m.poll.options.map((o: Json) => o.text), allowMultipleAnswers: m.poll.allows_multiple_answers, quotedMessageId }, digest(sendKey)));
+    else if (waText) result = await this.effect(sendKey, () => this.api.ow(quotedMessageId ? 'messages/reply' : 'messages/send-text', { chatId: route.chatId, text: waText, quotedMessageId, mentions }, digest(sendKey)));
+    else { await this.sendText('master', chat, 'This Telegram message type cannot be sent to WhatsApp.', key, thread ? { message_thread_id: thread } : {}); return; }
+    if (!result.messageId) throw new ApiError('WhatsApp did not return a message ID; inspect before retrying', 0, false, true);
+    this.store.map(route.chatId, result.messageId, chat, m.message_id, bot, 'out', !!attachment);
+    // Read receipts get their own job: a receipt failure must never replay the send.
+    this.management('mark_read', { chatId: route.chatId }, sendKey + ':read');
+  }
+  async command(bot: string, m: Json, key: string) {
+    const [raw, ...args] = (m.text || '').split(/\s+/), command = raw.split('@')[0].slice(1);
+    const { route, thread, contact } = this.telegramContext(bot, m);
+    const chat = String(m.chat.id), extra = thread ? { message_thread_id: thread } : {};
+    if (command === 'inbox' && bot === 'master') {
+      const details = await this.api.tg(this.token('master'), 'getChat', { chat_id: chat });
+      if (!details.is_forum || chat !== this.c.management) {
+        await this.sendText(bot, chat, `Set TELEGRAM_MANAGEMENT_CHAT_ID=${chat} in bridge.env and enable Topics in this private group, then restart the bridge.`, key, extra); return;
+      }
+      await this.sendText(bot, chat, 'Management inbox connected. Incoming WhatsApp conversations will get separate topics.', key, extra); return;
+    }
+    if (command === 'status') {
+      await this.sendText(bot, chat, JSON.stringify(this.status(), null, 2), key, extra); return;
+    }
+    if (command === 'start' && bot === 'master' && args[0]?.startsWith('sync_')) {
+      const request = this.store.get('action', args[0].slice('sync_'.length));
+      const route = request && this.store.get('route', request.chatId);
+      if (!request || request.kind !== 'sync-permission' || request.owner !== this.c.owner || request.session !== digest(this.c.session)
+        || request.expires < Date.now() || String(request.tgChat) !== chat || String(route?.tgChat) !== chat) {
+        await this.sendText(bot, chat, 'This permission link is no longer active for this group. Use /sync in the correct group for a fresh link.', key, extra); return;
+      }
+      this.management('sync_metadata', { scope: 'group', id: request.chatId, notify: { bot, chat, thread } }, key);
+      await this.sendText(bot, chat, 'Checking group permissions and queuing its metadata sync.', key, extra); return;
+    }
+    if (command === 'sync' && bot === 'master' && (args[0] === 'all' || (m.chat.type === 'private' && !args[0]) || (chat === this.c.management && !thread && !args[0]))) {
+      if ((args[0] && args[0] !== 'all') || !(m.chat.type === 'private' || chat === this.c.management)) { await this.sendText(bot, chat, 'Use /sync all in your private chat with Hermes or in the management group.', key, extra); return; }
+      this.management('sync_metadata', { scope: 'all', notify: { bot, chat, thread } }, key);
+      await this.sendText(bot, chat, 'Metadata sync queued. WhatsApp group and contact details will be checked in the background.', key, extra); return;
+    }
+    if (command === 'sync' && bot !== 'master' && m.chat.type === 'private') {
+      if (args.length) { await this.sendText(bot, chat, 'Use /sync here for this contact, or /sync all in your private chat with the master bot.', key); return; }
+      if (!contact) { await this.sendText(bot, chat, 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then run /sync here again.', key); return; }
+      // A member bot can be bound before this contact has a one-to-one inbox topic.
+      this.management('sync_metadata', { scope: 'contact', id: contact.id, notify: { bot, chat } }, key);
+      await this.sendText(bot, chat, 'Metadata sync queued for this contact.', key); return;
+    }
+    if (command === 'link' && bot === 'master' && chat !== this.c.management && ['group', 'supergroup'].includes(m.chat.type)) {
+      const chatId = args[0];
+      if (!chatId?.endsWith('@g.us')) { await this.sendText(bot, chat, 'Use /link <WhatsApp group ID ending in @g.us>. The ID is shown in its management topic.', key, extra); return; }
+      this.management('link_group', { chatId, tgChat: chat }, key); return;
+    }
+    const reply = m.reply_to_message && this.store.byTelegram(chat, m.reply_to_message.message_id, bot);
+    if (!route) { await this.sendText(bot, chat, 'Use this command inside a linked conversation or its management topic.', key, extra); return; }
+    if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Command target belongs to another WhatsApp conversation', 400);
+    if (command === 'sync') {
+      if (args.length) { await this.sendText(bot, chat, 'Use /sync here for this conversation, or /sync all in your private chat with Hermes.', key, extra); return; }
+      this.management('sync_metadata', { scope: route.chatId.endsWith('@g.us') ? 'group' : 'contact', id: route.chatId, notify: { bot, chat, thread } }, key);
+      await this.sendText(bot, chat, 'Metadata sync queued for this conversation.', key, extra); return;
+    }
+    if (command === 'group' && bot === 'master') {
+      if (!route.chatId.endsWith('@g.us')) { await this.sendText(bot, chat, 'Use /group in a WhatsApp group’s inbox topic.', key, extra); return; }
+      await this.sendMirrorButton(route.chatId, key); return;
+    }
+    if (['read', 'keep', 'mute', 'ignore', 'history', 'create', 'delete', 'react'].includes(command)) {
+      let sender = route.chatId;
+      if (sender.endsWith('@g.us') && command === 'create') {
+        sender = reply && this.store.get('wamessage', `${reply.wa_chat}:${reply.wa_id}`)?.sender;
+        if (!sender) { await this.sendText(bot, chat, 'Reply to a participant’s message with /create to create their bot.', key, extra); return; }
+      }
+      if (['delete', 'react'].includes(command) && !reply) { await this.sendText(bot, chat, 'Reply to the message you want to act on.', key, extra); return; }
+      this.management('operator_action', { operation: command, chatId: route.chatId, sender, message: reply?.wa_id, emoji: args[0] || '' }, key);
+    } else await this.sendText(bot, chat, 'Unknown command. Use /start in the master bot for help.', key, extra);
+  }
+  async registerBot(info: Json, key: string) {
+    if (String(info.user?.id) !== this.c.owner) return;
+    const id = String(info.bot.id), old = this.store.get('bot', id);
+    const token = await this.api.tg(this.token('master'), 'getManagedBotToken', { user_id: Number(id) });
+    this.store.put('bot', id, { ...old, token: this.store.seal(token), username: info.bot.username, ready: old?.ready || false });
+    await this.installWebhook(id);
+    if (old) return;
+    const pending = this.store.all('provision').filter(p => p.state === 'pending');
+    const buttons = pending.map(p => [{ text: this.store.get('contact', p.id)?.name || p.id,
+      callback_data: 'bind:' + this.action({ bot: id, sender: p.id }) }]);
+    await this.sendText('master', this.c.owner, `Created @${info.bot.username}. Choose the WhatsApp contact to bind it to.`, key,
+      buttons.length ? { reply_markup: { inline_keyboard: buttons.slice(0, 20) } } : {});
+  }
+  async manage(event: Json, key: string) {
+    const d = event.data;
+    if (event.type === 'sync_metadata') {
+      if (!['all', 'group', 'contact'].includes(d.scope)) throw new ApiError('Invalid metadata sync scope', 400);
+      this.metadata.queue({ scope: d.scope, id: d.id, source: 'command', requestId: key, notify: d.notify }); return;
+    }
+    if (event.type === 'mark_read') { await this.markRead(d.chatId); return; }
+    if (event.type === 'session_status' || event.type === 'delivery_problem') {
+      const text = event.type === 'delivery_problem' ? `Delivery job ${d.job} is ${d.state}: ${d.error || 'review required'}. Use /status. Review it with the local bridge CLI before retrying.` : `OpenWA: ${d.event} · ${d.status}`;
+      await this.sendText('master', this.c.management || this.c.owner, text, key); return;
+    }
+    if (event.type === 'link_group') {
+      const old = this.store.get('route', d.chatId);
+      if (!old) throw new ApiError('Receive a message from this WhatsApp group in the inbox before linking it', 400);
+      if (!d.chatId.endsWith('@g.us') || String(d.tgChat) === this.c.management) throw new ApiError('Choose a separate private group for this WhatsApp group', 400);
+      const request = d.requestId && this.store.get('chat-request', String(d.requestId));
+      if (d.requestId && (!request || request.chatId !== d.chatId || !this.validMirrorRequest(request, String(d.tgChat)))) throw new ApiError('This group selection expired or its conversation changed; use /group again', 400);
+      const tgChat = await this.api.tg(this.token('master'), 'getChat', { chat_id: d.tgChat });
+      if (!['group', 'supergroup'].includes(tgChat.type) || tgChat.username) throw new ApiError('Mirror destination must be a private Telegram group', 400);
+      const me = await this.api.tg(this.token('master'), 'getMe');
+      const membership = await this.api.tg(this.token('master'), 'getChatMember', { chat_id: d.tgChat, user_id: me.id });
+      if (membership.status !== 'administrator') throw new ApiError('Make the master an administrator of the mirror group first', 400);
+      if (this.store.all('route').some(r => r.chatId !== d.chatId && r.tgChat === d.tgChat)) throw new ApiError('Telegram group is already linked', 400);
+      this.store.put('route', d.chatId, { ...old, tgChat: d.tgChat, thread: undefined, mode: 'group' });
+      if (request) this.store.put('chat-request', String(d.requestId), { ...request, used: true, selectedChat: String(d.tgChat) });
+      await this.sendText('master', d.tgChat, `Linked WhatsApp group ${d.chatId}. Your messages here will be sent to that group.`, key);
+      if (request) await this.sendText('master', this.c.owner, `Linked ${old.name || d.chatId} to its Telegram group. You can now chat there.`, key + ':confirmed', { reply_markup: { remove_keyboard: true } });
+      this.metadata.queue({ scope: 'group', id: d.chatId, source: 'link', requestId: key });
+      this.queueHistory(d.chatId); return;
+    }
+    if (event.type === 'new_conversation') {
+      const route = this.store.get('route', d.chatId); if (!route) return;
+      const buttons = ['create', 'keep', 'mute', 'ignore', 'read', 'history'].filter(op => !(d.chatId.endsWith('@g.us') && op === 'create'))
+        .map(op => ({ text: ({ create: 'Create bot', keep: 'Keep here', mute: 'Mute', ignore: 'Ignore', read: 'Mark read', history: 'Recent history' } as Json)[op], callback_data: op + ':' + this.action({ chatId: d.chatId, sender: d.chatId }) }));
+      const groupButton = d.chatId.endsWith('@g.us') ? await this.mirrorButton(d.chatId) : undefined;
+      await this.sendText('master', route.tgChat, `${route.name}\nWhatsApp ID: ${d.chatId}\nReply in this topic to send a message. ${d.chatId.endsWith('@g.us') ? 'Reply to a participant with /create to provision their bot.' : 'Choose whether to keep this conversation here or create a dedicated bot.'}`, key,
+        { message_thread_id: route.thread, reply_markup: { inline_keyboard: [...(groupButton ? [[groupButton]] : []), buttons.slice(0, 3), buttons.slice(3)] } });
+      this.metadata.queue({ scope: d.chatId.endsWith('@g.us') ? 'group' : 'contact', id: d.chatId, source: 'new', requestId: key });
+      this.queueHistory(d.chatId); return;
+    }
+    if (event.type !== 'operator_action') throw new ApiError('Unknown management action', 400);
+    const op = d.operation, chatId = d.chatId || d.chat;
+    if (op === 'bind') {
+      const pending = this.store.get('provision', d.sender), contact = this.store.get('contact', d.sender), bot = this.store.get('bot', d.bot);
+      if (!pending || pending.state !== 'pending' || !contact || !bot) throw new ApiError('Provisioning request is no longer pending', 400);
+      if (this.store.all('contact').some(c => c.bot === d.bot && c.id !== d.sender)) throw new ApiError('This bot is already bound to another person', 400);
+      this.store.put('contact', d.sender, { ...contact, bot: d.bot });
+      this.store.put('provision', d.sender, { ...pending, state: 'bound' });
+      const direct = this.store.get('route', d.sender);
+      if (direct && ['inbox', 'dedicated'].includes(direct.mode)) this.store.put('route', d.sender, { ...direct, mode: 'dedicated' });
+      this.metadata.queue({ scope: 'contact', id: d.sender, source: 'bind', requestId: key });
+      await this.sendText('master', this.c.owner, `Bound @${bot.username} to ${contact.name}. Start it for private chat, and add it to any mirrored groups where you want its identity.`, key,
+        { reply_markup: { inline_keyboard: [[{ text: 'Start contact bot', url: `https://t.me/${bot.username}?start=bridge` }], [{ text: 'Add to a group', url: `https://t.me/${bot.username}?startgroup=bridge` }]] } }); return;
+    }
+    if (op === 'vote') {
+      const previous = this.store.get('poll-selection', `${chatId}:${d.message}`) || [];
+      const options = d.multiple ? previous.includes(d.choice) ? previous.filter((o: string) => o !== d.choice) : [...previous, d.choice] : [d.choice];
+      await this.effect(key + ':vote', () => this.api.ow('messages/vote-poll', { chatId, messageId: d.message, options }));
+      this.store.put('poll-selection', `${chatId}:${d.message}`, options); return;
+    }
+    const route = this.store.get('route', chatId); if (!route) throw new ApiError('Unknown conversation', 404);
+    const extra = route.thread ? { message_thread_id: route.thread } : {};
+    if (op === 'create') {
+      const sender = d.sender || chatId;
+      if (sender.endsWith('@g.us')) throw new ApiError('Choose a group participant to create a contact bot', 400);
+      const contact = this.store.get('contact', sender) || { name: sender };
+      if (contact.bot) { await this.sendText('master', route.tgChat, `This person already has @${this.store.get('bot', contact.bot).username}. Add that bot to this group to give it priority.`, key, extra); return; }
+      this.store.put('provision', sender, { state: 'pending', chatId });
+      const me = await this.api.tg(this.token('master'), 'getMe');
+      const username = `wa_${digest(sender + this.c.owner).slice(0, 16)}_bot`;
+      const url = `https://t.me/newbot/${me.username}/${username}?name=${encodeURIComponent(contact.name.slice(0, 64))}`;
+      await this.sendText('master', route.tgChat, 'Create this contact’s bot, then confirm its contact binding in your private chat with the master. If Telegram refuses creation at your bot limit, messages continue through the master.', key,
+        { ...extra, reply_markup: { inline_keyboard: [[{ text: 'Create contact bot', url }]] } }); return;
+    }
+    if (op === 'history') { this.queueHistory(chatId, key); return; }
+    if (op === 'read') { await this.markRead(chatId); return; }
+    if (op === 'delete') { await this.effect(key + ':delete', () => this.api.ow('messages/delete', { chatId, messageId: d.message, forEveryone: true })); return; }
+    if (op === 'react') { await this.effect(key + ':react', () => this.api.ow('messages/react', { chatId, messageId: d.message, emoji: d.emoji })); return; }
+    if (['keep', 'mute', 'ignore'].includes(op)) {
+      this.store.put('route', chatId, { ...route, mode: ({ keep: route.mode === 'group' ? 'group' : 'inbox', mute: 'muted', ignore: 'ignored' } as Json)[op] });
+      await this.sendText('master', route.tgChat, ({ keep: 'Conversation stays here.', mute: 'Conversation muted. Use /keep to resume.', ignore: 'Conversation ignored. Use /keep to resume.' } as Json)[op], key, extra); return;
+    }
+    throw new ApiError('Unsupported management operation', 400);
+  }
+  validMirrorRequest(request: Json, completedChat?: string) {
+    if (!request || request.owner !== this.c.owner || request.session !== digest(this.c.session) || request.expires < Date.now()) return false;
+    const route = this.store.get('route', request.chatId);
+    if (!route) return false;
+    if (completedChat && request.used && request.selectedChat === completedChat && String(route.tgChat) === completedChat) return true;
+    return !request.used && String(route.tgChat) === request.fromChat && Number(route.thread || 0) === request.fromThread;
+  }
+  async mirrorButton(chatId: string) {
+    const route = this.store.get('route', chatId);
+    if (!route || !chatId.endsWith('@g.us')) throw new ApiError('Choose a known WhatsApp group', 400);
+    const me = await this.api.tg(this.token('master'), 'getMe');
+    const id = this.action({ kind: 'mirror-group', chatId, owner: this.c.owner, session: digest(this.c.session),
+      fromChat: String(route.tgChat), fromThread: Number(route.thread || 0), expires: Date.now() + 86400000 });
+    return { text: 'Create / link Telegram group', url: `https://t.me/${me.username}?start=mirror_${id}` };
+  }
+  async sendMirrorButton(chatId: string, key: string) {
+    const route = this.store.get('route', chatId), button = await this.mirrorButton(chatId);
+    await this.sendText('master', route.tgChat, 'Create a private Telegram group for this conversation, or select one you own. Telegram will ask you to confirm adding Hermes as an administrator.', key,
+      { ...(route.thread ? { message_thread_id: route.thread } : {}), reply_markup: { inline_keyboard: [[button]] } });
+  }
+  async beginMirrorGroup(id: string, key: string) {
+    const request = this.store.get('action', id);
+    if (request?.kind !== 'mirror-group' || !this.validMirrorRequest(request)) {
+      await this.sendText('master', this.c.owner, 'This group button expired or its conversation changed. Use /group in the WhatsApp group’s inbox topic for a fresh button.', key); return;
+    }
+    let requestId: number;
+    do { requestId = randomInt(1, 2147483647); } while (this.store.get('chat-request', String(requestId)));
+    this.store.put('chat-request', String(requestId), request);
+    const rights = { is_anonymous: false, can_manage_chat: true, can_delete_messages: true, can_manage_video_chats: false,
+      can_restrict_members: false, can_promote_members: false, can_change_info: true, can_invite_users: true,
+      can_post_stories: false, can_edit_stories: false, can_delete_stories: false, can_pin_messages: false, can_manage_topics: false };
+    await this.sendText('master', this.c.owner, `Choose or create a private Telegram group for ${this.store.get('route', request.chatId).name || request.chatId}. Confirm Hermes’s administrator permissions. If your Telegram client has no create option in the picker, create a group first, then select it here.`, key,
+      { reply_markup: { keyboard: [[{ text: 'Create / select Telegram group', request_chat: { request_id: requestId, chat_is_channel: false,
+        chat_has_username: false, chat_is_created: true, bot_is_member: true,
+        user_administrator_rights: rights, bot_administrator_rights: rights, request_title: true } }]], resize_keyboard: true, one_time_keyboard: true } });
+  }
+  queueHistory(chatId: string, suffix = 'initial') {
+    if (this.c.history) this.store.enqueue('history:' + chatId + ':' + suffix, 'history:' + chatId, 'history', { chatId });
+  }
+  async markRead(chatId: string) {
+    const result = await this.api.ow('chats/read', { chatId });
+    if (result.success === false) throw new ApiError('OpenWA declined the read receipt; mark read in WhatsApp', 409);
+  }
+  async history(data: Json, key: string) {
+    const route = this.store.get('route', data.chatId);
+    if (!route || ['ignored', 'muted'].includes(route.mode)) return;
+    const rows = await this.api.ow(`messages/${encodeURIComponent(data.chatId)}/history?limit=${this.c.history}&includeMedia=false`);
+    if (!Array.isArray(rows)) throw new ApiError('Unexpected OpenWA history response', 502);
+    for (const m of rows.sort((a, b) => a.timestamp - b.timestamp)) {
+      const enriched = { ...m, chatId: data.chatId, isGroup: data.chatId.endsWith('@g.us') };
+      this.store.enqueue(`history-message:${data.chatId}:${m.id}`, 'wa:' + data.chatId, 'wa', { sessionId: this.c.session, event: 'message.received', data: enriched, historical: true });
+    }
+    if (!rows.length) await this.sendText('master', route.tgChat, '[No recent history is available from OpenWA.]', key, route.thread ? { message_thread_id: route.thread } : {});
+  }
+  status() {
+    return { configured: !!(this.c.masterToken && this.c.owner && this.c.management && this.c.openwaKey && this.c.session),
+      bots: this.store.all('bot').length, conversations: this.store.all('route').length,
+      metadataSync: { cron: this.c.syncCron, timezone: this.c.syncTimezone, last: this.store.get('sync-status', 'last') || null },
+      jobs: this.store.db.prepare('SELECT state,count(*) AS count FROM jobs GROUP BY state').all() };
+  }
+  async migrateBot(bot: string) {
+    // A bot must be logged out of the hosted API before first use on a local API server.
+    if (!this.store.get('migrated', bot)) {
+      const token = this.token(bot);
+      await this.api.request(`https://api.telegram.org/bot${token}/logOut`, { method: 'POST' }, true);
+      this.store.put('migrated', bot, true);
+    }
+  }
+  async installWebhook(bot: string) {
+    await this.migrateBot(bot);
+    await this.api.tg(this.token(bot), 'setWebhook', { url: `${this.c.callback}/webhooks/telegram/${bot}`, secret_token: this.webhookSecret(bot), allowed_updates: updates, drop_pending_updates: false });
+  }
+}

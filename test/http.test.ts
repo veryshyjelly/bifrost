@@ -1,0 +1,50 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
+import { once } from 'node:events';
+import { Bridge } from '../src/bridge.ts';
+import { Store } from '../src/store.ts';
+import { configuration, sign } from '../src/config.ts';
+import { handler } from '../src/server.ts';
+import { Api } from '../src/api.ts';
+
+test('real HTTP ingress authenticates raw OpenWA bytes, Telegram secrets and signed management actions', async t => {
+  const c = { ...configuration({}), key: 'aa'.repeat(32), admin: 'admin'.repeat(8), webhookSecret: 'secret'.repeat(8), owner: '123', session: 's1' };
+  const s = new Store(':memory:', c.key), bridge = new Bridge(c, s), server = createServer(handler(bridge));
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  const base = `http://127.0.0.1:${(server.address() as any).port}`;
+  t.after(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); s.close(); });
+  const event = JSON.stringify({ sessionId: 's1', event: 'message.received', idempotencyKey: 'first', data: { chatId: '111@c.us', id: 'm1' } }, null, 2);
+  const post = (path: string, body: string, headers = {}) => fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body });
+  assert.equal((await post('/webhooks/openwa', event)).status, 401);
+  const signature = 'sha256=' + sign(event, c.webhookSecret);
+  assert.deepEqual(await (await post('/webhooks/openwa', event, { 'x-openwa-signature': signature })).json(), { accepted: true });
+  assert.deepEqual(await (await post('/webhooks/openwa', event, { 'x-openwa-signature': signature })).json(), { accepted: false });
+  assert.equal((await post('/webhooks/openwa', event.replace('first', 'second'), { 'x-openwa-signature': signature })).status, 401);
+  assert.equal((await post('/webhooks/telegram/master', '{}')).status, 401);
+  assert.equal((await fetch(base + '/v1/status')).status, 401);
+  const management = { id: 'new', type: 'new_conversation', data: { chatId: '111@c.us' }, at: Date.now() };
+  assert.equal((await post('/v1/management', JSON.stringify({ ...management, signature: sign(JSON.stringify(management), c.admin) }))).status, 200);
+  assert.equal((await post('/v1/management', JSON.stringify({ ...management, signature: 'bad' }))).status, 401);
+  assert.equal((await post('/v1/review', '{}')).status, 401);
+});
+
+test('real API transport preserves JSON, quotes, idempotency and handles rate limits without leaking tokens', async t => {
+  const requests: any[] = [];
+  const server = createServer(async (req, res) => {
+    let body = ''; for await (const chunk of req) body += chunk;
+    requests.push({ url: req.url, key: req.headers['idempotency-key'], body: JSON.parse(body) });
+    res.setHeader('content-type', 'application/json');
+    if (req.url?.includes('sendMessage')) { res.statusCode = 429; res.end(JSON.stringify({ ok: false, parameters: { retry_after: 2 } })); }
+    else if (/getMyDescription|getUserProfilePhotos/.test(req.url || '')) { res.statusCode = 503; res.end(JSON.stringify({ ok: false })); }
+    else res.end(JSON.stringify({ messageId: 'sent-1' }));
+  });
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  t.after(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); });
+  const base = `http://127.0.0.1:${(server.address() as any).port}`;
+  const api = new Api({ ...configuration({}), openwa: base, telegram: base, session: 's1', openwaKey: 'private' });
+  assert.equal((await api.ow('messages/reply', { chatId: 'a@c.us', text: 'Hello', quotedMessageId: 'q1' }, 'stable-key')).messageId, 'sent-1');
+  assert.equal(requests[0].key, 'stable-key'); assert.equal(requests[0].body.quotedMessageId, 'q1');
+  await assert.rejects(api.tg('private-token', 'sendMessage', { text: 'hi' }), (e: any) => e.retry && !e.uncertain && e.delay === 2000 && !e.message.includes('private-token'));
+  for (const method of ['getMyDescription', 'getUserProfilePhotos']) await assert.rejects(api.tg('private-token', method), (e: any) => e.retry && !e.uncertain);
+});

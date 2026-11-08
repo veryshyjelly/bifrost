@@ -1,0 +1,52 @@
+name: ${COMPOSE_PROJECT_NAME:-whatsapp-telegram-bridge}
+
+services:
+  wa-telegram-bridge:
+    build:
+      context: .
+    image: local/wa-telegram-bridge:0.1.0
+    restart: unless-stopped
+    env_file:
+      - path: ./bridge.env
+        format: raw
+    ports:
+      - '127.0.0.1:${BRIDGE_HTTP_PORT:-3210}:3210'
+    volumes:
+      - bridge-data:/data
+      - bridge-media:/media
+      - telegram-data:/telegram-data:ro
+    networks: [bridge, n8n, openwa]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3210/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    stop_grace_period: 15s
+
+  telegram-api:
+    build:
+      context: .
+      dockerfile: telegram-api.Dockerfile
+    image: local/telegram-bot-api:e3e9dd8e5b3d
+    restart: unless-stopped
+    env_file:
+      - path: ./telegram-api.env
+        format: raw
+    volumes:
+      - telegram-data:/telegram-data
+    networks: [bridge]
+    stop_grace_period: 30s
+
+volumes:
+  bridge-data:
+  bridge-media:
+  telegram-data:
+
+networks:
+  bridge:
+  n8n:
+    external: true
+    name: ${N8N_NETWORK:-n8n_default}
+  openwa:
+    external: true
+    name: ${OPENWA_NETWORK:-openwa-network}

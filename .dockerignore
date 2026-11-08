@@ -1,0 +1,17 @@
+.git
+.github
+.githooks
+.env
+.env.*
+*.env
+*.env.*
+!bridge.env.example
+data
+media
+backups
+vendor
+test
+node_modules
+*.db*
+*.sqlite*
+*.log

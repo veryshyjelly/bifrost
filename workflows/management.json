@@ -1,0 +1,68 @@
+{
+  "name": "WhatsApp Telegram — management",
+  "active": false,
+  "nodes": [
+    {
+      "id": "a0cb4e4f-99ea-4c40-8590-3122c8c6fd3c",
+      "name": "Bridge management events",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wa-telegram-management",
+        "responseMode": "lastNode",
+        "responseData": "firstEntryJson",
+        "options": {}
+      },
+      "webhookId": "62f1d880-deda-46af-9e7a-2a81c043236a"
+    },
+    {
+      "id": "6c55e851-39c0-4296-93f4-6c15b339466e",
+      "name": "Queue signed management action",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://wa-telegram-bridge:3210/v1/management",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.body ?? $json }}",
+        "options": {
+          "timeout": 10000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Bridge management events": {
+      "main": [
+        [
+          {
+            "node": "Queue signed management action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "pinData": {}
+}

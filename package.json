@@ -1,0 +1,14 @@
+{
+  "name": "personal-whatsapp-telegram-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.13" },
+  "scripts": {
+    "start": "node --env-file=bridge.env src/server.ts",
+    "test": "node --test test/*.test.ts",
+    "check:repository": "node scripts/check-repository.ts",
+    "configure": "node scripts/configure.ts",
+    "setup": "node --env-file=bridge.env scripts/setup.ts"
+  }
+}
