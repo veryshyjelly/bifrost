@@ -98,6 +98,7 @@ export class TelegramControl {
   }
   async process(job: Json) {
     const p = job.payload;
+    if (job.type === 'control-revoke') return this.b.revocations.process(job);
     if (job.type === 'control-menu') { try { await this.install(p.bot); } catch (e) { this.retry(e); } return; }
     if (job.type === 'control-expire') {
       const row = this.b.store.db.prepare('SELECT * FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(p.scope, p.chat, p.message);

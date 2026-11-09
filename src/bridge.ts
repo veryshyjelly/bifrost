@@ -7,6 +7,7 @@ import { digest, sign, equal } from './config.ts';
 import type { Config, Json } from './config.ts';
 import { MetadataSync } from './sync.ts';
 import { TelegramControl, commandOf, serviceMessage } from './control.ts';
+import { Revocations } from './revocations.ts';
 
 const updates = ['message', 'edited_message', 'callback_query', 'my_chat_member', 'managed_bot', 'message_reaction', 'poll_answer'];
 const waEvents = ['message.received', 'message.sent', 'message.edited', 'message.revoked', 'message.reaction', 'poll.vote', 'session.status', 'session.disconnected', 'message.failed'];
@@ -17,9 +18,10 @@ const chunks = (text: string, length = 3800) => {
 };
 
 export class Bridge {
-  c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; control: TelegramControl; busy = false;
+  c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; control: TelegramControl; revocations: Revocations; busy = false;
   constructor(c: Config, store = new Store(c.db, c.key), api = new Api(c)) {
     this.c = c; this.store = store; this.api = api; this.media = new Media(c, api); this.metadata = new MetadataSync(this); this.control = new TelegramControl(this);
+    this.revocations = new Revocations(this);
   }
   token(id: string) {
     if (id === 'master') return this.c.masterToken;
@@ -171,7 +173,7 @@ export class Bridge {
     if (this.store.get('wa-complete', `${chat}:${m.id}`) || this.store.byWhatsApp(chat, m.id).some(row => row.direction === 'out')) return;
     const contact = this.store.get('contact', sender) || {};
     this.store.put('contact', sender, { ...contact, name: contact.metadataSyncedAt ? contact.name : m.contact?.name || m.contact?.pushName || m.contact?.shortName || contact.name || sender });
-    this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name });
+    this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name, fromMe: !!m.fromMe });
     const route = await this.topic(chat, m.isGroup ? m.chatName || chat : this.store.get('contact', sender).name, key);
     if (['muted', 'ignored'].includes(route.mode)) return;
     const privateChat = route.mode === 'dedicated';
@@ -249,7 +251,10 @@ export class Bridge {
   }
   async waChange(event: Json, key: string) {
     const m = event.data, chat = this.store.canonical(m.chatId || ''), id = m.revokedId || m.pollMessageId || m.messageId || m.id;
-    if (event.event === 'message.revoked') this.store.put('revoked', `${chat}:${id}`, true);
+    if (event.event === 'message.revoked') {
+      this.store.put('revoked', `${chat}:${id}`, true); await this.revocations.notify(chat, id); return;
+    }
+    if (this.store.get('revoked', `${chat}:${id}`)) return;
     if (event.event === 'message.edited') {
       this.store.put('latest-edit', `${chat}:${id}`, { body: m.body || m.newBody || m.text || '' });
       if (this.store.get('outbound-edit', `${chat}:${id}`) === digest(m.body || '')) return;
@@ -257,15 +262,11 @@ export class Bridge {
     const rows = this.store.byWhatsApp(chat, id);
     for (const [i, row] of rows.entries()) {
       const extra = { chat_id: row.tg_chat, message_id: row.tg_id };
-      if (event.event === 'message.edited' || event.event === 'message.revoked') {
+      if (event.event === 'message.edited') {
         const name = this.store.get('wamessage', `${chat}:${id}`)?.name || 'WhatsApp';
-        const text = event.event === 'message.revoked' ? '[Deleted on WhatsApp]' : `${name} · edited\n${m.body || m.newBody || m.text || ''}`;
+        const text = `${name} · edited\n${m.body || m.newBody || m.text || ''}`;
         try { await this.effect(`${key}:edit:${i}`, () => this.api.tg(this.token(row.bot), row.media ? 'editMessageCaption' : 'editMessageText', { ...extra, [row.media ? 'caption' : 'text']: text.slice(0, row.media ? 1000 : 4000) })); }
         catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; await this.sendText('master', row.tg_chat, text, `${key}:notice:${i}`, { reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } }); }
-        if (event.event === 'message.revoked' && row.media) {
-          try { await this.effect(`${key}:delete:${i}`, () => this.api.tg(this.token(row.bot), 'deleteMessage', extra)); }
-          catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; }
-        }
       } else {
         const text = event.event === 'poll.vote' ? `[Poll vote · ${m.voterId}] ${(m.selectedOptions || []).join(', ') || 'cleared'}` : `[Reaction · ${m.senderId || 'WhatsApp'}] ${m.reaction || 'removed'}`;
         await this.sendText('master', row.tg_chat, text, `${key}:reaction:${i}`, { reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } });
@@ -279,6 +280,7 @@ export class Bridge {
     if (update.my_chat_member) return; // Membership is checked live before selecting a participant bot.
     if (update.callback_query) {
       const q = update.callback_query;
+      if (/^rev-(delete|keep):/.test(q.data || '')) { await this.revocations.callback(bot, q); return; }
       try { await this.api.tg(this.token(bot), 'answerCallbackQuery', { callback_query_id: q.id }); }
       catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; }
       const [operation, id] = (q.data || '').split(':');
