@@ -1,32 +1,37 @@
 schema: spec-driven
 
-# Project context (optional)
-# Add only constraints that should guide OpenSpec artifacts and workflows.
-# Include constraints an agent cannot infer by reading the code.
-# Keep general project documentation and discoverable codebase facts out.
-# Example:
-#   context: |
-#     Designs and tasks must cover Windows, macOS, and Linux
-#     Write all artifacts in Spanish
+context: |
+  The ongoing ClojureScript rewrite is governed by docs/rewrite/08-implementation-specification.md.
+  Its finalized decisions supersede conflicting historical recommendations in documents 01–07.
+  Do not restart architecture interviews or infer new product features from the rewrite.
+  The frozen behavioral oracle is Git revision checkpoint-clojure-baseline.
+  Candidate implementation already exists; reconcile tasks with evidence rather than starting over.
+  docs/rewrite/evidence-ledger.md, coverage-matrix.md and evidence/checks/ describe completed checks and gaps.
+  All eight release gates remain pending; passing tests or ready OpenSpec artifacts do not complete them.
+  Use nbb exclusively on pinned Bun for application/workers; preserve existing delivery and latest-state rollback invariants.
+  Offline implementation was authorized. Real-event capture, live canary and production cutover each need separate authorization.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always state what is out of scope
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - State the bounded change and exclusions; distinguish specification import from new product behavior.
+  specs:
+    - Use observable requirements and scenarios covering normal, failure, recovery and authorization paths.
+    - Preserve documented intended functionality; register observable corrections under the governing exception policy.
+    - Reference the exhaustive behavioral inventory; a short capability list must not reduce scope.
+  design:
+    - Apply finalized architecture; explain implementation sequencing and compatibility without reopening settled choices.
+  tasks:
+    - Check only narrowly completed work supported by the recorded source hashes and executable evidence.
+    - Keep incomplete release gates and external verification unchecked even when component tests pass.
+    - Make tasks actionable with a concrete verification result and preserve every inventory workflow.
 
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+operations:
+  apply:
+    guidance:
+      - Preserve the frozen oracle, original tests, owner work and single-writer identity.
+      - Use native tools and context-mode per AGENTS.md; keep output concise.
+      - Commit validated milestones on the current branch; audit explicitly staged files and preserve evidence.
+      - Escalate only ambiguous semantics or operational authorization not already granted.
+  archive:
+    guidance:
+      - Do not archive the rewrite while required tasks, acceptance gates or critical exceptions remain unresolved.
