@@ -7,9 +7,11 @@ import { configuration } from '../src/config.ts';
 
 class Fixture extends Api {
   calls: any[] = []; sequence = 100; members = new Set([42, 43]); unsupported = new Set<string>(); failure?: ApiError; noticeFailure?: ApiError;
+  customEmojis: any[] = [];
   async tg(token: string, method: string, body: any = {}) {
     this.calls.push({ token, method, body });
     if (method === 'getChatMember') return { status: this.members.has(Number(body.user_id)) ? 'member' : 'left' };
+    if (method === 'getCustomEmojiStickers') return this.customEmojis.filter(item => body.custom_emoji_ids.includes(item.custom_emoji_id));
     if (method === 'setMessageReaction') {
       if (this.failure) { const e = this.failure; this.failure = undefined; throw e; }
       if (this.unsupported.has(body.reaction[0]?.emoji)) throw new ApiError('Reaction unavailable', 400);
@@ -197,4 +199,79 @@ test('Telegram-owner reaction echoes stay suppressed after adding equivalent ren
   await react(f.bridge, '999@c.us', '🤣', 'owner-echo'); assert.equal(native(f.api).length, 0);
   await react(f.bridge, '333@c.us', '😂', 'other-person'); assert.equal(native(f.api).length, 1);
   assert.equal(native(f.api)[0].body.reaction[0].emoji, '🤣');
+});
+
+test('Telegram custom reactions forward their Unicode equivalent and cache it without converting it to Telegram approximations', async t => {
+  const f = fixture(t); copy(f); f.api.customEmojis = [{ custom_emoji_id: 'custom-laugh', emoji: '😆' }];
+  const update = { update_id: 1, message_reaction: { chat: { id: -200, type: 'supergroup' }, message_id: 5, user: { id: 123 }, old_reaction: [], new_reaction: [{ type: 'custom_emoji', custom_emoji_id: 'custom-laugh' }] } };
+  assert.equal(f.bridge.acceptTelegram('master', update), true); await f.bridge.tick();
+  assert.equal(f.api.calls.find(c => c.method === 'messages/react').body.emoji, '😆');
+  await f.bridge.telegram('master', { message_reaction: { ...update.message_reaction, message_id: 5 } }, 'second');
+  assert.equal(f.api.calls.filter(c => c.method === 'getCustomEmojiStickers').length, 1);
+  await react(f.bridge, '999@c.us', '😆', 'own-custom-echo'); assert.equal(native(f.api).length, 0);
+});
+
+test('member DM reactions are admitted with bot-scoped mappings while group duplicates are ignored', async t => {
+  const f = fixture(t); copy(f, 5, { chat: '123', bot: '42' }); copy(f, 5, { chat: '123', bot: '43' });
+  const update = { update_id: 1, message_reaction: { chat: { id: 123, type: 'private' }, message_id: 5, user: { id: 123 }, new_reaction: [{ type: 'emoji', emoji: '👍' }] } };
+  assert.equal(f.bridge.acceptTelegram('42', update), true); await f.bridge.tick();
+  assert.equal(f.api.calls.filter(c => c.method === 'messages/react').length, 1);
+  assert.equal(f.bridge.acceptTelegram('42', { ...update, update_id: 2, message_reaction: { ...update.message_reaction, chat: { id: -200, type: 'supergroup' } } }), false);
+  assert.equal(f.bridge.acceptTelegram('42', { ...update, update_id: 3, message_reaction: { ...update.message_reaction, user: { id: 999 } } }), false);
+});
+
+test('adding a custom reaction beside an existing reaction forwards the new one; removal keeps the remaining one', async t => {
+  const f = fixture(t); copy(f); f.api.customEmojis = [{ custom_emoji_id: 'pointer', emoji: '👉' }];
+  const standard = { type: 'emoji', emoji: '👍' }, custom = { type: 'custom_emoji', custom_emoji_id: 'pointer' };
+  const base = { chat: { id: -200 }, message_id: 5, user: { id: 123 } };
+  await f.bridge.telegram('master', { message_reaction: { ...base, old_reaction: [standard], new_reaction: [standard, custom] } }, 'added');
+  assert.equal(f.api.calls.filter(c => c.method === 'messages/react').at(-1)!.body.emoji, '👉');
+  await f.bridge.telegram('master', { message_reaction: { ...base, old_reaction: [standard, custom], new_reaction: [standard] } }, 'remaining');
+  assert.equal(f.api.calls.filter(c => c.method === 'messages/react').at(-1)!.body.emoji, '👍');
+  await f.bridge.telegram('master', { message_reaction: { ...base, old_reaction: [standard], new_reaction: [] } }, 'removed');
+  assert.equal(f.api.calls.filter(c => c.method === 'messages/react').at(-1)!.body.emoji, '');
+});
+
+test('unresolvable custom reactions produce a temporary independent notice without clearing WhatsApp or blocking a chat', async t => {
+  const f = fixture(t); copy(f);
+  await f.bridge.telegram('master', { message_reaction: { chat: { id: -200 }, message_id: 5, new_reaction: [{ type: 'custom_emoji', custom_emoji_id: 'unknown' }] } }, 'unknown');
+  assert.equal(f.api.calls.filter(c => c.method === 'messages/react').length, 0);
+  const job = f.store.db.prepare("SELECT * FROM jobs WHERE type='control-reaction-notice'").get()!;
+  assert.ok(job); await f.bridge.control.process({ ...job, payload: JSON.parse(job.payload as string) });
+  assert.ok(f.api.calls.find(c => c.method === 'sendMessage').body.text.includes('no standard emoji equivalent'));
+});
+
+test('a member unable to access another bot’s message falls back to Hermes and cached refusals do not suppress that fallback', async t => {
+  const f = fixture(t); copy(f);
+  const original = f.api.tg.bind(f.api);
+  f.api.tg = async (token, method, body = {}) => {
+    if (token === 'bob' && method === 'setMessageReaction') { f.api.calls.push({ token, method, body }); throw Object.assign(new ApiError('Missing for bot', 400), { reason: 'message_missing' as const }); }
+    return original(token, method, body);
+  };
+  await react(f.bridge, '222@c.us', '👍', 'fallback');
+  assert.deepEqual(native(f.api).map(call => call.token), ['bob', 'master']);
+  await react(f.bridge, '222@c.us', '👍', 'same'); assert.equal(native(f.api).length, 2);
+  await react(f.bridge, '222@c.us', '', 'remove-fallback');
+  assert.equal(native(f.api).at(-1)!.token, 'master'); assert.deepEqual(native(f.api).at(-1)!.body.reaction, []);
+  assert.ok(!f.api.calls.some(c => c.method === 'sendMessage'));
+});
+
+test('old definitive reaction refusals expire so corrected permissions can recover', async t => {
+  const f = fixture(t); copy(f); f.api.unsupported.add('👍');
+  await react(f.bridge, '333@c.us', '👍', 'refused');
+  f.api.unsupported.clear(); await react(f.bridge, '333@c.us', '👍', 'still-cached'); assert.equal(native(f.api).length, 1);
+  const cache = f.store.all('tg-reaction-state')[0];
+  f.store.put('tg-reaction-state', cache.id, { ...cache, refusedAt: { master: Date.now() - 60001 } });
+  await react(f.bridge, '333@c.us', '👍', 'recovered');
+  assert.equal(native(f.api).length, 2); assert.equal(f.store.all('tg-reaction-state')[0].applied.master, JSON.stringify([5, '👍']));
+});
+
+test('custom-emoji resolution and outbound payload stay frozen across a known send retry', async t => {
+  const f = fixture(t); copy(f); f.api.customEmojis = [{ custom_emoji_id: 'custom', emoji: '😆' }];
+  const original = f.api.ow.bind(f.api); let first = true;
+  f.api.ow = async (path, body) => { if (path === 'messages/react' && first) { first = false; throw new ApiError('Rate limited', 429, true); } return original(path, body); };
+  const update = { message_reaction: { chat: { id: -200 }, message_id: 5, new_reaction: [{ type: 'custom_emoji', custom_emoji_id: 'custom' }] } };
+  await assert.rejects(f.bridge.telegram('master', update, 'retry-custom'));
+  f.api.customEmojis = [{ custom_emoji_id: 'custom', emoji: '👍' }]; await f.bridge.telegram('master', update, 'retry-custom');
+  assert.equal(f.api.calls.find(c => c.method === 'messages/react').body.emoji, '😆');
 });

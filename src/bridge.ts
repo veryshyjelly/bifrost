@@ -87,10 +87,11 @@ export class Bridge {
     if (!actor || actor.is_bot || String(actor.id) !== this.c.owner) return false;
     if (!Number.isSafeInteger(update.update_id)) throw new ApiError('Invalid update', 400);
     const m = update.message || update.edited_message || update.callback_query?.message;
+    const reaction = update.message_reaction;
     const recipient = m && commandOf(m)?.recipient;
     const directed = !!recipient && recipient === this.store.get('bot', bot)?.username?.toLowerCase();
-    if (m?.chat?.type !== 'private' && bot !== 'master' && !update.my_chat_member && !update.callback_query && !directed) return false;
-    const stream = m?.chat ? `tg:${m.chat.type === 'private' ? bot + ':' : ''}${m.chat.id}:${this.telegramContext(bot, m).thread || 0}` : `tg:${bot}`;
+    if ((m?.chat || reaction?.chat)?.type !== 'private' && bot !== 'master' && !update.my_chat_member && !update.callback_query && !directed) return false;
+    const stream = m?.chat ? `tg:${m.chat.type === 'private' ? bot + ':' : ''}${m.chat.id}:${this.telegramContext(bot, m).thread || 0}` : reaction?.chat ? `tg-reaction:${bot}:${reaction.chat.id}` : `tg:${bot}`;
     return this.store.enqueue(`tg:${bot}:${update.update_id}`, stream, 'tg', { bot, update });
   }
   management(type: string, data: Json, dedup: string) {
@@ -482,11 +483,16 @@ export class Bridge {
     }
     if (update.message_reaction) {
       const r = update.message_reaction, map = this.store.byTelegram(r.chat.id, r.message_id, bot);
-      const emoji = r.new_reaction?.find((value: Json) => typeof value.emoji === 'string')?.emoji;
-      if (r.new_reaction?.length && !emoji) return;
       if (map && map.wa_chat !== 'status@broadcast') {
-        await this.effect(key + ':react', () => this.api.ow('messages/react', { chatId: map.wa_chat, messageId: map.wa_id, emoji: emoji || '' }));
-        await this.reactions.rememberOutgoing(map, r, bot);
+        const result = await this.reactions.outgoing(bot, r, key);
+        if (result.emoji === undefined) {
+          const ledger = this.store.db.prepare('SELECT thread FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(bot, String(r.chat.id)), String(r.chat.id), r.message_id);
+          this.store.enqueue('reaction-notice:' + key, 'reaction-notice:' + key, 'control-reaction-notice', { bot, chat: String(r.chat.id), thread: ledger?.thread,
+            message: r.message_id, text: 'This reaction has no standard emoji equivalent and cannot be forwarded to WhatsApp. Choose a standard emoji reaction instead.' });
+          return;
+        }
+        await this.effect(key + ':react', () => this.api.ow('messages/react', { chatId: map.wa_chat, messageId: map.wa_id, emoji: result.emoji }));
+        await this.reactions.rememberOutgoing(map, { ...r, new_reaction: result.emoji ? [{ type: 'emoji', emoji: result.emoji }] : [] }, bot);
       }
       return;
     }

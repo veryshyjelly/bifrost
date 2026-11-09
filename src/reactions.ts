@@ -16,6 +16,30 @@ export class NativeReactions {
   b: Bridge;
   constructor(b: Bridge) { this.b = b; }
   sourceKey(chat: string, message: string) { return digest(JSON.stringify([this.b.c.session, chat, message])); }
+  async outgoing(bot: string, reaction: Json, key: string) {
+    const id = digest(JSON.stringify([this.b.c.session, bot, key])), previous = this.b.store.get('outgoing-reaction', id);
+    if (previous) return previous;
+    const identity = (item: Json) => JSON.stringify([item.type, item.emoji || item.custom_emoji_id || '']);
+    const old = new Set((reaction.old_reaction || []).map(identity)), next = reaction.new_reaction || [];
+    const selected = next.filter((item: Json) => !old.has(identity(item))).at(-1) || next.at(-1);
+    let emoji = selected?.type === 'emoji' ? selected.emoji : selected ? undefined : '';
+    if (selected?.type === 'custom_emoji') {
+      const cached = this.b.store.get('custom-reaction-emoji', selected.custom_emoji_id);
+      emoji = cached?.emoji;
+      if (!emoji) {
+        let stickers: Json;
+        try { stickers = await this.b.api.tg(this.b.token(bot), 'getCustomEmojiStickers', { custom_emoji_ids: [selected.custom_emoji_id] }); }
+        catch (e) { if (!(e instanceof ApiError) || ![400, 404].includes(e.status)) throw e; }
+        const candidate = Array.isArray(stickers) && stickers.find(item => item.custom_emoji_id === selected.custom_emoji_id)?.emoji;
+        if (typeof candidate === 'string' && candidate.length <= 32 && /\p{Extended_Pictographic}|\p{Regional_Indicator}|\u20e3/u.test(candidate)
+          && [...new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(candidate)].length === 1) {
+          emoji = candidate; this.b.store.put('custom-reaction-emoji', selected.custom_emoji_id, { emoji });
+        }
+      }
+    }
+    const result = emoji === undefined ? { unsupported: true } : { emoji };
+    this.b.store.put('outgoing-reaction', id, result); return result;
+  }
   async rememberOutgoing(map: Json, reaction: Json, bot: string) {
     const sessionKey = digest(this.b.c.session);
     let self = this.b.store.get('reaction-self', sessionKey);
@@ -58,30 +82,56 @@ export class NativeReactions {
     for (const [destination, copies] of destinations) {
       const primary = copies.at(-1)!, privateChat = !primary.tg_chat.startsWith('-');
       const cacheKey = sourceKey + ':' + digest(destination), cache = this.b.store.get('tg-reaction-state', cacheKey) || { applied: {}, refused: {} };
+      cache.refusedAt ||= {};
+      cache.refusedReason ||= {};
       const desired = new Map<string, Json>();
+      const rerouted = new Set<string>();
       for (const [reactor, value] of Object.entries(state.senders) as [string, Json][]) {
         if (value.echo?.chat === primary.tg_chat && value.echo.message === primary.tg_id && (!privateChat || value.echo.bot === primary.bot)) continue;
-        const bot = privateChat ? primary.bot : await this.b.preferred(reactor, primary.tg_chat);
+        let bot = privateChat ? primary.bot : await this.b.preferred(reactor, primary.tg_chat);
+        const mappedEmoji = telegramEquivalents[value.emoji] || value.emoji;
+        if (!privateChat && bot !== 'master' && bot !== primary.bot && cache.refusedReason[bot] === 'message_missing'
+          && cache.refused[bot] === JSON.stringify([primary.tg_id, mappedEmoji]) && Date.now() - (cache.refusedAt[bot] || 0) < 60000) {
+          rerouted.add(bot); bot = 'master';
+        }
         if (!desired.has(bot) || desired.get(bot)!.order < value.order) desired.set(bot, value);
       }
       let fallback = false, unavailable = false;
-      for (const bot of new Set([...Object.keys(cache.applied), ...Object.keys(cache.refused), ...desired.keys()])) {
+      const pendingBots = [...new Set([...Object.keys(cache.applied), ...Object.keys(cache.refused), ...desired.keys()])];
+      const useMaster = (bot: string) => {
+        const value = desired.get(bot);
+        if (privateChat || bot === 'master' || bot === primary.bot || !value) return false;
+        const current = desired.get('master'); desired.delete(bot); rerouted.add(bot);
+        if (!current || current.order < value.order) { desired.set('master', value); pendingBots.push('master'); }
+        return true;
+      };
+      for (const bot of pendingBots) {
         const originalEmoji = desired.get(bot)?.emoji || '', emoji = telegramEquivalents[originalEmoji] || originalEmoji;
         const signature = JSON.stringify([primary.tg_id, emoji]);
+        if (!emoji && !cache.applied[bot]) {
+          if (!rerouted.has(bot)) { delete cache.refused[bot]; delete cache.refusedAt[bot]; delete cache.refusedReason[bot]; this.b.store.put('tg-reaction-state', cacheKey, cache); }
+          continue;
+        }
         if (cache.applied[bot] === signature) {
           if (!emoji && cache.refused[bot]) { delete cache.refused[bot]; this.b.store.put('tg-reaction-state', cacheKey, cache); }
           continue;
         }
-        if (cache.refused[bot] === signature) continue;
+        if (cache.refused[bot] === signature && Date.now() - (cache.refusedAt[bot] || 0) < 60000) {
+          if (cache.refusedReason[bot] === 'message_missing') useMaster(bot);
+          continue;
+        }
         try {
           await this.b.api.tg(this.b.token(bot), 'setMessageReaction', { chat_id: primary.tg_chat, message_id: primary.tg_id,
             reaction: emoji ? [{ type: 'emoji', emoji }] : [] });
-          cache.applied[bot] = signature; delete cache.refused[bot];
+          cache.applied[bot] = signature; delete cache.refused[bot]; delete cache.refusedAt[bot]; delete cache.refusedReason[bot];
         } catch (e) {
           if (e instanceof ApiError && [400, 403].includes(e.status)) {
+            cache.refusedAt[bot] = Date.now(); cache.refusedReason[bot] = e.reason || 'reaction_unavailable';
             if (['message_missing', 'thread_missing'].includes(e.reason || '')) {
-              cache.refused[bot] = signature; delete cache.pendingFallback; unavailable = true;
-              this.b.store.put('tg-reaction-state', cacheKey, cache); break;
+              cache.refused[bot] = signature; delete cache.pendingFallback;
+              this.b.store.put('tg-reaction-state', cacheKey, cache);
+              if (e.reason === 'message_missing' && useMaster(bot)) continue;
+              unavailable = true; break;
             }
             if (cache.applied[bot] && JSON.parse(cache.applied[bot])[1]) {
               try {

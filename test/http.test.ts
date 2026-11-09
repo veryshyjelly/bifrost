@@ -51,7 +51,7 @@ test('real API transport preserves JSON, quotes, idempotency and handles rate li
     requests.push({ url: req.url, method: req.method, key: req.headers['idempotency-key'], body: JSON.parse(body) });
     res.setHeader('content-type', 'application/json');
     if (req.url?.includes('sendMessage')) { res.statusCode = 429; res.end(JSON.stringify({ ok: false, parameters: { retry_after: 2 } })); }
-    else if (/getMyDescription|getUserProfilePhotos/.test(req.url || '')) { res.statusCode = 503; res.end(JSON.stringify({ ok: false })); }
+    else if (/getMyDescription|getUserProfilePhotos|getCustomEmojiStickers/.test(req.url || '')) { res.statusCode = 503; res.end(JSON.stringify({ ok: false })); }
     else res.end(JSON.stringify({ messageId: 'sent-1' }));
   });
   server.listen(0, '127.0.0.1'); await once(server, 'listening');
@@ -64,7 +64,7 @@ test('real API transport preserves JSON, quotes, idempotency and handles rate li
   assert.equal(requests[1].method, 'PUT'); assert.equal(requests[1].url, '/api/sessions/s1/webhooks/own');
   assert.deepEqual(requests[1].body, { events: ['status.received'] });
   await assert.rejects(api.tg('private-token', 'sendMessage', { text: 'hi' }), (e: any) => e.retry && !e.uncertain && e.delay === 2000 && !e.message.includes('private-token'));
-  for (const method of ['getMyDescription', 'getUserProfilePhotos']) await assert.rejects(api.tg('private-token', method), (e: any) => e.retry && !e.uncertain);
+  for (const method of ['getMyDescription', 'getUserProfilePhotos', 'getCustomEmojiStickers']) await assert.rejects(api.tg('private-token', method), (e: any) => e.retry && !e.uncertain);
 });
 
 test('real multipart transport preserves attachment bytes and caption entities', async t => {

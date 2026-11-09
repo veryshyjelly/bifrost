@@ -43,7 +43,7 @@ export class Api {
   tg(token: string, method: string, body: Json = {}) {
     return this.request(`${this.c.telegram}/bot${token}/${method}`, {
       method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
-    }, !['getMe', 'getChat', 'getChatMember', 'getFile', 'getWebhookInfo', 'getManagedBotToken', 'getManagedBotAccessSettings', 'getMyDescription', 'getUserProfilePhotos', 'getMyCommands', 'getChatMenuButton'].includes(method)).then(r => r.result).catch(e => { if (e instanceof ApiError) e.service = 'telegram'; throw e; });
+    }, !['getMe', 'getChat', 'getChatMember', 'getFile', 'getWebhookInfo', 'getManagedBotToken', 'getManagedBotAccessSettings', 'getMyDescription', 'getUserProfilePhotos', 'getMyCommands', 'getChatMenuButton', 'getCustomEmojiStickers'].includes(method)).then(r => r.result).catch(e => { if (e instanceof ApiError) e.service = 'telegram'; throw e; });
   }
   async upload(token: string, method: string, field: string, path: string, name: string, body: Json) {
     const form = new FormData();
