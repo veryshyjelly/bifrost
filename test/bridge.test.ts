@@ -44,7 +44,7 @@ test('unknown conversation gets one topic; replay is deduplicated and never mark
   assert.equal(bridge.acceptWhatsApp(message()), true); assert.equal(bridge.acceptWhatsApp(message()), false);
   await bridge.tick();
   assert.equal(api.calls.filter(c => c.method === 'createForumTopic').length, 1);
-  assert.match(api.calls.find(c => c.method === 'sendMessage').body.text, /Alice\nHello/);
+  assert.match(api.calls.find(c => c.method === 'sendMessage').body.text, /Alice: Hello/);
   assert.equal(api.calls.some(c => c.method === 'chats/read'), false);
   assert.equal(s.byWhatsApp('111@c.us', 'm1').length, 1);
 });
@@ -60,7 +60,7 @@ test('dedicated bot wins in a group only when present; master falls back with se
   api.members.clear();
   await bridge.whatsApp(message('g2', { chatId: 'g@g.us', isGroup: true, author: '111@c.us' }), 'g2');
   assert.equal(api.calls.filter(c => c.method === 'sendMessage').at(-1).token, 'master-token');
-  assert.equal(api.calls.filter(c => c.method === 'sendMessage').at(-1).body.text, 'Alice\nHello');
+  assert.equal(api.calls.filter(c => c.method === 'sendMessage').at(-1).body.text, 'Alice: Hello');
 });
 
 test('member-bot media, stickers, locations, cards and polls omit redundant sender headers', async t => {
@@ -87,10 +87,11 @@ test('member-bot history keeps its history marker and body while phone-originate
   const group = { chatId: 'g@g.us', isGroup: true, author: '111@c.us' };
   await bridge.whatsApp({ ...message('history', { ...group, body: 'Alice is coming' }), historical: true }, 'history');
   const text = api.calls.find(c => c.method === 'sendMessage').body.text;
-  assert.match(text, /^\[History · [^\]]+\]\nAlice is coming$/);
+  assert.match(text, /^History · [^·]+ · Alice is coming$/);
+  assert.ok(api.calls.find(c => c.method === 'sendMessage').body.entities.some((e: any) => e.type === 'date_time' && e.unix_time === 1700000000));
   await bridge.whatsApp(message('phone', { ...group, body: 'From my phone', fromMe: true }), 'phone');
   const phone = api.calls.filter(c => c.method === 'sendMessage').at(-1);
-  assert.equal(phone.token, 'master-token'); assert.equal(phone.body.text, 'You · sent from WhatsApp\nFrom my phone');
+  assert.equal(phone.token, 'master-token'); assert.equal(phone.body.text, 'You · sent from WhatsApp: From my phone');
 });
 
 test('member-bot edits do not restore a sender header; master edit fallback remains attributed', async t => {
@@ -103,7 +104,7 @@ test('member-bot edits do not restore a sender header; master edit fallback rema
   api.failure = new ApiError('Cannot edit', 400);
   await bridge.waChange({ event: 'message.edited', data: { chatId: 'g@g.us', id: 'edit', body: 'Updated again' } }, 'edit-fallback');
   const fallback = api.calls.filter(c => c.method === 'sendMessage').at(-1);
-  assert.equal(fallback.token, 'master-token'); assert.equal(fallback.body.text, 'Alice · edited\nUpdated again');
+  assert.equal(fallback.token, 'master-token'); assert.equal(fallback.body.text, 'Edited · Alice: Updated again');
 });
 
 test('private member-bot messages and edit fallbacks stay nameless in the correct bot DM', async t => {
@@ -115,7 +116,7 @@ test('private member-bot messages and edit fallbacks stay nameless in the correc
   api.failure = new ApiError('Cannot edit', 400);
   await bridge.waChange({ event: 'message.edited', data: { chatId: '111@c.us', id: 'm1', body: 'Updated' } }, 'private-edit');
   const fallback = api.calls.filter(c => c.method === 'sendMessage').at(-1);
-  assert.equal(fallback.token, 'alice-token'); assert.equal(fallback.body.chat_id, '123'); assert.equal(fallback.body.text, 'Updated');
+  assert.equal(fallback.token, 'alice-token'); assert.equal(fallback.body.chat_id, '123'); assert.equal(fallback.body.text, 'Edited · Updated');
 });
 
 test('Telegram reply maps to WhatsApp quote; send echoes and overlapping bot updates do not loop', async t => {
