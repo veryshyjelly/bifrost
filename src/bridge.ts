@@ -101,11 +101,7 @@ export class Bridge {
       const job = this.store.next(); if (!job) return;
       try {
         if (job.type === 'wa') {
-          try { await this.whatsApp(job.payload, job.dedup); }
-          catch (e) {
-            if (!(e instanceof ApiError) || e.service !== 'telegram' || e.status !== 403) throw e;
-            await this.whatsApp({ ...job.payload, forceMaster: true }, job.dedup);
-          }
+          await this.deliverWhatsApp(job.payload, job.dedup);
         }
         else if (job.type === 'tg') await this.telegram(job.payload.bot, job.payload.update, job.dedup);
         else if (job.type === 'history') await this.history(job.payload, job.dedup);
@@ -132,6 +128,43 @@ export class Bridge {
         }
       }
     } finally { this.busy = false; }
+  }
+  async deliverWhatsApp(event: Json, key: string) {
+    try { await this.whatsApp(event, key); }
+    catch (e) {
+      if (await this.repairTopic(event, key, e)) await this.whatsApp(event, key);
+      else if (e instanceof ApiError && e.service === 'telegram' && e.status === 403 && !event.forceMaster) {
+        await this.deliverWhatsApp({ ...event, forceMaster: true }, key);
+      } else throw e;
+    }
+  }
+  async repairTopic(event: Json, key: string, error: unknown) {
+    if (!(error instanceof ApiError) || error.service !== 'telegram' || error.status !== 400 || error.reason !== 'thread_missing') return false;
+    const chat = this.store.canonical(event.data?.chatId || ''), snapshotKey = key + (event.forceMaster ? ':fallback' : '');
+    const target = this.store.get('delivery-target', snapshotKey), route = this.store.get('route', chat);
+    if (!target?.thread || target.bot !== 'master' || String(target.destination) !== this.c.management || String(route?.tgChat) !== this.c.management) return false;
+    const prefix = `${key}:to:${target.bot}:${target.destination}:`;
+    // A definite refusal can be moved only if no part was delivered or left uncertain.
+    if (this.store.byWhatsApp(chat, event.data.id).length || this.store.db.prepare("SELECT 1 FROM effects WHERE state IN ('done','sending','uncertain') AND substr(id,1,length(?))=? LIMIT 1").get(prefix, prefix)) return false;
+    if (route.mode === 'dedicated' && !event.forceMaster) {
+      const bot = await this.preferred(chat, route.tgChat, true);
+      if (bot !== 'master') {
+        this.store.put('delivery-target', snapshotKey, { ...target, bot, destination: this.c.owner, thread: undefined,
+          ...(target.presentation ? { presentation: { ...target.presentation, bot } } : {}) });
+        return true;
+      }
+    }
+    let thread = route.thread;
+    if (Number(thread) === Number(target.thread)) {
+      const repaired = await this.effect('topic-repair:' + digest(JSON.stringify([this.c.management, chat, thread])), () => this.api.tg(this.token('master'), 'createForumTopic', {
+        chat_id: this.c.management, name: String(route.name || this.store.get('contact', chat)?.name || 'WhatsApp conversation').slice(0, 128),
+      }));
+      thread = repaired.message_thread_id;
+      this.store.put('route', chat, { ...route, thread });
+    }
+    if (!thread) return false;
+    this.store.put('delivery-target', snapshotKey, { ...target, thread });
+    return true;
   }
   async sendText(bot: string, chat: string, text: string | Formatted, key: string, extra: Json = {}, kind = 'log') {
     const results: Json[] = [];
@@ -203,7 +236,7 @@ export class Bridge {
     const snapshotKey = key + (event.forceMaster ? ':fallback' : '');
     const snapshot = this.store.get('delivery-target', snapshotKey);
     const legacy = !!snapshot && snapshot.formatVersion !== 2;
-    const bot = snapshot?.bot || (status || m.fromMe || event.forceMaster ? 'master' : await this.preferred(sender, route.tgChat, privateChat));
+    const bot = snapshot?.bot || (status || (m.fromMe && !privateChat) || event.forceMaster ? 'master' : await this.preferred(sender, route.tgChat, privateChat));
     // A dedicated bot not yet started falls back to the management topic.
     const destination = snapshot?.destination || (privateChat && bot !== 'master' ? this.c.owner : route.tgChat);
     const thread = snapshot ? snapshot.thread : privateChat && bot !== 'master' ? undefined : route.thread;
@@ -221,7 +254,11 @@ export class Bridge {
     const header = legacy ? prefix.trimEnd() : relayHeader(format), headerValue = typeof header === 'string' ? header : header.text;
     const annotated = (notice: string) => legacy ? textValue + '\n[' + notice + ']' : render(concat(plain(m.body || ''), m.body ? '\n' : '', styled('[' + notice + ']', 'italic')));
     const extra: Json = { ...(thread ? { message_thread_id: thread } : {}) };
-    const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).find(r => r.tg_chat === String(destination) && (!privateChat || bot === 'master' || r.bot === bot));
+    const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).find(r => {
+      if (r.tg_chat !== String(destination) || (privateChat && bot !== 'master' && r.bot !== bot)) return false;
+      const recorded = this.store.db.prepare('SELECT deleted,thread FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(r.bot, r.tg_chat), r.tg_chat, r.tg_id);
+      return !recorded || (!recorded.deleted && Number(recorded.thread || 0) === Number(thread || 0));
+    });
     if (quoted) extra.reply_parameters = { message_id: quoted.tg_id, allow_sending_without_reply: true };
     const record = (result: Json, media = false) => {
       this.store.map(chat, m.id, destination, result.message_id, bot, 'in', media);
@@ -253,6 +290,7 @@ export class Bridge {
           { chat_id: destination, ...extra, ...(m.type === 'sticker' ? {} : legacy ? { caption: textValue.slice(0, 1000) }
             : captionFields(splitFormatted((textValue.length > 1000 ? header : text) as Formatted, 1000)[0])) })), true);
       } catch (e) {
+        if (e instanceof ApiError && ['thread_missing', 'reply_missing'].includes(e.reason || '')) throw e;
         if (!(e instanceof ApiError) || ![400, 415].includes(e.status) || method === 'sendDocument') throw e;
         const notice = '\n[Original attachment; native presentation unavailable]';
         let fallback: string | Formatted = legacy ? (textValue + notice).slice(0, 1000) : annotated('Original attachment; native presentation unavailable');
@@ -301,6 +339,8 @@ export class Bridge {
     const rows = this.store.byWhatsApp(chat, id);
     if (event.event === 'message.reaction') { await this.reactions.apply(chat, id, m, rows, key); return; }
     for (const [i, row] of rows.entries()) {
+      const recorded = this.store.db.prepare('SELECT deleted FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(row.bot, row.tg_chat), row.tg_chat, row.tg_id);
+      if (recorded?.deleted) continue;
       const extra = { chat_id: row.tg_chat, message_id: row.tg_id };
       if (event.event === 'message.edited') {
         let source = this.store.get('wamessage', `${chat}:${id}`) || {};
@@ -318,6 +358,7 @@ export class Bridge {
           ...(row.media ? captionFields(part) : { text: part.text || '[Empty message]', entities: part.entities, link_preview_options: { is_disabled: true } }) })); }
         catch (e) {
           if (!(e instanceof ApiError) || e.status !== 400) throw e;
+          if (['message_missing', 'thread_missing'].includes(e.reason || '')) continue;
           const fallback = row.tg_chat.startsWith('-') ? 'master' : row.bot;
           const ledger = this.store.db.prepare('SELECT thread FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(row.bot, row.tg_chat), row.tg_chat, row.tg_id);
           await this.sendText(fallback, row.tg_chat, relayText({ ...format, bot: fallback, editedNotice: true }, body), `${key}:notice:${i}`,
@@ -378,7 +419,15 @@ export class Bridge {
       return;
     }
     if (update.edited_message && this.store.db.prepare("SELECT 1 FROM telegram_messages WHERE scope=? AND chat=? AND message=? AND kind='command'").get(this.control.scope(bot, chat), chat, m.message_id)) return;
-    const { route, thread } = this.telegramContext(bot, m);
+    let { route, thread, contact } = this.telegramContext(bot, m);
+    if (m.chat.type === 'private' && bot !== 'master') {
+      if (!contact) {
+        await this.sendText(bot, chat, 'Connect this bot to a WhatsApp contact in the master bot first, then send your message again.', key); return;
+      }
+      if (!route) route = await this.topic(contact.id, contact.name || contact.id, key + ':dm-route');
+      const registered = this.store.get('bot', bot);
+      if (!registered.ready) this.store.put('bot', bot, { ...registered, ready: true });
+    }
     if (!route || ['muted', 'ignored'].includes(route.mode)) return;
     const reply = m.reply_to_message && this.store.byTelegram(chat, m.reply_to_message.message_id, bot);
     if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Reply belongs to a different WhatsApp conversation', 400);

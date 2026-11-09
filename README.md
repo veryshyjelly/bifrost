@@ -51,6 +51,8 @@ Reply in an inbox topic to send a WhatsApp message. The topic header includes bu
 
 Follow the creation link, then select the contact in your private chat with the master to confirm the binding. Start the new contact bot for private replies. Add it to mirrored groups where you want that sender identity. If a bot is absent, blocked, not yet started, or cannot be created because of your owned-bot limit, the master continues relaying with the person's name.
 
+A bound member bot can send private messages even when the contact has only appeared in a group: its first ordinary DM creates the missing direct conversation route. Replies retain WhatsApp quotes. Phone-originated messages in an active dedicated conversation are archived through that same member bot, labeled as yours, so later replies can quote them in the DM.
+
 Member-bot messages use Telegram's sender identity without repeating that person's name in the text, captions or edits. Hermes uses **Name: message** on one line, with every name linked: to that person's WhatsApp chat when their phone number is known, or the general WhatsApp launch page otherwise. History uses Telegram's native localized date/time, followed by the same compact message. Captions and edits use the same presentation; the owner's “sent from WhatsApp” marker remains visible. See [formatting capabilities and examples](docs/TELEGRAM-FORMATTING.md).
 
 WhatsApp Status posts share one **WhatsApp Status** topic in the management forum. Hermes creates it on startup and imports currently available posts; new `status.received` events arrive automatically. `/statuses` in Hermes opens the topic and refreshes available posts without duplicating the archive. Text, images, videos and voice statuses carry the poster's linked name and a native Telegram posting time. Missing/expired media gets a notice while its available caption is retained. Reading or refreshing this feed sends no WhatsApp view/read receipt.
@@ -157,6 +159,8 @@ docker compose exec wa-telegram-bridge bun scripts/review.ts retry JOB_ID --conf
 ```
 
 Skipping an uncertain send accepts that its reply mapping may be unavailable; future replies to that Telegram message may be unquoted. External API effects are journaled individually; completed effects are not replayed. Review jobs promptly: OpenWA's send idempotency records have a bounded retention window.
+
+When Telegram definitively rejects a relay because its management topic was deleted, the bridge can recover an entirely undelivered message into the ready contact DM or a recreated inbox topic. It preserves recorded/uncertain delivery targets for review. Missing targets for old reactions and edits do not block new conversation messages, and cleared or cross-topic copies are not used as quote targets.
 
 After env edits, run `bun run configure`, then `docker compose up -d --no-deps wa-telegram-bridge telegram-api` from the repository root. Restarting alone does not reload env files. Preserve the `bridge-data`, `telegram-data`, and `bridge-media` volumes. To stop this bridge, stop only its two services; do not remove volumes or alter the existing n8n/OpenWA data.
 

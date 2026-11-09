@@ -38,6 +38,109 @@ function fixture(t: any) {
 }
 const message = (id = 'm1', extra: any = {}) => ({ sessionId: 's1', event: 'message.received', idempotencyKey: id, data: { id, chatId: '111@c.us', from: '111@c.us', type: 'text', body: 'Hello', timestamp: 1700000000, fromMe: false, isGroup: false, contact: { pushName: 'Alice' }, ...extra } });
 const telegram = (id = 1, extra: any = {}) => ({ update_id: id, message: { message_id: id, from: { id: 123 }, chat: { id: -1001, type: 'supergroup' }, message_thread_id: 101, text: 'Reply', ...extra } });
+const missingThread = () => Object.assign(new ApiError('API refused request (400)', 400), { service: 'telegram', reason: 'thread_missing' as const });
+
+test('a group-only contact bot creates its direct route on first DM and sends ordinary and quoted replies', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); s.put('bot', '42', { token: s.seal('child'), ready: true });
+  const dm = (id: number, extra = {}) => telegram(id, { chat: { id: 123, type: 'private' }, message_thread_id: undefined, text: 'Hello', ...extra });
+  await bridge.telegram('42', dm(1), 'first-dm');
+  assert.equal(s.get('route', '111@c.us').mode, 'dedicated');
+  assert.equal(api.calls.find(c => c.method === 'messages/send-text').body.chatId, '111@c.us');
+  await bridge.whatsApp(message('incoming'), 'incoming');
+  const received = s.byWhatsApp('111@c.us', 'incoming')[0]; assert.equal(received.bot, '42');
+  await bridge.telegram('42', dm(2, { reply_to_message: { message_id: received.tg_id } }), 'quoted-dm');
+  assert.equal(api.calls.find(c => c.method === 'messages/reply').body.quotedMessageId, 'incoming');
+  assert.equal(api.calls.filter(c => c.method === 'createForumTopic').length, 1);
+});
+
+test('unbound member DMs explain the missing binding instead of silently dropping the message', async t => {
+  const { bridge, api, s } = fixture(t); s.put('bot', '42', { token: s.seal('child') });
+  await bridge.telegram('42', telegram(1, { chat: { id: 123, type: 'private' }, text: 'Hello' }), 'unbound-dm');
+  assert.ok(api.calls.some(c => c.method === 'sendMessage' && c.token === 'child' && /Connect this bot/.test(c.body.text)));
+  assert.ok(!api.calls.some(c => c.method.startsWith('messages/')));
+});
+
+test('phone-originated private messages stay in their started member-bot DM and can be quoted by incoming replies', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); s.put('bot', '42', { token: s.seal('child'), ready: true });
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 77, mode: 'dedicated' });
+  await bridge.whatsApp(message('phone', { fromMe: true }), 'phone');
+  const own = s.byWhatsApp('111@c.us', 'phone')[0]; assert.equal(own.bot, '42'); assert.equal(own.tg_chat, '123');
+  await bridge.whatsApp(message('answer', { quotedMessage: { id: 'phone' } }), 'answer');
+  const last = api.calls.filter(c => c.method === 'sendMessage').at(-1);
+  assert.equal(last.token, 'child'); assert.equal(last.body.reply_parameters.message_id, own.tg_id);
+});
+
+test('a deleted inbox topic is recreated after a definitive pre-delivery refusal and stale quotes are omitted', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('route', '111@c.us', { chatId: '111@c.us', name: 'Alice', tgChat: '-1001', thread: 77, mode: 'inbox' });
+  s.map('111@c.us', 'old', '-1001', 5, 'master', 'in');
+  bridge.control.track('master', { message_id: 5, chat: { id: -1001, type: 'supergroup' }, is_topic_message: true, message_thread_id: 77 }, 'chat');
+  api.failure = missingThread(); bridge.acceptWhatsApp(message('new', { quotedMessage: { id: 'old' } })); await bridge.tick();
+  const job = s.db.prepare("SELECT state FROM jobs WHERE type='wa'").get(); assert.equal(job!.state, 'done');
+  const sends = api.calls.filter(c => c.method === 'sendMessage'); assert.equal(sends.length, 2);
+  assert.notEqual(sends[1].body.message_thread_id, 77); assert.equal(sends[1].body.reply_parameters, undefined);
+  assert.equal(s.get('route', '111@c.us').thread, sends[1].body.message_thread_id);
+});
+
+test('an old frozen master target can recover into the ready contact DM only before any delivery', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); s.put('bot', '42', { token: s.seal('child'), ready: true });
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 77, mode: 'dedicated' });
+  s.put('delivery-target', 'legacy-target', { bot: 'master', destination: '-1001', thread: 77, formatVersion: 2 });
+  api.failure = missingThread(); await bridge.deliverWhatsApp(message('phone', { fromMe: true }), 'legacy-target');
+  const row = s.byWhatsApp('111@c.us', 'phone')[0]; assert.equal(row.bot, '42'); assert.equal(row.tg_chat, '123');
+  assert.equal(api.calls.filter(c => c.method === 'createForumTopic').length, 0);
+  for (const state of ['done', 'sending', 'uncertain']) {
+    const key = 'protected-' + state;
+    s.put('delivery-target', key, { bot: 'master', destination: '-1001', thread: 77, formatVersion: 2 });
+    s.db.prepare('INSERT INTO effects VALUES(?,?,?)').run(key + ':to:master:-1001:text:0', state, state === 'done' ? '{}' : null);
+    assert.equal(await bridge.repairTopic(message('protected-' + state), key, missingThread()), false);
+  }
+});
+
+test('a rejected media relay moves to the ready member DM without trying document fallback in the missing topic', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); s.put('bot', '42', { token: s.seal('child'), ready: true });
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 77, mode: 'dedicated' });
+  s.put('delivery-target', 'old-media', { bot: 'master', destination: '-1001', thread: 77, formatVersion: 2 });
+  bridge.media.fromWhatsApp = async () => ({ path: '/fixture', name: 'image.jpg' });
+  const upload = api.upload.bind(api);
+  api.upload = async (token, method, field, path, name, body) => {
+    if (body.message_thread_id === 77) { api.calls.push({ token, method, body }); throw missingThread(); }
+    return upload(token, method, field, path, name, body);
+  };
+  await bridge.deliverWhatsApp(message('media', { fromMe: true, type: 'image' }), 'old-media');
+  assert.equal(api.calls.filter(c => c.method === 'sendPhoto').length, 2);
+  assert.ok(!api.calls.some(c => c.method === 'sendDocument'));
+  const row = s.byWhatsApp('111@c.us', 'media')[0]; assert.equal(row.bot, '42'); assert.equal(row.tg_chat, '123');
+});
+
+test('a blocked member can fall back even when its management topic was deleted', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); s.put('bot', '42', { token: s.seal('child'), ready: true });
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 77, mode: 'dedicated' });
+  const original = api.tg.bind(api);
+  api.tg = async (token, method, body = {}) => {
+    if (method === 'sendMessage' && token === 'child') throw Object.assign(new ApiError('Blocked', 403), { service: 'telegram' });
+    if (method === 'sendMessage' && body.message_thread_id === 77) throw missingThread();
+    return original(token, method, body);
+  };
+  bridge.acceptWhatsApp(message()); await bridge.tick();
+  assert.equal(s.db.prepare("SELECT state FROM jobs WHERE type='wa'").get()!.state, 'done');
+  const copy = s.byWhatsApp('111@c.us', 'm1')[0]; assert.equal(copy.bot, 'master'); assert.equal(copy.tg_chat, '-1001');
+  assert.notEqual(s.get('route', '111@c.us').thread, 77);
+});
+
+test('edits of Telegram copies explicitly cleared from the archive do not recreate them', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.map('111@c.us', 'old', '-1001', 5, 'master', 'in');
+  bridge.control.track('master', { message_id: 5, chat: { id: -1001, type: 'supergroup' }, is_topic_message: true, message_thread_id: 77 }, 'chat');
+  s.db.prepare('UPDATE telegram_messages SET deleted=1 WHERE message=5').run();
+  await bridge.waChange({ event: 'message.edited', data: { chatId: '111@c.us', id: 'old', body: 'Changed' } }, 'edit-cleared');
+  assert.equal(api.calls.length, 0);
+});
 
 test('unknown conversation gets one topic; replay is deduplicated and never marks read', async t => {
   const { bridge, api, s } = fixture(t);

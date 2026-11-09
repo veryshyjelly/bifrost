@@ -11,6 +11,18 @@ import { configuration, sign } from '../src/config.ts';
 import { handler } from '../src/server.ts';
 import { Api } from '../src/api.ts';
 
+test('Telegram refusals expose safe reason codes without logging provider descriptions', async t => {
+  let description = 'Bad Request: message thread not found';
+  const server = createServer((req, res) => { req.resume(); res.writeHead(400, { 'content-type': 'application/json' }); res.end(JSON.stringify({ ok: false, description })); });
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  t.after(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); });
+  const api = new Api({ ...configuration({}), telegram: `http://127.0.0.1:${(server.address() as any).port}` });
+  for (const [text, reason] of [['message thread not found', 'thread_missing'], ['message to react not found', 'message_missing'], ['message to be replied not found', 'reply_missing']]) {
+    description = 'Bad Request: ' + text + ' private-provider-detail';
+    await assert.rejects(api.tg('fixture-token', 'sendMessage', {}), (error: any) => error.reason === reason && error.service === 'telegram' && !error.message.includes('private-provider-detail'));
+  }
+});
+
 test('real HTTP ingress authenticates raw OpenWA bytes, Telegram secrets and signed management actions', async t => {
   const c = { ...configuration({}), key: 'aa'.repeat(32), admin: 'admin'.repeat(8), webhookSecret: 'secret'.repeat(8), owner: '123', session: 's1' };
   const s = new Store(':memory:', c.key), bridge = new Bridge(c, s), server = createServer(handler(bridge));

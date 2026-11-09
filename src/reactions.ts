@@ -57,7 +57,7 @@ export class NativeReactions {
         const bot = privateChat ? primary.bot : await this.b.preferred(reactor, primary.tg_chat);
         if (!desired.has(bot) || desired.get(bot)!.order < value.order) desired.set(bot, value);
       }
-      let fallback = false;
+      let fallback = false, unavailable = false;
       for (const bot of new Set([...Object.keys(cache.applied), ...Object.keys(cache.refused), ...desired.keys()])) {
         const emoji = desired.get(bot)?.emoji || '', signature = JSON.stringify([primary.tg_id, emoji]);
         if (cache.applied[bot] === signature) {
@@ -71,6 +71,10 @@ export class NativeReactions {
           cache.applied[bot] = signature; delete cache.refused[bot];
         } catch (e) {
           if (e instanceof ApiError && [400, 403].includes(e.status)) {
+            if (['message_missing', 'thread_missing'].includes(e.reason || '')) {
+              cache.refused[bot] = signature; delete cache.pendingFallback; unavailable = true;
+              this.b.store.put('tg-reaction-state', cacheKey, cache); break;
+            }
             if (cache.applied[bot] && JSON.parse(cache.applied[bot])[1]) {
               try {
                 await this.b.api.tg(this.b.token(bot), 'setMessageReaction', { chat_id: primary.tg_chat, message_id: primary.tg_id, reaction: [] });
@@ -89,10 +93,13 @@ export class NativeReactions {
         }
         this.b.store.put('tg-reaction-state', cacheKey, cache);
       }
+      if (unavailable) continue;
       if (fallback || cache.pendingFallback === key) {
         const name = this.b.store.get('contact', sender)?.name || sender;
-        await this.b.sendText(privateChat ? primary.bot : 'master', primary.tg_chat, `${name} ${event.reaction ? 'reacted ' + event.reaction : 'removed a reaction'} · native reaction unavailable`, key + ':reaction-fallback:' + digest(destination),
-          { ...(primary.thread ? { message_thread_id: primary.thread } : {}), reply_parameters: { message_id: primary.tg_id, allow_sending_without_reply: true } });
+        try {
+          await this.b.sendText(privateChat ? primary.bot : 'master', primary.tg_chat, `${name} ${event.reaction ? 'reacted ' + event.reaction : 'removed a reaction'} · native reaction unavailable`, key + ':reaction-fallback:' + digest(destination),
+            { ...(primary.thread ? { message_thread_id: primary.thread } : {}), reply_parameters: { message_id: primary.tg_id, allow_sending_without_reply: true } });
+        } catch (e) { if (!(e instanceof ApiError) || e.status !== 400 || !['message_missing', 'thread_missing', 'reply_missing'].includes(e.reason || '')) throw e; }
         delete cache.pendingFallback; this.b.store.put('tg-reaction-state', cacheKey, cache);
       }
     }

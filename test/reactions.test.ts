@@ -40,6 +40,18 @@ function copy(f: ReturnType<typeof fixture>, id = 5, options: any = {}) {
 const react = (b: Bridge, sender: string, emoji: string, key: string, extra = {}) => b.waChange({ event: 'message.reaction', data: { chatId: 'g@g.us', messageId: 'm1', senderId: sender, reaction: emoji, ...extra } }, key);
 const native = (api: Fixture) => api.calls.filter(c => c.method === 'setMessageReaction');
 
+test('reactions to missing messages and notices targeting deleted topics do not block later deliveries', async t => {
+  const f = fixture(t); copy(f);
+  f.api.failure = Object.assign(new ApiError('Missing', 400), { reason: 'message_missing' as const });
+  await react(f.bridge, '222@c.us', '👍', 'missing-message');
+  assert.ok(!f.api.calls.some(c => c.method === 'sendMessage'));
+  f.api.unsupported.add('🚀');
+  f.api.noticeFailure = Object.assign(new ApiError('Missing topic', 400), { reason: 'thread_missing' as const });
+  await react(f.bridge, '222@c.us', '🚀', 'missing-topic');
+  await react(f.bridge, '222@c.us', '🚀', 'missing-topic');
+  assert.equal(f.api.calls.filter(c => c.method === 'sendMessage').length, 1);
+});
+
 test('WhatsApp reactions appear natively as the reactor’s available member bot without a reply notice', async t => {
   const f = fixture(t); copy(f); await react(f.bridge, '222@c.us', '👍', 'add');
   assert.equal(native(f.api).length, 1); assert.equal(native(f.api)[0].token, 'bob');

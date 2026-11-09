@@ -4,6 +4,7 @@ import type { Config, Json } from './config.ts';
 export class ApiError extends Error {
   retry: boolean; uncertain: boolean; delay: number; status: number;
   service?: string;
+  reason?: 'thread_missing' | 'message_missing' | 'reply_missing';
   constructor(message: string, status = 0, retry = false, uncertain = false, delay = 5000) {
     super(message); Object.assign(this, { status, retry, uncertain, delay });
   }
@@ -27,8 +28,15 @@ export class Api {
       const uncertain = body.code === 'IDEMPOTENCY_OUTCOME_UNKNOWN' || (mutation && code >= 500 && code !== 501);
       // Only a documented rate refusal proves that an outgoing send did not happen.
       const retry = code === 429 || (!mutation && code >= 500);
-      throw new ApiError(`API refused request (${code}${body.code ? ':' + body.code : ''})`, code, retry, uncertain,
+      const error = new ApiError(`API refused request (${code}${body.code ? ':' + body.code : ''})`, code, retry, uncertain,
         Number(body.parameters?.retry_after || response.headers.get('retry-after') || 5) * 1000);
+      // Keep only recognized reasons; provider descriptions can contain private data.
+      const description = String(body.description || '').toLowerCase();
+      if (description.includes('message thread not found')) error.reason = 'thread_missing';
+      else if (/repl(?:y|ied).*not found/.test(description)) error.reason = 'reply_missing';
+      else if (/message.*not found/.test(description)) error.reason = 'message_missing';
+      if (error.reason) error.message += ' [' + error.reason + ']';
+      throw error;
     }
     return body;
   }
