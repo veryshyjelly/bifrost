@@ -40,7 +40,7 @@ async function drain(b: Bridge) {
 }
 const deletedIds = (api: Fixture) => api.calls.filter(c => c.method === 'deleteMessages').flatMap(c => c.body.message_ids);
 
-test('Hermes ignores commands for another bot, while the addressed member bot handles its own group Start', async t => {
+test('Bifrost ignores commands for another bot, while the addressed member bot handles its own group Start', async t => {
   const { bridge, api, store } = fixture(t);
   const m = message(1, '/start@ALICE_bot');
   await bridge.telegram('master', { message: m }, 'foreign');
@@ -96,7 +96,7 @@ test('interactive command replies get a longer lifetime', async t => {
   assert.ok(Number(row.expires) - Number(row.date) >= 99000);
 });
 
-test('observing a member-bot notice through Hermes keeps its expiration and owner-only execution checks', async t => {
+test('observing a member-bot notice through Bifrost keeps its expiration and owner-only execution checks', async t => {
   const { bridge, store, api } = fixture(t);
   const [receipt] = await bridge.sendText('42', '-200', 'Member bot notice', 'member-notice');
   assert.equal(bridge.acceptTelegram('master', { update_id: 1, message: receipt }), false);

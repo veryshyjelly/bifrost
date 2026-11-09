@@ -9,6 +9,9 @@
 data
 media
 backups
+*.bifrost.tar.gz
+.bifrost-export-*
+.bifrost-import-*
 vendor
 test
 node_modules

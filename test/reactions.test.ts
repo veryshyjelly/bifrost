@@ -67,7 +67,7 @@ test('removing one member’s reaction clears only that bot’s reaction', async
   assert.deepEqual(native(f.api).map(c => [c.token, c.body.reaction]), [['bob', [{ type: 'emoji', emoji: '👍' }]], ['alice', [{ type: 'emoji', emoji: '❤' }]], ['bob', []]]);
 });
 
-test('Hermes shows the latest unbound reaction and preserves remaining reactors when one removes theirs', async t => {
+test('Bifrost shows the latest unbound reaction and preserves remaining reactors when one removes theirs', async t => {
   const f = fixture(t); copy(f);
   await react(f.bridge, '333@c.us', '👍', 'first'); await react(f.bridge, '444@c.us', '❤️', 'second');
   await react(f.bridge, '333@c.us', '', 'remove-first'); assert.equal(native(f.api).length, 2);
@@ -98,7 +98,7 @@ test('split messages react on the attachment once and skip Telegram copies alrea
   assert.equal(native(f.api).length, 1);
 });
 
-test('a member bot absent from the group falls back to Hermes', async t => {
+test('a member bot absent from the group falls back to Bifrost', async t => {
   const f = fixture(t); copy(f); f.api.members.delete(43); await react(f.bridge, '222@c.us', '👍', 'absent');
   assert.equal(native(f.api)[0].token, 'master');
 });
@@ -165,7 +165,7 @@ test('unsupported Telegram custom reactions do not clear an existing WhatsApp re
   assert.ok(!f.api.calls.some(c => c.method === 'messages/react'));
 });
 
-test('Hermes maps laughing reactions on owner messages, deduplicates equivalent changes and clears on removal', async t => {
+test('Bifrost maps laughing reactions on owner messages, deduplicates equivalent changes and clears on removal', async t => {
   const f = fixture(t); copy(f); f.store.db.exec("UPDATE messages SET direction='out'");
   await react(f.bridge, '333@c.us', '😂', 'laugh');
   assert.equal(native(f.api)[0].token, 'master'); assert.equal(native(f.api)[0].body.reaction[0].emoji, '🤣');
@@ -241,7 +241,7 @@ test('unresolvable custom reactions produce a temporary independent notice witho
   assert.ok(f.api.calls.find(c => c.method === 'sendMessage').body.text.includes('no standard emoji equivalent'));
 });
 
-test('a member unable to access another bot’s message falls back to Hermes and cached refusals do not suppress that fallback', async t => {
+test('a member unable to access another bot’s message falls back to Bifrost and cached refusals do not suppress that fallback', async t => {
   const f = fixture(t); copy(f);
   const original = f.api.tg.bind(f.api);
   f.api.tg = async (token, method, body = {}) => {

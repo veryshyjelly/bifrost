@@ -7,6 +7,9 @@
 data/
 media/
 backups/
+*.bifrost.tar.gz
+.bifrost-export-*/
+.bifrost-import-*/
 vendor/
 node_modules/
 package-lock.json

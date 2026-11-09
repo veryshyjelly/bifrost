@@ -1,10 +1,11 @@
-name: ${COMPOSE_PROJECT_NAME:-whatsapp-telegram-bridge}
+name: ${COMPOSE_PROJECT_NAME:-bifrost}
 
 services:
-  wa-telegram-bridge:
+  bifrost:
+    init: true
     build:
       context: .
-    image: local/wa-telegram-bridge:0.1.0
+    image: local/bifrost:0.1.0
     restart: unless-stopped
     env_file:
       - path: ./bridge.env
@@ -15,7 +16,11 @@ services:
       - bridge-data:/data
       - bridge-media:/media
       - telegram-data:/telegram-data:ro
-    networks: [bridge, n8n, openwa]
+    networks:
+      bridge:
+        aliases: [wa-telegram-bridge]
+      openwa:
+        aliases: [wa-telegram-bridge]
     healthcheck:
       test: [CMD, bun, -e, "fetch('http://127.0.0.1:3210/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
@@ -44,9 +49,6 @@ volumes:
 
 networks:
   bridge:
-  n8n:
-    external: true
-    name: ${N8N_NETWORK:-n8n_default}
   openwa:
     external: true
     name: ${OPENWA_NETWORK:-openwa-network}

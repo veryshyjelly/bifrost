@@ -8,6 +8,7 @@ function fixture(status: string) {
   const bridge = {
     migrateBot: async () => { calls.push('migrate'); },
     installWebhook: async () => { calls.push('telegram-webhook'); },
+    store: { all: () => [{ id: '42' }] },
     statuses: { startup: () => { calls.push('status-startup'); } },
     api: {
       ow: async (path: string, body?: any) => {
@@ -33,7 +34,8 @@ test('setup accepts OpenWA ready, migrates before local Telegram calls and insta
   const result = await setup({ ...configuration({}), admin: 'test-key' }, bridge as any);
   assert.equal(result.sessionStatus, 'ready');
   assert.ok(calls.indexOf('migrate') < calls.indexOf('getMe'));
-  assert.ok(calls.indexOf('n8n') < calls.indexOf('telegram-webhook'));
+  assert.ok(!calls.includes('n8n'));
+  assert.equal(calls.filter(c => c === 'telegram-webhook').length, 2);
   assert.equal(calls.filter(c => c === 'webhooks').length, 2);
 });
 

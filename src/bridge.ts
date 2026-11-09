@@ -95,7 +95,7 @@ export class Bridge {
     return this.store.enqueue(`tg:${bot}:${update.update_id}`, stream, 'tg', { bot, update });
   }
   management(type: string, data: Json, dedup: string) {
-    this.store.enqueue('n8n:' + dedup, 'n8n:' + dedup, 'n8n', { id: dedup, type, data, at: Date.now() });
+    this.store.enqueue('management:' + dedup, 'management:' + dedup, 'management', { id: dedup, type, data, at: Date.now() });
   }
   acceptManagement(event: Json) {
     const { signature, ...body } = event;
@@ -119,8 +119,10 @@ export class Bridge {
         else if (job.type.startsWith('sync-')) await this.metadata.process(job);
         else if (job.type.startsWith('status-')) await this.statuses.process(job);
         else if (job.type === 'n8n') {
+          // Old exports may contain undelivered forwarding jobs. Converge on the
+          // same receipt key as an event already forwarded by the old workflow.
           const event = job.payload;
-          await this.api.request(this.c.n8n, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...event, signature: sign(JSON.stringify(event), this.c.admin) }) });
+          this.store.enqueue('management:' + event.id, 'management:' + event.id, 'management', event);
         }
         this.store.finish(job.id);
       } catch (e) {
@@ -365,6 +367,16 @@ export class Bridge {
       let method = ({ image: 'sendPhoto', video: 'sendVideo', audio: 'sendAudio', voice: 'sendVoice', sticker: 'sendSticker', document: 'sendDocument' } as Json)[m.type];
       let field = ({ image: 'photo', video: 'video', audio: 'audio', voice: 'voice', sticker: 'sticker', document: 'document' } as Json)[m.type];
       let path = attachment.path;
+      let uploadName = attachment.name;
+      if (m.type === 'sticker') {
+        try {
+          const prepared = await this.media.sticker(attachment, 'telegram');
+          path = prepared.path; uploadName = prepared.name;
+        } catch (e) {
+          if (!(e instanceof ApiError) || e.status !== 415) throw e;
+          method = 'sendDocument'; field = 'document';
+        }
+      }
       if (m.type === 'voice' && !m.media?.mimetype?.includes('ogg')) {
         try { path = await this.media.convert(path, true); } catch { method = 'sendDocument'; field = 'document'; }
       }
@@ -375,8 +387,8 @@ export class Bridge {
         for (const r of await this.sendText(bot, destination, text, key + ':label', extra, 'chat')) record(r);
       }
       try {
-        record(await this.effect(key + ':media', () => this.api.upload(this.token(bot), method, field, path, attachment.name,
-          { chat_id: destination, ...extra, ...(m.type === 'sticker' ? {} : legacy ? { caption: textValue.slice(0, 1000) }
+        record(await this.effect(key + ':media', () => this.api.upload(this.token(bot), method, field, path, uploadName,
+          { chat_id: destination, ...extra, ...(m.type === 'sticker' ? method === 'sendDocument' ? { caption: '[Original attachment; native presentation unavailable]' } : {} : legacy ? { caption: textValue.slice(0, 1000) }
             : captionFields(splitFormatted((textValue.length > 1000 ? header : text) as Formatted, 1000)[0])) })), true);
       } catch (e) {
         if (e instanceof ApiError && ['thread_missing', 'reply_missing'].includes(e.reason || '')) throw e;
@@ -564,10 +576,31 @@ export class Bridge {
       return;
     }
     let result: Json;
-    const attachment = await this.media.fromTelegram(this.token(bot), m);
+    const stickerSnapshot = this.store.get('outbound-sticker', sendKey);
+    let attachment = stickerSnapshot?.attachment || await this.media.fromTelegram(this.token(bot), m);
     if (attachment) {
-      const method = ({ photo: 'send-image', video: 'send-video', video_note: 'send-video', animation: 'send-video', audio: 'send-audio', voice: 'send-audio', sticker: attachment.mime === 'image/webp' ? 'send-sticker' : 'send-document', document: 'send-document' } as Json)[attachment.kind];
-      const bytes = await readFile(attachment.path);
+      let stickerReady = stickerSnapshot?.native || false;
+      if (attachment.kind === 'sticker' && !stickerSnapshot) {
+        try { attachment = { ...attachment, ...await this.media.sticker(attachment, 'whatsapp') }; stickerReady = true; }
+        catch (e) { if (!(e instanceof ApiError) || e.status !== 415) throw e; }
+      }
+      const method = ({ photo: 'send-image', video: 'send-video', video_note: 'send-video', animation: 'send-video', audio: 'send-audio', voice: 'send-audio', sticker: stickerReady ? 'send-sticker' : 'send-document', document: 'send-document' } as Json)[attachment.kind];
+      let bytes: Buffer;
+      try { bytes = await readFile(attachment.path); }
+      catch (e) {
+        if (!stickerSnapshot || (e as any)?.code !== 'ENOENT') throw e;
+        // Media expires after a day. Regeneration must match the frozen send bytes.
+        attachment = await this.media.fromTelegram(this.token(bot), m);
+        if (stickerReady) attachment = { ...attachment, ...await this.media.sticker(attachment!, 'whatsapp') };
+        bytes = await readFile(attachment!.path);
+      }
+      if (attachment.kind === 'sticker') {
+        const hash = digest(bytes.toString('base64'));
+        if (stickerSnapshot && (hash !== stickerSnapshot.hash || attachment.mime !== stickerSnapshot.attachment.mime || attachment.name !== stickerSnapshot.attachment.name)) {
+          throw new ApiError('Prepared sticker changed; inspect before retrying', 409);
+        }
+        this.store.put('outbound-sticker', sendKey, { attachment, native: stickerReady, hash });
+      }
       result = await this.effect(sendKey, () => this.api.ow('messages/' + method, {
         chatId: route.chatId, base64: bytes.toString('base64'), mimetype: attachment.mime,
         filename: attachment.name, caption: waText || undefined, quotedMessageId, mentions,
@@ -642,10 +675,10 @@ export class Bridge {
       await this.sendText(bot, chat, 'Checking group permissions and queuing its metadata sync.', key, extra); return;
     }
     if (command === 'start' && bot === 'master') {
-      await this.sendText(bot, chat, 'Use /create while replying to a participant, /sync for metadata, /group for a mirror group, or /clear log for notices. Use /clear all in management to clear only the current topic, including General. Open Hermes privately for full help.', key, extra); return;
+      await this.sendText(bot, chat, 'Use /create while replying to a participant, /sync for metadata, /group for a mirror group, or /clear log for notices. Use /clear all in management to clear only the current topic, including General. Open Bifrost privately for full help.', key, extra); return;
     }
     if (command === 'sync' && bot === 'master' && (args[0] === 'all' || (m.chat.type === 'private' && !args[0]) || (chat === this.c.management && !thread && !args[0]))) {
-      if ((args[0] && args[0] !== 'all') || !(m.chat.type === 'private' || chat === this.c.management)) { await this.sendText(bot, chat, 'Use /sync all in your private chat with Hermes or in the management group.', key, extra); return; }
+      if ((args[0] && args[0] !== 'all') || !(m.chat.type === 'private' || chat === this.c.management)) { await this.sendText(bot, chat, 'Use /sync all in your private chat with Bifrost or in the management group.', key, extra); return; }
       this.management('sync_metadata', { scope: 'all', notify: { bot, chat, thread } }, key);
       await this.sendText(bot, chat, 'Metadata sync queued. WhatsApp group and contact details will be checked in the background.', key, extra); return;
     }
@@ -681,7 +714,7 @@ export class Bridge {
     if (!route) { await this.sendText(bot, chat, 'Use this command inside a linked conversation or its management topic.', key, extra); return; }
     if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Command target belongs to another WhatsApp conversation', 400);
     if (command === 'sync') {
-      if (args.length) { await this.sendText(bot, chat, 'Use /sync here for this conversation, or /sync all in your private chat with Hermes.', key, extra); return; }
+      if (args.length) { await this.sendText(bot, chat, 'Use /sync here for this conversation, or /sync all in your private chat with Bifrost.', key, extra); return; }
       this.management('sync_metadata', { scope: route.chatId.endsWith('@g.us') ? 'group' : 'contact', id: route.chatId, notify: { bot, chat, thread } }, key);
       await this.sendText(bot, chat, 'Metadata sync queued for this conversation.', key, extra); return;
     }
@@ -814,7 +847,7 @@ export class Bridge {
   }
   async sendMirrorButton(chatId: string, key: string) {
     const route = this.store.get('route', chatId), button = await this.mirrorButton(chatId);
-    await this.sendText('master', route.tgChat, 'Create a private Telegram group for this conversation, or select one you own. Telegram will ask you to confirm adding Hermes as an administrator.', key,
+    await this.sendText('master', route.tgChat, 'Create a private Telegram group for this conversation, or select one you own. Telegram will ask you to confirm adding Bifrost as an administrator.', key,
       { ...(route.thread ? { message_thread_id: route.thread } : {}), reply_markup: { inline_keyboard: [[button]] } });
   }
   async beginMirrorGroup(id: string, key: string) {
@@ -828,7 +861,7 @@ export class Bridge {
     const rights = { is_anonymous: false, can_manage_chat: true, can_delete_messages: true, can_manage_video_chats: false,
       can_restrict_members: false, can_promote_members: false, can_change_info: true, can_invite_users: true,
       can_post_stories: false, can_edit_stories: false, can_delete_stories: false, can_pin_messages: false, can_manage_topics: false };
-    await this.sendText('master', this.c.owner, `Choose or create a private Telegram group for ${this.store.get('route', request.chatId).name || request.chatId}. Confirm Hermes’s administrator permissions. If your Telegram client has no create option in the picker, create a group first, then select it here.`, key,
+    await this.sendText('master', this.c.owner, `Choose or create a private Telegram group for ${this.store.get('route', request.chatId).name || request.chatId}. Confirm Bifrost’s administrator permissions. If your Telegram client has no create option in the picker, create a group first, then select it here.`, key,
       { reply_markup: { keyboard: [[{ text: 'Create / select Telegram group', request_chat: { request_id: requestId, chat_is_channel: false,
         chat_has_username: false, chat_is_created: true, bot_is_member: true,
         user_administrator_rights: rights, bot_administrator_rights: rights, request_title: true } }]], resize_keyboard: true, one_time_keyboard: true } });

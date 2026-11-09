@@ -204,7 +204,7 @@ test('429 retries retain the original resolved text and identity after bot bindi
   assert.equal(sends(api).length, 2); assert.deepEqual(sends(api)[0].body, sends(api)[1].body); assert.equal(sends(api)[0].key, sends(api)[1].key);
 });
 
-test('group member bots ignore ordinary tagged updates so Hermes sends exactly once', async t => {
+test('group member bots ignore ordinary tagged updates so Bifrost sends exactly once', async t => {
   const { bridge, store } = fixture(t);
   const update = { update_id: 1, message: tg('Hi @alice_bot') };
   assert.equal(bridge.acceptTelegram('42', update), false); assert.equal(bridge.acceptTelegram('master', update), true);

@@ -40,7 +40,7 @@ test('native group creation/selection grants master rights and links only after 
   assert.deepEqual(request.user_administrator_rights, request.bot_administrator_rights);
   assert.equal(store.get('route', 'group@g.us').tgChat, '-1001');
   await bridge.telegram('master', { message: { message_id: 2, chat: { id: 123, type: 'private' }, chat_shared: { request_id: request.request_id, chat_id: -200 } } }, 'selection');
-  const event = JSON.parse(store.db.prepare("SELECT payload FROM jobs WHERE type='n8n'").get()!.payload as string);
+  const event = JSON.parse(store.db.prepare("SELECT payload FROM jobs WHERE type='management'").get()!.payload as string);
   assert.equal(event.type, 'link_group');
   assert.equal(event.data.chatId, 'group@g.us');
   await bridge.manage(event, 'link-result');
@@ -71,7 +71,7 @@ test('unknown requests and other Telegram users cannot link a group', async t =>
   const message = { message_id: 3, from: { id: 555 }, chat: { id: 555, type: 'private' }, chat_shared: { request_id: request.request_id, chat_id: -200 } };
   assert.equal(bridge.acceptTelegram('master', { update_id: 3, message }), false);
   await bridge.telegram('master', { message: { ...message, chat: { id: 123, type: 'private' }, chat_shared: { request_id: 999, chat_id: -200 } } }, 'unknown');
-  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 0);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 0);
   assert.equal(store.get('route', 'group@g.us').tgChat, '-1001');
 });
 

@@ -73,7 +73,7 @@ test('Status webhooks share one archive topic with linked authors and native tim
   assert.equal(store.all('route').length, 0); assert.equal(store.all('bot').length, 1);
   assert.equal(store.byWhatsApp('status@broadcast', 'story').length, 1);
   assert.ok(store.db.prepare("SELECT kind,expires FROM telegram_messages").all().every(row => row.kind === 'chat' && row.expires === 0));
-  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 0);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 0);
 });
 
 test('startup upgrades only bridge callback events, imports available stored Status posts and deduplicates webhook races', async t => {
@@ -169,7 +169,7 @@ test('typing, edits, message actions and reactions in the Status topic cannot pu
   assert.ok(api.calls.filter(c => c.method === 'sendMessage').slice(1).every(c => /Status/.test(c.body.text) && c.body.message_thread_id === feed.thread));
 });
 
-test('/statuses opens and refreshes the feed from Hermes DM; /status remains the health command', async t => {
+test('/statuses opens and refreshes the feed from Bifrost DM; /status remains the health command', async t => {
   const { bridge, store, api } = fixture(t);
   const message = { message_id: 1, from: { id: 123 }, chat: { id: 123, type: 'private' }, text: '/statuses' };
   assert.equal(bridge.acceptTelegram('master', { update_id: 1, message: { ...message, from: { id: 999 } } }), false);
@@ -303,7 +303,7 @@ test('Status mute commands require a mapped Status reply and ordinary conversati
   assert.match(api.calls.filter(call => call.method === 'sendMessage').at(-1).body.text, /Reply to a post in WhatsApp Status/);
   store.put('route', contact.id, { chatId: contact.id, tgChat: '-200', mode: 'inbox' });
   await bridge.command('master', { ...dm, message_id: 2, chat: { id: -200, type: 'supergroup' }, text: '/mute' }, 'chat-mute');
-  const action = JSON.parse(store.db.prepare("SELECT payload FROM jobs WHERE type='n8n'").get()!.payload as string);
+  const action = JSON.parse(store.db.prepare("SELECT payload FROM jobs WHERE type='management'").get()!.payload as string);
   assert.equal(action.data.operation, 'mute'); assert.equal(action.data.chatId, contact.id);
   assert.equal(bridge.statuses.muted().length, 0);
 });

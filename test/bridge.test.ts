@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Bridge } from '../src/bridge.ts';
@@ -34,11 +34,25 @@ class Fixture extends Api {
 }
 function fixture(t: any) {
   const c = config(), s = new Store(':memory:', c.key), api = new Fixture(c), bridge = new Bridge(c, s, api);
+  // Media codecs are exercised with real files in stickers.test.ts.
+  bridge.media.sticker = async attachment => attachment;
   t.after(() => s.close()); return { c, s, api, bridge };
 }
 const message = (id = 'm1', extra: any = {}) => ({ sessionId: 's1', event: 'message.received', idempotencyKey: id, data: { id, chatId: '111@c.us', from: '111@c.us', type: 'text', body: 'Hello', timestamp: 1700000000, fromMe: false, isGroup: false, contact: { pushName: 'Alice' }, ...extra } });
 const telegram = (id = 1, extra: any = {}) => ({ update_id: id, message: { message_id: id, from: { id: 123 }, chat: { id: -1001, type: 'supergroup' }, message_thread_id: 101, text: 'Reply', ...extra } });
 const missingThread = () => Object.assign(new ApiError('API refused request (400)', 400), { service: 'telegram', reason: 'thread_missing' as const });
+
+test('standalone management and legacy forwarding jobs converge on one durable action without HTTP forwarding', async t => {
+  const { bridge, api, s } = fixture(t);
+  const event = { id: 'old-action', type: 'mark_read', data: { chatId: '111@c.us' }, at: Date.now() - 10 * 86400000 };
+  s.enqueue('n8n:old-action', 'n8n:old-action', 'n8n', event);
+  bridge.management('mark_read', event.data, event.id);
+  for (let i = 0; i < 6; i++) await bridge.tick();
+  assert.equal(s.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 1);
+  assert.equal(api.calls.filter(c => c.method === 'chats/read').length, 1);
+  assert.ok(!api.calls.some(c => c.url));
+  assert.equal(s.db.prepare("SELECT state FROM jobs WHERE type='n8n'").get()!.state, 'done');
+});
 
 test('a group-only contact bot creates its direct route without a management topic and sends ordinary and quoted replies', async t => {
   const { bridge, api, s } = fixture(t);
@@ -248,7 +262,7 @@ test('/create in a linked whole group accepts Telegram reply-thread IDs and sele
   const update = telegram(18, { text: '/create@master_bot', chat: { id: -200, type: 'supergroup' }, message_thread_id: 17, reply_to_message: { message_id: 17 } });
   assert.equal(bridge.acceptTelegram('master', update), true);
   await bridge.tick();
-  const job = s.db.prepare("SELECT payload FROM jobs WHERE type='n8n'").get();
+  const job = s.db.prepare("SELECT payload FROM jobs WHERE type='management'").get();
   assert.ok(job, 'The command must reach management instead of emitting unlinked-chat guidance');
   const event = JSON.parse(job.payload as string);
   assert.equal(event.type, 'operator_action');
@@ -284,9 +298,9 @@ test('configured inbox topics still require an exact topic match', async t => {
   s.put('wamessage', 'g@g.us:wa-original', { sender: '111@c.us' });
   s.map('g@g.us', 'wa-original', '-1001', 17, 'master', 'in');
   await bridge.telegram('master', telegram(18, { text: '/create', chat: { id: -1001, type: 'supergroup', is_forum: true }, is_topic_message: true, reply_to_message: { message_id: 17 } }), 'right-topic');
-  assert.equal(s.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 1);
+  assert.equal(s.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 1);
   await bridge.telegram('master', telegram(19, { text: '/create', chat: { id: -1001, type: 'supergroup', is_forum: true }, is_topic_message: true, message_thread_id: 102, reply_to_message: { message_id: 17 } }), 'wrong-topic');
-  assert.equal(s.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 1);
+  assert.equal(s.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 1);
   const guidance = api.calls.find(c => c.method === 'sendMessage');
   assert.match(guidance.body.text, /inside a linked conversation/);
   assert.equal(guidance.body.message_thread_id, 102);
@@ -298,7 +312,7 @@ test('whole-group reply-thread handling still rejects a quoted message from anot
   s.map('other@g.us', 'wa-original', '-200', 17, 'master', 'in');
   const m = telegram(18, { text: '/create', chat: { id: -200, type: 'supergroup' }, message_thread_id: 17, reply_to_message: { message_id: 17 } }).message;
   await assert.rejects(bridge.command('master', m, 'wrong-source'), /another WhatsApp conversation/);
-  assert.equal(s.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 0);
+  assert.equal(s.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 0);
 });
 
 test('uncertain remote send pauses a conversation, while known 429 retries', async t => {
@@ -309,7 +323,7 @@ test('uncertain remote send pauses a conversation, while known 429 retries', asy
   assert.equal(s.db.prepare("SELECT state FROM jobs WHERE type='tg'").get()?.state, 'uncertain');
   assert.equal(s.db.prepare("SELECT state FROM effects WHERE id='send:-1001:1'").get()?.state, 'uncertain');
   assert.equal(s.enqueue('later', 'tg:-1001:101', 'tg', { bot: 'master', update: telegram(2) }), true);
-  assert.equal(s.next()?.type, 'n8n'); // The failed stream cannot overtake its first send.
+  assert.equal(s.next()?.type, 'management'); // The failed stream cannot overtake its first send.
 });
 
 test('sealed tokens authenticate and are absent from SQLite plaintext', t => {
@@ -349,6 +363,90 @@ test('each WhatsApp media class uses native Telegram methods; view-once content 
     assert.ok(api.calls.some(c => c.method === method));
     assert.ok(s.byWhatsApp('111@c.us', kind).some(m => m.media === 1));
   }
+});
+
+test('converted WhatsApp stickers use WebM filenames and preserve quote mappings across a partial retry', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 101, mode: 'inbox' });
+  s.map('111@c.us', 'parent', '-1001', 77, 'master', 'in');
+  bridge.media.fromWhatsApp = async () => ({ path: '/original', name: 'original.webp' });
+  bridge.media.sticker = async (file, target) => { assert.equal(file.path, '/original'); assert.equal(target, 'telegram'); return { path: '/converted', name: 'sticker.webm', mime: 'video/webm' }; };
+  const upload = api.upload.bind(api); let attempts = 0;
+  api.upload = async (...args) => { if (++attempts === 1) throw new ApiError('Rate limited', 429, true); return upload(...args); };
+  const event = message('moving', { type: 'sticker', quotedMessage: { id: 'parent' } });
+  await assert.rejects(bridge.whatsApp(event, 'moving')); await bridge.whatsApp(event, 'moving');
+  const sent = api.calls.find(c => c.method === 'sendSticker');
+  assert.equal(sent.path, '/converted'); assert.equal(sent.name, 'sticker.webm'); assert.equal(sent.body.reply_parameters.message_id, 77);
+  assert.equal(api.calls.filter(c => c.method === 'sendMessage').length, 1);
+  assert.equal(s.byWhatsApp('111@c.us', 'moving').filter(row => row.media).length, 1);
+});
+
+test('sticker conversion failures and definitive Telegram rejections send the untouched original document', async t => {
+  for (const rejectedByApi of [false, true]) {
+    const { bridge, api } = fixture(t);
+    bridge.media.fromWhatsApp = async () => ({ path: '/original', name: 'original.webp' });
+    bridge.media.sticker = async () => {
+      if (!rejectedByApi) throw new ApiError('Cannot convert', 415);
+      return { path: '/converted', name: 'sticker.webm' };
+    };
+    const upload = api.upload.bind(api);
+    api.upload = async (...args) => { if (args[1] === 'sendSticker') throw new ApiError('Refused', 400); return upload(...args); };
+    await bridge.whatsApp(message('fallback', { type: 'sticker' }), 'fallback');
+    const sent = api.calls.find(c => c.method === 'sendDocument'); assert.equal(sent.path, '/original'); assert.equal(sent.name, 'original.webp');
+    assert.match(sent.body.caption, /Original attachment/);
+  }
+});
+
+test('outgoing TGS and WebM stickers use converted WebP with replies and the original delivery key', async t => {
+  const { bridge, api, s } = fixture(t);
+  const root = await mkdtemp(join(tmpdir(), 'bridge-sticker-send-')); t.after(() => rm(root, { recursive: true, force: true }));
+  const path = join(root, 'converted.webp'); await writeFile(path, 'converted');
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 101, mode: 'inbox' });
+  s.map('111@c.us', 'parent', '-1001', 77, 'master', 'in');
+  for (const [i, mime] of ['application/x-tgsticker', 'video/webm'].entries()) {
+    bridge.media.fromTelegram = async () => ({ kind: 'sticker', path: '/original', name: 'source.bin', mime });
+    bridge.media.sticker = async (_file, target) => { assert.equal(target, 'whatsapp'); return { path, name: 'sticker.webp', mime: 'image/webp' }; };
+    const update = telegram(i + 10, { text: undefined, sticker: { file_id: 'sticker' }, reply_to_message: { message_id: 77 } });
+    await bridge.telegram('master', update, 'out-' + i); await bridge.telegram('master', update, 'out-' + i);
+  }
+  const sends = api.calls.filter(c => c.method === 'messages/send-sticker'); assert.equal(sends.length, 2);
+  for (const sent of sends) {
+    assert.equal(sent.body.mimetype, 'image/webp'); assert.equal(sent.body.filename, 'sticker.webp');
+    assert.equal(sent.body.quotedMessageId, 'parent'); assert.equal(Buffer.from(sent.body.base64, 'base64').toString(), 'converted'); assert.ok(sent.key);
+  }
+});
+
+test('ordinary documents bypass conversion and failed outgoing sticker conversions keep original bytes', async t => {
+  const { bridge, api, s } = fixture(t);
+  const root = await mkdtemp(join(tmpdir(), 'bridge-sticker-fallback-')); t.after(() => rm(root, { recursive: true, force: true }));
+  const path = join(root, 'original.tgs'); await writeFile(path, 'original');
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 101, mode: 'inbox' });
+  let conversions = 0;
+  bridge.media.sticker = async () => { conversions++; throw new ApiError('Cannot convert', 415); };
+  for (const [i, kind] of ['sticker', 'document'].entries()) {
+    bridge.media.fromTelegram = async () => ({ kind, path, name: 'original.tgs', mime: 'application/x-tgsticker' });
+    await bridge.telegram('master', telegram(i + 10, { text: undefined, [kind]: { file_id: 'file' } }), 'fallback-' + i);
+  }
+  assert.equal(conversions, 1);
+  const sends = api.calls.filter(c => c.method === 'messages/send-document'); assert.equal(sends.length, 2);
+  for (const sent of sends) { assert.equal(sent.body.filename, 'original.tgs'); assert.equal(Buffer.from(sent.body.base64, 'base64').toString(), 'original'); }
+});
+
+test('rate-limited sticker sends freeze the conversion choice and bytes even after a converter recovers', async t => {
+  const { bridge, api, s } = fixture(t);
+  const root = await mkdtemp(join(tmpdir(), 'bridge-sticker-retry-')); t.after(() => rm(root, { recursive: true, force: true }));
+  const path = join(root, 'original.tgs'); await writeFile(path, 'original');
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 101, mode: 'inbox' });
+  bridge.media.fromTelegram = async () => ({ kind: 'sticker', path, name: 'original.tgs', mime: 'application/x-tgsticker' });
+  bridge.media.sticker = async () => { throw new ApiError('Unavailable', 415); };
+  const update = telegram(10, { text: undefined, sticker: { file_id: 'file' } });
+  api.failure = new ApiError('Rate limited', 429, true);
+  await assert.rejects(bridge.telegram('master', update, 'retry'));
+  bridge.media.sticker = async () => { throw new Error('Must retain document fallback'); };
+  bridge.media.fromTelegram = async () => { throw new Error('Use the prepared file'); };
+  await bridge.telegram('master', update, 'retry');
+  const sends = api.calls.filter(c => c.method === 'messages/send-document'); assert.equal(sends.length, 2);
+  assert.deepEqual(sends[0].body, sends[1].body); assert.equal(sends[0].key, sends[1].key);
 });
 
 test('missing media is visible, and location/contact/poll use structured representations', async t => {

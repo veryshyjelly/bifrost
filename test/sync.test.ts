@@ -14,7 +14,7 @@ class Fixture extends Api {
   groups: any = { 'g@g.us': { name: 'New group', description: 'New description', participants: [{ id: '111@c.us', name: 'Alice', isAdmin: true }] } };
   contacts: any = { '111@c.us': { name: 'Saved Alice', pushName: 'Alice' } };
   chats: any = { '-200': { type: 'supergroup', title: 'Old group', description: 'Old description', photo: { big_file_unique_id: 'old-group' } } };
-  names: any = { master: 'Hermes', child: 'Old Alice' }; descriptions: any = { child: '' };
+  names: any = { master: 'Bifrost', child: 'Old Alice' }; descriptions: any = { child: '' };
   photos: any = { '42': { photos: [[{ file_unique_id: 'old-contact' }]] } };
   changeInfo = true; hiddenPictures = true; groupError?: ApiError;
   async ow(path: string, body?: any) {
@@ -135,9 +135,9 @@ test('missing group permission yields a scoped grant button while contact metada
   const url = message.body.reply_markup.inline_keyboard.find((r: any) => r[0].text.startsWith('Allow info edits'))[0].url;
   const action = new URL(url).searchParams.get('startgroup')!;
   await bridge.command('master', { text: '/start ' + action, chat: { id: -999, type: 'supergroup' } }, 'wrong-group');
-  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 0);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 0);
   await bridge.command('master', { text: '/start ' + action, chat: { id: -200, type: 'supergroup' } }, 'correct-group');
-  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 1);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 1);
 });
 
 test('one contact bot shared across groups is fetched once and LID aliases retain its binding', async t => {
@@ -153,9 +153,9 @@ test('one contact bot shared across groups is fetched once and LID aliases retai
   assert.equal(store.get('sync-status', 'last').groups, 2);
 });
 
-test('/sync scopes to its conversation, and global sync uses the signed management path', async t => {
+test('/sync scopes to its conversation, and global sync uses the local management queue', async t => {
   const { bridge, store } = fixture(t);
-  const requests = () => store.db.prepare("SELECT payload FROM jobs WHERE type='n8n' ORDER BY id").all().map(r => JSON.parse(r.payload as string));
+  const requests = () => store.db.prepare("SELECT payload FROM jobs WHERE type='management' ORDER BY id").all().map(r => JSON.parse(r.payload as string));
   await bridge.command('master', { text: '/sync@hermes_bot', chat: { id: -200, type: 'supergroup' } }, 'group-sync');
   assert.equal(requests()[0].type, 'sync_metadata');
   assert.equal(requests()[0].data.scope, 'group');
@@ -174,15 +174,13 @@ test('/sync in a bound member bot DM works without a one-to-one route and report
   assert.equal(store.get('route', '111@c.us'), undefined);
   bridge.acceptTelegram('42', { update_id: 1, message: { message_id: 1, from: { id: 123 }, chat: { id: 123, type: 'private' }, text: '/sync' } });
   await bridge.tick();
-  const job = store.db.prepare("SELECT id,payload FROM jobs WHERE type='n8n'").get()!;
+  const job = store.db.prepare("SELECT id,payload FROM jobs WHERE type='management'").get()!;
   assert.ok(job);
   const event = JSON.parse(job.payload as string);
   assert.equal(event.type, 'sync_metadata');
   assert.equal(event.data.scope, 'contact');
   assert.equal(event.data.id, '111@c.us');
   assert.deepEqual(event.data.notify, { bot: '42', chat: '123' });
-  store.finish(Number(job.id));
-  bridge.acceptManagement({ ...event, signature: sign(JSON.stringify(event), bridge.c.admin) });
   await drain(bridge);
   const status = store.get('sync-status', 'last');
   assert.equal(status.contacts, 1); assert.equal(status.groups, 0); assert.equal(status.warnings, 0);
@@ -204,7 +202,7 @@ test('an unbound member bot explains the missing binding for Start and /sync wit
   const messages = api.calls.filter(c => c.method === 'sendMessage');
   assert.equal(messages.length, 2);
   assert.ok(messages.every(c => c.token === 'child' && c.body.text.includes('select the contact in its binding message')));
-  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 0);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 0);
   assert.ok(!api.calls.some(c => c.source === 'wa'));
 });
 
@@ -213,13 +211,13 @@ test('member-bot DM sync keeps the contact scope with an existing inbox topic an
   store.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 5, mode: 'dedicated' });
   const dm = { chat: { id: 123, type: 'private' } };
   await bridge.command('42', { ...dm, text: '/sync@alice_bot' }, 'bound-sync');
-  const request = JSON.parse(store.db.prepare("SELECT payload FROM jobs WHERE type='n8n'").get()!.payload as string);
+  const request = JSON.parse(store.db.prepare("SELECT payload FROM jobs WHERE type='management'").get()!.payload as string);
   assert.equal(request.data.scope, 'contact');
   assert.equal(request.data.id, '111@c.us');
   assert.equal(request.data.notify.thread, undefined);
   assert.equal(api.calls.find(c => c.method === 'sendMessage').body.message_thread_id, undefined);
   await bridge.command('42', { ...dm, text: '/sync all' }, 'rejected-global-sync');
-  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='n8n'").get()!.n, 1);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='management'").get()!.n, 1);
   assert.ok(api.calls.some(c => c.method === 'sendMessage' && c.body.text.includes('/sync all in your private chat with the master bot')));
   assert.equal(bridge.acceptTelegram('42', { update_id: 3, message: { ...dm, message_id: 3, from: { id: 999 }, text: '/sync' } }), false);
 });

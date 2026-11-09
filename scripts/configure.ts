@@ -20,14 +20,11 @@ export function configure(directory = resolve(import.meta.dirname, '..')) {
   const telegram = resolve(directory, 'telegram-api.env');
   writeFileSync(telegram, `TELEGRAM_API_ID=${values.TELEGRAM_API_ID || ''}\nTELEGRAM_API_HASH=${values.TELEGRAM_API_HASH || ''}\n`, { mode: 0o600 });
   chmodSync(telegram, 0o600);
-  const n8n = resolve(directory, 'n8n.env'), createdN8n = !existsSync(n8n);
-  if (createdN8n) writeFileSync(n8n, `N8N_ENCRYPTION_KEY=${randomBytes(32).toString('hex')}\nN8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true\nN8N_SECURE_COOKIE=false\nGENERIC_TIMEZONE=${values.SYNC_TIMEZONE || 'Asia/Kolkata'}\nTZ=${values.SYNC_TIMEZONE || 'Asia/Kolkata'}\n`, { mode: 0o600 });
-  chmodSync(n8n, 0o600);
-  return { created, createdN8n };
+  return { created };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const result = configure();
   console.log(result.created ? 'Created private bridge.env with fresh bridge secrets. Fill the empty account fields locally.' : 'Preserved every bridge.env value.');
-  console.log('Updated private telegram-api.env. ' + (result.createdN8n ? 'Created private n8n.env for the optional standalone n8n service.' : 'Preserved n8n.env.'));
+  console.log('Updated private telegram-api.env. Bifrost runs without n8n or a public tunnel.');
 }

@@ -18,7 +18,7 @@ for (const file of ['bridge.env', 'telegram-api.env', 'n8n.env']) {
 let errors = 0;
 for (const path of paths) {
   const basename = path.split('/').at(-1)!;
-  const forbidden = /(^|\/)(data|media|backups|vendor|node_modules)\//.test(path)
+  const forbidden = /(^|\/)(data|media|backups|vendor|node_modules|\.bifrost-(?:export|import)-[^/]*)\//.test(path) || /\.bifrost\.tar\.gz$/.test(path)
     || /\.(db|sqlite)(?:$|[.-])/.test(basename)
     || ((!basename.endsWith('.example')) && (basename === '.env' || basename.startsWith('.env.') || /\.env(?:\.|$)/.test(basename)));
   if (forbidden) { console.error('Private/runtime file tracked: ' + path); errors++; continue; }

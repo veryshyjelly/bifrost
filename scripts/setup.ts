@@ -14,11 +14,8 @@ export async function setup(c: Config, bridge: Bridge) {
   if (!group.is_forum || group.username) throw new Error('Management destination must be a private forum supergroup');
   const member = await bridge.api.tg(c.masterToken, 'getChatMember', { chat_id: c.management, user_id: bot.id });
   if (member.status !== 'administrator' || !member.can_manage_topics) throw new Error('Master must be an administrator with Manage Topics permission');
-  // Confirm n8n has an active management endpoint before connecting message sources.
-  const probe = { id: 'setup-probe', type: 'session_status', data: { event: 'bridge.setup', status: 'connected' }, at: Date.now() };
-  const { sign } = await import('../src/config.ts');
-  await bridge.api.request(c.n8n, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...probe, signature: sign(JSON.stringify(probe), c.admin) }) });
   await bridge.installWebhook('master');
+  for (const { id } of bridge.store.all('bot')) await bridge.installWebhook(id);
   await ensureOpenWAWebhook(c, bridge.api);
   bridge.statuses.startup();
   return { connected: true, master: '@' + bot.username, sessionStatus: session.status };
@@ -30,7 +27,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const bridge = new Bridge(c);
   try { console.log(JSON.stringify(await setup(c, bridge))); }
   catch (e) {
-  if (e instanceof ApiError) console.error(e.message + '. If webhook registration is refused, add wa-telegram-bridge to OpenWA SSRF_ALLOWED_HOSTS and recreate only its API service.');
+  if (e instanceof ApiError) console.error(e.message + '. If webhook registration is refused, add bifrost to OpenWA SSRF_ALLOWED_HOSTS and recreate only its API service.');
   else console.error((e as Error).message);
   process.exitCode = 1;
   } finally { bridge.store.close(); }

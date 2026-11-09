@@ -1,4 +1,4 @@
-name: Bridge checks
+name: Bifrost checks
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
@@ -13,8 +13,19 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun install --frozen-lockfile
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg python3-venv
+          python3 -m venv /tmp/sticker-python
+          /tmp/sticker-python/bin/pip install Pillow==13.0.0
       - run: bun run test
+      - run: bun run test:stickers
+        env:
+          STICKER_PYTHON: /tmp/sticker-python/bin/python
+          STICKER_CHROMIUM: /usr/bin/google-chrome
+          STICKER_CHROMIUM_NO_SANDBOX: '1'
       - run: bun run check:repository
+      - run: docker build -t local/bifrost:0.1.0 .
+      - run: bun run test:transfer
       - run: bun run configure
       - run: docker compose config --quiet
-      - run: docker compose -f compose.yaml -f deploy/compose.n8n.yaml config --quiet

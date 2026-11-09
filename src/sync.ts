@@ -125,7 +125,7 @@ export class MetadataSync {
       const picture = await this.b.api.ow(`groups/${encodeURIComponent(id)}/picture`);
       await this.picture('group', id, picture.url, token, route.tgChat, tg, run, result);
     } else {
-      result.warnings.push('Enable Change Group Info for Hermes to synchronize this group’s title, description and picture.');
+      result.warnings.push('Enable Change Group Info for Bifrost to synchronize this group’s title, description and picture.');
       const action = this.b.action({ kind: 'sync-permission', chatId: id, tgChat: String(route.tgChat), owner: this.b.c.owner, session: this.session, expires: Date.now() + 86400000 });
       result.permissionLink = `https://t.me/${me.username}?startgroup=sync_${action}&admin=change_info+delete_messages+invite_users`;
     }

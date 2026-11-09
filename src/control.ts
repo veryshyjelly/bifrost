@@ -106,7 +106,7 @@ export class TelegramControl {
       try { await this.b.retireInbox(p.chatId); }
       catch (e) {
         if (!(e instanceof ApiError) || ![400, 403, 409].includes(e.status)) this.retry(e);
-        await this.b.sendText('master', this.b.c.owner, 'The conversation is linked, but its old management topic could not be removed. Check Hermes’s Delete Messages permission and retry /start in the contact bot or link the mirror again.', job.dedup + ':notice');
+        await this.b.sendText('master', this.b.c.owner, 'The conversation is linked, but its old management topic could not be removed. Check Bifrost’s Delete Messages permission and retry /start in the contact bot or link the mirror again.', job.dedup + ':notice');
       }
       return;
     }
@@ -145,7 +145,7 @@ export class TelegramControl {
           if (!run.single) { this.b.store.put('control-clear', p.id, { ...run, single: true }); this.nextClear(p.id, run.cursor, true); return; }
           run.blocked++;
         } else if (e instanceof ApiError && e.status === 403) {
-          await this.b.sendText(run.bot, run.chat, 'Telegram refused cleanup. Give Hermes Delete Messages permission in this group.', job.dedup, run.thread ? { message_thread_id: run.thread } : {});
+          await this.b.sendText(run.bot, run.chat, 'Telegram refused cleanup. Give Bifrost Delete Messages permission in this group.', job.dedup, run.thread ? { message_thread_id: run.thread } : {});
           this.b.store.put('control-clear', p.id, { ...run, status: 'failed' }); return;
         } else this.retry(e);
       }

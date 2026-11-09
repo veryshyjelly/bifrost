@@ -1,4 +1,4 @@
-import { mkdir, writeFile, realpath, stat, unlink, readdir } from 'node:fs/promises';
+import { mkdir, writeFile, realpath, stat, unlink, readdir, rm } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { Readable, Transform } from 'node:stream';
@@ -7,6 +7,7 @@ import { resolve, basename, extname, sep } from 'node:path';
 import { spawn } from 'node:child_process';
 import { Api, ApiError } from './api.ts';
 import type { Config, Json } from './config.ts';
+import { prepareSticker, type StickerFile, type StickerTarget } from './stickers.ts';
 
 export class Media {
   c: Config; api: Api;
@@ -46,7 +47,7 @@ export class Media {
     if (file.file_size > this.c.mediaLimit) throw new ApiError('Attachment exceeds configured bridge media limit', 413);
     const info = await this.api.tg(token, 'getFile', { file_id: file.file_id });
     const mime = file.mime_type || ({ photo: 'image/jpeg', voice: 'audio/ogg; codecs=opus', sticker: file.is_animated ? 'application/x-tgsticker' : file.is_video ? 'video/webm' : 'image/webp', video: 'video/mp4', animation: 'video/mp4', video_note: 'video/mp4' } as Json)[kind] || 'application/octet-stream';
-    const name = basename(file.file_name || `telegram.${mime.includes('webp') ? 'webp' : mime.includes('ogg') ? 'ogg' : mime.includes('jpeg') ? 'jpg' : mime.includes('mp4') ? 'mp4' : 'bin'}`);
+    const name = basename(file.file_name || `telegram.${mime.includes('tgsticker') ? 'tgs' : mime.includes('webm') ? 'webm' : mime.includes('webp') ? 'webp' : mime.includes('ogg') ? 'ogg' : mime.includes('jpeg') ? 'jpg' : mime.includes('mp4') ? 'mp4' : 'bin'}`);
     let path: string;
     if (info.file_path.startsWith('/')) {
       const root = await realpath('/telegram-data'); path = await realpath(info.file_path);
@@ -57,6 +58,9 @@ export class Media {
       path = await this.download(`${this.c.telegram}/file/bot${token}/${info.file_path.split('/').map(encodeURIComponent).join('/')}`, {}, name);
     }
     return { kind, path, name, mime };
+  }
+  sticker(attachment: StickerFile, target: StickerTarget) {
+    return prepareSticker(attachment, target, this.c.media, this.c.mediaLimit);
   }
   async convert(path: string, voice = false) {
     const output = await this.save(Buffer.alloc(0), voice ? 'voice.ogg' : 'image.jpg');
@@ -74,6 +78,7 @@ export class Media {
     for (const name of await readdir(this.c.media)) {
       const path = resolve(this.c.media, name), info = await stat(path);
       if (info.isFile() && info.mtimeMs < Date.now() - 86400000) await unlink(path);
+      if (info.isDirectory() && name.startsWith('.sticker-') && info.mtimeMs < Date.now() - 86400000) await rm(path, { recursive: true, force: true });
     }
   }
 }

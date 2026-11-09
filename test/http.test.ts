@@ -101,7 +101,7 @@ test('Telegram caption edits satisfy the OpenWA HTTP contract and a refused edit
   });
   server.listen(0, '127.0.0.1'); await once(server, 'listening');
   const base = `http://127.0.0.1:${(server.address() as any).port}`;
-  const c = { ...configuration({}), key: 'aa'.repeat(32), masterToken: 'fixture', owner: '123', management: '-1001', session: 's1', openwa: base, telegram: base, n8n: base + '/management' };
+  const c = { ...configuration({}), key: 'aa'.repeat(32), masterToken: 'fixture', owner: '123', management: '-1001', session: 's1', openwa: base, telegram: base };
   const store = new Store(':memory:', c.key), bridge = new Bridge(c, store);
   t.after(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); store.close(); });
   store.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-200', mode: 'group' });

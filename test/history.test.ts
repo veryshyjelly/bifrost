@@ -139,6 +139,24 @@ test('manual history can restore a copy explicitly cleared from the current dest
   assert.equal(content(api).length, 2); assert.equal(store.byWhatsApp('g@g.us', 'a').length, 2);
 });
 
+test('history sends retained WebM sticker media through the Telegram sticker preparation path', async t => {
+  const { bridge, api, store } = fixture(t);
+  store.put('route', 'g@g.us', { chatId: 'g@g.us', tgChat: '-1001', thread: 77, mode: 'inbox' });
+  bridge.media.fromWhatsApp = async () => ({ path: '/source', name: 'source.webp' });
+  bridge.media.sticker = async file => ({ ...file, path: '/converted', name: 'sticker.webm', mime: 'video/webm' });
+  const item = message('sticker', 1, '', { type: 'sticker' }); await bridge.whatsApp(event(item), 'archived-sticker');
+  store.put('route', 'g@g.us', { chatId: 'g@g.us', tgChat: '-200', mode: 'group' });
+  let prepared = false;
+  bridge.media.fromTelegram = async () => ({ kind: 'sticker', path: '/retained', name: 'sticker.webm', mime: 'video/webm' });
+  bridge.media.fromWhatsApp = async () => { throw new Error('Source media has expired'); };
+  bridge.media.sticker = async (file, target) => { assert.equal(file.path, '/retained'); assert.equal(file.mime, 'video/webm'); assert.equal(target, 'telegram'); prepared = true; return file; };
+  api.rows = [item]; await history(bridge, 'master', command('/history 1'), 'sticker-history'); await drain(bridge);
+  assert.equal(prepared, true);
+  const sent = api.calls.filter(call => call.method === 'sendSticker').at(-1);
+  assert.equal(sent.path, '/retained'); assert.equal(sent.name, 'sticker.webm');
+  assert.equal(store.byWhatsApp('g@g.us', 'sticker').filter(row => row.media).length, 2);
+});
+
 test('history validates counts and uses the gateway deep-history option above 100', async t => {
   const { bridge, api, store } = fixture(t);
   for (const [i, value] of ['0', '-1', '2001', 'abc', '1 2', '1.5'].entries()) await bridge.command('master', command('/history ' + value, { message_id: i + 1 }), 'invalid-' + i);
@@ -322,7 +340,7 @@ test('member DM Import all remains bot scoped and legacy Recent history buttons 
   assert.equal(store.byTelegram('123', 888, 'master').bot, 'master');
   const action = bridge.action({ chatId: 'g@g.us' });
   await bridge.telegram('master', { callback_query: { id: 'legacy', from: { id: 123 }, message: command('header'), data: 'history:' + action } }, 'legacy');
-  const queued = store.db.prepare("SELECT payload FROM jobs WHERE type='n8n' AND json_extract(payload,'$.type')='operator_action'").get()!;
+  const queued = store.db.prepare("SELECT payload FROM jobs WHERE type='management' AND json_extract(payload,'$.type')='operator_action'").get()!;
   await bridge.manage(JSON.parse(queued.payload as string), 'legacy-management');
   assert.equal(store.all('history-choice').length, 2); assert.equal(store.all('history-run').length, 1);
 });
@@ -426,7 +444,7 @@ test('prompt-deletion network failures retry independently without blocking an i
   assert.equal(api.calls.filter(call => call.method === 'deleteMessages').length, 1);
 });
 
-test('group history uses each present member bot while Hermes handles absent/unbound authors, own messages and dates', async t => {
+test('group history uses each present member bot while Bifrost handles absent/unbound authors, own messages and dates', async t => {
   const { bridge, api, store } = fixture(t);
   for (const [person, id, token, name] of [['12025550123@c.us', '42', 'alice', 'Alice'], ['12025550124@c.us', '43', 'bob', 'Bob'], ['12025550125@c.us', '44', 'absent', 'Absent']]) {
     store.put('contact', person, { name, bot: id }); store.put('bot', id, { token: store.seal(token) });
