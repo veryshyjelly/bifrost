@@ -55,6 +55,8 @@ Member-bot messages use Telegram's sender identity without repeating that person
 
 WhatsApp Status posts share one **WhatsApp Status** topic in the management forum. Hermes creates it on startup and imports currently available posts; new `status.received` events arrive automatically. `/statuses` in Hermes opens the topic and refreshes available posts without duplicating the archive. Text, images, videos and voice statuses carry the poster's linked name and a native Telegram posting time. Missing/expired media gets a notice while its available caption is retained. Reading or refreshing this feed sends no WhatsApp view/read receipt.
 
+Reply to a Status post with `/mute` or `/mute_status` to mute that person's Status posts in the bridge. Chats continue normally and existing archived posts remain. `/muted_statuses` shows a paginated list with **Unmute** buttons; replying to a Status post with `/unmute_status` also unmutes its author (`/keep` and `/unmute` work in this topic too). Preferences survive restarts and resolve known phone/LID aliases. Live events and refresh imports both honor mutes; posts skipped while muted stay skipped after unmuting. This changes only the Telegram feed, without sending any WhatsApp operation or read receipt.
+
 The Status topic is an archive: source expiry does not remove its Telegram copies. It does not publish WhatsApp statuses or send replies/reactions; open the person's chat to respond. `/clear log` removes temporary notices while retaining archived posts; `/clear all` clears recorded posts in this topic. `/status` still shows bridge health.
 
 To mirror a WhatsApp group, tap **Create / link Telegram group** in its management topic. In your private chat with Hermes, tap **Create / select Telegram group**, create a private group (or select one you own), and confirm Hermes's administrator permissions. The selected group is linked automatically. This uses Telegram's native picker and requires no separate account login. If your client has no create option in that picker, create the private group first and select it there.
@@ -83,6 +85,8 @@ Commands inside conversations:
 | `/react 👍` | Reply to a mapped message to set a WhatsApp reaction; `/react` clears it |
 | `/status` | Show counts, queue state, metadata schedule and last sync result |
 | `/statuses` | Open the shared WhatsApp Status archive and refresh available posts through Hermes |
+| `/mute_status`, `/unmute_status` | Reply to a Status post to mute or unmute only its author's Status posts |
+| `/muted_statuses` | List muted people and tap Unmute; accepts an optional page number |
 | `/clear log`, `/clear_log`, `/clear` | Remove recorded bot notices and command messages in the current Telegram chat/topic |
 | `/clear all`, `/clear_all` | Remove recorded Telegram messages in the current management topic, including General; unavailable in separate mirror groups |
 

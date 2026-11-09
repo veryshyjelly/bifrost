@@ -176,6 +176,7 @@ export class Bridge {
   async whatsApp(event: Json, key: string) {
     const status = event.event === 'status.received', m = status ? this.statuses.message(event.data) : event.data;
     if (!m) return;
+    if (status && this.statuses.suppressed(m)) return;
     if (event.event.startsWith('session.') || event.event === 'message.failed') {
       this.management('session_status', { event: event.event, status: m.status || 'changed' }, key); return;
     }
@@ -335,6 +336,7 @@ export class Bridge {
     if (update.my_chat_member) return; // Membership is checked live before selecting a participant bot.
     if (update.callback_query) {
       const q = update.callback_query;
+      if (await this.statuses.callback(bot, q, key)) return;
       if (/^rev-(delete|keep):/.test(q.data || '')) { await this.revocations.callback(bot, q); return; }
       try { await this.api.tg(this.token(bot), 'answerCallbackQuery', { callback_query_id: q.id }); }
       catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; }
@@ -372,7 +374,7 @@ export class Bridge {
     }
     if (serviceMessage(m)) return;
     if (this.statuses.isTopic(m)) {
-      if (!update.edited_message) await this.sendText(bot, chat, 'This topic archives WhatsApp Status posts. Open the person’s chat to reply.', key, { message_thread_id: m.message_thread_id });
+      if (!update.edited_message) await this.sendText(bot, chat, 'This topic archives WhatsApp Status posts. Reply to a post with /mute to mute its author’s Status posts, or open the person’s chat to reply.', key, { message_thread_id: m.message_thread_id });
       return;
     }
     if (update.edited_message && this.store.db.prepare("SELECT 1 FROM telegram_messages WHERE scope=? AND chat=? AND message=? AND kind='command'").get(this.control.scope(bot, chat), chat, m.message_id)) return;
@@ -425,6 +427,7 @@ export class Bridge {
     const { name: command, args } = parsed;
     const { route, thread, contact } = this.telegramContext(bot, m);
     const chat = String(m.chat.id), extra = thread ? { message_thread_id: thread } : {};
+    if (await this.statuses.command(bot, m, command, args, key)) return;
     if (command === 'start' && m.chat.type === 'private') {
       const parameter = /^mirror_([a-f0-9-]+)$/.exec(args[0] || '')?.[1];
       if (bot === 'master' && parameter) { await this.beginMirrorGroup(parameter, key); return; }
@@ -432,7 +435,7 @@ export class Bridge {
         const registered = this.store.get('bot', bot); registered.ready = true; this.store.put('bot', bot, registered);
         await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact.'
           : 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then return here.', key);
-      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts, or /sync all here for every group and contact bot. In a conversation: /create, /read, /history, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all clears the current management topic, including General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
+      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts and /muted_statuses to manage Status mutes. In the Status topic, reply to a post with /mute or /unmute_status. Use /sync all here for every group and contact bot. In a conversation: /create, /read, /history, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all clears the current management topic, including General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
       return;
     }
     if (command === 'start' && bot !== 'master') {
@@ -496,7 +499,7 @@ export class Bridge {
     }
     const reply = m.reply_to_message && this.store.byTelegram(chat, m.reply_to_message.message_id, bot);
     if (this.statuses.isTopic(m)) {
-      await this.sendText(bot, chat, 'This is the WhatsApp Status archive. Use /statuses to refresh it; open a person’s chat to reply.', key, extra); return;
+      await this.sendText(bot, chat, 'This is the WhatsApp Status archive. Use /statuses to refresh it, reply to a post with /mute to mute its author, or use /muted_statuses to manage mutes. Open a person’s chat to reply.', key, extra); return;
     }
     if (!route) { await this.sendText(bot, chat, 'Use this command inside a linked conversation or its management topic.', key, extra); return; }
     if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Command target belongs to another WhatsApp conversation', 400);
