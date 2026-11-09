@@ -12,7 +12,7 @@ export function serviceMessage(m: Json) {
 }
 const commands = (entries: string[][]) => entries.map(([command, description]) => ({ command, description }));
 const common = commands([['start', 'Show bridge help'], ['sync', 'Refresh WhatsApp metadata'], ['status', 'Show bridge and queue status'], ['clear', 'Clear bot notices in this chat or topic'], ['clear_log', 'Clear bot notices in this chat or topic']]);
-const groupCommands = [...common, ...commands([['create', 'Reply to a participant to create their bot'], ['group', 'Create or select a Telegram mirror group'], ['read', 'Mark this WhatsApp conversation read'], ['history', 'Import available WhatsApp history'], ['keep', 'Resume this conversation'], ['mute', 'Mute this conversation'], ['ignore', 'Ignore this conversation'], ['delete', 'Delete a replied-to WhatsApp message'], ['react', 'React to a replied-to WhatsApp message']])];
+const groupCommands = [...common, ...commands([['statuses', 'Open and refresh WhatsApp Status posts'], ['create', 'Reply to a participant to create their bot'], ['group', 'Create or select a Telegram mirror group'], ['read', 'Mark this WhatsApp conversation read'], ['history', 'Import available WhatsApp history'], ['keep', 'Resume this conversation'], ['mute', 'Mute this conversation'], ['ignore', 'Ignore this conversation'], ['delete', 'Delete a replied-to WhatsApp message'], ['react', 'React to a replied-to WhatsApp message']])];
 
 export class TelegramControl {
   b: Bridge;

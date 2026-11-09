@@ -33,7 +33,7 @@ test('real API transport preserves JSON, quotes, idempotency and handles rate li
   const requests: any[] = [];
   const server = createServer(async (req, res) => {
     let body = ''; for await (const chunk of req) body += chunk;
-    requests.push({ url: req.url, key: req.headers['idempotency-key'], body: JSON.parse(body) });
+    requests.push({ url: req.url, method: req.method, key: req.headers['idempotency-key'], body: JSON.parse(body) });
     res.setHeader('content-type', 'application/json');
     if (req.url?.includes('sendMessage')) { res.statusCode = 429; res.end(JSON.stringify({ ok: false, parameters: { retry_after: 2 } })); }
     else if (/getMyDescription|getUserProfilePhotos/.test(req.url || '')) { res.statusCode = 503; res.end(JSON.stringify({ ok: false })); }
@@ -45,6 +45,9 @@ test('real API transport preserves JSON, quotes, idempotency and handles rate li
   const api = new Api({ ...configuration({}), openwa: base, telegram: base, session: 's1', openwaKey: 'private' });
   assert.equal((await api.ow('messages/reply', { chatId: 'a@c.us', text: 'Hello', quotedMessageId: 'q1' }, 'stable-key')).messageId, 'sent-1');
   assert.equal(requests[0].key, 'stable-key'); assert.equal(requests[0].body.quotedMessageId, 'q1');
+  await api.ow('webhooks/own', { events: ['status.received'] }, undefined, 'PUT');
+  assert.equal(requests[1].method, 'PUT'); assert.equal(requests[1].url, '/api/sessions/s1/webhooks/own');
+  assert.deepEqual(requests[1].body, { events: ['status.received'] });
   await assert.rejects(api.tg('private-token', 'sendMessage', { text: 'hi' }), (e: any) => e.retry && !e.uncertain && e.delay === 2000 && !e.message.includes('private-token'));
   for (const method of ['getMyDescription', 'getUserProfilePhotos']) await assert.rejects(api.tg('private-token', method), (e: any) => e.retry && !e.uncertain);
 });

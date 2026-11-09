@@ -23,17 +23,18 @@ export function senderName(name: string, id: string): Formatted {
   if (displayed) result.entities.push({ type: 'text_link', offset: 0, length: displayed.length, url });
   return result;
 }
-export function historyTime(timestamp: unknown): Formatted {
+export function historyTime(timestamp: unknown, label = 'History'): Formatted {
   const unix = Number(timestamp), max = Math.floor(Date.now() / 1000) + 1098 * 86400;
-  if (!Number.isSafeInteger(unix) || unix <= 0 || unix > max) return styled('History', 'italic');
+  if (!Number.isSafeInteger(unix) || unix <= 0 || unix > max) return styled(label, 'italic');
   const fallback = new Date(unix * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
-  return concat(styled('History', 'italic'), ' · ', styled(fallback, 'date_time', { unix_time: unix, date_time_format: 'dt' }));
+  return concat(styled(label, 'italic'), ' · ', styled(fallback, 'date_time', { unix_time: unix, date_time_format: 'dt' }));
 }
-export type RelayFormat = { bot: string; sender: string; name: string; own?: boolean; historical?: boolean; timestamp?: unknown; editedNotice?: boolean };
+export type RelayFormat = { bot: string; sender: string; name: string; own?: boolean; historical?: boolean; status?: boolean; timestamp?: unknown; editedNotice?: boolean };
 export function relayHeader(options: RelayFormat): Formatted {
   const parts: Formatted[] = [];
   if (options.editedNotice) parts.push(styled('Edited', 'italic'));
-  if (options.historical) parts.push(historyTime(options.timestamp));
+  if (options.status) parts.push(historyTime(options.timestamp, 'Status'));
+  else if (options.historical) parts.push(historyTime(options.timestamp));
   if (options.own) parts.push(concat(senderName('You', options.sender), ' · ', styled('sent from WhatsApp', 'italic')));
   else if (options.bot === 'master') parts.push(senderName(options.name, options.sender));
   return parts.reduce((result, part) => result.text ? concat(result, ' · ', part) : part, plain(''));

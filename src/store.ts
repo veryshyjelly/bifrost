@@ -60,7 +60,7 @@ export class Store {
       AND NOT EXISTS (SELECT 1 FROM jobs p WHERE p.stream=j.stream AND p.id<j.id AND p.state IN ('pending','running','uncertain','failed'))
       AND (j.type!='sync-finish' OR NOT EXISTS (SELECT 1 FROM jobs t WHERE t.type IN ('sync-start','sync-target')
         AND json_extract(t.payload,'$.run')=json_extract(j.payload,'$.run') AND t.state IN ('pending','running')))
-      ORDER BY CASE WHEN j.type LIKE 'control-%' THEN 2 WHEN j.type LIKE 'sync-%' THEN 1 ELSE 0 END,id LIMIT 1`).get(Date.now());
+      ORDER BY CASE WHEN j.type LIKE 'control-%' THEN 2 WHEN j.type LIKE 'sync-%' OR j.type LIKE 'status-%' THEN 1 ELSE 0 END,id LIMIT 1`).get(Date.now());
     if (!row) return undefined;
     this.db.prepare("UPDATE jobs SET state='running',attempts=attempts+1 WHERE id=?").run(row.id);
     return { ...row, attempts: Number(row.attempts) + 1, payload: JSON.parse(row.payload as string) };

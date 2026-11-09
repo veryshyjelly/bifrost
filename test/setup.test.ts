@@ -8,6 +8,7 @@ function fixture(status: string) {
   const bridge = {
     migrateBot: async () => { calls.push('migrate'); },
     installWebhook: async () => { calls.push('telegram-webhook'); },
+    statuses: { startup: () => { calls.push('status-startup'); } },
     api: {
       ow: async (path: string, body?: any) => {
         calls.push(path || 'session');

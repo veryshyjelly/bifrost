@@ -3,6 +3,7 @@ import { Bridge } from '../src/bridge.ts';
 import { ApiError } from '../src/api.ts';
 import { fileURLToPath } from 'node:url';
 import type { Config } from '../src/config.ts';
+import { ensureOpenWAWebhook } from '../src/openwa.ts';
 
 export async function setup(c: Config, bridge: Bridge) {
   const session = await bridge.api.ow('');
@@ -18,11 +19,8 @@ export async function setup(c: Config, bridge: Bridge) {
   const { sign } = await import('../src/config.ts');
   await bridge.api.request(c.n8n, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...probe, signature: sign(JSON.stringify(probe), c.admin) }) });
   await bridge.installWebhook('master');
-  const webhooks = await bridge.api.ow('webhooks');
-  const url = `${c.callback}/webhooks/openwa`;
-  if (!webhooks.some((w: any) => w.url === url)) {
-    await bridge.api.ow('webhooks', { url, events: ['message.received', 'message.sent', 'message.edited', 'message.revoked', 'message.reaction', 'poll.vote', 'session.status', 'session.disconnected', 'message.failed'], secret: c.webhookSecret, retryCount: 5 });
-  }
+  await ensureOpenWAWebhook(c, bridge.api);
+  bridge.statuses.startup();
   return { connected: true, master: '@' + bot.username, sessionStatus: session.status };
 }
 

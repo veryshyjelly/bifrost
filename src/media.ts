@@ -33,7 +33,10 @@ export class Media {
   async fromWhatsApp(message: Json) {
     const name = basename(message.media?.filename || `attachment.${({ image: 'jpg', video: 'mp4', voice: 'ogg', sticker: 'webp', audio: 'mp3' } as Json)[message.type] || 'bin'}`);
     if (message.media?.data) return { path: await this.save(Buffer.from(message.media.data.replace(/^data:[^,]*,/, ''), 'base64'), name), name };
-    const path = await this.download(`${this.c.openwa}/api/sessions/${encodeURIComponent(this.c.session)}/messages/${encodeURIComponent(message.chatId)}/${encodeURIComponent(message.id)}/media`, { 'X-API-Key': this.c.openwaKey }, name);
+    if (message.statusId && message.media?.omitted) throw new ApiError('OpenWA did not retain this status media', 404);
+    const endpoint = message.statusId ? `status/${encodeURIComponent(message.statusId)}/media`
+      : `messages/${encodeURIComponent(message.chatId)}/${encodeURIComponent(message.id)}/media`;
+    const path = await this.download(`${this.c.openwa}/api/sessions/${encodeURIComponent(this.c.session)}/${endpoint}`, { 'X-API-Key': this.c.openwaKey }, name);
     return { path, name };
   }
   async fromTelegram(token: string, message: Json) {

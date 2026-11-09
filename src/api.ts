@@ -43,9 +43,9 @@ export class Api {
     form.set(field, await openAsBlob(path), name);
     return this.request(`${this.c.telegram}/bot${token}/${method}`, { method: 'POST', body: form }, true).then(r => r.result).catch(e => { if (e instanceof ApiError) e.service = 'telegram'; throw e; });
   }
-  ow(path: string, body?: Json, key?: string) {
+  ow(path: string, body?: Json, key?: string, method: 'POST' | 'PUT' = 'POST') {
     return this.request(`${this.c.openwa}/api/sessions/${encodeURIComponent(this.c.session)}/${path}`, {
-      method: body === undefined ? 'GET' : 'POST',
+      method: body === undefined ? 'GET' : method,
       headers: { 'X-API-Key': this.c.openwaKey, 'content-type': 'application/json', ...(key ? { 'Idempotency-Key': key } : {}) },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     }, body !== undefined);
