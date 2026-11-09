@@ -183,14 +183,14 @@ test('member-bot media, stickers, locations, cards and polls omit redundant send
   assert.equal(api.calls.find(c => c.method === 'sendMessage').body.text, '📊 Choose\n1. Yes\n2. No');
 });
 
-test('member-bot history keeps its history marker and body while phone-originated sends keep owner attribution', async t => {
+test('member-bot history keeps a compact time and body while phone-originated sends keep owner attribution', async t => {
   const { bridge, api, s } = fixture(t);
   s.put('route', 'g@g.us', { chatId: 'g@g.us', tgChat: '-200', mode: 'group' });
   s.put('bot', '42', { token: s.seal('alice-token') }); s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); api.members.add('42');
   const group = { chatId: 'g@g.us', isGroup: true, author: '111@c.us' };
   await bridge.whatsApp({ ...message('history', { ...group, body: 'Alice is coming' }), historical: true }, 'history');
   const text = api.calls.find(c => c.method === 'sendMessage').body.text;
-  assert.match(text, /^History · [^·]+ · Alice is coming$/);
+  assert.match(text, /^\[\d{2}:\d{2}\]: Alice is coming$/);
   assert.ok(api.calls.find(c => c.method === 'sendMessage').body.entities.some((e: any) => e.type === 'date_time' && e.unix_time === 1700000000));
   await bridge.whatsApp(message('phone', { ...group, body: 'From my phone', fromMe: true }), 'phone');
   const phone = api.calls.filter(c => c.method === 'sendMessage').at(-1);
@@ -468,7 +468,7 @@ test('history is bounded and enqueued with historical markers', async t => {
   s.put('route', '111@c.us', { chatId: '111@c.us', mode: 'inbox', tgChat: '-1001', thread: 101 });
   api.historyRows = [message('old').data];
   await bridge.history({ chatId: '111@c.us' }, 'history'); await bridge.tick();
-  assert.match(api.calls.find(c => c.method === 'sendMessage').body.text, /History/);
+  assert.ok(api.calls.some(c => c.method === 'sendMessage' && c.body.entities?.some(e => e.type === 'date_time' && e.date_time_format === 't')));
   assert.match(api.calls.find(c => c.method?.includes('/history')).method, /limit=100/);
 });
 

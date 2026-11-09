@@ -14,7 +14,7 @@ class Fixture extends Api {
     if (method === 'getChatMember') return { status: 'administrator', can_delete_messages: true, can_manage_topics: true };
     if (method === 'createForumTopic') return { message_thread_id: ++this.sequence };
     if (method === 'deleteForumTopic' && this.failDelete) throw new ApiError('Permission denied', 403);
-    if (method === 'sendMessage' && body.text.startsWith('History ·') && ++this.contentSends === this.failMessage) throw new ApiError('Rate limited', 429, true);
+    if (method === 'sendMessage' && body.entities?.some(e => e.type === 'date_time' && e.date_time_format === 't') && ++this.contentSends === this.failMessage) throw new ApiError('Rate limited', 429, true);
     return { message_id: ++this.sequence, chat: { id: body.chat_id }, from: { id: token === 'master' ? 99 : 42 }, text: body.text, entities: body.entities,
       ...(body.reply_parameters ? { reply_to_message: { message_id: body.reply_parameters.message_id } } : {}) };
   }
@@ -40,7 +40,7 @@ function fixture(t: any) {
 const message = (id: string, timestamp: number, body = id, extra = {}) => ({ id, chatId: 'g@g.us', from: 'g@g.us', author: '12025550123@c.us', isGroup: true, fromMe: false, type: 'text', body, timestamp, ...extra });
 const event = (m: any) => ({ event: 'message.received', sessionId: 's1', idempotencyKey: m.id, data: m });
 const command = (text: string, extra = {}) => ({ message_id: 1, from: { id: 123 }, chat: { id: -200, type: 'supergroup' }, text, ...extra });
-const content = (api: Fixture) => api.calls.filter(call => call.method === 'sendMessage' && call.body.text?.startsWith('History ·'));
+const content = (api: Fixture) => api.calls.filter(call => call.method === 'sendMessage' && call.body.entities?.some(e => e.type === 'date_time' && e.date_time_format === 't'));
 async function drain(b: Bridge) { for (let i = 0; i < 100; i++) await b.tick(); }
 async function choose(b: Bridge, bot: string, m: any, key: string, mode = 'skip') {
   const id = digest(JSON.stringify([b.c.session, bot, key])).slice(0, 24);
@@ -75,7 +75,7 @@ test('history delivered to management can be imported into a mirror and repeated
   assert.equal(content(api).length, 1); assert.equal(store.byWhatsApp('g@g.us', 'old').length, 2);
   await bridge.waChange({ event: 'message.edited', data: { chatId: 'g@g.us', id: 'old', body: 'Edited' } }, 'edit');
   const edited = api.calls.filter(call => call.method === 'editMessageText');
-  assert.ok(!edited[0].body.text.startsWith('History')); assert.ok(edited[1].body.text.startsWith('History'));
+  assert.ok(!edited[0].body.entities.some(e => e.type === 'date_time')); assert.ok(edited[1].body.entities.some(e => e.type === 'date_time' && e.date_time_format === 't'));
 });
 
 test('history in a new member DM includes own messages and preserves bot-scoped reply targets', async t => {
@@ -342,4 +342,59 @@ test('reactions prefer a fresh unavailable-media placeholder over a stale attach
   const replacement = store.byWhatsApp('g@g.us', 'file').at(-1)!; assert.notEqual(replacement.tg_id, 55);
   await bridge.waChange({ event: 'message.reaction', data: { chatId: 'g@g.us', messageId: 'file', senderId: '12025550123@c.us', reaction: '👍' } }, 'react');
   assert.equal(api.calls.find(call => call.method === 'setMessageReaction').body.message_id, replacement.tg_id);
+});
+
+const dates = (api: Fixture) => api.calls.filter(call => call.method === 'sendMessage' && call.body.entities?.some(e => e.type === 'date_time' && e.date_time_format === 'D'));
+
+test('history posts one retained date marker per day with time-only messages and replies across midnight', async t => {
+  const { bridge, api, store } = fixture(t);
+  const start = Date.parse('2023-11-14T18:29:00Z') / 1000;
+  api.rows = [message('a', start, 'First'), message('b', start + 30, 'Second'), message('c', start + 120, 'Third', { quotedMessage: { id: 'b' } }), message('d', start + 150, 'Fourth')];
+  await history(bridge, 'master', command('/history 4'), 'days'); await drain(bridge);
+  assert.deepEqual(dates(api).map(call => call.body.text), ['14 November 2023', '15 November 2023']);
+  assert.deepEqual(content(api).map(call => call.body.text), ['Alice [23:59]: First', 'Alice [23:59]: Second', 'Alice [00:01]: Third', 'Alice [00:01]: Fourth']);
+  assert.equal(content(api)[2].body.reply_parameters.message_id, store.byWhatsApp('g@g.us', 'b')[0].tg_id);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM telegram_messages WHERE kind='chat' AND expires=0").get()!.n, 6);
+  assert.equal(store.db.prepare('SELECT count(*) AS n FROM messages').get()!.n, 4);
+  assert.ok(content(api).every(call => !call.body.text.includes('History') && !call.body.text.includes('2023')));
+});
+
+test('history date markers survive a retry and a fresh worker without duplicate date posts', async t => {
+  const { bridge, api, store } = fixture(t);
+  api.rows = [message('a', 1700000000), message('b', 1700000030)]; api.failMessage = 1;
+  await history(bridge, 'master', command('/history 2'), 'retry-date'); await drain(bridge);
+  assert.equal(dates(api).length, 1); assert.equal(store.byWhatsApp('g@g.us', 'a').length, 0);
+  const resumed = new Bridge(bridge.c, store, api);
+  store.db.prepare("UPDATE jobs SET due=0 WHERE type='history-message' AND state='pending'").run(); await drain(resumed);
+  assert.equal(dates(api).length, 1); assert.equal(store.byWhatsApp('g@g.us', 'a').length, 1); assert.equal(store.byWhatsApp('g@g.us', 'b').length, 1);
+});
+
+test('skipped and revoked messages do not produce empty date sections', async t => {
+  const { bridge, api, store } = fixture(t);
+  const existing = message('old', 1700000000); await bridge.whatsApp(event(existing), 'old');
+  store.put('revoked', 'g@g.us:revoked', true); api.rows = [existing, message('revoked', 1700086400)];
+  await history(bridge, 'master', command('/history 2'), 'skip-days'); await drain(bridge);
+  assert.equal(dates(api).length, 0); assert.equal(content(api).length, 0);
+  api.rows = [existing, message('fresh', 1700172800)];
+  await history(bridge, 'master', command('/history 2'), 'one-new-day'); await drain(bridge);
+  assert.equal(dates(api).length, 1); assert.equal(dates(api)[0].body.text, '17 November 2023');
+});
+
+test('member DM date markers use its bot and compact imported messages still identify the owner', async t => {
+  const { bridge, api, store } = fixture(t);
+  store.put('contact', '12025550123@c.us', { name: 'Alice', bot: '42' }); store.put('bot', '42', { token: store.seal('child'), ready: true });
+  api.rows = [message('own', 1700000000, 'Mine', { chatId: '12025550123@c.us', isGroup: false, fromMe: true }), message('peer', 1700000030, 'Reply', { chatId: '12025550123@c.us', isGroup: false })];
+  await history(bridge, '42', command('/history 2', { chat: { id: 123, type: 'private' } }), 'compact-dm'); await drain(bridge);
+  assert.equal(dates(api).length, 1); assert.equal(dates(api)[0].token, 'child');
+  assert.deepEqual(content(api).map(call => call.body.text), ['You [03:43]: Mine', '[03:43]: Reply']);
+  assert.ok(content(api).every(call => call.token === 'child'));
+});
+
+test('older in-progress history runs keep their legacy presentation and do not gain date markers mid-import', async t => {
+  const { bridge, api, store } = fixture(t); api.rows = [message('legacy', 1700000000, 'Original')];
+  const run = bridge.conversationHistory.request('g@g.us', { chat: '-200' }, 1, 'legacy', false);
+  delete run.historyStyle; delete run.timeZone; store.put('history-run', run.id, run);
+  await bridge.history({ run: run.id }, 'old-fetch'); await drain(bridge);
+  assert.equal(dates(api).length, 0);
+  assert.ok(api.calls.some(call => call.body?.text === 'History · 2023-11-14 22:13 UTC · Alice: Original'));
 });

@@ -306,7 +306,8 @@ export class Bridge {
     const historical = legacy && event.historical ? `[History · ${new Date(m.timestamp * 1000).toISOString()}]\n` : '';
     const prefix = historical + (label ? label + '\n' : '');
     const format: RelayFormat = snapshot?.presentation || { bot, sender: event.replay ? this.store.canonical(linkSender) : this.store.get('wamessage', `${chat}:${m.id}`).linkSender,
-      name: this.store.get('contact', sender)?.name || sender, own: !!m.fromMe, historical: !!event.historical, status, timestamp: m.timestamp };
+      name: this.store.get('contact', sender)?.name || sender, own: !!m.fromMe, historical: !!event.historical, status, timestamp: m.timestamp,
+      ...(event.historical && !status ? { historyStyle: event.historyStyle || 'compact', timeZone: event.historyTimeZone || this.c.syncTimezone } : {}) };
     if (!legacy) this.store.put('delivery-target', snapshotKey, { bot, destination, thread, formatVersion: 2, presentation: format });
     const extra: Json = { ...(thread ? { message_thread_id: thread } : {}) };
     const freshQuote = event.historyMode === 'all' && event.historyRun && m.quotedMessage?.id

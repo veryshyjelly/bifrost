@@ -91,8 +91,8 @@ test('manual history renders mention entities alongside native dates and keeps s
   await bridge.history({ run: run.id }, 'fetch');
   const job = store.db.prepare("SELECT dedup,payload FROM jobs WHERE type='history-message'").get()!;
   await bridge.conversationHistory.process({ type: 'history-message', dedup: job.dedup, payload: JSON.parse(job.payload as string) });
-  assert.ok(sent(api)[0].body.entities.some(e => e.type === 'date_time'));
-  assert.ok(sent(api)[0].body.entities.some(e => e.type === 'text_mention'));
+  const imported = sent(api).find(call => call.body.entities?.some(e => e.type === 'date_time' && e.date_time_format === 't'))!;
+  assert.ok(imported.body.entities.some(e => e.type === 'text_mention'));
 });
 
 test('incoming mention rendering remains stable across retries and text splitting preserves offsets', async t => {

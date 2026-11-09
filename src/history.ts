@@ -2,6 +2,7 @@ import type { Bridge } from './bridge.ts';
 import { digest } from './config.ts';
 import type { Json } from './config.ts';
 import { ApiError } from './api.ts';
+import { historyDay } from './format.ts';
 
 export type HistoryTarget = { chat: string; thread?: number; bot?: string };
 export type HistoryMode = 'skip' | 'all';
@@ -87,7 +88,7 @@ export class ConversationHistory {
     const previous = this.b.store.get('history-run', id); if (previous) return previous;
     const active = this.active(chatId);
     if (active) return active;
-    const run = { id, chatId, target, count, mode, status: 'queued', createdAt: Date.now(), session: this.b.c.session };
+    const run = { id, chatId, target, count, mode, historyStyle: 'compact', timeZone: this.b.c.syncTimezone, status: 'queued', createdAt: Date.now(), session: this.b.c.session };
     this.b.store.put('history-run', id, run);
     if (enqueue) this.b.store.enqueue('history-fetch:' + id, 'history-fetch:' + id, 'history', { run: id });
     return run;
@@ -158,7 +159,16 @@ export class ConversationHistory {
     if (job.type === 'history-message') {
       const message = this.b.store.get('history-plan', run.id)?.items[job.payload.index];
       if (!message) throw new ApiError('History snapshot is missing', 409);
-      await this.b.deliverWhatsApp({ event: 'message.received', sessionId: this.b.c.session, historical: true, replay: run.target, historyMode: run.mode || 'skip', historyRun: run.id, data: message }, job.dedup);
+      const skipped = run.mode === 'all' ? this.b.store.get('history-copy-complete', this.copyKey(run.id, run.chatId, message.id)) : this.delivered(run.chatId, message.id, run.target);
+      if (run.historyStyle === 'compact' && !skipped && !this.b.store.get('revoked', `${run.chatId}:${message.id}`)) {
+        const day = historyDay(message.timestamp, run.timeZone || this.b.c.syncTimezone), previous = this.b.store.get('history-day', run.id);
+        if (previous?.day !== day.key) {
+          await this.b.sendText(run.target.bot || 'master', run.target.chat, day.label, job.dedup + ':day', run.target.thread ? { message_thread_id: run.target.thread } : {}, 'chat');
+          this.b.store.put('history-day', run.id, { day: day.key });
+        }
+      }
+      await this.b.deliverWhatsApp({ event: 'message.received', sessionId: this.b.c.session, historical: true, replay: run.target, historyMode: run.mode || 'skip', historyRun: run.id,
+        historyStyle: run.historyStyle || 'legacy', historyTimeZone: run.timeZone, data: message }, job.dedup);
     } else {
       this.b.store.put('history-run', run.id, { ...run, status: 'complete', finishedAt: Date.now() });
       await this.b.sendText(run.target.bot || 'master', run.target.chat, `History ready: ${run.available || 0} available messages checked, oldest first. ${run.mode === 'all' ? 'Previously delivered messages were included.' : 'Already delivered messages were skipped.'} WhatsApp-deleted messages remain excluded.`, job.dedup,

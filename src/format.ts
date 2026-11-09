@@ -29,8 +29,32 @@ export function historyTime(timestamp: unknown, label = 'History'): Formatted {
   const fallback = new Date(unix * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
   return concat(styled(label, 'italic'), ' · ', styled(fallback, 'date_time', { unix_time: unix, date_time_format: 'dt' }));
 }
-export type RelayFormat = { bot: string; sender: string; name: string; own?: boolean; historical?: boolean; status?: boolean; timestamp?: unknown; editedNotice?: boolean };
+function validTimestamp(timestamp: unknown) {
+  const unix = Number(timestamp);
+  return Number.isSafeInteger(unix) && unix > 0 && unix <= Math.floor(Date.now() / 1000) + 1098 * 86400 ? unix : undefined;
+}
+export function historyClock(timestamp: unknown, timeZone = 'UTC'): Formatted {
+  const unix = validTimestamp(timestamp);
+  if (!unix) return styled('time unknown', 'italic');
+  const fallback = new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(unix * 1000));
+  return styled(fallback, 'date_time', { unix_time: unix, date_time_format: 't' });
+}
+export function historyDay(timestamp: unknown, timeZone: string) {
+  const unix = validTimestamp(timestamp);
+  if (!unix) return { key: 'unknown', label: styled('Date unknown', 'bold') };
+  const date = new Date(unix * 1000), key = new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+  const fallback = new Intl.DateTimeFormat('en-GB', { timeZone, year: 'numeric', month: 'long', day: 'numeric' }).format(date);
+  const label = styled(fallback, 'date_time', { unix_time: unix, date_time_format: 'D' });
+  label.entities.push({ type: 'bold', offset: 0, length: fallback.length });
+  return { key, label };
+}
+export type RelayFormat = { bot: string; sender: string; name: string; own?: boolean; historical?: boolean; status?: boolean; timestamp?: unknown; editedNotice?: boolean; historyStyle?: 'compact' | 'legacy'; timeZone?: string };
 export function relayHeader(options: RelayFormat): Formatted {
+  if (options.historical && !options.status && options.historyStyle === 'compact') {
+    const name = options.own ? senderName('You', options.sender) : options.bot === 'master' ? senderName(options.name, options.sender) : plain('');
+    const header = concat(name, name.text ? ' [' : '[', historyClock(options.timestamp, options.timeZone), ']');
+    return options.editedNotice ? concat(styled('Edited', 'italic'), ' · ', header) : header;
+  }
   const parts: Formatted[] = [];
   if (options.editedNotice) parts.push(styled('Edited', 'italic'));
   if (options.status) parts.push(historyTime(options.timestamp, 'Status'));
@@ -43,7 +67,7 @@ export function relayText(options: RelayFormat, body: string | Formatted): Forma
   const header = relayHeader(options), content = typeof body === 'string' ? plain(body) : body;
   if (!header.text) return content;
   if (!content.text) return header;
-  return concat(header, options.own || options.bot === 'master' ? ': ' : ' · ', content);
+  return concat(header, options.own || options.bot === 'master' || (options.historical && !options.status && options.historyStyle === 'compact') ? ': ' : ' · ', content);
 }
 function boundary(value: Formatted, start: number, limit: number) {
   let end = Math.min(value.text.length, start + limit);

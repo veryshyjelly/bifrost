@@ -4,7 +4,7 @@ import { Bridge } from '../src/bridge.ts';
 import { Store } from '../src/store.ts';
 import { Api, ApiError } from '../src/api.ts';
 import { configuration, digest } from '../src/config.ts';
-import { plain, concat, styled, relayText, historyTime, whatsappURL, splitFormatted, captionFields } from '../src/format.ts';
+import { plain, concat, styled, relayText, historyTime, historyClock, historyDay, whatsappURL, splitFormatted, captionFields } from '../src/format.ts';
 import type { Formatted } from '../src/format.ts';
 
 const phone = '12025550123', sender = phone + '@c.us', timestamp = 1700000000;
@@ -68,14 +68,16 @@ test('untrusted HTML characters remain literal text and cannot inject markup or 
   validEntities(message);
 });
 
-test('history uses a native date_time entity while member bots keep their sender identity implicit', () => {
-  const master = relayText({ ...options, historical: true, timestamp }, 'Hi bro');
-  assert.equal(master.text, 'History · 2023-11-14 22:13 UTC · Abhishek: Hi bro');
+test('compact history uses linked sender and bracketed native time while member bots omit their names', () => {
+  const historical = { ...options, historical: true, historyStyle: 'compact' as const, timeZone: 'UTC', timestamp };
+  const master = relayText(historical, 'Hi bro');
+  assert.equal(master.text, 'Abhishek [22:13]: Hi bro');
   const time = master.entities.find(e => e.type === 'date_time')!;
-  assert.equal(time.unix_time, timestamp); assert.equal(time.date_time_format, 'dt');
-  assert.equal(master.text.slice(time.offset, time.offset + time.length), '2023-11-14 22:13 UTC');
-  const member = relayText({ ...options, bot: '42', historical: true, timestamp }, 'Hi bro');
-  assert.equal(member.text, 'History · 2023-11-14 22:13 UTC · Hi bro');
+  assert.equal(time.unix_time, timestamp); assert.equal(time.date_time_format, 't');
+  assert.equal(master.text.slice(time.offset, time.offset + time.length), '22:13');
+  const member = relayText({ ...historical, bot: '42' }, 'Hi bro');
+  assert.equal(member.text, '[22:13]: Hi bro');
+  assert.equal(relayText({ ...historical, own: true }, 'Mine').text, 'You [22:13]: Mine');
   assert.ok(!member.entities.some(e => e.type === 'text_link')); validEntities(master); validEntities(member);
 });
 
@@ -83,6 +85,25 @@ test('invalid source timestamps remain clearly historical without inventing a da
   for (const value of [undefined, 'invalid', -1, 1700000000000, Number.MAX_SAFE_INTEGER]) {
     const time = historyTime(value); assert.equal(time.text, 'History'); assert.ok(!time.entities.some(e => e.type === 'date_time'));
   }
+});
+
+test('compact clocks handle invalid timestamps and dates group in the configured timezone', () => {
+  assert.equal(historyClock(timestamp, 'Asia/Kolkata').text, '03:43');
+  assert.equal(historyClock(timestamp, 'UTC').text, '22:13');
+  assert.notEqual(historyDay(timestamp, 'Asia/Kolkata').key, historyDay(timestamp, 'UTC').key);
+  assert.equal(historyDay(timestamp, 'Asia/Kolkata').label.text, '15 November 2023');
+  for (const value of [undefined, 'invalid', -1, 1700000000000]) {
+    const message = relayText({ ...options, historical: true, historyStyle: 'compact', timestamp: value }, 'Message');
+    assert.equal(message.text, 'Abhishek [time unknown]: Message');
+    assert.ok(!message.entities.some(e => e.type === 'date_time'));
+    assert.equal(historyDay(value, 'UTC').label.text, 'Date unknown'); validEntities(message);
+  }
+});
+
+test('saved history presentations retain legacy rendering when compact style was not selected', () => {
+  const old = relayText({ ...options, historical: true, timestamp }, 'Original');
+  assert.equal(old.text, 'History · 2023-11-14 22:13 UTC · Abhishek: Original');
+  assert.equal(old.entities.find(e => e.type === 'date_time')!.date_time_format, 'dt');
 });
 
 test('formatted splitting preserves every UTF-16 character, clips links safely and keeps native time atomic', () => {
@@ -144,7 +165,7 @@ test('long media captions keep all content in formatted text and a compact linke
   const full = messages.map(p => p.text).join(''); assert.ok(full.endsWith(body));
   for (const packet of messages) validEntities(packet);
   const media = api.calls.find(c => c.method === 'sendPhoto').body;
-  assert.equal(media.caption, 'History · 2023-11-14 22:13 UTC · Abhishek');
+  assert.equal(media.caption, 'Abhishek [03:43]');
   validEntities({ text: media.caption, entities: media.caption_entities });
   assert.ok(media.caption_entities.some((e: any) => e.type === 'date_time'));
 });
@@ -152,9 +173,10 @@ test('long media captions keep all content in formatted text and a compact linke
 test('history metadata survives formatted message edits and captions do not contain raw HTML', async t => {
   const { bridge, api } = fixture(t);
   await bridge.whatsApp({ ...event('edit', 'Original'), historical: true }, 'original');
+  bridge.c.syncTimezone = 'UTC';
   await bridge.waChange({ event: 'message.edited', data: { chatId: 'g@g.us', id: 'edit', body: '<Updated> & 😀' } }, 'edit');
   const update = api.calls.find(c => c.method === 'editMessageText').body;
-  assert.equal(update.text, 'History · 2023-11-14 22:13 UTC · Abhishek: <Updated> & 😀');
+  assert.equal(update.text, 'Abhishek [03:43]: <Updated> & 😀');
   assert.ok(update.entities.some((e: any) => e.type === 'date_time' && e.unix_time === timestamp)); validEntities(update);
 });
 
