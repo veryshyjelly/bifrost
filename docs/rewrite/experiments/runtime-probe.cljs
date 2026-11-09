@@ -1,0 +1,16 @@
+; Offline capability probe. Run: bunx --bun nbb docs/rewrite/experiments/runtime-probe.cljs
+; Uses synthetic data and memory SQLite; spawns only bun --version.
+(ns runtime-probe (:require [nbb.core :as nbb] ["node:sqlite" :as sql] ["node:crypto" :as crypto] ["node:http" :as http] ["node:fs" :as fs] ["node:child_process" :as cp]))
+(assert (string? js/Bun.version))
+(def db (sql/DatabaseSync. ":memory:"))
+(.exec db "CREATE TABLE probe (v TEXT); INSERT INTO probe VALUES ('ok');")
+(assert (= "ok" (.-v (.get (.prepare db "SELECT v FROM probe")))))
+(.close db)
+(assert (= 64 (count (.digest (.update (crypto/createHash "sha256") "probe") "hex"))))
+(assert (= true (fn? fs/openAsBlob)))
+(assert (= true (fn? http/createServer)))
+(-> (js/Promise.resolve "promise-ok") (.then (fn [v] (println (js/JSON.stringify #js {:bun js/Bun.version :promise v :sqlite "ok" :crypto "ok" :child (.toString (cp/execFileSync "bun" #js ["--version"]))})))))
+(def sealed (let [iv (crypto/randomBytes 12) key (js/Buffer.alloc 32 7) c (crypto/createCipheriv "aes-256-gcm" key iv) bytes (js/Buffer.concat #js [(.update c "synthetic") (.final c)]) d (crypto/createDecipheriv "aes-256-gcm" key iv)] (.setAuthTag d (.getAuthTag c)) (.toString (js/Buffer.concat #js [(.update d bytes) (.final d)]))))
+(assert (= "synthetic" sealed))
+(-> (fs/openAsBlob nbb/*file*) (.then (fn [blob] (let [form (js/FormData.)] (.set form "file" blob "probe.cljs") (assert (> (.-size (.get form "file")) 0)) (println "aes-gcm/formdata/openAsBlob: ok"))))
+)
