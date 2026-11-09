@@ -40,7 +40,7 @@ const message = (id = 'm1', extra: any = {}) => ({ sessionId: 's1', event: 'mess
 const telegram = (id = 1, extra: any = {}) => ({ update_id: id, message: { message_id: id, from: { id: 123 }, chat: { id: -1001, type: 'supergroup' }, message_thread_id: 101, text: 'Reply', ...extra } });
 const missingThread = () => Object.assign(new ApiError('API refused request (400)', 400), { service: 'telegram', reason: 'thread_missing' as const });
 
-test('a group-only contact bot creates its direct route on first DM and sends ordinary and quoted replies', async t => {
+test('a group-only contact bot creates its direct route without a management topic and sends ordinary and quoted replies', async t => {
   const { bridge, api, s } = fixture(t);
   s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); s.put('bot', '42', { token: s.seal('child'), ready: true });
   const dm = (id: number, extra = {}) => telegram(id, { chat: { id: 123, type: 'private' }, message_thread_id: undefined, text: 'Hello', ...extra });
@@ -51,7 +51,7 @@ test('a group-only contact bot creates its direct route on first DM and sends or
   const received = s.byWhatsApp('111@c.us', 'incoming')[0]; assert.equal(received.bot, '42');
   await bridge.telegram('42', dm(2, { reply_to_message: { message_id: received.tg_id } }), 'quoted-dm');
   assert.equal(api.calls.find(c => c.method === 'messages/reply').body.quotedMessageId, 'incoming');
-  assert.equal(api.calls.filter(c => c.method === 'createForumTopic').length, 1);
+  assert.equal(api.calls.filter(c => c.method === 'createForumTopic').length, 0);
 });
 
 test('unbound member DMs explain the missing binding instead of silently dropping the message', async t => {

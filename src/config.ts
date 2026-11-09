@@ -21,7 +21,7 @@ export function configuration(env = process.env) {
     openwa: env.OPENWA_URL || 'http://openwa-api:2785',
     openwaKey: env.OPENWA_API_KEY || '', session: env.OPENWA_SESSION_ID || '',
     n8n: env.N8N_MANAGEMENT_WEBHOOK || 'http://n8n:5678/webhook/wa-telegram-management',
-    history: Math.min(100, Math.max(0, Number(env.HISTORY_LIMIT || 100))),
+    history: Math.min(2000, Math.max(0, Number(env.HISTORY_LIMIT || 20))),
     mediaLimit: Number(env.MAX_MEDIA_BYTES || 100 * 1024 * 1024),
     pace: Number(env.DELIVERY_INTERVAL_MS || 1100),
     syncCron: env.SYNC_CRON || '0 * * * *',

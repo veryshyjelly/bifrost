@@ -13,6 +13,7 @@ import { plain, concat, styled, relayHeader, relayText, splitFormatted, captionF
 import type { Formatted, RelayFormat } from './format.ts';
 import { waEvents } from './openwa.ts';
 import { StatusFeed } from './statuses.ts';
+import { ConversationHistory } from './history.ts';
 
 const updates = ['message', 'edited_message', 'callback_query', 'my_chat_member', 'managed_bot', 'message_reaction', 'poll_answer'];
 const chunks = (text: string, length = 3800) => {
@@ -28,7 +29,9 @@ export class Bridge {
     this.revocations = new Revocations(this);
     this.reactions = new NativeReactions(this);
     this.statuses = new StatusFeed(this);
+    this.conversationHistory = new ConversationHistory(this);
   }
+  conversationHistory: ConversationHistory;
   token(id: string) {
     if (id === 'master') return this.c.masterToken;
     const bot = this.store.get('bot', id);
@@ -46,6 +49,7 @@ export class Bridge {
       // A mirror without a configured topic covers the whole group. Telegram can
       // include a reply-thread ID even when this group has no forum topics.
       route = this.store.all('route').find(r => String(r.tgChat) === chat
+        && !(chat === this.c.management && r.inboxRetired && !r.thread)
         && (!r.thread || Number(r.thread) === Number(message.message_thread_id || 0)));
     }
     const thread = message.chat.type === 'private' ? undefined : route ? route.thread
@@ -105,6 +109,7 @@ export class Bridge {
         }
         else if (job.type === 'tg') await this.telegram(job.payload.bot, job.payload.update, job.dedup);
         else if (job.type === 'history') await this.history(job.payload, job.dedup);
+        else if (['history-message', 'history-finish'].includes(job.type)) await this.conversationHistory.process(job);
         else if (job.type === 'management') await this.manage(job.payload, job.dedup);
         else if (job.type.startsWith('control-')) await this.control.process(job);
         else if (job.type.startsWith('sync-')) await this.metadata.process(job);
@@ -118,6 +123,7 @@ export class Bridge {
         const error = e instanceof ApiError ? e : new ApiError('Internal processing error; inspect local service logs', 0, false, true);
         const state = error.uncertain ? 'uncertain' : error.retry && job.attempts < 8 ? 'pending' : 'failed';
         this.store.fail(job.id, state, error.message, Math.max(error.delay, Math.min(300000, 1000 * 2 ** job.attempts)));
+        if (state !== 'pending' && (job.type === 'history' || job.type.startsWith('history-'))) this.conversationHistory.failed(job);
         if (['sync-start', 'sync-finish'].includes(job.type) && state !== 'pending') {
           const run = this.store.get('sync-run', job.payload.run);
           if (run) this.store.put('sync-run', job.payload.run, { ...run, status: 'failed', error: error.message });
@@ -133,12 +139,13 @@ export class Bridge {
     try { await this.whatsApp(event, key); }
     catch (e) {
       if (await this.repairTopic(event, key, e)) await this.whatsApp(event, key);
-      else if (e instanceof ApiError && e.service === 'telegram' && e.status === 403 && !event.forceMaster) {
+      else if (e instanceof ApiError && e.service === 'telegram' && e.status === 403 && !event.forceMaster && !event.replay) {
         await this.deliverWhatsApp({ ...event, forceMaster: true }, key);
       } else throw e;
     }
   }
   async repairTopic(event: Json, key: string, error: unknown) {
+    if (event.replay) return false;
     if (!(error instanceof ApiError) || error.service !== 'telegram' || error.status !== 400 || error.reason !== 'thread_missing') return false;
     const chat = this.store.canonical(event.data?.chatId || ''), snapshotKey = key + (event.forceMaster ? ':fallback' : '');
     const target = this.store.get('delivery-target', snapshotKey), route = this.store.get('route', chat);
@@ -155,12 +162,12 @@ export class Bridge {
       }
     }
     let thread = route.thread;
-    if (Number(thread) === Number(target.thread)) {
+    if (!thread || Number(thread) === Number(target.thread)) {
       const repaired = await this.effect('topic-repair:' + digest(JSON.stringify([this.c.management, chat, thread])), () => this.api.tg(this.token('master'), 'createForumTopic', {
         chat_id: this.c.management, name: String(route.name || this.store.get('contact', chat)?.name || 'WhatsApp conversation').slice(0, 128),
       }));
       thread = repaired.message_thread_id;
-      this.store.put('route', chat, { ...route, thread });
+      this.store.put('route', chat, { ...route, thread, inboxRetired: false });
     }
     if (!thread) return false;
     this.store.put('delivery-target', snapshotKey, { ...target, thread });
@@ -189,6 +196,11 @@ export class Bridge {
   async topic(chatId: string, name: string, key: string) {
     let route = this.store.get('route', chatId);
     if (route) return route;
+    const contact = this.store.get('contact', chatId), bot = contact?.bot && this.store.get('bot', contact.bot);
+    if (!chatId.endsWith('@g.us') && bot?.ready) {
+      route = { chatId, name, tgChat: this.c.management, mode: 'dedicated', history: false, inboxRetired: true };
+      this.store.put('route', chatId, route); return route;
+    }
     if (!this.c.management) throw new ApiError('Management forum group has not been configured', 409, true);
     const topic = await this.effect(`${key}:topic`, () => this.api.tg(this.token('master'), 'createForumTopic', { chat_id: this.c.management, name: name.slice(0, 128) || chatId }));
     route = { chatId, name, tgChat: this.c.management, thread: topic.message_thread_id,
@@ -196,6 +208,34 @@ export class Bridge {
     this.store.put('route', chatId, route);
     this.management('new_conversation', { chatId }, 'new:' + chatId);
     return route;
+  }
+  queueRetireInbox(chatId: string, key: string) {
+    this.store.enqueue('retire-inbox:' + key, 'retire-inbox:' + chatId, 'control-retire-inbox', { chatId });
+  }
+  async retireInbox(chatId: string) {
+    const route = this.store.get('route', chatId); if (!route) return;
+    const contact = this.store.get('contact', chatId), bot = contact?.bot && this.store.get('bot', contact.bot);
+    if (!(route.mode === 'group' && String(route.tgChat) !== this.c.management) && !(route.mode === 'dedicated' && bot?.ready)) return;
+    const topics = new Set<number>();
+    if (String(route.inbox?.chat) === this.c.management && route.inbox.thread > 1) topics.add(Number(route.inbox.thread));
+    if (String(route.tgChat) === this.c.management && route.thread > 1) topics.add(Number(route.thread));
+    for (const row of this.store.db.prepare("SELECT DISTINCT t.thread FROM messages m JOIN telegram_messages t ON t.chat=m.tg_chat AND t.message=m.tg_id AND t.scope='*' WHERE m.wa_chat=? AND t.chat=? AND t.thread>1 AND t.deleted=0").all(chatId, this.c.management)) topics.add(Number(row.thread));
+    for (const thread of topics) {
+      if (this.store.all('route').some(other => other.chatId !== chatId && String(other.tgChat) === this.c.management && Number(other.thread) === thread)) throw new ApiError('This management topic is shared with another conversation', 409);
+      if (this.store.db.prepare("SELECT 1 FROM messages m JOIN telegram_messages t ON t.chat=m.tg_chat AND t.message=m.tg_id AND t.scope='*' WHERE t.chat=? AND t.thread=? AND m.wa_chat!=? LIMIT 1").get(this.c.management, thread, chatId)) throw new ApiError('This management topic contains another conversation', 409);
+      await this.effect('retire-inbox:' + digest(JSON.stringify([this.c.management, thread])), async () => {
+        try { return await this.api.tg(this.token('master'), 'deleteForumTopic', { chat_id: this.c.management, message_thread_id: thread }); }
+        catch (e) {
+          if (e instanceof ApiError && e.status === 400 && e.reason === 'thread_missing') return { alreadyDeleted: true };
+          if (e instanceof ApiError && (e.retry || e.uncertain)) throw new ApiError('Management topic deletion will retry', e.status, true, false, e.delay);
+          throw e;
+        }
+      });
+      this.store.put('retired-topic', digest(JSON.stringify([this.c.management, thread])), { chatId });
+      this.store.db.prepare("UPDATE telegram_messages SET deleted=1,error=NULL WHERE scope='*' AND chat=? AND thread=?").run(this.c.management, thread);
+    }
+    const current = this.store.get('route', chatId);
+    this.store.put('route', chatId, { ...current, inbox: undefined, ...(String(current.tgChat) === this.c.management ? { thread: undefined, inboxRetired: true } : {}) });
   }
   async preferred(sender: string, tgChat: string, privateChat = false) {
     const contact = this.store.get('contact', sender), bot = contact?.bot && this.store.get('bot', contact.bot);
@@ -222,37 +262,45 @@ export class Bridge {
     if (this.store.get('revoked', `${chat}:${m.id}`)) return;
     const edit = this.store.get('latest-edit', `${chat}:${m.id}`);
     if (edit) m.body = edit.body;
-    if (this.store.get('wa-complete', `${chat}:${m.id}`) || this.store.byWhatsApp(chat, m.id).some(row => row.direction === 'out')) return;
+    if (!event.replay && (this.store.get('wa-complete', `${chat}:${m.id}`) || this.store.byWhatsApp(chat, m.id).some(row => row.direction === 'out'))) return;
     const contact = this.store.get('contact', sender) || {};
     this.store.put('contact', sender, { ...contact, name: contact.metadataSyncedAt ? contact.name : m.contact?.name || m.contact?.pushName || m.contact?.shortName || contact.name || sender });
     // In a private outgoing event, sender is the peer's chat ID. Only the session's
     // independently resolved self identity may be used for the "You" link.
     const linkSender = m.fromMe ? this.store.get('reaction-self', digest(this.c.session))?.sender || '' : m.senderPhone ? `${m.senderPhone}@c.us` : sender;
-    this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name, fromMe: !!m.fromMe,
+    if (!event.replay || !this.store.get('wamessage', `${chat}:${m.id}`)) this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name, fromMe: !!m.fromMe,
       historical: !!event.historical, timestamp: m.timestamp, status, linkSender: this.store.canonical(linkSender) });
-    const route = status ? await this.statuses.topic() : await this.topic(chat, m.isGroup ? m.chatName || chat : this.store.get('contact', sender).name, key);
+    if (event.replay) {
+      if (this.conversationHistory.delivered(chat, m.id, event.replay)) return;
+      key = this.conversationHistory.begin(chat, m.id, event.replay, key);
+    }
+    let route = event.replay ? { chatId: chat, tgChat: String(event.replay.chat), thread: event.replay.thread, mode: String(event.replay.chat).startsWith('-') ? 'group' : 'dedicated' }
+      : status ? await this.statuses.topic() : await this.topic(chat, m.isGroup ? m.chatName || chat : this.store.get('contact', sender).name, key);
     if (['muted', 'ignored'].includes(route.mode)) return;
     const privateChat = route.mode === 'dedicated';
     const snapshotKey = key + (event.forceMaster ? ':fallback' : '');
-    const snapshot = this.store.get('delivery-target', snapshotKey);
+    let snapshot = this.store.get('delivery-target', snapshotKey);
+    if (!event.replay && snapshot?.thread && this.store.get('retired-topic', digest(JSON.stringify([String(snapshot.destination), snapshot.thread])))) snapshot = undefined;
     const legacy = !!snapshot && snapshot.formatVersion !== 2;
-    const bot = snapshot?.bot || (status || (m.fromMe && !privateChat) || event.forceMaster ? 'master' : await this.preferred(sender, route.tgChat, privateChat));
+    const bot = snapshot?.bot || event.replay?.bot || (status || (m.fromMe && !privateChat) || event.forceMaster ? 'master' : await this.preferred(sender, route.tgChat, privateChat));
+    if (!event.replay && bot === 'master' && route.inboxRetired) {
+      const topic = await this.effect(key + ':restore-inbox', () => this.api.tg(this.token('master'), 'createForumTopic', { chat_id: this.c.management, name: String(route.name || 'WhatsApp conversation').slice(0, 128) }));
+      route = { ...route, tgChat: this.c.management, thread: topic.message_thread_id, inboxRetired: false }; this.store.put('route', chat, route);
+    }
     // A dedicated bot not yet started falls back to the management topic.
     const destination = snapshot?.destination || (privateChat && bot !== 'master' ? this.c.owner : route.tgChat);
     const thread = snapshot ? snapshot.thread : privateChat && bot !== 'master' ? undefined : route.thread;
+    const deliveredTarget = { chat: String(destination), thread, ...(!String(destination).startsWith('-') ? { bot } : {}) };
+    if (!event.replay) this.conversationHistory.begin(chat, m.id, deliveredTarget, key);
     this.store.put('delivery-target', snapshotKey, { bot, destination, thread, formatVersion: legacy ? 1 : 2 });
     // Message ids and file ids in private chats are scoped to each bot.
     key += `:to:${bot}:${destination}`;
     const label = m.fromMe ? 'You · sent from WhatsApp' : bot === 'master' ? this.store.get('contact', sender)?.name || sender : '';
     const historical = legacy && event.historical ? `[History · ${new Date(m.timestamp * 1000).toISOString()}]\n` : '';
     const prefix = historical + (label ? label + '\n' : '');
-    const format: RelayFormat = snapshot?.presentation || { bot, sender: this.store.get('wamessage', `${chat}:${m.id}`).linkSender,
+    const format: RelayFormat = snapshot?.presentation || { bot, sender: event.replay ? this.store.canonical(linkSender) : this.store.get('wamessage', `${chat}:${m.id}`).linkSender,
       name: this.store.get('contact', sender)?.name || sender, own: !!m.fromMe, historical: !!event.historical, status, timestamp: m.timestamp };
     if (!legacy) this.store.put('delivery-target', snapshotKey, { bot, destination, thread, formatVersion: 2, presentation: format });
-    const render = (body: string | Formatted): string | Formatted => legacy ? prefix + (typeof body === 'string' ? body : body.text) : relayText(format, body);
-    const text = render(m.body || ''), textValue = typeof text === 'string' ? text : text.text;
-    const header = legacy ? prefix.trimEnd() : relayHeader(format), headerValue = typeof header === 'string' ? header : header.text;
-    const annotated = (notice: string) => legacy ? textValue + '\n[' + notice + ']' : render(concat(plain(m.body || ''), m.body ? '\n' : '', styled('[' + notice + ']', 'italic')));
     const extra: Json = { ...(thread ? { message_thread_id: thread } : {}) };
     const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).find(r => {
       if (r.tg_chat !== String(destination) || (privateChat && bot !== 'master' && r.bot !== bot)) return false;
@@ -260,17 +308,37 @@ export class Bridge {
       return !recorded || (!recorded.deleted && Number(recorded.thread || 0) === Number(thread || 0));
     });
     if (quoted) extra.reply_parameters = { message_id: quoted.tg_id, allow_sending_without_reply: true };
+    const preview = event.historical && !quoted && m.quotedMessage?.body ? styled('↪ ' + Array.from(String(m.quotedMessage.body)).slice(0, 300).join(''), 'italic') : undefined;
+    const render = (body: string | Formatted): string | Formatted => legacy ? prefix + (typeof body === 'string' ? body : body.text)
+      : relayText(format, preview ? concat(preview, '\n', body) : body);
+    const text = render(m.body || ''), textValue = typeof text === 'string' ? text : text.text;
+    const header = legacy ? prefix.trimEnd() : relayHeader(format), headerValue = typeof header === 'string' ? header : header.text;
+    const annotated = (notice: string) => legacy ? textValue + '\n[' + notice + ']' : render(concat(plain(m.body || ''), m.body ? '\n' : '', styled('[' + notice + ']', 'italic')));
     const record = (result: Json, media = false) => {
       this.store.map(chat, m.id, destination, result.message_id, bot, 'in', media);
       this.control.track(bot, { ...result, ...(thread ? { message_thread_id: thread, is_topic_message: true } : {}) }, 'chat');
+      this.store.put('telegram-receipt', digest(JSON.stringify([bot, String(destination), result.message_id])), result);
+      this.store.put('message-presentation', digest(JSON.stringify([bot, String(destination), result.message_id])), format);
     };
+    const complete = () => { this.conversationHistory.complete(chat, m.id, deliveredTarget); if (!event.replay) this.store.put('wa-complete', `${chat}:${m.id}`, true); };
     if (['image', 'video', 'audio', 'voice', 'sticker', 'document'].includes(m.type)) {
       let attachment: Json;
-      try { attachment = await this.media.fromWhatsApp(m); }
+      try {
+        if (m.archiveMedia) {
+          try { attachment = await this.media.fromTelegram(this.token(m.archiveMedia.bot), m.archiveMedia.message); }
+          catch (e) {
+            if ((e instanceof ApiError && [400, 403, 404].includes(e.status)) || (e as any)?.code === 'ENOENT') attachment = await this.media.fromWhatsApp(m);
+            else throw e;
+          }
+        }
+        else attachment = await this.media.fromWhatsApp(m);
+        if (!attachment) throw new ApiError('Archived attachment is unavailable', 404);
+        if (attachment.mime) m.media = { ...m.media, mimetype: attachment.mime };
+      }
       catch (e) {
         if (!(e instanceof ApiError) || ![404, 413].includes(e.status)) throw e;
         for (const r of await this.sendText(bot, destination, annotated(`${m.type} unavailable: ${e.message}`), key, extra, 'chat')) record(r);
-        this.store.put('wa-complete', `${chat}:${m.id}`, true);
+        complete();
         return;
       }
       let method = ({ image: 'sendPhoto', video: 'sendVideo', audio: 'sendAudio', voice: 'sendVoice', sticker: 'sendSticker', document: 'sendDocument' } as Json)[m.type];
@@ -321,7 +389,7 @@ export class Bridge {
       const fallback = ['text', 'contact'].includes(m.type) ? '' : `${m.type || 'Unsupported message'}${m.call?.missed ? ' · missed' : ''}`;
       for (const r of await this.sendText(bot, destination, fallback ? annotated(fallback) : text, key, extra, 'chat')) record(r);
     }
-    this.store.put('wa-complete', `${chat}:${m.id}`, true);
+    complete();
   }
   action(data: Json) {
     const id = randomUUID().slice(0, 12); this.store.put('action', id, data); return id;
@@ -351,7 +419,7 @@ export class Bridge {
         }
         const own = source?.fromMe || row.direction === 'out', body = m.body ?? m.newBody ?? m.text ?? '';
         const linkSender = own ? this.store.get('reaction-self', digest(this.c.session))?.sender || '' : source.linkSender || source.sender || chat;
-        const format: RelayFormat = { bot: row.bot, sender: this.store.canonical(linkSender), name: source.name || 'WhatsApp', own,
+        const format: RelayFormat = this.store.get('message-presentation', digest(JSON.stringify([row.bot, row.tg_chat, row.tg_id]))) || { bot: row.bot, sender: this.store.canonical(linkSender), name: source.name || 'WhatsApp', own,
           historical: source.historical, status: source.status, timestamp: source.timestamp };
         const text = relayText(format, body), part = splitFormatted(text, row.media ? 1000 : 3800)[0];
         try { await this.effect(`${key}:edit:${i}`, () => this.api.tg(this.token(row.bot), row.media ? 'editMessageCaption' : 'editMessageText', { ...extra,
@@ -482,9 +550,10 @@ export class Bridge {
       if (bot === 'master' && parameter) { await this.beginMirrorGroup(parameter, key); return; }
       if (bot !== 'master') {
         const registered = this.store.get('bot', bot); registered.ready = true; this.store.put('bot', bot, registered);
-        await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact.'
+        await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact. Use /history 50 to import recent messages here.'
           : 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then return here.', key);
-      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts and /muted_statuses to manage Status mutes. In the Status topic, reply to a post with /mute or /unmute_status. Use /sync all here for every group and contact bot. In a conversation: /create, /read, /history, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all clears the current management topic, including General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
+        if (contact) { await this.topic(contact.id, contact.name || contact.id, key + ':direct'); this.queueRetireInbox(contact.id, key); }
+      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts and /muted_statuses to manage Status mutes. In the Status topic, reply to a post with /mute or /unmute_status. Use /sync all here for every group and contact bot. In a conversation: /create, /read, /history 50, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all clears the current management topic, including General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
       return;
     }
     if (command === 'start' && bot !== 'master') {
@@ -550,6 +619,20 @@ export class Bridge {
     if (this.statuses.isTopic(m)) {
       await this.sendText(bot, chat, 'This is the WhatsApp Status archive. Use /statuses to refresh it, reply to a post with /mute to mute its author, or use /muted_statuses to manage mutes. Open a person’s chat to reply.', key, extra); return;
     }
+    if (command === 'history') {
+      const count = args.length ? Number(args[0]) : this.c.history || 20;
+      if (args.length > 1 || (args.length && !/^[1-9]\d{0,3}$/.test(args[0])) || count > 2000) { await this.sendText(bot, chat, 'Use /history <n>, with n from 1 to 2000.', key, extra); return; }
+      let conversation = route;
+      if (m.chat.type === 'private' && bot !== 'master' && contact) {
+        const registered = this.store.get('bot', bot); if (!registered.ready) this.store.put('bot', bot, { ...registered, ready: true });
+      }
+      if (!conversation && contact && m.chat.type === 'private') conversation = await this.topic(contact.id, contact.name || contact.id, key + ':direct');
+      if (!conversation) { await this.sendText(bot, chat, 'Use /history <n> inside a mirror group, a linked management topic, or the contact’s bot DM.', key, extra); return; }
+      if (['muted', 'ignored'].includes(conversation.mode)) { await this.sendText(bot, chat, 'Use /keep to resume this conversation before importing history.', key, extra); return; }
+      const run = this.conversationHistory.request(conversation.chatId, { chat, thread, ...(m.chat.type === 'private' ? { bot } : {}) }, count, key);
+      const here = this.conversationHistory.scope(conversation.chatId, run.target) === this.conversationHistory.scope(conversation.chatId, { chat, thread, ...(m.chat.type === 'private' ? { bot } : {}) });
+      await this.sendText(bot, chat, here ? `History queued: fetching up to ${run.count} messages, then posting oldest first here.` : 'History is already importing in another destination for this conversation. Wait for it to finish, then run /history here.', key, extra); return;
+    }
     if (!route) { await this.sendText(bot, chat, 'Use this command inside a linked conversation or its management topic.', key, extra); return; }
     if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Command target belongs to another WhatsApp conversation', 400);
     if (command === 'sync') {
@@ -607,12 +690,12 @@ export class Bridge {
       const membership = await this.api.tg(this.token('master'), 'getChatMember', { chat_id: d.tgChat, user_id: me.id });
       if (membership.status !== 'administrator') throw new ApiError('Make the master an administrator of the mirror group first', 400);
       if (this.store.all('route').some(r => r.chatId !== d.chatId && r.tgChat === d.tgChat)) throw new ApiError('Telegram group is already linked', 400);
-      this.store.put('route', d.chatId, { ...old, tgChat: d.tgChat, thread: undefined, mode: 'group' });
+      this.store.put('route', d.chatId, { ...old, inbox: old.inbox || (String(old.tgChat) === this.c.management && old.thread ? { chat: old.tgChat, thread: old.thread } : undefined), tgChat: d.tgChat, thread: undefined, mode: 'group' });
       if (request) this.store.put('chat-request', String(d.requestId), { ...request, used: true, selectedChat: String(d.tgChat) });
-      await this.sendText('master', d.tgChat, `Linked WhatsApp group ${d.chatId}. Your messages here will be sent to that group.`, key);
+      await this.sendText('master', d.tgChat, `Linked WhatsApp group ${d.chatId}. Your messages here will be sent to that group. Use /history 50 to import recent messages here.`, key);
       if (request) await this.sendText('master', this.c.owner, `Linked ${old.name || d.chatId} to its Telegram group. You can now chat there.`, key + ':confirmed', { reply_markup: { remove_keyboard: true } });
       this.metadata.queue({ scope: 'group', id: d.chatId, source: 'link', requestId: key });
-      this.queueHistory(d.chatId); return;
+      this.queueRetireInbox(d.chatId, key); return;
     }
     if (event.type === 'new_conversation') {
       const route = this.store.get('route', d.chatId); if (!route) return;
@@ -622,7 +705,7 @@ export class Bridge {
       await this.sendText('master', route.tgChat, `${route.name}\nWhatsApp ID: ${d.chatId}\nReply in this topic to send a message. ${d.chatId.endsWith('@g.us') ? 'Reply to a participant with /create to provision their bot.' : 'Choose whether to keep this conversation here or create a dedicated bot.'}`, key,
         { message_thread_id: route.thread, reply_markup: { inline_keyboard: [...(groupButton ? [[groupButton]] : []), buttons.slice(0, 3), buttons.slice(3)] } });
       this.metadata.queue({ scope: d.chatId.endsWith('@g.us') ? 'group' : 'contact', id: d.chatId, source: 'new', requestId: key });
-      this.queueHistory(d.chatId); return;
+      return;
     }
     if (event.type !== 'operator_action') throw new ApiError('Unknown management action', 400);
     const op = d.operation, chatId = d.chatId || d.chat;
@@ -636,7 +719,8 @@ export class Bridge {
       if (direct && ['inbox', 'dedicated'].includes(direct.mode)) this.store.put('route', d.sender, { ...direct, mode: 'dedicated' });
       this.metadata.queue({ scope: 'contact', id: d.sender, source: 'bind', requestId: key });
       await this.sendText('master', this.c.owner, `Bound @${bot.username} to ${contact.name}. Start it for private chat, and add it to any mirrored groups where you want its identity.`, key,
-        { reply_markup: { inline_keyboard: [[{ text: 'Start contact bot', url: `https://t.me/${bot.username}?start=bridge` }], [{ text: 'Add to a group', url: `https://t.me/${bot.username}?startgroup=bridge` }]] } }); return;
+        { reply_markup: { inline_keyboard: [[{ text: 'Start contact bot', url: `https://t.me/${bot.username}?start=bridge` }], [{ text: 'Add to a group', url: `https://t.me/${bot.username}?startgroup=bridge` }]] } });
+      if (bot.ready) this.queueRetireInbox(d.sender, key); return;
     }
     if (op === 'vote') {
       const previous = this.store.get('poll-selection', `${chatId}:${d.message}`) || [];
@@ -705,22 +789,15 @@ export class Bridge {
         user_administrator_rights: rights, bot_administrator_rights: rights, request_title: true } }]], resize_keyboard: true, one_time_keyboard: true } });
   }
   queueHistory(chatId: string, suffix = 'initial') {
-    if (this.c.history) this.store.enqueue('history:' + chatId + ':' + suffix, 'history:' + chatId, 'history', { chatId });
+    const target = this.conversationHistory.target(chatId);
+    if (target) this.conversationHistory.request(chatId, target, this.c.history || 20, suffix);
   }
   async markRead(chatId: string) {
     const result = await this.api.ow('chats/read', { chatId });
     if (result.success === false) throw new ApiError('OpenWA declined the read receipt; mark read in WhatsApp', 409);
   }
   async history(data: Json, key: string) {
-    const route = this.store.get('route', data.chatId);
-    if (!route || ['ignored', 'muted'].includes(route.mode)) return;
-    const rows = await this.api.ow(`messages/${encodeURIComponent(data.chatId)}/history?limit=${this.c.history}&includeMedia=false`);
-    if (!Array.isArray(rows)) throw new ApiError('Unexpected OpenWA history response', 502);
-    for (const m of rows.sort((a, b) => a.timestamp - b.timestamp)) {
-      const enriched = { ...m, chatId: data.chatId, isGroup: data.chatId.endsWith('@g.us') };
-      this.store.enqueue(`history-message:${data.chatId}:${m.id}`, 'wa:' + data.chatId, 'wa', { sessionId: this.c.session, event: 'message.received', data: enriched, historical: true });
-    }
-    if (!rows.length) await this.sendText('master', route.tgChat, '[No recent history is available from OpenWA.]', key, route.thread ? { message_thread_id: route.thread } : {});
+    await this.conversationHistory.fetch(data, key);
   }
   status() {
     return { configured: !!(this.c.masterToken && this.c.owner && this.c.management && this.c.openwaKey && this.c.session),

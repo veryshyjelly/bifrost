@@ -11,8 +11,8 @@ export function serviceMessage(m: Json) {
   return Object.keys(m).some(k => /^(new_chat_participant|new_chat_member|new_chat_members|left_chat_participant|left_chat_member|new_chat_title|new_chat_photo|delete_chat_photo|group_chat_created|supergroup_chat_created|channel_chat_created|pinned_message|migrate_to_chat_id|migrate_from_chat_id|message_auto_delete_timer_changed|forum_topic_|general_forum_topic_|video_chat_|write_access_allowed|users_shared|chat_shared|boost_added|chat_background_set|community_chat_joined)/.test(k));
 }
 const commands = (entries: string[][]) => entries.map(([command, description]) => ({ command, description }));
-const common = commands([['start', 'Show bridge help'], ['sync', 'Refresh WhatsApp metadata'], ['status', 'Show bridge and queue status'], ['clear', 'Clear bot notices in this chat or topic'], ['clear_log', 'Clear bot notices in this chat or topic']]);
-const groupCommands = [...common, ...commands([['statuses', 'Open and refresh WhatsApp Status posts'], ['mute_status', 'Reply to a Status post to mute its author'], ['unmute_status', 'Reply to a Status post to unmute its author'], ['muted_statuses', 'List and unmute people in the Status feed'], ['create', 'Reply to a participant to create their bot'], ['group', 'Create or select a Telegram mirror group'], ['read', 'Mark this WhatsApp conversation read'], ['history', 'Import available WhatsApp history'], ['keep', 'Resume this conversation'], ['mute', 'Mute this conversation; reply in Status to mute its author'], ['ignore', 'Ignore this conversation'], ['delete', 'Delete a replied-to WhatsApp message'], ['react', 'React to a replied-to WhatsApp message']])];
+const common = commands([['start', 'Show bridge help'], ['sync', 'Refresh WhatsApp metadata'], ['history', 'Import messages here: /history <n>'], ['status', 'Show bridge and queue status'], ['clear', 'Clear bot notices in this chat or topic'], ['clear_log', 'Clear bot notices in this chat or topic']]);
+const groupCommands = [...common, ...commands([['statuses', 'Open and refresh WhatsApp Status posts'], ['mute_status', 'Reply to a Status post to mute its author'], ['unmute_status', 'Reply to a Status post to unmute its author'], ['muted_statuses', 'List and unmute people in the Status feed'], ['create', 'Reply to a participant to create their bot'], ['group', 'Create or select a Telegram mirror group'], ['read', 'Mark this WhatsApp conversation read'], ['keep', 'Resume this conversation'], ['mute', 'Mute this conversation; reply in Status to mute its author'], ['ignore', 'Ignore this conversation'], ['delete', 'Delete a replied-to WhatsApp message'], ['react', 'React to a replied-to WhatsApp message']])];
 
 export class TelegramControl {
   b: Bridge;
@@ -98,6 +98,14 @@ export class TelegramControl {
   }
   async process(job: Json) {
     const p = job.payload;
+    if (job.type === 'control-retire-inbox') {
+      try { await this.b.retireInbox(p.chatId); }
+      catch (e) {
+        if (!(e instanceof ApiError) || ![400, 403, 409].includes(e.status)) this.retry(e);
+        await this.b.sendText('master', this.b.c.owner, 'The conversation is linked, but its old management topic could not be removed. Check Hermes’s Delete Messages permission and retry /start in the contact bot or link the mirror again.', job.dedup + ':notice');
+      }
+      return;
+    }
     if (job.type === 'control-revoke') return this.b.revocations.process(job);
     if (job.type === 'control-menu') { try { await this.install(p.bot); } catch (e) { this.retry(e); } return; }
     if (job.type === 'control-expire') {

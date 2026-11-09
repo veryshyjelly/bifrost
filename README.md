@@ -53,6 +53,10 @@ Follow the creation link, then select the contact in your private chat with the 
 
 A bound member bot can send private messages even when the contact has only appeared in a group: its first ordinary DM creates the missing direct conversation route. Replies retain WhatsApp quotes. Phone-originated messages in an active dedicated conversation are archived through that same member bot, labeled as yours, so later replies can quote them in the DM.
 
+History imports are manual. Run `/history 50` in a member bot's DM, a separate mirror group, or a linked management topic to fetch up to 50 available WhatsApp messages and post them there, oldest first. The batch is fetched before posting, and replies point to the corresponding Telegram message when it is available in that destination; quotes outside the imported batch get a short preview. Already delivered messages in that destination are skipped, while copies previously sent only to management can be imported into the new mirror. `/history` uses `HISTORY_LIMIT` (20 by default); explicit counts range from 1 to 2000. Fetching history sends no read receipt. Availability depends on OpenWA and WhatsApp; older attachments may be unavailable, with retained Telegram files used when available.
+
+Linking a separate mirror group or starting a bound member bot removes that conversation's old management topic and its messages. History is not copied automatically; invoke `/history <n>` in the new destination when desired. Hermes needs Delete Messages permission in the management forum. Topic cleanup runs independently so a permission refusal does not prevent conversation delivery. Existing links are not swept on startup; retry linking or `/start` in the member bot to request cleanup.
+
 Member-bot messages use Telegram's sender identity without repeating that person's name in the text, captions or edits. Hermes uses **Name: message** on one line, with every name linked: to that person's WhatsApp chat when their phone number is known, or the general WhatsApp launch page otherwise. History uses Telegram's native localized date/time, followed by the same compact message. Captions and edits use the same presentation; the owner's “sent from WhatsApp” marker remains visible. See [formatting capabilities and examples](docs/TELEGRAM-FORMATTING.md).
 
 WhatsApp Status posts share one **WhatsApp Status** topic in the management forum. Hermes creates it on startup and imports currently available posts; new `status.received` events arrive automatically. `/statuses` in Hermes opens the topic and refreshes available posts without duplicating the archive. Text, images, videos and voice statuses carry the poster's linked name and a native Telegram posting time. Missing/expired media gets a notice while its available caption is retained. Reading or refreshing this feed sends no WhatsApp view/read receipt.
@@ -76,7 +80,7 @@ Commands inside conversations:
 | Command | Behavior |
 | --- | --- |
 | `/read` | Mark the WhatsApp conversation read |
-| `/history` | Import up to 100 available recent messages without duplicating mapped messages |
+| `/history [n]` | Manually import up to n available messages here, oldest first with replies; default 20, maximum 2000 |
 | `/create` | Request a contact bot; in groups, reply to that person's message |
 | `/group` | Show the native create/select-and-link flow for a WhatsApp group |
 | `/sync` | Refresh this conversation's WhatsApp metadata and existing member bots |
