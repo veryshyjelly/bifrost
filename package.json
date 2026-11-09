@@ -12,6 +12,9 @@
     "import": "bun scripts/transfer.ts import",
     "start": "bun --env-file=bridge.env src/server.ts",
     "test": "bun test ./test",
+    "test:rewrite": "bun test ./test/rewrite",
+    "check:rewrite:oracle": "bun scripts/rewrite/oracle.ts",
+    "prepare:rewrite": "bun scripts/rewrite/prepare-context.ts",
     "test:stickers": "STICKER_TESTS=1 bun test --timeout 150000 ./test/stickers.test.ts",
     "check:repository": "bun scripts/check-repository.ts",
     "configure": "bun scripts/configure.ts",
@@ -24,6 +27,7 @@
   },
   "dependencies": {
     "lottie-web": "5.13.0",
+    "nbb": "1.6.214",
     "puppeteer-core": "25.16.0"
   }
 }

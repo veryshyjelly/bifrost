@@ -1,0 +1,2221 @@
+{
+  "baseline": "checkpoint-clojure-baseline",
+  "investigation": {
+    "docs/rewrite/01-current-architecture.md": "4a0c88ecb10f185165be958436c693eb0060f3a5e6d2e69c31f423f267bdd8c9",
+    "docs/rewrite/02-behavioral-specification.md": "9edbcd745d3492cdfdb909e90e26c31ac39c01a98bc1ebb1613b041fd364084f",
+    "docs/rewrite/03-domain-model.md": "28bd74c822a31883daee603047d1a0dcc46b1ce4c4a4ebfefb9094ea95920774",
+    "docs/rewrite/04-proposed-architecture.md": "85fc30296e30cd438332c0b8372966bf66fdd6ada2b1d3ffcbac3d422cdddf6d",
+    "docs/rewrite/05-migration-plan.md": "e3dc03957da32e50dfffd6e151042c4982349e6681556394e0bfe569391280ef",
+    "docs/rewrite/06-testing-strategy.md": "3d1c31cd5b86cedcd03c854dd2d1bd8368e611bb150f406b3ba4d633cc1c64e4",
+    "docs/rewrite/07-open-questions.md": "92795d7cc200ef2516a042812840ab9dd63db6c277c52b5b26745bc8f584d2c7",
+    "docs/rewrite/08-implementation-specification.md": "ab6091aea3dbe44b8597ea80acdd6074e0d5cd59f0d40b29a4d8f34d5b9984b8"
+  },
+  "notes": "Per-test inventory is a coverage floor. Workflow and failure-path mapping is in coverage-matrix.md. Pending means the entire original case has not yet been replayed through the candidate.",
+  "tests": [
+    {
+      "id": "baseline:test/bridge.test.ts:45",
+      "reference": "test/bridge.test.ts:45",
+      "name": "standalone management and legacy forwarding jobs converge on one durable action without HTTP forwarding",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:57",
+      "reference": "test/bridge.test.ts:57",
+      "name": "a group-only contact bot creates its direct route without a management topic and sends ordinary and quoted replies",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:71",
+      "reference": "test/bridge.test.ts:71",
+      "name": "unbound member DMs explain the missing binding instead of silently dropping the message",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:78",
+      "reference": "test/bridge.test.ts:78",
+      "name": "phone-originated private messages stay in their started member-bot DM and can be quoted by incoming replies",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:89",
+      "reference": "test/bridge.test.ts:89",
+      "name": "a deleted inbox topic is recreated after a definitive pre-delivery refusal and stale quotes are omitted",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:101",
+      "reference": "test/bridge.test.ts:101",
+      "name": "an old frozen master target can recover into the ready contact DM only before any delivery",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:117",
+      "reference": "test/bridge.test.ts:117",
+      "name": "a rejected media relay moves to the ready member DM without trying document fallback in the missing topic",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:134",
+      "reference": "test/bridge.test.ts:134",
+      "name": "a blocked member can fall back even when its management topic was deleted",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:150",
+      "reference": "test/bridge.test.ts:150",
+      "name": "edits of Telegram copies explicitly cleared from the archive do not recreate them",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:159",
+      "reference": "test/bridge.test.ts:159",
+      "name": "unknown conversation gets one topic; replay is deduplicated and never marks read",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:169",
+      "reference": "test/bridge.test.ts:169",
+      "name": "dedicated bot wins in a group only when present; master falls back with sender name",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:183",
+      "reference": "test/bridge.test.ts:183",
+      "name": "member-bot media, stickers, locations, cards and polls omit redundant sender headers",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:200",
+      "reference": "test/bridge.test.ts:200",
+      "name": "member-bot history keeps a compact time and body while phone-originated sends keep owner attribution",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:214",
+      "reference": "test/bridge.test.ts:214",
+      "name": "member-bot edits do not restore a sender header; master edit fallback remains attributed",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:227",
+      "reference": "test/bridge.test.ts:227",
+      "name": "private member-bot messages and edit fallbacks stay nameless in the correct bot DM",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:239",
+      "reference": "test/bridge.test.ts:239",
+      "name": "Telegram reply maps to WhatsApp quote; send echoes and overlapping bot updates do not loop",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:256",
+      "reference": "test/bridge.test.ts:256",
+      "name": "/create in a linked whole group accepts Telegram reply-thread IDs and selects the replied-to participant",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:280",
+      "reference": "test/bridge.test.ts:280",
+      "name": "ordinary replies in a whole group share one queue stream and retain WhatsApp quotes",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:295",
+      "reference": "test/bridge.test.ts:295",
+      "name": "configured inbox topics still require an exact topic match",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:309",
+      "reference": "test/bridge.test.ts:309",
+      "name": "whole-group reply-thread handling still rejects a quoted message from another WhatsApp conversation",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:318",
+      "reference": "test/bridge.test.ts:318",
+      "name": "uncertain remote send pauses a conversation, while known 429 retries",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:329",
+      "reference": "test/bridge.test.ts:329",
+      "name": "sealed tokens authenticate and are absent from SQLite plaintext",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:336",
+      "reference": "test/bridge.test.ts:336",
+      "name": "management signatures reject forgery and repeated actions are durable",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:343",
+      "reference": "test/bridge.test.ts:343",
+      "name": "out-of-order WhatsApp revocation uses revokedId and prevents history resurrection",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:350",
+      "reference": "test/bridge.test.ts:350",
+      "name": "phone/LID aliases share a contact bot across conversations",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:358",
+      "reference": "test/bridge.test.ts:358",
+      "name": "each WhatsApp media class uses native Telegram methods; view-once content exposed by OpenWA is archived",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:368",
+      "reference": "test/bridge.test.ts:368",
+      "name": "converted WhatsApp stickers use WebM filenames and preserve quote mappings across a partial retry",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:384",
+      "reference": "test/bridge.test.ts:384",
+      "name": "sticker conversion failures and definitive Telegram rejections send the untouched original document",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:400",
+      "reference": "test/bridge.test.ts:400",
+      "name": "outgoing TGS and WebM stickers use converted WebP with replies and the original delivery key",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:419",
+      "reference": "test/bridge.test.ts:419",
+      "name": "ordinary documents bypass conversion and failed outgoing sticker conversions keep original bytes",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:435",
+      "reference": "test/bridge.test.ts:435",
+      "name": "rate-limited sticker sends freeze the conversion choice and bytes even after a converter recovers",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:452",
+      "reference": "test/bridge.test.ts:452",
+      "name": "missing media is visible, and location/contact/poll use structured representations",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:465",
+      "reference": "test/bridge.test.ts:465",
+      "name": "dedicated private bot waits for Start, then routes private replies to the contact",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:478",
+      "reference": "test/bridge.test.ts:478",
+      "name": "muted conversations can resume; creating a bot at capacity leaves master routing intact",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:491",
+      "reference": "test/bridge.test.ts:491",
+      "name": "429 is retried with the same WhatsApp idempotency key",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:503",
+      "reference": "test/bridge.test.ts:503",
+      "name": "child-bot group callbacks remain actionable while its ordinary group updates are ignored",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:509",
+      "reference": "test/bridge.test.ts:509",
+      "name": "private message ids are isolated between contact bots",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:523",
+      "reference": "test/bridge.test.ts:523",
+      "name": "a partial sticker delivery retries the attachment without losing it or duplicating the label",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:539",
+      "reference": "test/bridge.test.ts:539",
+      "name": "blocked dedicated bot falls back to its management topic on a definitive Telegram refusal",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:552",
+      "reference": "test/bridge.test.ts:552",
+      "name": "completed external effects retain their original destination when routing changes during a retry",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:564",
+      "reference": "test/bridge.test.ts:564",
+      "name": "history is bounded and enqueued with historical markers",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/bridge.test.ts:573",
+      "reference": "test/bridge.test.ts:573",
+      "name": "opening a second store does not reset a live process; explicit recovery preserves uncertain sends",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/bridge workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/configure.test.ts:8",
+      "reference": "test/configure.test.ts:8",
+      "name": "fresh configuration generates independent private secrets from the tracked template",
+      "sourceSha256": "cbf56d897f990f3d25d527b5b09d1c9a56cf5ca48763818c88fb2579570c5d74",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/configure workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/configure.test.ts:21",
+      "reference": "test/configure.test.ts:21",
+      "name": "reconfiguration preserves existing encryption keys and all operator configuration",
+      "sourceSha256": "cbf56d897f990f3d25d527b5b09d1c9a56cf5ca48763818c88fb2579570c5d74",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/configure workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:43",
+      "reference": "test/control.test.ts:43",
+      "name": "Bifrost ignores commands for another bot, while the addressed member bot handles its own group Start",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:56",
+      "reference": "test/control.test.ts:56",
+      "name": "join, leave, title and forum service events produce no unsupported-message replies or WhatsApp operations",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:65",
+      "reference": "test/control.test.ts:65",
+      "name": "edited commands and edits of former commands never become WhatsApp messages",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:74",
+      "reference": "test/control.test.ts:74",
+      "name": "commands and notices expire durably, while WhatsApp text and poll relays remain ordinary chat messages",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:92",
+      "reference": "test/control.test.ts:92",
+      "name": "interactive command replies get a longer lifetime",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:99",
+      "reference": "test/control.test.ts:99",
+      "name": "observing a member-bot notice through Bifrost keeps its expiration and owner-only execution checks",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:109",
+      "reference": "test/control.test.ts:109",
+      "name": "/clear log removes local notices and command messages, preserving chat messages, bindings and mappings",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:123",
+      "reference": "test/control.test.ts:123",
+      "name": "/clear all in management General preserves other topics and old/protected messages",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:138",
+      "reference": "test/control.test.ts:138",
+      "name": "both clear-all forms clear only the current management topic, preserving other chats, later messages and mappings",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:161",
+      "reference": "test/control.test.ts:161",
+      "name": "clear all remains unavailable in mirror groups, private chats and through member bots",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:171",
+      "reference": "test/control.test.ts:171",
+      "name": "cleanup isolates private message IDs for each member bot",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:181",
+      "reference": "test/control.test.ts:181",
+      "name": "one undeletable message does not prevent removal of other notices",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:191",
+      "reference": "test/control.test.ts:191",
+      "name": "ambiguous cleanup failures retry as idempotent deletes without uncertain delivery effects",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:202",
+      "reference": "test/control.test.ts:202",
+      "name": "startup registers command menus for migrated master/member bots, including management-topic clear_all",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/control.test.ts:220",
+      "reference": "test/control.test.ts:220",
+      "name": "existing recorded chat/history is indexed for cleanup without expiring mirrored conversations",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/control workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:48",
+      "reference": "test/format.test.ts:48",
+      "name": "master relay uses a bold WhatsApp-linked name and body on one line",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:54",
+      "reference": "test/format.test.ts:54",
+      "name": "verified phone JIDs open their chat; unknown identities use the generic WhatsApp launch link",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:62",
+      "reference": "test/format.test.ts:62",
+      "name": "untrusted HTML characters remain literal text and cannot inject markup or links",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:71",
+      "reference": "test/format.test.ts:71",
+      "name": "compact history uses linked sender and bracketed native time while member bots omit their names",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:84",
+      "reference": "test/format.test.ts:84",
+      "name": "invalid source timestamps remain clearly historical without inventing a date",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:90",
+      "reference": "test/format.test.ts:90",
+      "name": "compact clocks handle invalid timestamps and dates group in the configured timezone",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:103",
+      "reference": "test/format.test.ts:103",
+      "name": "saved history presentations retain legacy rendering when compact style was not selected",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:109",
+      "reference": "test/format.test.ts:109",
+      "name": "formatted splitting preserves every UTF-16 character, clips links safely and keeps native time atomic",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:119",
+      "reference": "test/format.test.ts:119",
+      "name": "caption entity offsets are safe and oversize raw captions must be handled as text",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:125",
+      "reference": "test/format.test.ts:125",
+      "name": "relay transport carries native entities and disables the generated WhatsApp header preview",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:135",
+      "reference": "test/format.test.ts:135",
+      "name": "sender links resolve known LID aliases rather than treating a LID as a phone number",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:141",
+      "reference": "test/format.test.ts:141",
+      "name": "phone-originated private messages and edits never link You to the conversation partner",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:152",
+      "reference": "test/format.test.ts:152",
+      "name": "You links only to the independently verified session phone",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:161",
+      "reference": "test/format.test.ts:161",
+      "name": "long media captions keep all content in formatted text and a compact linked attachment header",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:173",
+      "reference": "test/format.test.ts:173",
+      "name": "history metadata survives formatted message edits and captions do not contain raw HTML",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:183",
+      "reference": "test/format.test.ts:183",
+      "name": "formatted packets remain immutable across a partial send retry",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:191",
+      "reference": "test/format.test.ts:191",
+      "name": "presentation stays frozen while a media upload retries after a contact rename",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/format.test.ts:201",
+      "reference": "test/format.test.ts:201",
+      "name": "pre-upgrade partial deliveries retain their legacy packet boundaries",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/format workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/group-picker.test.ts:32",
+      "reference": "test/group-picker.test.ts:32",
+      "name": "native group creation/selection grants master rights and links only after the owner shares a group",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/group-picker workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/group-picker.test.ts:55",
+      "reference": "test/group-picker.test.ts:55",
+      "name": "expired and previous-session buttons produce guidance without opening a selector",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/group-picker workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/group-picker.test.ts:68",
+      "reference": "test/group-picker.test.ts:68",
+      "name": "unknown requests and other Telegram users cannot link a group",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/group-picker workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/group-picker.test.ts:78",
+      "reference": "test/group-picker.test.ts:78",
+      "name": "picker rejects public destinations and the management group",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/group-picker workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/group-picker.test.ts:88",
+      "reference": "test/group-picker.test.ts:88",
+      "name": "new group inbox controls include the button and /group works for existing topics",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/group-picker workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:53",
+      "reference": "test/history.test.ts:53",
+      "name": "queued history resumes under its original checkpoint after OpenWA credentials change",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:68",
+      "reference": "test/history.test.ts:68",
+      "name": "an unexpired history choice remains usable after an OpenWA session rotation",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:80",
+      "reference": "test/history.test.ts:80",
+      "name": "/history n fetches the complete batch first, posts oldest first, and recreates native reply chains",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:94",
+      "reference": "test/history.test.ts:94",
+      "name": "history delivered to management can be imported into a mirror and repeated requests do not duplicate it",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:108",
+      "reference": "test/history.test.ts:108",
+      "name": "history in a new member DM includes own messages and preserves bot-scoped reply targets",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:119",
+      "reference": "test/history.test.ts:119",
+      "name": "history retries use the saved batch, preserve earlier parts and hold only live events for this conversation",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:138",
+      "reference": "test/history.test.ts:138",
+      "name": "history orders parents before children even with equal or inconsistent source timestamps and previews outside-window quotes",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:146",
+      "reference": "test/history.test.ts:146",
+      "name": "history reuses archived Telegram media even after its management topic has been removed",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:161",
+      "reference": "test/history.test.ts:161",
+      "name": "manual history can restore a copy explicitly cleared from the current destination without reusing deleted receipts",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:169",
+      "reference": "test/history.test.ts:169",
+      "name": "history sends retained WebM sticker media through the Telegram sticker preparation path",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:187",
+      "reference": "test/history.test.ts:187",
+      "name": "history validates counts and uses the gateway deep-history option above 100",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:195",
+      "reference": "test/history.test.ts:195",
+      "name": "history fetch failure releases live delivery and never deletes a management topic",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:203",
+      "reference": "test/history.test.ts:203",
+      "name": "linking a mirror queues old-topic deletion but never imports history automatically",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:215",
+      "reference": "test/history.test.ts:215",
+      "name": "starting a bound DM retires its inbox separately and cleanup refusal does not block messaging",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:228",
+      "reference": "test/history.test.ts:228",
+      "name": "retiring a DM topic is durable and a blocked member recreates an inbox lazily",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:240",
+      "reference": "test/history.test.ts:240",
+      "name": "General and management topics shared with another conversation cannot be deleted by retirement",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:249",
+      "reference": "test/history.test.ts:249",
+      "name": "a retired direct route cannot capture General or another management topic",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:258",
+      "reference": "test/history.test.ts:258",
+      "name": "history requests from a previous session cannot block the current session",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:265",
+      "reference": "test/history.test.ts:265",
+      "name": "/history waits for a choice without fetching or holding live messages, and Cancel does not start an import",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:279",
+      "reference": "test/history.test.ts:279",
+      "name": "Import all restores manually cleared messages despite old delivery records and links replies to the new copies",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:299",
+      "reference": "test/history.test.ts:299",
+      "name": "Import all previews out-of-window quotes instead of replying to stale copies from a cleared chat",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:308",
+      "reference": "test/history.test.ts:308",
+      "name": "Import all retries a frozen batch without duplicating parts and repeated clicks cannot start another run or switch mode",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:325",
+      "reference": "test/history.test.ts:325",
+      "name": "Import all still excludes WhatsApp-revoked messages and preserves other destinations",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:340",
+      "reference": "test/history.test.ts:340",
+      "name": "history choices validate owner, bot, session, destination, topic, binding and expiry",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:358",
+      "reference": "test/history.test.ts:358",
+      "name": "member DM Import all remains bot scoped and legacy Recent history buttons now show the choice",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:375",
+      "reference": "test/history.test.ts:375",
+      "name": "two pending choices cannot start concurrent imports or change an active import mode",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:383",
+      "reference": "test/history.test.ts:383",
+      "name": "reactions prefer a fresh unavailable-media placeholder over a stale attachment from before clearing",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:397",
+      "reference": "test/history.test.ts:397",
+      "name": "history posts one retained date marker per day with time-only messages and replies across midnight",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:410",
+      "reference": "test/history.test.ts:410",
+      "name": "history date markers survive a retry and a fresh worker without duplicate date posts",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:420",
+      "reference": "test/history.test.ts:420",
+      "name": "skipped and revoked messages do not produce empty date sections",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:431",
+      "reference": "test/history.test.ts:431",
+      "name": "member DM date markers use its bot and compact imported messages still identify the owner",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:441",
+      "reference": "test/history.test.ts:441",
+      "name": "older in-progress history runs keep their legacy presentation and do not gain date markers mid-import",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:450",
+      "reference": "test/history.test.ts:450",
+      "name": "every history choice deletes only its own prompt and duplicate clicks cannot schedule more deletion",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:463",
+      "reference": "test/history.test.ts:463",
+      "name": "prompt-deletion network failures retry independently without blocking an import",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/history.test.ts:474",
+      "reference": "test/history.test.ts:474",
+      "name": "group history uses each present member bot while Bifrost handles absent/unbound authors, own messages and dates",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/history workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/http.test.ts:14",
+      "reference": "test/http.test.ts:14",
+      "name": "Telegram refusals expose safe reason codes without logging provider descriptions",
+      "sourceSha256": "e5f19ad78ec65f86b5bdd089e80e0888bdd56b2fecf24c5654d24d29a663a846",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/http workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/http.test.ts:26",
+      "reference": "test/http.test.ts:26",
+      "name": "real HTTP ingress authenticates raw OpenWA bytes, Telegram secrets and signed management actions",
+      "sourceSha256": "e5f19ad78ec65f86b5bdd089e80e0888bdd56b2fecf24c5654d24d29a663a846",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/http workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/http.test.ts:47",
+      "reference": "test/http.test.ts:47",
+      "name": "real API transport preserves JSON, quotes, idempotency and handles rate limits without leaking tokens",
+      "sourceSha256": "e5f19ad78ec65f86b5bdd089e80e0888bdd56b2fecf24c5654d24d29a663a846",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/http workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/http.test.ts:70",
+      "reference": "test/http.test.ts:70",
+      "name": "real multipart transport preserves attachment bytes and caption entities",
+      "sourceSha256": "e5f19ad78ec65f86b5bdd089e80e0888bdd56b2fecf24c5654d24d29a663a846",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/http workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/http.test.ts:89",
+      "reference": "test/http.test.ts:89",
+      "name": "Telegram caption edits satisfy the OpenWA HTTP contract and a refused edit cannot stall later sends",
+      "sourceSha256": "e5f19ad78ec65f86b5bdd089e80e0888bdd56b2fecf24c5654d24d29a663a846",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/http workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/http.test.ts:130",
+      "reference": "test/http.test.ts:130",
+      "name": "edit transport keeps known rate refusals retryable and ambiguous mutations uncertain",
+      "sourceSha256": "e5f19ad78ec65f86b5bdd089e80e0888bdd56b2fecf24c5654d24d29a663a846",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/http workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/identity.test.ts:13",
+      "reference": "test/identity.test.ts:13",
+      "name": "legacy database keeps its original state identity after restart with new OpenWA credentials",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/identity workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/identity.test.ts:42",
+      "reference": "test/identity.test.ts:42",
+      "name": "explicit permanent identity is independent of OpenWA and a conflicting identity is refused",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/identity workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/identity.test.ts:51",
+      "reference": "test/identity.test.ts:51",
+      "name": "new webhook transport rejects the old session and cannot override the permanent account",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/identity workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/identity.test.ts:68",
+      "reference": "test/identity.test.ts:68",
+      "name": "active history still holds new and legacy live jobs after the OpenWA session changes",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/identity workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/identity.test.ts:81",
+      "reference": "test/identity.test.ts:81",
+      "name": "uncertain outgoing sends remain blocked when the API key and session are replaced",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/identity workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:49",
+      "reference": "test/mentions.test.ts:49",
+      "name": "incoming WhatsApp tags become readable native bot mentions with correct UTF-16 offsets and no duplicate sender header",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:59",
+      "reference": "test/mentions.test.ts:59",
+      "name": "absent bots link to Telegram, unbound members link to WhatsApp, and hidden numbers use the uniform fallback",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:66",
+      "reference": "test/mentions.test.ts:66",
+      "name": "mention metadata and phone/LID aliases determine replacements, while ambiguous or literal numbers stay unchanged",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:74",
+      "reference": "test/mentions.test.ts:74",
+      "name": "incoming captions, replies and edits retain mentions, and explicit removal clears them",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:88",
+      "reference": "test/mentions.test.ts:88",
+      "name": "manual history renders mention entities alongside native dates and keeps source mappings",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:98",
+      "reference": "test/mentions.test.ts:98",
+      "name": "incoming mention rendering remains stable across retries and text splitting preserves offsets",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:107",
+      "reference": "test/mentions.test.ts:107",
+      "name": "outgoing bot usernames and name entities produce one native WhatsApp mention and preserve quoted replies",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:115",
+      "reference": "test/mentions.test.ts:115",
+      "name": "emails, URLs, code and unrelated numbers do not become outgoing mentions",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:123",
+      "reference": "test/mentions.test.ts:123",
+      "name": "LID-bound bots and copied unbound tags send their exact WhatsApp identities",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:131",
+      "reference": "test/mentions.test.ts:131",
+      "name": "outgoing captions and edits carry updated mention lists, including explicit empty removal",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:144",
+      "reference": "test/mentions.test.ts:144",
+      "name": "invalid, wrong-group, previous-session and departed-member tokens are refused before sending",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:155",
+      "reference": "test/mentions.test.ts:155",
+      "name": "copy tokens persist across reopening and renaming, and duplicate names get distinct identities",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:165",
+      "reference": "test/mentions.test.ts:165",
+      "name": "/mention searches names and usernames, gives copy buttons, and never writes to WhatsApp",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:175",
+      "reference": "test/mentions.test.ts:175",
+      "name": "picker uses scoped pagination and rejects wrong owner, bot, topic, session and expired callbacks",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:192",
+      "reference": "test/mentions.test.ts:192",
+      "name": "stale-roster refresh failure shows a cached picker but refuses unvalidated sends",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:199",
+      "reference": "test/mentions.test.ts:199",
+      "name": "429 retries retain the original resolved text and identity after bot bindings change",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:207",
+      "reference": "test/mentions.test.ts:207",
+      "name": "group member bots ignore ordinary tagged updates so Bifrost sends exactly once",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:214",
+      "reference": "test/mentions.test.ts:214",
+      "name": "incomplete copied tokens are refused and fresh roster caches expire after five minutes",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:225",
+      "reference": "test/mentions.test.ts:225",
+      "name": "picker tokens handle short-ID collisions and aliases learned after copying",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/mentions.test.ts:234",
+      "reference": "test/mentions.test.ts:234",
+      "name": "picker accepts a linked management topic, isolates its callbacks and rejects unrelated DMs and owners",
+      "sourceSha256": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/mentions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:45",
+      "reference": "test/reactions.test.ts:45",
+      "name": "reactions to missing messages and notices targeting deleted topics do not block later deliveries",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:57",
+      "reference": "test/reactions.test.ts:57",
+      "name": "WhatsApp reactions appear natively as the reactor’s available member bot without a reply notice",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:64",
+      "reference": "test/reactions.test.ts:64",
+      "name": "removing one member’s reaction clears only that bot’s reaction",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:70",
+      "reference": "test/reactions.test.ts:70",
+      "name": "Bifrost shows the latest unbound reaction and preserves remaining reactors when one removes theirs",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:78",
+      "reference": "test/reactions.test.ts:78",
+      "name": "full OpenWA reaction snapshots and LID aliases reconstruct every actor and remove missing reactions",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:86",
+      "reference": "test/reactions.test.ts:86",
+      "name": "private message IDs remain scoped to their original bot, regardless of who reacted in WhatsApp",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:93",
+      "reference": "test/reactions.test.ts:93",
+      "name": "split messages react on the attachment once and skip Telegram copies already cleared",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:101",
+      "reference": "test/reactions.test.ts:101",
+      "name": "a member bot absent from the group falls back to Bifrost",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:106",
+      "reference": "test/reactions.test.ts:106",
+      "name": "unavailable emoji clears a stale native reaction and uses one attributed fallback in the same topic",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:118",
+      "reference": "test/reactions.test.ts:118",
+      "name": "a rate-limited fallback notice is not lost when the original reaction event retries",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:125",
+      "reference": "test/reactions.test.ts:125",
+      "name": "ambiguous native updates safely retry without uncertain outgoing-send effects",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:134",
+      "reference": "test/reactions.test.ts:134",
+      "name": "Telegram-owner reactions echoing from WhatsApp do not add duplicate bot reactions or loop back",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:144",
+      "reference": "test/reactions.test.ts:144",
+      "name": "later repeats of a reaction already represented by the Telegram owner remain suppressed",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:155",
+      "reference": "test/reactions.test.ts:155",
+      "name": "WhatsApp heart variations normalize to Telegram emoji and do not create a second reaction",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:162",
+      "reference": "test/reactions.test.ts:162",
+      "name": "unsupported Telegram custom reactions do not clear an existing WhatsApp reaction",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:168",
+      "reference": "test/reactions.test.ts:168",
+      "name": "Bifrost maps laughing reactions on owner messages, deduplicates equivalent changes and clears on removal",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:178",
+      "reference": "test/reactions.test.ts:178",
+      "name": "equivalent reactions work through member bots and private copies without altering supported emoji",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:186",
+      "reference": "test/reactions.test.ts:186",
+      "name": "a refused equivalent and an unsupported unmapped emoji both keep the original in text fallbacks",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:195",
+      "reference": "test/reactions.test.ts:195",
+      "name": "Telegram-owner reaction echoes stay suppressed after adding equivalent rendering",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:204",
+      "reference": "test/reactions.test.ts:204",
+      "name": "Telegram custom reactions forward their Unicode equivalent and cache it without converting it to Telegram approximations",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:214",
+      "reference": "test/reactions.test.ts:214",
+      "name": "member DM reactions are admitted with bot-scoped mappings while group duplicates are ignored",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:223",
+      "reference": "test/reactions.test.ts:223",
+      "name": "adding a custom reaction beside an existing reaction forwards the new one; removal keeps the remaining one",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:235",
+      "reference": "test/reactions.test.ts:235",
+      "name": "unresolvable custom reactions produce a temporary independent notice without clearing WhatsApp or blocking a chat",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:244",
+      "reference": "test/reactions.test.ts:244",
+      "name": "a member unable to access another bot’s message falls back to Bifrost and cached refusals do not suppress that fallback",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:259",
+      "reference": "test/reactions.test.ts:259",
+      "name": "old definitive reaction refusals expire so corrected permissions can recover",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/reactions.test.ts:269",
+      "reference": "test/reactions.test.ts:269",
+      "name": "custom-emoji resolution and outbound payload stay frozen across a known send retry",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/reactions workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:62",
+      "reference": "test/revocations.test.ts:62",
+      "name": "a deleted owner message gets Delete/Keep without overwriting or deleting its Telegram content",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:73",
+      "reference": "test/revocations.test.ts:73",
+      "name": "Keep removes the fallback notice and preserves the original, including after late edits/history",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:86",
+      "reference": "test/revocations.test.ts:86",
+      "name": "own phone-originated messages get inline choices; Keep and expiration remove only the buttons",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:97",
+      "reference": "test/revocations.test.ts:97",
+      "name": "Delete removes every text/media part in the chosen destination while preserving other copies and mappings",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:108",
+      "reference": "test/revocations.test.ts:108",
+      "name": "other people’s deleted text/media copies are removed automatically without a replacement or choices",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:115",
+      "reference": "test/revocations.test.ts:115",
+      "name": "duplicate events and conflicting clicks cannot reopen or reverse a completed choice",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:127",
+      "reference": "test/revocations.test.ts:127",
+      "name": "choices validate owner, bot, destination, message, session and expiry before changing content",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:140",
+      "reference": "test/revocations.test.ts:140",
+      "name": "expiration defaults to keeping the message and never deletes the original",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:148",
+      "reference": "test/revocations.test.ts:148",
+      "name": "member-bot private copies keep their bot-scoped identity even when Telegram message IDs overlap",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:158",
+      "reference": "test/revocations.test.ts:158",
+      "name": "a Telegram deletion refusal preserves the remaining copy and produces no destructive content replacement",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:168",
+      "reference": "test/revocations.test.ts:168",
+      "name": "an ambiguous keyboard update safely retries without pausing as an uncertain send",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:178",
+      "reference": "test/revocations.test.ts:178",
+      "name": "saved WhatsApp phone events identify the owner for messages predating the fromMe metadata",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:186",
+      "reference": "test/revocations.test.ts:186",
+      "name": "fallback prompt expiration keeps the owner’s original message",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:193",
+      "reference": "test/revocations.test.ts:193",
+      "name": "a timed-out automatic deletion retries safely without an uncertain message send",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/revocations.test.ts:202",
+      "reference": "test/revocations.test.ts:202",
+      "name": "a timed-out callback acknowledgement retries without blocking the conversation as uncertain",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/revocations workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/setup.test.ts:32",
+      "reference": "test/setup.test.ts:32",
+      "name": "setup accepts OpenWA ready, migrates before local Telegram calls and installs both webhooks",
+      "sourceSha256": "349ad1d40d373c2a18e7702cb2b33d8fc7b4e867c660573e93518431367d34aa",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/setup workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/setup.test.ts:42",
+      "reference": "test/setup.test.ts:42",
+      "name": "setup refuses incomplete or disconnected sessions before migrating or registering callbacks",
+      "sourceSha256": "349ad1d40d373c2a18e7702cb2b33d8fc7b4e867c660573e93518431367d34aa",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/setup workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:60",
+      "reference": "test/statuses.test.ts:60",
+      "name": "Status webhooks share one archive topic with linked authors and native times, without new conversations",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:79",
+      "reference": "test/statuses.test.ts:79",
+      "name": "startup upgrades only bridge callback events, imports available stored Status posts and deduplicates webhook races",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:98",
+      "reference": "test/statuses.test.ts:98",
+      "name": "a fresh or wildcard webhook installation remains idempotent",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:108",
+      "reference": "test/statuses.test.ts:108",
+      "name": "image, video and voice Status posts use native media with attributed captions in the feed",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:123",
+      "reference": "test/statuses.test.ts:123",
+      "name": "Status media uses the authenticated local status endpoint and never an advertised media URL",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:132",
+      "reference": "test/statuses.test.ts:132",
+      "name": "omitted or expired media keeps its caption and a readable unavailable notice",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:143",
+      "reference": "test/statuses.test.ts:143",
+      "name": "expired and malformed incoming stories are skipped while already archived posts remain",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:156",
+      "reference": "test/statuses.test.ts:156",
+      "name": "typing, edits, message actions and reactions in the Status topic cannot publish or send WhatsApp messages",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:172",
+      "reference": "test/statuses.test.ts:172",
+      "name": "/statuses opens and refreshes the feed from Bifrost DM; /status remains the health command",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:187",
+      "reference": "test/statuses.test.ts:187",
+      "name": "replying /mute in Status suppresses only that author before media download, preserving chats and archived posts",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:206",
+      "reference": "test/statuses.test.ts:206",
+      "name": "refresh honors mutes and unmuting resumes new posts without replaying stories skipped while muted",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:222",
+      "reference": "test/statuses.test.ts:222",
+      "name": "muted-person preferences survive reopening SQLite and resolve aliases with the latest preference winning",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:239",
+      "reference": "test/statuses.test.ts:239",
+      "name": "muted list supports one-tap unmute and pagination without changing other people’s preferences",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:260",
+      "reference": "test/statuses.test.ts:260",
+      "name": "mute controls enforce owner, bot, session, chat, topic and expiry; stale buttons cannot undo a later mute",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:284",
+      "reference": "test/statuses.test.ts:284",
+      "name": "retrying a mute confirmation or unmute callback cannot reverse a newer decision from another chat",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:299",
+      "reference": "test/statuses.test.ts:299",
+      "name": "Status mute commands require a mapped Status reply and ordinary conversation mute keeps its existing behavior",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/statuses.test.ts:311",
+      "reference": "test/statuses.test.ts:311",
+      "name": "Status topic clear log preserves posts, while clear all removes only this topic’s recorded posts",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/statuses workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:44",
+      "reference": "test/stickers.test.ts:44",
+      "name": "static WebP passes through byte-for-byte; non-square stickers get transparent padding",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:54",
+      "reference": "test/stickers.test.ts:54",
+      "name": "animated WebP becomes a moving transparent VP9 sticker with variable frame timing",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:69",
+      "reference": "test/stickers.test.ts:69",
+      "name": "long animations preserve their ending while speeding up to three seconds",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:76",
+      "reference": "test/stickers.test.ts:76",
+      "name": "Telegram VP9 alpha survives conversion to WhatsApp animated WebP",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:93",
+      "reference": "test/stickers.test.ts:93",
+      "name": "timeout kills encoder descendants and removes the private job directory",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:114",
+      "reference": "test/stickers.test.ts:114",
+      "name": "TGS uses its frame rate and nonzero in-point, preserving motion and transparency",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:136",
+      "reference": "test/stickers.test.ts:136",
+      "name": "dense WhatsApp animations fit after extra compression while retaining motion, duration and alpha",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:167",
+      "reference": "test/stickers.test.ts:167",
+      "name": "malformed and excessive inputs fail safely; concurrent jobs leave no intermediates",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/stickers.test.ts:177",
+      "reference": "test/stickers.test.ts:177",
+      "name": "high-detail animations either meet the video size ceiling or retain the original fallback",
+      "sourceSha256": "d094eb1866daa62972305eac863b0ea645e47be8939c4ffd4b75d54e6e596dd4",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/stickers workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:67",
+      "reference": "test/sync.test.ts:67",
+      "name": "sync updates group metadata, existing member bots and missing-bot buttons without WhatsApp writes",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:84",
+      "reference": "test/sync.test.ts:84",
+      "name": "an inbox group only renames its topic and never overwrites the shared management group",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:92",
+      "reference": "test/sync.test.ts:92",
+      "name": "content-hash picture caching avoids repeated uploads even when signed source URLs rotate",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:108",
+      "reference": "test/sync.test.ts:108",
+      "name": "hidden pictures and unavailable descriptions preserve Telegram data",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:117",
+      "reference": "test/sync.test.ts:117",
+      "name": "incomplete metadata and failed lookups cannot clear the old roster or group identity",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:129",
+      "reference": "test/sync.test.ts:129",
+      "name": "missing group permission yields a scoped grant button while contact metadata can still sync",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:143",
+      "reference": "test/sync.test.ts:143",
+      "name": "one contact bot shared across groups is fetched once and LID aliases retain its binding",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:156",
+      "reference": "test/sync.test.ts:156",
+      "name": "/sync scopes to its conversation, and global sync uses the local management queue",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:172",
+      "reference": "test/sync.test.ts:172",
+      "name": "/sync in a bound member bot DM works without a one-to-one route and reports back through that bot",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:195",
+      "reference": "test/sync.test.ts:195",
+      "name": "an unbound member bot explains the missing binding for Start and /sync without accessing WhatsApp",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:209",
+      "reference": "test/sync.test.ts:209",
+      "name": "member-bot DM sync keeps the contact scope with an existing inbox topic and rejects global sync",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:225",
+      "reference": "test/sync.test.ts:225",
+      "name": "a failed group lookup does not prevent existing contact bots from syncing",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:235",
+      "reference": "test/sync.test.ts:235",
+      "name": "chat jobs take priority over metadata work, and coalesced manual requests receive a completion",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:248",
+      "reference": "test/sync.test.ts:248",
+      "name": "cron is timezone-aware and persists one run per scheduled minute across restarts",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/sync.test.ts:258",
+      "reference": "test/sync.test.ts:258",
+      "name": "cron supports quarter-hour, daily, weekday and disabled schedules and rejects malformed fields",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/sync workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/transfer.test.ts:9",
+      "reference": "test/transfer.test.ts:9",
+      "name": "import keeps credentials literal, normalizes only local paths and removes the retired n8n setting",
+      "sourceSha256": "5ac6aa670507feceb3d7ea64b2871ef046eb5a2c46c6a018c21902e862fa3b4b",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/transfer workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/transfer.test.ts:18",
+      "reference": "test/transfer.test.ts:18",
+      "name": "export discovers legacy and Bifrost named volumes and refuses ambiguous or bind-mounted state",
+      "sourceSha256": "5ac6aa670507feceb3d7ea64b2871ef046eb5a2c46c6a018c21902e862fa3b4b",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/transfer workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/transfer.test.ts:32",
+      "reference": "test/transfer.test.ts:32",
+      "name": "archive validation rejects traversal, duplicate paths and link entries before extraction",
+      "sourceSha256": "5ac6aa670507feceb3d7ea64b2871ef046eb5a2c46c6a018c21902e862fa3b4b",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/transfer workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/transfer.test.ts:53",
+      "reference": "test/transfer.test.ts:53",
+      "name": "export/import round trip preserves identity, state, media and ownership without starting the restored bots",
+      "sourceSha256": "5ac6aa670507feceb3d7ea64b2871ef046eb5a2c46c6a018c21902e862fa3b4b",
+      "baselineEvidence": "opt-in check; skipped in baseline default run",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/transfer workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:34",
+      "reference": "test/unmirror.test.ts:34",
+      "name": "/unmirror queues a durable move and restores the topic controls without deleting archived messages",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:61",
+      "reference": "test/unmirror.test.ts:61",
+      "name": "new WhatsApp messages and Telegram replies use management while the former mirror stops sending",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:81",
+      "reference": "test/unmirror.test.ts:81",
+      "name": "notification retries reuse the created topic and leave uncertain deliveries intact",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:96",
+      "reference": "test/unmirror.test.ts:96",
+      "name": "topic permission errors keep the existing mirror and explain how to retry",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:105",
+      "reference": "test/unmirror.test.ts:105",
+      "name": "uncertain topic creation is preserved for review without replaying the creation",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:113",
+      "reference": "test/unmirror.test.ts:113",
+      "name": "muted and ignored mirrors retain their setting after returning to management",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:123",
+      "reference": "test/unmirror.test.ts:123",
+      "name": "an active history import finishes before the mirror can be moved",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:132",
+      "reference": "test/unmirror.test.ts:132",
+      "name": "stale move requests and notification retries cannot undo later routing choices",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    },
+    {
+      "id": "baseline:test/unmirror.test.ts:146",
+      "reference": "test/unmirror.test.ts:146",
+      "name": "/unmirror requires the owner, master bot and a linked WhatsApp mirror group",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "baselineEvidence": "implemented and locally verified",
+      "candidateStatus": "pending",
+      "plannedCandidateFixtures": "test/rewrite/unmirror workflow replay; docs/rewrite/coverage-matrix.md"
+    }
+  ]
+}
