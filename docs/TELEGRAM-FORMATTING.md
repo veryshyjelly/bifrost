@@ -24,6 +24,7 @@ The bridge sends equivalent entities directly, preserving literal message text a
 
 - Master: bold, linked `Name: body`, with no header newline or generated link preview.
 - Member bot: body only; Telegram already displays its identity.
+- Incoming WhatsApp mentions: `@Name` with a native `text_mention` for a bound bot present in the destination group, a `t.me` profile link when it is absent, or a WhatsApp link for people without bots. Phone/LID aliases resolve to the same person. Literal number strings without WhatsApp mention metadata are preserved.
 - History: native date/time plus the same presentation; UTC fallback text supports older clients.
 - Status topic: `Status · native posting time · Name: caption`, always posted by Hermes with the same sender links.
 - Media captions, edits, poll titles and unavailable-media notices retain the formatting. Oversized captions are delivered fully as text, with a compact header on the attachment.

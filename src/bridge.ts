@@ -14,6 +14,7 @@ import type { Formatted, RelayFormat } from './format.ts';
 import { waEvents } from './openwa.ts';
 import { StatusFeed } from './statuses.ts';
 import { ConversationHistory } from './history.ts';
+import { Mentions, MentionError } from './mentions.ts';
 
 const updates = ['message', 'edited_message', 'callback_query', 'my_chat_member', 'managed_bot', 'message_reaction', 'poll_answer'];
 const chunks = (text: string, length = 3800) => {
@@ -30,7 +31,9 @@ export class Bridge {
     this.reactions = new NativeReactions(this);
     this.statuses = new StatusFeed(this);
     this.conversationHistory = new ConversationHistory(this);
+    this.mentions = new Mentions(this);
   }
+  mentions: Mentions;
   conversationHistory: ConversationHistory;
   token(id: string) {
     if (id === 'master') return this.c.masterToken;
@@ -181,7 +184,7 @@ export class Bridge {
       packets = this.store.get('formatted-packets', key);
       if (!packets) {
         packets = splitFormatted(text).map(part => ({ text: part.text, entities: part.entities,
-          ...(part.entities.some(entity => entity.type === 'text_link' && String(entity.url).startsWith('https://wa.me/')) ? { link_preview_options: { is_disabled: true } } : {}) }));
+          ...(part.entities.some(entity => entity.type === 'text_link') ? { link_preview_options: { is_disabled: true } } : {}) }));
         this.store.put('formatted-packets', key, packets);
       }
     }
@@ -261,7 +264,7 @@ export class Bridge {
     const chat = this.store.canonical(m.chatId);
     if (this.store.get('revoked', `${chat}:${m.id}`)) return;
     const edit = this.store.get('latest-edit', `${chat}:${m.id}`);
-    if (edit) m.body = edit.body;
+    if (edit) { m.body = edit.body; if (edit.mentionedIds) m.mentionedIds = edit.mentionedIds; }
     if (!event.replay && (this.store.get('wa-complete', `${chat}:${m.id}`) || this.store.byWhatsApp(chat, m.id).some(row => row.direction === 'out'))) return;
     const contact = this.store.get('contact', sender) || {};
     this.store.put('contact', sender, { ...contact, name: contact.metadataSyncedAt ? contact.name : m.contact?.name || m.contact?.pushName || m.contact?.shortName || contact.name || sender });
@@ -269,7 +272,7 @@ export class Bridge {
     // independently resolved self identity may be used for the "You" link.
     const linkSender = m.fromMe ? this.store.get('reaction-self', digest(this.c.session))?.sender || '' : m.senderPhone ? `${m.senderPhone}@c.us` : sender;
     if (!event.replay || !this.store.get('wamessage', `${chat}:${m.id}`)) this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name, fromMe: !!m.fromMe,
-      historical: !!event.historical, timestamp: m.timestamp, status, linkSender: this.store.canonical(linkSender) });
+      historical: !!event.historical, timestamp: m.timestamp, status, linkSender: this.store.canonical(linkSender), mentionedIds: m.mentionedIds || [] });
     if (event.replay) {
       if (this.conversationHistory.delivered(chat, m.id, event.replay)) return;
       key = this.conversationHistory.begin(chat, m.id, event.replay, key);
@@ -311,9 +314,10 @@ export class Bridge {
     const preview = event.historical && !quoted && m.quotedMessage?.body ? styled('↪ ' + Array.from(String(m.quotedMessage.body)).slice(0, 300).join(''), 'italic') : undefined;
     const render = (body: string | Formatted): string | Formatted => legacy ? prefix + (typeof body === 'string' ? body : body.text)
       : relayText(format, preview ? concat(preview, '\n', body) : body);
-    const text = render(m.body || ''), textValue = typeof text === 'string' ? text : text.text;
+    const mentionBody = legacy ? plain(m.body || '') : await this.mentions.incoming(m.body || '', m.mentionedIds, chat, String(destination), key + ':body');
+    const text = render(mentionBody), textValue = typeof text === 'string' ? text : text.text;
     const header = legacy ? prefix.trimEnd() : relayHeader(format), headerValue = typeof header === 'string' ? header : header.text;
-    const annotated = (notice: string) => legacy ? textValue + '\n[' + notice + ']' : render(concat(plain(m.body || ''), m.body ? '\n' : '', styled('[' + notice + ']', 'italic')));
+    const annotated = (notice: string) => legacy ? textValue + '\n[' + notice + ']' : render(concat(mentionBody, m.body ? '\n' : '', styled('[' + notice + ']', 'italic')));
     const record = (result: Json, media = false) => {
       this.store.map(chat, m.id, destination, result.message_id, bot, 'in', media);
       this.control.track(bot, { ...result, ...(thread ? { message_thread_id: thread, is_topic_message: true } : {}) }, 'chat');
@@ -401,7 +405,9 @@ export class Bridge {
     }
     if (this.store.get('revoked', `${chat}:${id}`)) return;
     if (event.event === 'message.edited') {
-      this.store.put('latest-edit', `${chat}:${id}`, { body: m.body || m.newBody || m.text || '' });
+      this.store.put('latest-edit', `${chat}:${id}`, { body: m.body ?? m.newBody ?? m.text ?? '', ...(Array.isArray(m.mentionedIds) ? { mentionedIds: m.mentionedIds } : {}) });
+      const original = this.store.get('wamessage', `${chat}:${id}`);
+      if (original && Array.isArray(m.mentionedIds)) this.store.put('wamessage', `${chat}:${id}`, { ...original, mentionedIds: m.mentionedIds });
       if (this.store.get('outbound-edit', `${chat}:${id}`) === digest(m.body || '')) return;
     }
     const rows = this.store.byWhatsApp(chat, id);
@@ -415,13 +421,14 @@ export class Bridge {
         if (source.historical === undefined) {
           const saved = this.store.db.prepare("SELECT payload FROM jobs WHERE type='wa' AND json_extract(payload,'$.data.id')=? ORDER BY id").all(id)
             .map(row => JSON.parse(row.payload as string)).find(event => ['message.received', 'message.sent'].includes(event.event) && this.store.canonical(event.data.chatId || '') === chat);
-          if (saved) source = { ...source, historical: !!saved.historical, timestamp: saved.data.timestamp };
+          if (saved) source = { ...source, historical: !!saved.historical, timestamp: saved.data.timestamp, mentionedIds: saved.data.mentionedIds };
         }
         const own = source?.fromMe || row.direction === 'out', body = m.body ?? m.newBody ?? m.text ?? '';
         const linkSender = own ? this.store.get('reaction-self', digest(this.c.session))?.sender || '' : source.linkSender || source.sender || chat;
         const format: RelayFormat = this.store.get('message-presentation', digest(JSON.stringify([row.bot, row.tg_chat, row.tg_id]))) || { bot: row.bot, sender: this.store.canonical(linkSender), name: source.name || 'WhatsApp', own,
           historical: source.historical, status: source.status, timestamp: source.timestamp };
-        const text = relayText(format, body), part = splitFormatted(text, row.media ? 1000 : 3800)[0];
+        const mentionBody = await this.mentions.incoming(body, m.mentionedIds ?? source.mentionedIds, chat, row.tg_chat, `${key}:edit-body:${i}`);
+        const text = relayText(format, mentionBody), part = splitFormatted(text, row.media ? 1000 : 3800)[0];
         try { await this.effect(`${key}:edit:${i}`, () => this.api.tg(this.token(row.bot), row.media ? 'editMessageCaption' : 'editMessageText', { ...extra,
           ...(row.media ? captionFields(part) : { text: part.text || '[Empty message]', entities: part.entities, link_preview_options: { is_disabled: true } }) })); }
         catch (e) {
@@ -429,7 +436,7 @@ export class Bridge {
           if (['message_missing', 'thread_missing'].includes(e.reason || '')) continue;
           const fallback = row.tg_chat.startsWith('-') ? 'master' : row.bot;
           const ledger = this.store.db.prepare('SELECT thread FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(row.bot, row.tg_chat), row.tg_chat, row.tg_id);
-          await this.sendText(fallback, row.tg_chat, relayText({ ...format, bot: fallback, editedNotice: true }, body), `${key}:notice:${i}`,
+          await this.sendText(fallback, row.tg_chat, relayText({ ...format, bot: fallback, editedNotice: true }, mentionBody), `${key}:notice:${i}`,
             { ...(ledger?.thread ? { message_thread_id: ledger.thread } : {}), reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } });
         }
       } else {
@@ -445,6 +452,7 @@ export class Bridge {
     if (update.my_chat_member) return; // Membership is checked live before selecting a participant bot.
     if (update.callback_query) {
       const q = update.callback_query;
+      if (await this.mentions.callback(bot, q, key)) return;
       if (await this.statuses.callback(bot, q, key)) return;
       if (/^rev-(delete|keep):/.test(q.data || '')) { await this.revocations.callback(bot, q); return; }
       try { await this.api.tg(this.token(bot), 'answerCallbackQuery', { callback_query_id: q.id }); }
@@ -501,22 +509,22 @@ export class Bridge {
     if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Reply belongs to a different WhatsApp conversation', 400);
     const quotedMessageId = reply?.wa_id;
     const mapped = this.store.byTelegram(chat, m.message_id, bot);
+    if (mapped && (!update.edited_message || mapped.direction !== 'out')) return;
+    const sendKey = `send:${m.chat.type === 'private' ? bot + ':' : ''}${chat}:${m.message_id}`;
+    let outgoing: Json;
+    try { outgoing = await this.mentions.outgoing(route.chatId, m, update.edited_message ? key + ':edit-mentions' : sendKey); }
+    catch (e) {
+      if (!(e instanceof MentionError)) throw e;
+      await this.sendText(bot, chat, e.message, key + ':mention-error', thread ? { message_thread_id: thread } : {}); return;
+    }
+    const waText = outgoing.text, mentions = outgoing.mentions;
     if (update.edited_message) {
       if (mapped?.direction === 'out') {
-        await this.effect(key + ':edit', () => this.api.ow('messages/edit', { chatId: mapped.wa_chat, messageId: mapped.wa_id, text }));
-        this.store.put('outbound-edit', `${mapped.wa_chat}:${mapped.wa_id}`, digest(text));
+        await this.effect(key + ':edit', () => this.api.ow('messages/edit', { chatId: mapped.wa_chat, messageId: mapped.wa_id, text: waText, mentions }));
+        this.store.put('outbound-edit', `${mapped.wa_chat}:${mapped.wa_id}`, digest(waText));
       }
       return;
     }
-    if (mapped) return;
-    const sendKey = `send:${m.chat.type === 'private' ? bot + ':' : ''}${chat}:${m.message_id}`;
-    const mentions: string[] = [];
-    const waText = text.replace(/@([a-zA-Z0-9_]+)/g, (match: string, username: string) => {
-      const target = this.store.all('bot').find(b => b.username?.toLowerCase() === username.toLowerCase());
-      const contact = target && this.store.all('contact').find(c => c.bot === target.id);
-      if (!contact?.id.endsWith('@c.us')) return match;
-      mentions.push(contact.id); return '@' + contact.id.split('@')[0];
-    });
     let result: Json;
     const attachment = await this.media.fromTelegram(this.token(bot), m);
     if (attachment) {
@@ -544,6 +552,7 @@ export class Bridge {
     const { name: command, args } = parsed;
     const { route, thread, contact } = this.telegramContext(bot, m);
     const chat = String(m.chat.id), extra = thread ? { message_thread_id: thread } : {};
+    if (command === 'mention') { await this.mentions.command(bot, m, args, key); return; }
     if (await this.statuses.command(bot, m, command, args, key)) return;
     if (command === 'start' && m.chat.type === 'private') {
       const parameter = /^mirror_([a-f0-9-]+)$/.exec(args[0] || '')?.[1];

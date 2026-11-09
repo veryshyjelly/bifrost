@@ -59,6 +59,14 @@ Linking a separate mirror group or starting a bound member bot removes that conv
 
 Member-bot messages use Telegram's sender identity without repeating that person's name in the text, captions or edits. Hermes uses **Name: message** on one line, with every name linked: to that person's WhatsApp chat when their phone number is known, or the general WhatsApp launch page otherwise. History uses Telegram's native localized date/time, followed by the same compact message. Captions and edits use the same presentation; the owner's “sent from WhatsApp” marker remains visible. See [formatting capabilities and examples](docs/TELEGRAM-FORMATTING.md).
 
+WhatsApp tags appear as readable **@Name** mentions. A bound member bot present in the destination group gets a native Telegram mention; an absent bot gets a link to its Telegram profile. People without bots get a WhatsApp-linked name, with the same generic WhatsApp link when their phone number is unknown. Only identities explicitly tagged by WhatsApp are converted; ordinary `@number` text stays literal. Text, captions, edits and manual history use the same conversion.
+
+To tag someone from Telegram, select their member bot from Telegram's mention menu or type its `@bot_username`. Hermes converts both username tags and Telegram's name-based mention entities into native WhatsApp mentions. Only Hermes relays ordinary group messages, so tagged member bots do not produce extra sends.
+
+For someone without a bot, send `/mention Abhishek` in the WhatsApp group's management topic or separate mirror group. Search by name, known number or bot username; `/mention` lists members with pagination. Tap **Copy tag** beside a result, then paste it anywhere in your message. Bound members copy their bot username; others copy a token such as `@{Abhishek|a1b2c3d4}`. Multiple tags can be mixed with ordinary text and used in captions or edits. The bridge replaces these tokens before sending to WhatsApp. The short ID distinguishes identical names and survives restarts or renames; changing the displayed name does not change whom the token tags. Copying never sends a message or marks WhatsApp read.
+
+Mention searches use the synchronized group roster, refreshing it after five minutes. A failed refresh can show a clearly labeled cached picker, but sends requiring an expired roster are refused until it can refresh. Unknown, wrong-group or previous-session tokens and members missing from the current roster produce a temporary correction notice without sending the message. Ordinary usernames unrelated to registered member bots stay literal. Mention conversion excludes code, email and URL entities. Retrying a previously prepared send retains its original resolved tags and delivery key.
+
 WhatsApp Status posts share one **WhatsApp Status** topic in the management forum. Hermes creates it on startup and imports currently available posts; new `status.received` events arrive automatically. `/statuses` in Hermes opens the topic and refreshes available posts without duplicating the archive. Text, images, videos and voice statuses carry the poster's linked name and a native Telegram posting time. Missing/expired media gets a notice while its available caption is retained. Reading or refreshing this feed sends no WhatsApp view/read receipt.
 
 Reply to a Status post with `/mute` or `/mute_status` to mute that person's Status posts in the bridge. Chats continue normally and existing archived posts remain. `/muted_statuses` shows a paginated list with **Unmute** buttons; replying to a Status post with `/unmute_status` also unmutes its author (`/keep` and `/unmute` work in this topic too). Preferences survive restarts and resolve known phone/LID aliases. Live events and refresh imports both honor mutes; posts skipped while muted stay skipped after unmuting. This changes only the Telegram feed, without sending any WhatsApp operation or read receipt.
@@ -81,6 +89,7 @@ Commands inside conversations:
 | --- | --- |
 | `/read` | Mark the WhatsApp conversation read |
 | `/history [n]` | Manually import up to n available messages here, oldest first with replies; default 20, maximum 2000 |
+| `/mention [search]` | Find a WhatsApp group member and copy a tag to paste into your message |
 | `/create` | Request a contact bot; in groups, reply to that person's message |
 | `/group` | Show the native create/select-and-link flow for a WhatsApp group |
 | `/sync` | Refresh this conversation's WhatsApp metadata and existing member bots |
