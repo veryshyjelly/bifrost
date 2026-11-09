@@ -15,12 +15,12 @@ export function concat(...parts: (Formatted | string)[]): Formatted {
 }
 export function whatsappURL(id: string) {
   const phone = /^\+?([1-9]\d{4,14})@(?:c\.us|s\.whatsapp\.net)$/.exec(id)?.[1];
-  return phone ? 'https://wa.me/' + phone : undefined;
+  return 'https://wa.me/' + (phone || '');
 }
 export function senderName(name: string, id: string): Formatted {
   const displayed = String(name).replace(/[\r\n\t]+/g, ' ').trim();
   const result = styled(displayed, 'bold'), url = whatsappURL(id);
-  if (url && displayed) result.entities.push({ type: 'text_link', offset: 0, length: displayed.length, url });
+  if (displayed) result.entities.push({ type: 'text_link', offset: 0, length: displayed.length, url });
   return result;
 }
 export function historyTime(timestamp: unknown): Formatted {

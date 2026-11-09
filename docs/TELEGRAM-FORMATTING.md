@@ -27,6 +27,8 @@ The bridge sends equivalent entities directly, preserving literal message text a
 - History: native date/time plus the same presentation; UTC fallback text supports older clients.
 - Media captions, edits, poll titles and unavailable-media notices retain the formatting. Oversized captions are delivered fully as text, with a compact header on the attachment.
 - Retries retain their original presentation and text packets. Deliveries already in progress before this upgrade keep their prior plain format.
-- WhatsApp links require a phone JID or resolved phone alias. Opaque LIDs remain unlinked. An outgoing private chat ID identifies the other person, so “You” links only when the session's own number is independently known.
+- Every sender name is linked. A verified phone JID or resolved phone alias opens that person's chat; unknown numbers and opaque LIDs use `https://wa.me/`, the generic WhatsApp launch page. Telegram rejects direct `whatsapp://app` entities. An outgoing private chat ID identifies the other person, so “You” opens its own chat only when the session's number is independently known; otherwise it uses the generic link too.
 
 Links use an international phone number without punctuation, following [WhatsApp click-to-chat](https://faq.whatsapp.com/5913398998672934).
+
+The numberless fallback resolves to WhatsApp's [Open WhatsApp page](https://api.whatsapp.com/). App launching depends on the device and client; it may show an Open/Chat button first.

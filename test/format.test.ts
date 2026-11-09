@@ -51,11 +51,12 @@ test('master relay uses a bold WhatsApp-linked name and body on one line', () =>
   assert.deepEqual(message.entities, [{ type: 'bold', offset: 0, length: 8 }, { type: 'text_link', offset: 0, length: 8, url: 'https://wa.me/' + phone }]);
 });
 
-test('only a verified phone JID becomes a WhatsApp link; opaque LIDs never become phone links', () => {
+test('verified phone JIDs open their chat; unknown identities use the generic WhatsApp launch link', () => {
   assert.equal(whatsappURL(sender), 'https://wa.me/' + phone);
   assert.equal(whatsappURL('+' + phone + '@s.whatsapp.net'), 'https://wa.me/' + phone);
-  for (const id of ['123456789012345@lid', '123@g.us', '111@c.us', '0' + phone + '@c.us', 'https://example.com@c.us']) assert.equal(whatsappURL(id), undefined);
-  assert.ok(!relayText({ ...options, sender: '123456789012345@lid' }, 'Hi').entities.some(e => e.type === 'text_link'));
+  for (const id of ['', '123456789012345@lid', '123@g.us', '111@c.us', '0' + phone + '@c.us', 'https://example.com@c.us']) assert.equal(whatsappURL(id), 'https://wa.me/');
+  const message = relayText({ ...options, sender: '123456789012345@lid' }, 'Hi');
+  assert.deepEqual(message.entities.filter(e => e.type === 'text_link'), [{ type: 'text_link', offset: 0, length: 8, url: 'https://wa.me/' }]);
 });
 
 test('untrusted HTML characters remain literal text and cannot inject markup or links', () => {
@@ -122,9 +123,9 @@ test('phone-originated private messages and edits never link You to the conversa
   await bridge.whatsApp(event('own', 'Hello', { chatId: sender, isGroup: false, fromMe: true }), 'own');
   const message = api.calls.find(c => c.method === 'sendMessage').body;
   assert.equal(message.text, 'You · sent from WhatsApp: Hello');
-  assert.ok(!message.entities.some((e: any) => e.type === 'text_link'));
+  assert.deepEqual(message.entities.filter((e: any) => e.type === 'text_link').map((e: any) => e.url), ['https://wa.me/']);
   await bridge.waChange({ event: 'message.edited', data: { chatId: sender, id: 'own', body: 'Updated' } }, 'own-edit');
-  assert.ok(!api.calls.find(c => c.method === 'editMessageText').body.entities.some((e: any) => e.type === 'text_link'));
+  assert.deepEqual(api.calls.find(c => c.method === 'editMessageText').body.entities.filter((e: any) => e.type === 'text_link').map((e: any) => e.url), ['https://wa.me/']);
 });
 
 test('You links only to the independently verified session phone', async t => {
