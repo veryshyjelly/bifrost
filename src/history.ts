@@ -51,15 +51,18 @@ export class ConversationHistory {
     if (this.active(chatId)) { await this.b.sendText(bot, target.chat, 'History is already importing for this conversation. Wait for it to finish, then run /history again.', key, target.thread ? { message_thread_id: target.thread } : {}); return; }
     const id = digest(JSON.stringify([this.b.c.session, bot, key])).slice(0, 24);
     if (!this.b.store.get('history-choice', id)) this.b.store.put('history-choice', id, { chatId, target, count, bot, owner: this.b.c.owner, session: this.b.c.session, status: 'pending', expires: Date.now() + this.b.c.controlTTL * 1000 });
-    await this.b.sendText(bot, target.chat, `Import up to ${count} WhatsApp messages here?\nSkip existing avoids copies recorded as delivered. Import all restores a manually cleared chat, but can create duplicates if messages are still present.`, key,
+    const receipts = await this.b.sendText(bot, target.chat, `Import up to ${count} WhatsApp messages here?\nSkip existing avoids copies recorded as delivered. Import all restores a manually cleared chat, but can create duplicates if messages are still present.`, key,
       { ...(target.thread ? { message_thread_id: target.thread } : {}), reply_markup: { inline_keyboard: [[{ text: 'Skip existing', callback_data: `history:skip:${id}` }, { text: 'Import all', callback_data: `history:all:${id}` }], [{ text: 'Cancel', callback_data: `history:cancel:${id}` }]] } });
+    this.b.store.put('history-choice', id, { ...this.b.store.get('history-choice', id), promptMessage: receipts[0].message_id });
   }
   async callback(bot: string, q: Json) {
     if (!String(q.data || '').startsWith('history:') || q.data.split(':').length !== 3) return false;
     const [, mode, id] = q.data.split(':'), choice = this.b.store.get('history-choice', id), context = q.message && this.b.telegramContext(bot, q.message);
+    const promptMatches = choice?.promptMessage ? q.message?.message_id === choice.promptMessage
+      : q.message?.reply_markup?.inline_keyboard?.flat().some((button: Json) => button.callback_data === q.data);
     const valid = ['skip', 'all', 'cancel'].includes(mode) && choice && choice.bot === bot && choice.owner === String(q.from?.id) && choice.owner === this.b.c.owner
       && choice.session === this.b.c.session && choice.expires > Date.now() && String(q.message?.chat.id) === choice.target.chat
-      && Number(context?.thread || 0) === Number(choice.target.thread || 0) && this.b.store.canonical(context?.route?.chatId || '') === choice.chatId && !['muted', 'ignored'].includes(context.route.mode);
+      && promptMatches && Number(context?.thread || 0) === Number(choice.target.thread || 0) && this.b.store.canonical(context?.route?.chatId || '') === choice.chatId && !['muted', 'ignored'].includes(context.route.mode);
     try { await this.b.api.tg(this.b.token(bot), 'answerCallbackQuery', { callback_query_id: q.id, ...(!valid ? { text: 'This history choice expired or its conversation changed. Run /history again.' } : choice.status !== 'pending' ? { text: 'This choice was already used. Run /history for a new import.' } : {}) }); }
     catch (e) { if (!(e instanceof ApiError) || e.status !== 400) this.b.control.retry(e); }
     if (!valid) return true;
@@ -73,7 +76,11 @@ export class ConversationHistory {
           const run = this.request(choice.chatId, choice.target, choice.count, 'history-choice:' + id, true, mode as HistoryMode);
           selected = { ...choice, status: 'selected', mode, run: run.id };
         }
-        this.b.store.put('history-choice', id, selected); this.b.store.db.exec('COMMIT');
+        this.b.store.put('history-choice', id, selected);
+        this.b.store.enqueue('history-choice-delete:' + id, 'history-choice-delete:' + id, 'control-expire', {
+          scope: this.b.control.scope(bot, choice.target.chat), bot, chat: choice.target.chat, message: choice.promptMessage || q.message.message_id,
+        });
+        this.b.store.db.exec('COMMIT');
       } catch (e) { this.b.store.db.exec('ROLLBACK'); throw e; }
     }
     const text = selected.status === 'cancelled' ? 'History import cancelled.' : selected.status === 'busy' ? 'History is already importing for this conversation. Wait for it to finish, then run /history again.'

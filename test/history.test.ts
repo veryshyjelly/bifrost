@@ -44,7 +44,7 @@ const content = (api: Fixture) => api.calls.filter(call => call.method === 'send
 async function drain(b: Bridge) { for (let i = 0; i < 100; i++) await b.tick(); }
 async function choose(b: Bridge, bot: string, m: any, key: string, mode = 'skip') {
   const id = digest(JSON.stringify([b.c.session, bot, key])).slice(0, 24);
-  await b.telegram(bot, { callback_query: { id: key + ':callback', from: m.from, message: { ...m, message_id: 999 }, data: `history:${mode}:${id}` } }, key + ':choice');
+  await b.telegram(bot, { callback_query: { id: key + ':callback', from: m.from, message: { ...m, message_id: b.store.get('history-choice', id)?.promptMessage }, data: `history:${mode}:${id}` } }, key + ':choice');
 }
 async function history(b: Bridge, bot: string, m: any, key: string, mode = 'skip') {
   await b.command(bot, m, key); await choose(b, bot, m, key, mode);
@@ -54,7 +54,7 @@ test('/history n fetches the complete batch first, posts oldest first, and recre
   const { bridge, api, store } = fixture(t);
   api.rows = [message('c', 3, 'third', { quotedMessage: { id: 'b', body: 'second' } }), message('a', 1, 'first'), message('b', 2, 'second', { quotedMessage: { id: 'a', body: 'first' } })];
   await history(bridge, 'master', command('/history 3'), 'history-three');
-  assert.equal(content(api).length, 0); await bridge.tick(); assert.equal(content(api).length, 0);
+  assert.equal(content(api).length, 0); await bridge.tick(); await bridge.tick(); assert.equal(content(api).length, 0);
   assert.equal(store.all('history-plan')[0].items.length, 3);
   await drain(bridge);
   const sent = content(api); assert.deepEqual(sent.map(call => call.body.text.split(': ').at(-1)), ['first', 'second', 'third']);
@@ -287,7 +287,9 @@ test('Import all still excludes WhatsApp-revoked messages and preserves other de
   assert.equal(store.byWhatsApp('g@g.us', 'revoked').length, 0);
   assert.equal(store.byWhatsApp('g@g.us', 'old').length, 2);
   assert.equal(store.byTelegram('-300', 12, 'master').wa_id, 'other-copy');
-  assert.ok(!api.calls.some(call => ['deleteMessage', 'deleteMessages', 'deleteForumTopic'].includes(call.method)));
+  const prompt = store.all('history-choice')[0].promptMessage;
+  assert.ok(api.calls.filter(call => call.method === 'deleteMessages').every(call => call.body.message_ids.every(id => id === prompt)));
+  assert.ok(!api.calls.some(call => ['deleteMessage', 'deleteForumTopic'].includes(call.method)));
 });
 
 test('history choices validate owner, bot, session, destination, topic, binding and expiry', async t => {
@@ -297,14 +299,15 @@ test('history choices validate owner, bot, session, destination, topic, binding 
   const m = command('/history 5', { chat: { id: -1001, type: 'supergroup' }, message_thread_id: 77, is_topic_message: true });
   await bridge.command('master', m, 'secure');
   const id = store.all('history-choice')[0].id, original = store.get('history-choice', id);
-  const q = { id: 'q', from: { id: 123 }, message: m, data: `history:all:${id}` };
-  for (const changes of [{ from: { id: 999 } }, { message: { ...m, message_thread_id: 78 } }, { message: { ...m, chat: { id: -1002, type: 'supergroup' } } }]) await bridge.conversationHistory.callback('master', { ...q, ...changes });
+  const q = { id: 'q', from: { id: 123 }, message: { ...m, message_id: original.promptMessage }, data: `history:all:${id}` };
+  for (const changes of [{ from: { id: 999 } }, { message: { ...q.message, message_thread_id: 78 } }, { message: { ...q.message, chat: { id: -1002, type: 'supergroup' } } }, { message: { ...q.message, message_id: original.promptMessage + 1 } }]) await bridge.conversationHistory.callback('master', { ...q, ...changes });
   await bridge.conversationHistory.callback('42', q);
   store.put('history-choice', id, { ...original, session: 'old' }); await bridge.conversationHistory.callback('master', q);
   store.put('history-choice', id, { ...original, expires: 0 }); await bridge.conversationHistory.callback('master', q);
   store.put('history-choice', id, original);
   store.put('route', 'g@g.us', { chatId: 'g@g.us', tgChat: '-200', mode: 'group' }); await bridge.conversationHistory.callback('master', q);
   assert.equal(store.all('history-run').length, 0); assert.ok(!api.calls.some(call => call.path?.includes('/history?')));
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE dedup LIKE 'history-choice-delete:%'").get()!.n, 0);
 });
 
 test('member DM Import all remains bot scoped and legacy Recent history buttons now show the choice', async t => {
@@ -397,4 +400,42 @@ test('older in-progress history runs keep their legacy presentation and do not g
   await bridge.history({ run: run.id }, 'old-fetch'); await drain(bridge);
   assert.equal(dates(api).length, 0);
   assert.ok(api.calls.some(call => call.body?.text === 'History · 2023-11-14 22:13 UTC · Alice: Original'));
+});
+
+test('every history choice deletes only its own prompt and duplicate clicks cannot schedule more deletion', async t => {
+  for (const mode of ['skip', 'all', 'cancel']) {
+    const { bridge, api, store } = fixture(t), m = command('/history 1');
+    api.rows = [message('a', 1700000000)]; await bridge.command('master', m, 'delete-' + mode);
+    const choice = store.all('history-choice')[0];
+    await choose(bridge, 'master', m, 'delete-' + mode, mode); await choose(bridge, 'master', m, 'delete-' + mode, mode); await drain(bridge);
+    const calls = api.calls.filter(call => call.method === 'deleteMessages');
+    assert.equal(calls.length, 1); assert.deepEqual(calls[0].body, { chat_id: '-200', message_ids: [choice.promptMessage] });
+    assert.equal(store.db.prepare('SELECT deleted FROM telegram_messages WHERE message=?').get(choice.promptMessage)!.deleted, 1);
+    assert.equal(content(api).length, mode === 'cancel' ? 0 : 1);
+  }
+});
+
+test('prompt-deletion network failures retry independently without blocking an import', async t => {
+  const { bridge, api, store } = fixture(t), m = command('/history 1');
+  api.rows = [message('a', 1700000000)];
+  const original = api.tg.bind(api); let fail = true;
+  api.tg = async (token, method, body = {}) => { if (method === 'deleteMessages' && fail) { fail = false; throw new ApiError('Timeout', 0, false, true); } return original(token, method, body); };
+  await history(bridge, 'master', m, 'retry-delete'); await drain(bridge);
+  assert.equal(content(api).length, 1); assert.equal(store.all('history-run')[0].status, 'complete');
+  store.db.prepare("UPDATE jobs SET due=0 WHERE dedup LIKE 'history-choice-delete:%' AND state='pending'").run(); await drain(bridge);
+  assert.equal(api.calls.filter(call => call.method === 'deleteMessages').length, 1);
+});
+
+test('group history uses each present member bot while Hermes handles absent/unbound authors, own messages and dates', async t => {
+  const { bridge, api, store } = fixture(t);
+  for (const [person, id, token, name] of [['12025550123@c.us', '42', 'alice', 'Alice'], ['12025550124@c.us', '43', 'bob', 'Bob'], ['12025550125@c.us', '44', 'absent', 'Absent']]) {
+    store.put('contact', person, { name, bot: id }); store.put('bot', id, { token: store.seal(token) });
+  }
+  const original = api.tg.bind(api);
+  api.tg = async (token, method, body = {}) => method === 'getChatMember' && body.user_id === 44 ? { status: 'left' } : original(token, method, body);
+  api.rows = [message('alice', 1700000000), message('bob', 1700000001, 'Bob', { author: '12025550124@c.us' }), message('absent', 1700000002, 'Absent', { author: '12025550125@c.us' }), message('unbound', 1700000003, 'Unbound', { author: '12025550126@c.us' }), message('own', 1700000004, 'Mine', { fromMe: true })];
+  await history(bridge, 'master', command('/history 5'), 'authors'); await drain(bridge);
+  assert.deepEqual(content(api).map(call => call.token), ['alice', 'bob', 'master', 'master', 'master']);
+  assert.equal(dates(api)[0].token, 'master');
+  assert.ok(content(api)[0].body.text.startsWith('[')); assert.ok(content(api)[4].body.text.startsWith('You ['));
 });
