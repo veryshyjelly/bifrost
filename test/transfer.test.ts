@@ -86,6 +86,17 @@ dockerTest('export/import round trip preserves identity, state, media and owners
     assert.equal(values.BRIDGE_ENCRYPTION_KEY, key); assert.equal(values.TELEGRAM_MASTER_TOKEN, 'fixture-master');
     assert.equal(values.BRIDGE_CALLBACK_URL, 'http://bifrost:3210');
     assert.equal(values.BIFROST_ACCOUNT_ID, 'original-session');
+    // Bun loads this checkout's .env; let the imported project's .env take precedence here.
+    const composeEnv = { ...process.env };
+    delete composeEnv.COMPOSE_PROJECT_NAME; delete composeEnv.BIFROST_EXTERNAL_VOLUMES;
+    const compose = JSON.parse(execFileSync('docker', ['compose', '--project-directory', destination,
+      '--env-file', join(destination, '.env'), '-f', join(import.meta.dirname, '../compose.yaml'), 'config', '--format', 'json'],
+    { encoding: 'utf8', env: composeEnv }));
+    for (const role of roles) {
+      const key = role === 'telegram-data' ? role : 'bridge-' + role;
+      assert.equal(compose.volumes[key].external, true);
+      assert.equal(compose.volumes[key].name, volume(restored, role));
+    }
     for (const name of ['bridge.env', 'telegram-api.env', '.env']) assert.equal(statSync(join(destination, name)).mode & 0o777, 0o600);
     const restoredMounts = roles.flatMap(role => ['--mount', `type=volume,source=${volume(restored, role)},target=/${role}`]);
     const result = JSON.parse(docker('run', '--rm', '--network', 'none', ...restoredMounts, image, 'bun', '-e', `

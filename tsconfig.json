@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    // Enable Bun's global types
+    "types": ["bun"],
+
+    // Modern runtime settings
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleDetection": "force",
+    
+    // Bundler & import settings
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
+    // Strict type checking (Highly Recommended)
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

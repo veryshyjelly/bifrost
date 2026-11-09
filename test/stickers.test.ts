@@ -133,6 +133,37 @@ last=im.convert('RGBA'); print(json.dumps([duration,first,last.getpixel((370,125
   assert.ok(meta[2][0] > 200); assert.equal(meta[3][3], 0);
 });
 
+mediaTest('dense WhatsApp animations fit after extra compression while retaining motion, duration and alpha', async t => {
+  const f = await fixture(t), input = join(f.root, 'dense.webp');
+  execute(python, ['-c', `
+from PIL import Image
+import random,sys
+r=random.Random(7); frames=[]
+for i in range(45):
+    frame=Image.new('RGBA',(512,512))
+    patch=Image.frombytes('RGB',(128,128),r.randbytes(128*128*3)).resize((192,192),Image.Resampling.NEAREST)
+    frame.paste(patch,(160,160)); frames.append(frame)
+delays=[round((i+1)*3000/45)-round(i*3000/45) for i in range(45)]
+frames[0].save(sys.argv[1],save_all=True,append_images=frames[1:],duration=delays,loop=0,lossless=True)
+`, input]);
+  assert.ok((await readFile(input)).length > 500000);
+  const output = await prepareSticker({ path: input, name: 'dense.webp' }, 'whatsapp', f.root, 16 * 1024 * 1024);
+  assert.equal(output.stickerFormat, 'animated'); assert.equal(output.mime, 'image/webp');
+  assert.ok((await readFile(output.path)).length <= 500000);
+  const meta = JSON.parse(execute(python, ['-c', `
+from PIL import Image
+import json,sys
+im=Image.open(sys.argv[1]); first=im.convert('RGBA'); duration=0
+for i in range(im.n_frames):
+    im.seek(i); im.load(); duration+=im.info['duration']
+last=im.convert('RGBA')
+print(json.dumps([im.size,im.n_frames,duration,first.getpixel((0,0))[3],last.getpixel((0,0))[3],first.tobytes()!=last.tobytes()]))
+`, output.path]));
+  assert.deepEqual(meta[0], [512, 512]); assert.ok(meta[1] > 1);
+  assert.ok(Math.abs(meta[2] - 3000) < 40);
+  assert.equal(meta[3], 0); assert.equal(meta[4], 0); assert.equal(meta[5], true);
+});
+
 mediaTest('malformed and excessive inputs fail safely; concurrent jobs leave no intermediates', async t => {
   const f = await fixture(t), invalid = join(f.root, 'bad.tgs'); await writeFile(invalid, gzipSync('invalid'));
   await assert.rejects(f.convert(invalid, 'whatsapp'), (e: any) => e instanceof ApiError && e.status === 415);

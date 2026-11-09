@@ -205,11 +205,13 @@ test('startup registers command menus for migrated master/member bots, including
   bridge.control.startup(); await drain(bridge);
   const menus = api.calls.filter(c => c.method === 'setMyCommands');
   assert.ok(menus.some(c => c.token === 'master' && c.body.scope.type === 'default' && c.body.commands.some((x: any) => x.command === 'create')));
+  assert.ok(menus.some(c => c.token === 'master' && c.body.scope.type === 'default' && c.body.commands.some((x: any) => x.command === 'unmirror')));
   assert.ok(menus.some(c => c.token === 'master' && c.body.scope.chat_id === '-1001' && c.body.commands.some((x: any) => x.command === 'clear_all')));
   assert.ok(menus.some(c => c.token === 'master' && c.body.scope.chat_id === '-1001'
     && c.body.commands.some((x: any) => x.command === 'clear_all' && x.description === 'Clear messages in the current management topic')));
   assert.ok(menus.some(c => c.token === 'child' && c.body.commands.some((x: any) => x.command === 'sync')));
   assert.ok(menus.filter(c => c.token === 'child').every(c => !c.body.commands.some((x: any) => x.command === 'clear_all')));
+  assert.ok(menus.filter(c => c.token === 'child').every(c => !c.body.commands.some((x: any) => x.command === 'unmirror')));
   assert.equal(api.calls.filter(c => c.method === 'setChatMenuButton').length, 2);
   bridge.control.startup(); await drain(bridge);
   assert.equal(api.calls.filter(c => c.method === 'setChatMenuButton').length, 4);

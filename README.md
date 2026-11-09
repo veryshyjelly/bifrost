@@ -70,6 +70,8 @@ For an older topic, send `/group` inside the topic to get the button. The manual
 
 Your ordinary messages in that linked group go to the WhatsApp group. Bots cannot create Telegram groups or silently add other bots; use the supplied add-to-group links. A contact bot may be reused in multiple groups. Only the master consumes ordinary group messages, preventing one send per participant bot.
 
+To return a mirror to management, send `/unmirror` to Bifrost inside that mirror group. Bifrost creates a new management topic and replies with an **Open management topic** button. Future messages use the topic; the former mirror keeps its existing messages and stops forwarding your messages and reactions to WhatsApp. History is not moved automatically: use `/history 50` in the new topic if needed. Mute/ignore settings are preserved; use `/keep` in the topic to resume them. Finish an active history import before using `/unmirror`. Bifrost needs Manage Topics permission in the management forum. You can use `/group` in the topic to create or link a mirror again.
+
 Commands inside conversations:
 
 | Command | Behavior |
@@ -79,6 +81,7 @@ Commands inside conversations:
 | `/mention [search]` | Find a WhatsApp group member and copy a tag to paste into your message |
 | `/create` | Request a contact bot; in groups, reply to that person's message |
 | `/group` | Show the native create/select-and-link flow for a WhatsApp group |
+| `/unmirror` | Move the current mirror group back to a new management topic |
 | `/sync` | Refresh this conversation's WhatsApp metadata and existing member bots |
 | `/sync all` | Refresh every active group and registered contact bot; use privately with Bifrost or in the management group |
 | `/keep` | Resume or retain this conversation in the current topic/group |

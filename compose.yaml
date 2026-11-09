@@ -44,8 +44,14 @@ services:
 
 volumes:
   bridge-data:
+    name: ${COMPOSE_PROJECT_NAME:-bifrost}_bridge-data
+    external: ${BIFROST_EXTERNAL_VOLUMES:-false}
   bridge-media:
+    name: ${COMPOSE_PROJECT_NAME:-bifrost}_bridge-media
+    external: ${BIFROST_EXTERNAL_VOLUMES:-false}
   telegram-data:
+    name: ${COMPOSE_PROJECT_NAME:-bifrost}_telegram-data
+    external: ${BIFROST_EXTERNAL_VOLUMES:-false}
 
 networks:
   bridge:

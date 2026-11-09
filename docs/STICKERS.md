@@ -7,7 +7,7 @@
 | Telegram static WebP | WhatsApp static WebP, 512 square, at most 100,000 bytes |
 | Telegram TGS or WebM | WhatsApp animated WebP, 512 square, at most 10 seconds / 500,000 bytes |
 
-The bridge preserves aspect ratio with transparent padding. Longer animations are sped up to fit the destination duration, preserving the full sequence. Encoders first reduce quality and then frame rate to fit size limits. A conversion that cannot meet the limits sends the original document instead. Ordinary documents are not converted into stickers. Source download limits still apply.
+The bridge preserves aspect ratio with transparent padding. Longer animations are sped up to fit the destination duration, preserving the full sequence. Encoders reduce quality and frame rate to fit size limits, with additional compression attempts for dense WhatsApp animations before falling back to the original document. Ordinary documents are not converted into stickers. Source download limits still apply.
 
 TGS uses a local Lottie light player through Puppeteer/Chromium, with autoplay and expressions disabled and external requests blocked. Frames go directly to WebP encoding without GIF or MP4 intermediates. Pillow decodes WebP frame blending/disposal and variable durations using libwebp. Animated WebP alpha flags are normalized so a transparent canvas remains transparent even when frames were optimized to opaque subrectangles. FFmpeg's libvpx decoder retains WebM alpha. Previously archived valid Telegram WebM stickers are reused byte-for-byte during history imports.
 

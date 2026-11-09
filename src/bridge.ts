@@ -245,6 +245,43 @@ export class Bridge {
     const current = this.store.get('route', chatId);
     this.store.put('route', chatId, { ...current, inbox: undefined, ...(String(current.tgChat) === this.c.management ? { thread: undefined, inboxRetired: true } : {}) });
   }
+  async returnToInbox(data: Json, key: string) {
+    const { chatId } = data, fromChat = String(data.tgChat);
+    let route = this.store.get('route', chatId), returned = this.store.get('inbox-return', key);
+    if (!returned) {
+      if (!route || !chatId.endsWith('@g.us') || fromChat === this.c.management || String(route.tgChat) !== fromChat
+        || (route.inboxReturnKey || '') !== (data.previousReturn || '')) {
+        await this.sendText('master', fromChat, 'This group is no longer the active mirror. Use /unmirror in the current mirror group.', key + ':stale'); return;
+      }
+      if (this.conversationHistory.active(chatId)) {
+        await this.sendText('master', fromChat, 'History is importing for this conversation. Wait for it to finish, then run /unmirror again.', key + ':busy'); return;
+      }
+      let topic: Json;
+      try {
+        topic = await this.effect(key + ':topic', () => this.api.tg(this.token('master'), 'createForumTopic', {
+          chat_id: this.c.management, name: (route.name || chatId).slice(0, 128),
+        }));
+      } catch (e) {
+        if (!(e instanceof ApiError) || e.retry || e.uncertain || ![400, 403].includes(e.status)) throw e;
+        await this.sendText('master', fromChat, 'Could not create a management topic. Check Bifrost’s Manage Topics permission in the management forum, then run /unmirror again.', key + ':permission'); return;
+      }
+      returned = { chatId, fromChat, thread: topic.message_thread_id };
+      route = { ...route, tgChat: this.c.management, thread: returned.thread,
+        mode: ['muted', 'ignored'].includes(route.mode) ? route.mode : 'inbox',
+        inbox: undefined, inboxRetired: false, inboxReturnKey: key };
+      this.store.db.exec('BEGIN IMMEDIATE');
+      try {
+        this.store.put('route', chatId, route); this.store.put('inbox-return', key, returned);
+        this.store.db.exec('COMMIT');
+      } catch (e) { this.store.db.exec('ROLLBACK'); throw e; }
+    }
+    // A notification retry must not undo a later link or create another topic.
+    if (route?.inboxReturnKey !== key || String(route.tgChat) !== this.c.management || route.thread !== returned.thread) return;
+    await this.manage({ type: 'new_conversation', data: { chatId } }, key + ':inbox');
+    const paused = ['muted', 'ignored'].includes(route.mode) ? ' Use /keep in the topic to resume this conversation.' : '';
+    await this.sendText('master', returned.fromChat, 'Moved back to a management topic. This group’s existing messages stay here. Use /history 50 in the topic to import recent messages.' + paused,
+      key + ':confirmed', { reply_markup: { inline_keyboard: [[{ text: 'Open management topic', url: `https://t.me/c/${this.c.management.replace(/^-100/, '')}/${returned.thread}` }]] } });
+  }
   async preferred(sender: string, tgChat: string, privateChat = false) {
     const contact = this.store.get('contact', sender), bot = contact?.bot && this.store.get('bot', contact.bot);
     if (!bot) return 'master';
@@ -498,6 +535,7 @@ export class Bridge {
     if (update.message_reaction) {
       const r = update.message_reaction, map = this.store.byTelegram(r.chat.id, r.message_id, bot);
       if (map && map.wa_chat !== 'status@broadcast') {
+        if (String(r.chat.id).startsWith('-') && String(this.store.get('route', map.wa_chat)?.tgChat) !== String(r.chat.id)) return;
         const result = await this.reactions.outgoing(bot, r, key);
         if (result.emoji === undefined) {
           const ledger = this.store.db.prepare('SELECT thread FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(bot, String(r.chat.id)), String(r.chat.id), r.message_id);
@@ -635,7 +673,7 @@ export class Bridge {
         await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact. Use /history 50 to import recent messages here.'
           : 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then return here.', key);
         if (contact) { await this.topic(contact.id, contact.name || contact.id, key + ':direct'); this.queueRetireInbox(contact.id, key); }
-      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts and /muted_statuses to manage Status mutes. In the Status topic, reply to a post with /mute or /unmute_status. Use /sync all here for every group and contact bot. In a conversation: /create, /read, /history 50, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all clears the current management topic, including General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
+      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts and /muted_statuses to manage Status mutes. In the Status topic, reply to a post with /mute or /unmute_status. Use /sync all here for every group and contact bot. In a conversation: /create, /read, /history 50, /keep, /mute, /ignore, /group. Use /unmirror in a mirror group to move it back to management. Reply with /delete or /react 👍. /clear log removes notices; /clear all clears the current management topic, including General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
       return;
     }
     if (command === 'start' && bot !== 'master') {
@@ -697,6 +735,12 @@ export class Bridge {
       if (!chatId?.endsWith('@g.us')) { await this.sendText(bot, chat, 'Use /link <WhatsApp group ID ending in @g.us>. The ID is shown in its management topic.', key, extra); return; }
       this.management('link_group', { chatId, tgChat: chat }, key); return;
     }
+    if (command === 'unmirror') {
+      if (bot !== 'master' || args.length || !['group', 'supergroup'].includes(m.chat.type) || chat === this.c.management || !route?.chatId.endsWith('@g.us')) {
+        await this.sendText(bot, chat, 'Send /unmirror to Bifrost inside the linked mirror group to move it back to a management topic.', key, extra); return;
+      }
+      this.management('return_to_inbox', { chatId: route.chatId, tgChat: chat, previousReturn: route.inboxReturnKey || '' }, key); return;
+    }
     const reply = m.reply_to_message && this.store.byTelegram(chat, m.reply_to_message.message_id, bot);
     if (this.statuses.isTopic(m)) {
       await this.sendText(bot, chat, 'This is the WhatsApp Status archive. Use /statuses to refresh it, reply to a post with /mute to mute its author, or use /muted_statuses to manage mutes. Open a person’s chat to reply.', key, extra); return;
@@ -749,6 +793,7 @@ export class Bridge {
   }
   async manage(event: Json, key: string) {
     const d = event.data;
+    if (event.type === 'return_to_inbox') { await this.returnToInbox(d, key); return; }
     if (event.type === 'sync_metadata') {
       if (!['all', 'group', 'contact'].includes(d.scope)) throw new ApiError('Invalid metadata sync scope', 400);
       this.metadata.queue({ scope: d.scope, id: d.id, source: 'command', requestId: key, notify: d.notify }); return;
@@ -772,7 +817,7 @@ export class Bridge {
       if (this.store.all('route').some(r => r.chatId !== d.chatId && r.tgChat === d.tgChat)) throw new ApiError('Telegram group is already linked', 400);
       this.store.put('route', d.chatId, { ...old, inbox: old.inbox || (String(old.tgChat) === this.c.management && old.thread ? { chat: old.tgChat, thread: old.thread } : undefined), tgChat: d.tgChat, thread: undefined, mode: 'group' });
       if (request) this.store.put('chat-request', String(d.requestId), { ...request, used: true, selectedChat: String(d.tgChat) });
-      await this.sendText('master', d.tgChat, `Linked WhatsApp group ${d.chatId}. Your messages here will be sent to that group. Use /history 50 to import recent messages here.`, key);
+      await this.sendText('master', d.tgChat, `Linked WhatsApp group ${d.chatId}. Your messages here will be sent to that group. Use /history 50 to import recent messages here, or /unmirror to move back to a management topic.`, key);
       if (request) await this.sendText('master', this.c.owner, `Linked ${old.name || d.chatId} to its Telegram group. You can now chat there.`, key + ':confirmed', { reply_markup: { remove_keyboard: true } });
       this.metadata.queue({ scope: 'group', id: d.chatId, source: 'link', requestId: key });
       this.queueRetireInbox(d.chatId, key); return;

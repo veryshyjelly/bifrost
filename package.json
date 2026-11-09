@@ -19,6 +19,7 @@
     "test:transfer": "BIFROST_DOCKER_TESTS=1 bun test --timeout 150000 ./test/transfer.test.ts"
   },
   "devDependencies": {
+    "@types/bun": "^1.4.4",
     "@types/node": "^26.6.6"
   },
   "dependencies": {

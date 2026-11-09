@@ -159,7 +159,9 @@ export function importState(file: string, project = 'bifrost', image = imageDefa
     const outputs: Record<string, string> = {
       'bridge.env': restoredEnvironment(readFileSync(join(staging, 'bridge.env'), 'utf8'), account),
       'telegram-api.env': readFileSync(join(staging, 'telegram-api.env'), 'utf8'),
-      '.env': readFileSync(join(root, '.env.example'), 'utf8').replace(/^COMPOSE_PROJECT_NAME=.*$/m, 'COMPOSE_PROJECT_NAME=' + project),
+      '.env': readFileSync(join(root, '.env.example'), 'utf8')
+        .replace(/^COMPOSE_PROJECT_NAME=.*$/m, 'COMPOSE_PROJECT_NAME=' + project)
+        .replace(/^BIFROST_EXTERNAL_VOLUMES=.*$/m, 'BIFROST_EXTERNAL_VOLUMES=true'),
     };
     for (const [name, text] of Object.entries(outputs)) { writeFileSync(join(directory, name), text, { mode: 0o600, flag: 'wx' }); written.push(name); }
     console.log('Imported Bifrost identity and state. No services started.');

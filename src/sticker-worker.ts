@@ -82,8 +82,8 @@ async function decodeVideo(): Promise<Frames> {
 async function webp(frames: Frames) {
   const output = join(directory, 'output.webp'), animated = frames.count > 1;
   const limit = animated ? 500000 : 100000;
-  // First keep frame rate and reduce quality; then reduce frame rate.
-  for (const [quality, fps] of [[80, 30], [60, 30], [40, 30], [40, 20], [40, 15]]) {
+  // Prefer the usual quality/frame rates, then give dense animations smaller encodings.
+  for (const [quality, fps] of [[80, 30], [60, 30], [40, 30], [40, 20], [40, 15], [30, 15], [30, 12], [30, 10]]) {
     await run(python, [helper, 'encode', directory, output, String(quality), String(fps)]);
     if (!(await fits(output, limit))) continue;
     const result = await inspect(output);
