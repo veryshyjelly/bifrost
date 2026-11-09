@@ -4,29 +4,9 @@ A standalone personal WhatsApp–Telegram bridge. OpenWA supplies WhatsApp; Bifr
 
 Bifrost and the local Telegram Bot API communicate over Docker networking. No n8n instance, workflow, public domain or tunnel is required. OpenWA is installed and paired separately.
 
-## Move an existing identity to another PC
+## Moving to another PC
 
-Install Git, Bun **1.4.2**, Docker with Buildx and Compose **2.30+**. On Windows, run these commands inside WSL2 with Docker integration enabled. Clone the repository:
-
-```sh
-git clone --branch bifrost git@github.com:veryshyjelly/bifrost.git bifrost
-cd bifrost
-bun install --frozen-lockfile
-docker build -t local/bifrost:0.1.0 .
-bun run import /path/to/home.bifrost.tar.gz
-```
-
-Import restores the original credentials, encryption key, bot bindings, message mappings, queue, pending media and Telegram API cache into a fresh project. It verifies checksums, safe archive paths, database integrity and decryption of managed-bot tokens. It refuses existing destination configuration or volumes and does not start services. **The export contains private credentials and messages; keep it private and outside Git.**
-
-Install/pair OpenWA, preferably with the same session ID. Set `OPENWA_URL`, `OPENWA_API_KEY` and `OPENWA_SESSION_ID` in imported `bridge.env` and `OPENWA_NETWORK` in `.env`. Allow `bifrost` in OpenWA's `SSRF_ALLOWED_HOSTS`. Stop the original bridge and local Telegram API before starting this identity:
-
-```sh
-docker compose build telegram-api
-docker compose up -d bifrost telegram-api
-docker compose exec -T bifrost bun scripts/setup.ts
-```
-
-Setup registers callbacks for the existing master and all managed bots. Bot usernames, tokens and ownership remain unchanged; an existing master may still display its old Telegram name until you rename it there. See [export, restore and cutover](docs/RECOVERY.md).
+Follow [Moving Bifrost to another PC](docs/MOVING.md) to export this installation, import its existing credentials and state into a fresh clone, configure OpenWA, and switch machines safely.
 
 ## Start a fresh identity
 
