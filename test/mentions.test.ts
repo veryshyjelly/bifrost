@@ -136,7 +136,7 @@ test('outgoing captions and edits carry updated mention lists, including explici
   await bridge.telegram('master', { message: tg('', { text: undefined, caption: 'Hi @Alice', caption_entities: [{ type: 'text_mention', offset: 3, length: 6, user: { id: 42 } }], photo: [{}] }) }, 'caption');
   assert.equal(sends(api)[0].body.caption, 'Hi @12025550123'); assert.deepEqual(sends(api)[0].body.mentions, [alice]);
   await bridge.telegram('master', { edited_message: tg('New @alice_bot') }, 'edit');
-  assert.deepEqual(sends(api).at(-1).body.mentions, [alice]); assert.equal(sends(api).at(-1).body.text, 'New @12025550123');
+  assert.deepEqual(sends(api).at(-1).body.mentions, [alice]); assert.equal(sends(api).at(-1).body.body, 'New @12025550123');
   await bridge.telegram('master', { edited_message: tg('No tags') }, 'remove');
   assert.deepEqual(sends(api).at(-1).body.mentions, []);
 });

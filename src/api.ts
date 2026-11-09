@@ -56,6 +56,6 @@ export class Api {
       method: body === undefined ? 'GET' : method,
       headers: { 'X-API-Key': this.c.openwaKey, 'content-type': 'application/json', ...(key ? { 'Idempotency-Key': key } : {}) },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    }, body !== undefined);
+    }, body !== undefined).catch(e => { if (e instanceof ApiError) e.service = 'openwa'; throw e; });
   }
 }

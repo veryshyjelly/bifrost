@@ -9,7 +9,7 @@ import { Bridge } from '../src/bridge.ts';
 import { Store } from '../src/store.ts';
 import { configuration, sign } from '../src/config.ts';
 import { handler } from '../src/server.ts';
-import { Api } from '../src/api.ts';
+import { Api, ApiError } from '../src/api.ts';
 
 test('Telegram refusals expose safe reason codes without logging provider descriptions', async t => {
   let description = 'Bad Request: message thread not found';
@@ -84,4 +84,61 @@ test('real multipart transport preserves attachment bytes and caption entities',
   assert.equal(result.message_id, 1); assert.match(contentType, /^multipart\/form-data; boundary=/);
   assert.ok(received.includes(bytes)); assert.ok(received.includes(Buffer.from('filename="sample.bin"')));
   assert.ok(received.includes(Buffer.from('Name: 😀 <text>'))); assert.ok(received.includes(Buffer.from(JSON.stringify(entities))));
+});
+
+test('Telegram caption edits satisfy the OpenWA HTTP contract and a refused edit cannot stall later sends', async t => {
+  const requests: any[] = []; let refusal = 0, sequence = 100;
+  const server = createServer(async (req, res) => {
+    let raw = ''; for await (const chunk of req) raw += chunk;
+    const body = JSON.parse(raw || '{}'); requests.push({ path: req.url, body });
+    res.setHeader('content-type', 'application/json');
+    if (req.url?.endsWith('/messages/edit')) {
+      const valid = typeof body.body === 'string' && body.body.length > 0 && !('text' in body);
+      if (!valid || refusal) { res.statusCode = valid ? refusal : 400; res.end(JSON.stringify({ ok: false, description: 'private-refusal-detail' })); return; }
+    }
+    const result = req.url?.includes('/bot') ? { message_id: ++sequence, chat: { id: body.chat_id } } : { messageId: 'wa-' + (++sequence) };
+    res.end(JSON.stringify({ ok: true, result, ...result }));
+  });
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  const base = `http://127.0.0.1:${(server.address() as any).port}`;
+  const c = { ...configuration({}), key: 'aa'.repeat(32), masterToken: 'fixture', owner: '123', management: '-1001', session: 's1', openwa: base, telegram: base, n8n: base + '/management' };
+  const store = new Store(':memory:', c.key), bridge = new Bridge(c, store);
+  t.after(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); store.close(); });
+  store.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-200', mode: 'group' });
+  store.map('111@c.us', 'original', '-200', 1, 'master', 'out', true);
+  const message = (id: number, extra = {}) => ({ message_id: id, from: { id: 123 }, chat: { id: -200, type: 'supergroup' }, ...extra });
+  const edit = { update_id: 1, edited_message: message(1, { caption: 'Edited 😀 caption', photo: [{ file_id: 'unused' }] }) };
+  assert.equal(bridge.acceptTelegram('master', edit), true); await bridge.tick();
+  const changed = requests.find(r => r.path.endsWith('/messages/edit'));
+  assert.deepEqual(changed.body, { chatId: '111@c.us', messageId: 'original', body: 'Edited 😀 caption', mentions: [] });
+  assert.equal(store.get('outbound-edit', '111@c.us:original'), (await import('../src/config.ts')).digest('Edited 😀 caption'));
+  for (const [index, status] of [400, 403, 404, 413, 422].entries()) {
+    refusal = status;
+    bridge.acceptTelegram('master', { ...edit, update_id: 2 + index * 2, edited_message: { ...edit.edited_message, caption: 'Refused edit ' + status } });
+    bridge.acceptTelegram('master', { update_id: 3 + index * 2, message: message(2 + index, { text: 'Following message ' + status }) });
+    for (let tick = 0; tick < 8; tick++) await bridge.tick();
+  }
+  assert.equal(requests.filter(r => r.path.endsWith('/messages/send-text')).length, 5);
+  assert.equal(store.db.prepare("SELECT count(*) AS n FROM jobs WHERE type='tg' AND state!='done'").get()!.n, 0);
+  assert.equal(store.all('edit-refusal').length, 5);
+  for (let n = 0; n < 35; n++) await bridge.tick();
+  const notices = requests.filter(r => r.path.endsWith('/sendMessage'));
+  assert.equal(notices.length, 5); assert.ok(notices.every(r => r.body.reply_parameters.message_id === 1 && !r.body.text.includes('private-refusal-detail')));
+  assert.ok(!requests.some(r => r.path.endsWith('/messages/send-image') || r.path.endsWith('/messages/send-document')));
+});
+
+test('edit transport keeps known rate refusals retryable and ambiguous mutations uncertain', async t => {
+  const c = { ...configuration({}), key: 'ab'.repeat(32), masterToken: 'fixture', owner: '123', management: '-1001' };
+  const store = new Store(':memory:', c.key), api = new Api(c), bridge = new Bridge(c, store, api); t.after(() => store.close());
+  store.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-200', mode: 'group' });
+  store.map('111@c.us', 'original', '-200', 1, 'master', 'out');
+  const edit = { edited_message: { message_id: 1, from: { id: 123 }, chat: { id: -200, type: 'supergroup' }, text: 'Edited' } };
+  for (const [index, error] of [new ApiError('Rate limited', 429, true), new ApiError('Unknown outcome', 503, false, true), new ApiError('Not authorized', 401)].entries()) {
+    api.request = async () => { throw error; };
+    await assert.rejects(bridge.telegram('master', edit, 'edit-' + index), e => e === error);
+  }
+  assert.equal(store.all('edit-refusal').length, 0);
+  const count = store.db.prepare('SELECT count(*) AS n FROM effects').get()!.n;
+  await bridge.telegram('master', { edited_message: { ...edit.edited_message, text: undefined, caption: '' } }, 'empty-caption');
+  assert.equal(store.all('edit-refusal').length, 1); assert.equal(store.db.prepare('SELECT count(*) AS n FROM effects').get()!.n, count);
 });

@@ -98,6 +98,10 @@ export class TelegramControl {
   }
   async process(job: Json) {
     const p = job.payload;
+    if (job.type === 'control-edit-notice') {
+      await this.b.sendText(p.bot, p.chat, p.text, job.dedup, { ...(p.thread ? { message_thread_id: p.thread } : {}), reply_parameters: { message_id: p.message, allow_sending_without_reply: true } });
+      return;
+    }
     if (job.type === 'control-retire-inbox') {
       try { await this.b.retireInbox(p.chatId); }
       catch (e) {

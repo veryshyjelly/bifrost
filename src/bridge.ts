@@ -520,7 +520,22 @@ export class Bridge {
     const waText = outgoing.text, mentions = outgoing.mentions;
     if (update.edited_message) {
       if (mapped?.direction === 'out') {
-        await this.effect(key + ':edit', () => this.api.ow('messages/edit', { chatId: mapped.wa_chat, messageId: mapped.wa_id, text: waText, mentions }));
+        const refusalKey = digest(JSON.stringify([this.c.session, key]));
+        const refused = (notice: string, status: number) => {
+          this.store.db.exec('BEGIN IMMEDIATE');
+          try {
+            this.store.put('edit-refusal', refusalKey, { status, at: Date.now() });
+            this.store.enqueue('edit-notice:' + key, 'edit-notice:' + key, 'control-edit-notice', { bot, chat, thread, message: m.message_id, text: notice });
+            this.store.db.exec('COMMIT');
+          } catch (e) { this.store.db.exec('ROLLBACK'); throw e; }
+        };
+        if (this.store.get('edit-refusal', refusalKey)) return;
+        if (!waText) { refused('Clearing a WhatsApp caption is not supported here. Its WhatsApp caption was kept; new messages can continue.', 400); return; }
+        try { await this.effect(key + ':edit', () => this.api.ow('messages/edit', { chatId: mapped.wa_chat, messageId: mapped.wa_id, body: waText, mentions })); }
+        catch (e) {
+          if (!(e instanceof ApiError) || e.service !== 'openwa' || e.retry || e.uncertain || ![400, 403, 404, 413, 422].includes(e.status)) throw e;
+          refused('This edit was not applied on WhatsApp. WhatsApp may refuse edits to older or unsupported messages. New messages can continue.', e.status); return;
+        }
         this.store.put('outbound-edit', `${mapped.wa_chat}:${mapped.wa_id}`, digest(waText));
       }
       return;
