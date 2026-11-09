@@ -9,7 +9,7 @@ Bifrost and the local Telegram Bot API communicate over Docker networking. No n8
 Install Git, Bun **1.4.2**, Docker with Buildx and Compose **2.30+**. On Windows, run these commands inside WSL2 with Docker integration enabled. Clone the repository:
 
 ```sh
-git clone --branch bifrost git@github.com:veryshyjelly/hermes_bridge.git bifrost
+git clone --branch bifrost git@github.com:veryshyjelly/bifrost.git bifrost
 cd bifrost
 bun install --frozen-lockfile
 docker build -t local/bifrost:0.1.0 .
