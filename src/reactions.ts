@@ -56,7 +56,7 @@ export class NativeReactions {
       destinations.set(destination, [...(destinations.get(destination) || []), { ...row, thread: Number(ledger?.thread || 0) }]);
     }
     for (const [destination, copies] of destinations) {
-      const primary = copies.find(row => row.media) || copies[0], privateChat = !primary.tg_chat.startsWith('-');
+      const primary = copies.at(-1)!, privateChat = !primary.tg_chat.startsWith('-');
       const cacheKey = sourceKey + ':' + digest(destination), cache = this.b.store.get('tg-reaction-state', cacheKey) || { applied: {}, refused: {} };
       const desired = new Map<string, Json>();
       for (const [reactor, value] of Object.entries(state.senders) as [string, Json][]) {

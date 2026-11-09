@@ -4,6 +4,7 @@ import type { Json } from './config.ts';
 import { ApiError } from './api.ts';
 
 export type HistoryTarget = { chat: string; thread?: number; bot?: string };
+export type HistoryMode = 'skip' | 'all';
 export class ConversationHistory {
   b: Bridge;
   constructor(bridge: Bridge) { this.b = bridge; }
@@ -41,13 +42,52 @@ export class ConversationHistory {
     const current = this.target(chat);
     if (current && this.scope(chat, current) === this.scope(chat, target)) this.b.store.put('wa-complete', chat + ':' + id, true);
   }
-  request(chatId: string, target: HistoryTarget, count: number, key: string, enqueue = true) {
+  active(chatId: string) {
+    return this.b.store.all('history-run').find(run => run.session === this.b.c.session && run.chatId === chatId && ['queued', 'fetching', 'delivering'].includes(run.status));
+  }
+  async prompt(chatId: string, target: HistoryTarget, count: number, bot: string, key: string) {
+    chatId = this.b.store.canonical(chatId);
+    if (this.active(chatId)) { await this.b.sendText(bot, target.chat, 'History is already importing for this conversation. Wait for it to finish, then run /history again.', key, target.thread ? { message_thread_id: target.thread } : {}); return; }
+    const id = digest(JSON.stringify([this.b.c.session, bot, key])).slice(0, 24);
+    if (!this.b.store.get('history-choice', id)) this.b.store.put('history-choice', id, { chatId, target, count, bot, owner: this.b.c.owner, session: this.b.c.session, status: 'pending', expires: Date.now() + this.b.c.controlTTL * 1000 });
+    await this.b.sendText(bot, target.chat, `Import up to ${count} WhatsApp messages here?\nSkip existing avoids copies recorded as delivered. Import all restores a manually cleared chat, but can create duplicates if messages are still present.`, key,
+      { ...(target.thread ? { message_thread_id: target.thread } : {}), reply_markup: { inline_keyboard: [[{ text: 'Skip existing', callback_data: `history:skip:${id}` }, { text: 'Import all', callback_data: `history:all:${id}` }], [{ text: 'Cancel', callback_data: `history:cancel:${id}` }]] } });
+  }
+  async callback(bot: string, q: Json) {
+    if (!String(q.data || '').startsWith('history:') || q.data.split(':').length !== 3) return false;
+    const [, mode, id] = q.data.split(':'), choice = this.b.store.get('history-choice', id), context = q.message && this.b.telegramContext(bot, q.message);
+    const valid = ['skip', 'all', 'cancel'].includes(mode) && choice && choice.bot === bot && choice.owner === String(q.from?.id) && choice.owner === this.b.c.owner
+      && choice.session === this.b.c.session && choice.expires > Date.now() && String(q.message?.chat.id) === choice.target.chat
+      && Number(context?.thread || 0) === Number(choice.target.thread || 0) && this.b.store.canonical(context?.route?.chatId || '') === choice.chatId && !['muted', 'ignored'].includes(context.route.mode);
+    try { await this.b.api.tg(this.b.token(bot), 'answerCallbackQuery', { callback_query_id: q.id, ...(!valid ? { text: 'This history choice expired or its conversation changed. Run /history again.' } : choice.status !== 'pending' ? { text: 'This choice was already used. Run /history for a new import.' } : {}) }); }
+    catch (e) { if (!(e instanceof ApiError) || e.status !== 400) this.b.control.retry(e); }
+    if (!valid) return true;
+    let selected = choice;
+    if (choice.status === 'pending') {
+      this.b.store.db.exec('BEGIN IMMEDIATE');
+      try {
+        if (mode === 'cancel') selected = { ...choice, status: 'cancelled' };
+        else if (this.active(choice.chatId)) selected = { ...choice, status: 'busy' };
+        else {
+          const run = this.request(choice.chatId, choice.target, choice.count, 'history-choice:' + id, true, mode as HistoryMode);
+          selected = { ...choice, status: 'selected', mode, run: run.id };
+        }
+        this.b.store.put('history-choice', id, selected); this.b.store.db.exec('COMMIT');
+      } catch (e) { this.b.store.db.exec('ROLLBACK'); throw e; }
+    }
+    const text = selected.status === 'cancelled' ? 'History import cancelled.' : selected.status === 'busy' ? 'History is already importing for this conversation. Wait for it to finish, then run /history again.'
+      : `History queued: fetching up to ${choice.count} messages, then posting oldest first here. ${selected.mode === 'all' ? 'Previously delivered messages will be included.' : 'Already delivered messages will be skipped.'}`;
+    await this.b.sendText(bot, choice.target.chat, text, 'history-choice-confirm:' + id, choice.target.thread ? { message_thread_id: choice.target.thread } : {});
+    return true;
+  }
+  copyKey(run: string, chat: string, id: string) { return digest(JSON.stringify([this.b.c.session, run, chat, id])); }
+  request(chatId: string, target: HistoryTarget, count: number, key: string, enqueue = true, mode: HistoryMode = 'skip') {
     chatId = this.b.store.canonical(chatId);
     const id = digest(JSON.stringify([this.b.c.session, chatId, target, key]));
     const previous = this.b.store.get('history-run', id); if (previous) return previous;
-    const active = this.b.store.all('history-run').find(run => run.session === this.b.c.session && run.chatId === chatId && ['queued', 'fetching', 'delivering'].includes(run.status));
+    const active = this.active(chatId);
     if (active) return active;
-    const run = { id, chatId, target, count, status: 'queued', createdAt: Date.now(), session: this.b.c.session };
+    const run = { id, chatId, target, count, mode, status: 'queued', createdAt: Date.now(), session: this.b.c.session };
     this.b.store.put('history-run', id, run);
     if (enqueue) this.b.store.enqueue('history-fetch:' + id, 'history-fetch:' + id, 'history', { run: id });
     return run;
@@ -118,10 +158,10 @@ export class ConversationHistory {
     if (job.type === 'history-message') {
       const message = this.b.store.get('history-plan', run.id)?.items[job.payload.index];
       if (!message) throw new ApiError('History snapshot is missing', 409);
-      await this.b.deliverWhatsApp({ event: 'message.received', sessionId: this.b.c.session, historical: true, replay: run.target, data: message }, job.dedup);
+      await this.b.deliverWhatsApp({ event: 'message.received', sessionId: this.b.c.session, historical: true, replay: run.target, historyMode: run.mode || 'skip', historyRun: run.id, data: message }, job.dedup);
     } else {
       this.b.store.put('history-run', run.id, { ...run, status: 'complete', finishedAt: Date.now() });
-      await this.b.sendText(run.target.bot || 'master', run.target.chat, `History ready: ${run.available || 0} available messages checked, oldest first. Existing or deleted messages were skipped.`, job.dedup,
+      await this.b.sendText(run.target.bot || 'master', run.target.chat, `History ready: ${run.available || 0} available messages checked, oldest first. ${run.mode === 'all' ? 'Previously delivered messages were included.' : 'Already delivered messages were skipped.'} WhatsApp-deleted messages remain excluded.`, job.dedup,
         run.target.thread ? { message_thread_id: run.target.thread } : {});
     }
   }

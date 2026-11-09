@@ -274,8 +274,12 @@ export class Bridge {
     if (!event.replay || !this.store.get('wamessage', `${chat}:${m.id}`)) this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name, fromMe: !!m.fromMe,
       historical: !!event.historical, timestamp: m.timestamp, status, linkSender: this.store.canonical(linkSender), mentionedIds: m.mentionedIds || [] });
     if (event.replay) {
-      if (this.conversationHistory.delivered(chat, m.id, event.replay)) return;
-      key = this.conversationHistory.begin(chat, m.id, event.replay, key);
+      if (event.historyMode === 'all' && event.historyRun) {
+        if (this.store.get('history-copy-complete', this.conversationHistory.copyKey(event.historyRun, chat, m.id))) return;
+      } else {
+        if (this.conversationHistory.delivered(chat, m.id, event.replay)) return;
+        key = this.conversationHistory.begin(chat, m.id, event.replay, key);
+      }
     }
     let route = event.replay ? { chatId: chat, tgChat: String(event.replay.chat), thread: event.replay.thread, mode: String(event.replay.chat).startsWith('-') ? 'group' : 'dedicated' }
       : status ? await this.statuses.topic() : await this.topic(chat, m.isGroup ? m.chatName || chat : this.store.get('contact', sender).name, key);
@@ -305,7 +309,10 @@ export class Bridge {
       name: this.store.get('contact', sender)?.name || sender, own: !!m.fromMe, historical: !!event.historical, status, timestamp: m.timestamp };
     if (!legacy) this.store.put('delivery-target', snapshotKey, { bot, destination, thread, formatVersion: 2, presentation: format });
     const extra: Json = { ...(thread ? { message_thread_id: thread } : {}) };
-    const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).find(r => {
+    const freshQuote = event.historyMode === 'all' && event.historyRun && m.quotedMessage?.id
+      ? this.store.get('history-copy', this.conversationHistory.copyKey(event.historyRun, chat, m.quotedMessage.id)) : undefined;
+    const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).reverse().find(r => {
+      if (event.historyMode === 'all' && (!freshQuote || r.tg_id !== freshQuote.tg_id || r.bot !== freshQuote.bot)) return false;
       if (r.tg_chat !== String(destination) || (privateChat && bot !== 'master' && r.bot !== bot)) return false;
       const recorded = this.store.db.prepare('SELECT deleted,thread FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(r.bot, r.tg_chat), r.tg_chat, r.tg_id);
       return !recorded || (!recorded.deleted && Number(recorded.thread || 0) === Number(thread || 0));
@@ -323,8 +330,16 @@ export class Bridge {
       this.control.track(bot, { ...result, ...(thread ? { message_thread_id: thread, is_topic_message: true } : {}) }, 'chat');
       this.store.put('telegram-receipt', digest(JSON.stringify([bot, String(destination), result.message_id])), result);
       this.store.put('message-presentation', digest(JSON.stringify([bot, String(destination), result.message_id])), format);
+      if (event.historyMode === 'all' && event.historyRun) {
+        const id = this.conversationHistory.copyKey(event.historyRun, chat, m.id), previous = this.store.get('history-copy', id);
+        if (!previous || (media && !previous.media)) this.store.put('history-copy', id, { tg_id: result.message_id, bot, media });
+      }
     };
-    const complete = () => { this.conversationHistory.complete(chat, m.id, deliveredTarget); if (!event.replay) this.store.put('wa-complete', `${chat}:${m.id}`, true); };
+    const complete = () => {
+      this.conversationHistory.complete(chat, m.id, deliveredTarget);
+      if (event.historyMode === 'all' && event.historyRun) this.store.put('history-copy-complete', this.conversationHistory.copyKey(event.historyRun, chat, m.id), true);
+      if (!event.replay) this.store.put('wa-complete', `${chat}:${m.id}`, true);
+    };
     if (['image', 'video', 'audio', 'voice', 'sticker', 'document'].includes(m.type)) {
       let attachment: Json;
       try {
@@ -452,6 +467,7 @@ export class Bridge {
     if (update.my_chat_member) return; // Membership is checked live before selecting a participant bot.
     if (update.callback_query) {
       const q = update.callback_query;
+      if (await this.conversationHistory.callback(bot, q)) return;
       if (await this.mentions.callback(bot, q, key)) return;
       if (await this.statuses.callback(bot, q, key)) return;
       if (/^rev-(delete|keep):/.test(q.data || '')) { await this.revocations.callback(bot, q); return; }
@@ -653,9 +669,7 @@ export class Bridge {
       if (!conversation && contact && m.chat.type === 'private') conversation = await this.topic(contact.id, contact.name || contact.id, key + ':direct');
       if (!conversation) { await this.sendText(bot, chat, 'Use /history <n> inside a mirror group, a linked management topic, or the contact’s bot DM.', key, extra); return; }
       if (['muted', 'ignored'].includes(conversation.mode)) { await this.sendText(bot, chat, 'Use /keep to resume this conversation before importing history.', key, extra); return; }
-      const run = this.conversationHistory.request(conversation.chatId, { chat, thread, ...(m.chat.type === 'private' ? { bot } : {}) }, count, key);
-      const here = this.conversationHistory.scope(conversation.chatId, run.target) === this.conversationHistory.scope(conversation.chatId, { chat, thread, ...(m.chat.type === 'private' ? { bot } : {}) });
-      await this.sendText(bot, chat, here ? `History queued: fetching up to ${run.count} messages, then posting oldest first here.` : 'History is already importing in another destination for this conversation. Wait for it to finish, then run /history here.', key, extra); return;
+      await this.conversationHistory.prompt(conversation.chatId, { chat, thread, ...(m.chat.type === 'private' ? { bot } : {}) }, count, bot, key); return;
     }
     if (!route) { await this.sendText(bot, chat, 'Use this command inside a linked conversation or its management topic.', key, extra); return; }
     if (reply && reply.wa_chat !== route.chatId) throw new ApiError('Command target belongs to another WhatsApp conversation', 400);
@@ -766,7 +780,7 @@ export class Bridge {
       await this.sendText('master', route.tgChat, 'Create this contact’s bot, then confirm its contact binding in your private chat with the master. If Telegram refuses creation at your bot limit, messages continue through the master.', key,
         { ...extra, reply_markup: { inline_keyboard: [[{ text: 'Create contact bot', url }]] } }); return;
     }
-    if (op === 'history') { this.queueHistory(chatId, key); return; }
+    if (op === 'history') { await this.queueHistory(chatId, key); return; }
     if (op === 'read') { await this.markRead(chatId); return; }
     if (op === 'delete') { await this.effect(key + ':delete', () => this.api.ow('messages/delete', { chatId, messageId: d.message, forEveryone: true })); return; }
     if (op === 'react') { await this.effect(key + ':react', () => this.api.ow('messages/react', { chatId, messageId: d.message, emoji: d.emoji })); return; }
@@ -812,9 +826,9 @@ export class Bridge {
         chat_has_username: false, chat_is_created: true, bot_is_member: true,
         user_administrator_rights: rights, bot_administrator_rights: rights, request_title: true } }]], resize_keyboard: true, one_time_keyboard: true } });
   }
-  queueHistory(chatId: string, suffix = 'initial') {
+  async queueHistory(chatId: string, suffix = 'manual') {
     const target = this.conversationHistory.target(chatId);
-    if (target) this.conversationHistory.request(chatId, target, this.c.history || 20, suffix);
+    if (target) await this.conversationHistory.prompt(chatId, target, this.c.history || 20, target.bot || 'master', suffix);
   }
   async markRead(chatId: string) {
     const result = await this.api.ow('chats/read', { chatId });

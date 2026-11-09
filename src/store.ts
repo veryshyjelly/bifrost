@@ -81,7 +81,7 @@ export class Store {
     if (bot && !String(chat).startsWith('-')) return this.db.prepare('SELECT * FROM messages WHERE tg_chat=? AND tg_id=? AND bot=?').get(String(chat), message, bot);
     return this.db.prepare('SELECT * FROM messages WHERE tg_chat=? AND tg_id=?').get(String(chat), message);
   }
-  byWhatsApp(chat: string, message: string): Json[] { return this.db.prepare('SELECT * FROM messages WHERE wa_chat=? AND wa_id=?').all(chat, message); }
+  byWhatsApp(chat: string, message: string): Json[] { return this.db.prepare('SELECT * FROM messages WHERE wa_chat=? AND wa_id=? ORDER BY rowid').all(chat, message); }
   seal(text: string) {
     const iv = randomBytes(12), cipher = createCipheriv('aes-256-gcm', this.key, iv);
     return Buffer.concat([iv, cipher.update(text), cipher.final(), cipher.getAuthTag()]).toString('base64');
