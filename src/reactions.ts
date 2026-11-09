@@ -4,6 +4,13 @@ import { digest } from './config.ts';
 import { ApiError } from './api.ts';
 
 const emojiKey = (value: unknown) => typeof value === 'string' ? value.replace(/\uFE0F/g, '') : '';
+// Approximate only clear counterparts missing from Telegram's standard reaction set.
+// Keep the source emoji in WhatsApp state/echo tracking and in fallback notices.
+const telegramEquivalents: Record<string, string> = {
+  '😂': '🤣', '😀': '😁', '😃': '😁', '😄': '😁', '😆': '😁',
+  '😠': '😡', '😔': '😢', '😞': '😢', '😥': '😢',
+  '😙': '😘', '😚': '😘', '🥳': '🎉',
+};
 
 export class NativeReactions {
   b: Bridge;
@@ -59,7 +66,8 @@ export class NativeReactions {
       }
       let fallback = false, unavailable = false;
       for (const bot of new Set([...Object.keys(cache.applied), ...Object.keys(cache.refused), ...desired.keys()])) {
-        const emoji = desired.get(bot)?.emoji || '', signature = JSON.stringify([primary.tg_id, emoji]);
+        const originalEmoji = desired.get(bot)?.emoji || '', emoji = telegramEquivalents[originalEmoji] || originalEmoji;
+        const signature = JSON.stringify([primary.tg_id, emoji]);
         if (cache.applied[bot] === signature) {
           if (!emoji && cache.refused[bot]) { delete cache.refused[bot]; this.b.store.put('tg-reaction-state', cacheKey, cache); }
           continue;

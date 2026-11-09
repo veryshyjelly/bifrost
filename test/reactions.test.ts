@@ -162,3 +162,39 @@ test('unsupported Telegram custom reactions do not clear an existing WhatsApp re
   await f.bridge.telegram('master', { message_reaction: { chat: { id: -200 }, message_id: 5, new_reaction: [{ type: 'custom_emoji', custom_emoji_id: 'custom' }] } }, 'custom');
   assert.ok(!f.api.calls.some(c => c.method === 'messages/react'));
 });
+
+test('Hermes maps laughing reactions on owner messages, deduplicates equivalent changes and clears on removal', async t => {
+  const f = fixture(t); copy(f); f.store.db.exec("UPDATE messages SET direction='out'");
+  await react(f.bridge, '333@c.us', '😂', 'laugh');
+  assert.equal(native(f.api)[0].token, 'master'); assert.equal(native(f.api)[0].body.reaction[0].emoji, '🤣');
+  assert.equal(f.store.get('wa-reaction-state', f.bridge.reactions.sourceKey('g@g.us', 'm1')).senders['333@c.us'].emoji, '😂');
+  await react(f.bridge, '333@c.us', '🤣', 'same-native'); assert.equal(native(f.api).length, 1);
+  await react(f.bridge, '333@c.us', '', 'removed'); assert.deepEqual(native(f.api).at(-1)!.body.reaction, []);
+  assert.ok(!f.api.calls.some(c => c.method === 'sendMessage' || c.method.startsWith('messages/')));
+});
+
+test('equivalent reactions work through member bots and private copies without altering supported emoji', async t => {
+  const f = fixture(t); copy(f); copy(f, 5, { chat: '123' });
+  for (const [index, [source, target]] of [['😄', '😁'], ['😠', '😡'], ['😞', '😢'], ['😚', '😘'], ['🥳', '🎉'], ['❤', '❤']].entries()) {
+    await react(f.bridge, '222@c.us', source, 'reaction-' + index);
+    assert.deepEqual(native(f.api).slice(-2).map(call => [call.token, call.body.reaction[0].emoji]), [['bob', target], ['alice', target]]);
+  }
+});
+
+test('a refused equivalent and an unsupported unmapped emoji both keep the original in text fallbacks', async t => {
+  const f = fixture(t); copy(f); f.api.unsupported.add('🤣'); f.api.unsupported.add('💙');
+  await react(f.bridge, '333@c.us', '😂', 'refused-map');
+  const notice = f.api.calls.find(c => c.method === 'sendMessage'); assert.ok(notice.body.text.includes('reacted 😂')); assert.ok(!notice.body.text.includes('🤣'));
+  await react(f.bridge, '333@c.us', '😂', 'repeat'); assert.equal(f.api.calls.filter(c => c.method === 'sendMessage').length, 1);
+  await react(f.bridge, '333@c.us', '💙', 'unmapped'); assert.equal(native(f.api).at(-1)!.body.reaction[0].emoji, '💙');
+  assert.ok(f.api.calls.filter(c => c.method === 'sendMessage').at(-1)!.body.text.includes('reacted 💙'));
+});
+
+test('Telegram-owner reaction echoes stay suppressed after adding equivalent rendering', async t => {
+  const f = fixture(t); copy(f);
+  const map = f.store.byTelegram('-200', 5)!;
+  await f.bridge.reactions.rememberOutgoing(map, { chat: { id: -200 }, message_id: 5, new_reaction: [{ type: 'emoji', emoji: '🤣' }] }, 'master');
+  await react(f.bridge, '999@c.us', '🤣', 'owner-echo'); assert.equal(native(f.api).length, 0);
+  await react(f.bridge, '333@c.us', '😂', 'other-person'); assert.equal(native(f.api).length, 1);
+  assert.equal(native(f.api)[0].body.reaction[0].emoji, '🤣');
+});
