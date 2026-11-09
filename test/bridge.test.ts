@@ -56,9 +56,66 @@ test('dedicated bot wins in a group only when present; master falls back with se
   api.members.add('42');
   await bridge.whatsApp(message('g1', { chatId: 'g@g.us', isGroup: true, author: '111@c.us' }), 'g1');
   assert.equal(api.calls.find(c => c.method === 'sendMessage').token, 'alice-token');
+  assert.equal(api.calls.find(c => c.method === 'sendMessage').body.text, 'Hello');
   api.members.clear();
   await bridge.whatsApp(message('g2', { chatId: 'g@g.us', isGroup: true, author: '111@c.us' }), 'g2');
   assert.equal(api.calls.filter(c => c.method === 'sendMessage').at(-1).token, 'master-token');
+  assert.equal(api.calls.filter(c => c.method === 'sendMessage').at(-1).body.text, 'Alice\nHello');
+});
+
+test('member-bot media, stickers, locations, cards and polls omit redundant sender headers', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('route', 'g@g.us', { chatId: 'g@g.us', tgChat: '-200', mode: 'group' });
+  s.put('bot', '42', { token: s.seal('alice-token') }); s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); api.members.add('42');
+  bridge.media.fromWhatsApp = async () => ({ path: '/fixture', name: 'media.jpg' });
+  const group = { chatId: 'g@g.us', isGroup: true, author: '111@c.us' };
+  await bridge.whatsApp(message('photo', { ...group, type: 'image', body: 'Caption' }), 'photo');
+  await bridge.whatsApp(message('sticker', { ...group, type: 'sticker', body: '' }), 'sticker');
+  await bridge.whatsApp(message('location', { ...group, type: 'location', body: '', location: { latitude: 1, longitude: 2 } }), 'location');
+  await bridge.whatsApp(message('card', { ...group, type: 'contact', body: 'BEGIN:VCARD\nFN:Bob\nTEL:+123\nEND:VCARD' }), 'card');
+  assert.equal(api.calls.find(c => c.method === 'sendPhoto').body.caption, 'Caption');
+  assert.equal(api.calls.filter(c => c.method === 'sendMessage').length, 0);
+  assert.equal(api.calls.find(c => c.method === 'sendContact').body.first_name, 'Bob');
+  await bridge.whatsApp(message('poll', { ...group, type: 'poll', body: '', poll: { name: 'Choose', options: ['Yes', 'No'] } }), 'poll');
+  assert.equal(api.calls.find(c => c.method === 'sendMessage').body.text, '📊 Choose\n1. Yes\n2. No');
+});
+
+test('member-bot history keeps its history marker and body while phone-originated sends keep owner attribution', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('route', 'g@g.us', { chatId: 'g@g.us', tgChat: '-200', mode: 'group' });
+  s.put('bot', '42', { token: s.seal('alice-token') }); s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); api.members.add('42');
+  const group = { chatId: 'g@g.us', isGroup: true, author: '111@c.us' };
+  await bridge.whatsApp({ ...message('history', { ...group, body: 'Alice is coming' }), historical: true }, 'history');
+  const text = api.calls.find(c => c.method === 'sendMessage').body.text;
+  assert.match(text, /^\[History · [^\]]+\]\nAlice is coming$/);
+  await bridge.whatsApp(message('phone', { ...group, body: 'From my phone', fromMe: true }), 'phone');
+  const phone = api.calls.filter(c => c.method === 'sendMessage').at(-1);
+  assert.equal(phone.token, 'master-token'); assert.equal(phone.body.text, 'You · sent from WhatsApp\nFrom my phone');
+});
+
+test('member-bot edits do not restore a sender header; master edit fallback remains attributed', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('route', 'g@g.us', { chatId: 'g@g.us', tgChat: '-200', mode: 'group' });
+  s.put('bot', '42', { token: s.seal('alice-token') }); s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); api.members.add('42');
+  await bridge.whatsApp(message('edit', { chatId: 'g@g.us', isGroup: true, author: '111@c.us' }), 'initial-edit');
+  await bridge.waChange({ event: 'message.edited', data: { chatId: 'g@g.us', id: 'edit', body: 'Updated' } }, 'edited');
+  assert.equal(api.calls.find(c => c.method === 'editMessageText').body.text, 'Updated');
+  api.failure = new ApiError('Cannot edit', 400);
+  await bridge.waChange({ event: 'message.edited', data: { chatId: 'g@g.us', id: 'edit', body: 'Updated again' } }, 'edit-fallback');
+  const fallback = api.calls.filter(c => c.method === 'sendMessage').at(-1);
+  assert.equal(fallback.token, 'master-token'); assert.equal(fallback.body.text, 'Alice · edited\nUpdated again');
+});
+
+test('private member-bot messages and edit fallbacks stay nameless in the correct bot DM', async t => {
+  const { bridge, api, s } = fixture(t);
+  s.put('contact', '111@c.us', { name: 'Alice', bot: '42' }); s.put('bot', '42', { token: s.seal('alice-token'), ready: true });
+  s.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread: 101, mode: 'dedicated' });
+  await bridge.whatsApp(message(), 'private');
+  assert.equal(api.calls.find(c => c.method === 'sendMessage').body.text, 'Hello');
+  api.failure = new ApiError('Cannot edit', 400);
+  await bridge.waChange({ event: 'message.edited', data: { chatId: '111@c.us', id: 'm1', body: 'Updated' } }, 'private-edit');
+  const fallback = api.calls.filter(c => c.method === 'sendMessage').at(-1);
+  assert.equal(fallback.token, 'alice-token'); assert.equal(fallback.body.chat_id, '123'); assert.equal(fallback.body.text, 'Updated');
 });
 
 test('Telegram reply maps to WhatsApp quote; send echoes and overlapping bot updates do not loop', async t => {

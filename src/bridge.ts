@@ -8,6 +8,7 @@ import type { Config, Json } from './config.ts';
 import { MetadataSync } from './sync.ts';
 import { TelegramControl, commandOf, serviceMessage } from './control.ts';
 import { Revocations } from './revocations.ts';
+import { NativeReactions } from './reactions.ts';
 
 const updates = ['message', 'edited_message', 'callback_query', 'my_chat_member', 'managed_bot', 'message_reaction', 'poll_answer'];
 const waEvents = ['message.received', 'message.sent', 'message.edited', 'message.revoked', 'message.reaction', 'poll.vote', 'session.status', 'session.disconnected', 'message.failed'];
@@ -18,10 +19,11 @@ const chunks = (text: string, length = 3800) => {
 };
 
 export class Bridge {
-  c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; control: TelegramControl; revocations: Revocations; busy = false;
+  c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; control: TelegramControl; revocations: Revocations; reactions: NativeReactions; busy = false;
   constructor(c: Config, store = new Store(c.db, c.key), api = new Api(c)) {
     this.c = c; this.store = store; this.api = api; this.media = new Media(c, api); this.metadata = new MetadataSync(this); this.control = new TelegramControl(this);
     this.revocations = new Revocations(this);
+    this.reactions = new NativeReactions(this);
   }
   token(id: string) {
     if (id === 'master') return this.c.masterToken;
@@ -186,9 +188,10 @@ export class Bridge {
     this.store.put('delivery-target', snapshotKey, { bot, destination, thread });
     // Message ids and file ids in private chats are scoped to each bot.
     key += `:to:${bot}:${destination}`;
-    const label = m.fromMe ? 'You · sent from WhatsApp' : this.store.get('contact', sender)?.name || sender;
+    const label = m.fromMe ? 'You · sent from WhatsApp' : bot === 'master' ? this.store.get('contact', sender)?.name || sender : '';
     const historical = event.historical ? `[History · ${new Date(m.timestamp * 1000).toISOString()}]\n` : '';
-    const text = `${historical}${label}\n${m.body || ''}`;
+    const prefix = historical + (label ? label + '\n' : '');
+    const text = prefix + (m.body || '');
     const extra: Json = { ...(thread ? { message_thread_id: thread } : {}) };
     const quoted = m.quotedMessage?.id && this.store.byWhatsApp(chat, m.quotedMessage.id).find(r => r.tg_chat === String(destination) && (!privateChat || bot === 'master' || r.bot === bot));
     if (quoted) extra.reply_parameters = { message_id: quoted.tg_id, allow_sending_without_reply: true };
@@ -214,7 +217,7 @@ export class Bridge {
       if (m.type === 'image' && m.media?.mimetype && !/image\/(jpeg|png)/.test(m.media.mimetype)) {
         try { path = await this.media.convert(path); } catch { method = 'sendDocument'; field = 'document'; }
       }
-      if (m.type === 'sticker' || text.length > 1000) {
+      if ((m.type === 'sticker' && text.trim()) || text.length > 1000) {
         for (const r of await this.sendText(bot, destination, text, key + ':label', extra, 'chat')) record(r);
       }
       try {
@@ -226,19 +229,19 @@ export class Bridge {
           { chat_id: destination, ...extra, caption: (text + '\n[Original attachment; native presentation unavailable]').slice(0, 1000) })), true);
       }
     } else if (m.type === 'location' && m.location) {
-      for (const r of await this.sendText(bot, destination, text, key, extra, 'chat')) record(r);
+      if (text.trim()) for (const r of await this.sendText(bot, destination, text, key, extra, 'chat')) record(r);
       record(await this.effect(key + ':location', () => this.api.tg(this.token(bot), 'sendLocation', { chat_id: destination, ...extra, latitude: m.location.latitude, longitude: m.location.longitude })));
     } else if (m.type === 'contact' && /BEGIN:VCARD/i.test(m.body || '')) {
       const name = /(?:^|\n)FN:(.+)/i.exec(m.body)?.[1]?.trim();
       const number = /(?:^|\n)TEL[^:]*:([+\d ()-]+)/i.exec(m.body)?.[1]?.trim();
       if (name && number) {
-        for (const r of await this.sendText(bot, destination, label, key + ':label', extra, 'chat')) record(r);
+        if (prefix.trim()) for (const r of await this.sendText(bot, destination, prefix.trimEnd(), key + ':label', extra, 'chat')) record(r);
         record(await this.effect(key + ':contact', () => this.api.tg(this.token(bot), 'sendContact', { chat_id: destination, ...extra, first_name: name, phone_number: number, vcard: m.body })));
       } else for (const r of await this.sendText(bot, destination, text, key, extra, 'chat')) record(r);
     } else if (m.type === 'poll' && m.poll) {
       const choices = m.poll.options.map((o: Json) => typeof o === 'string' ? o : o.name || o.text);
       const buttons = choices.slice(0, 12).map((choice: string) => [{ text: choice.slice(0, 64), callback_data: 'vote:' + this.action({ chat, message: m.id, choice, multiple: !!m.poll.allowMultipleAnswers }) }]);
-      for (const r of await this.sendText(bot, destination, `${historical}${label}\n📊 ${m.poll.name}\n${choices.map((o: string, i: number) => `${i + 1}. ${o}`).join('\n')}`, key,
+      for (const r of await this.sendText(bot, destination, `${prefix}📊 ${m.poll.name}\n${choices.map((o: string, i: number) => `${i + 1}. ${o}`).join('\n')}`, key,
         { ...extra, reply_markup: { inline_keyboard: buttons } }, 'chat')) record(r);
     } else {
       const fallback = ['text', 'contact'].includes(m.type) ? '' : `\n[${m.type || 'Unsupported message'}${m.call?.missed ? ' · missed' : ''}]`;
@@ -260,13 +263,23 @@ export class Bridge {
       if (this.store.get('outbound-edit', `${chat}:${id}`) === digest(m.body || '')) return;
     }
     const rows = this.store.byWhatsApp(chat, id);
+    if (event.event === 'message.reaction') { await this.reactions.apply(chat, id, m, rows, key); return; }
     for (const [i, row] of rows.entries()) {
       const extra = { chat_id: row.tg_chat, message_id: row.tg_id };
       if (event.event === 'message.edited') {
-        const name = this.store.get('wamessage', `${chat}:${id}`)?.name || 'WhatsApp';
-        const text = `${name} · edited\n${m.body || m.newBody || m.text || ''}`;
+        const source = this.store.get('wamessage', `${chat}:${id}`);
+        const own = source?.fromMe || row.direction === 'out', body = m.body ?? m.newBody ?? m.text ?? '';
+        const label = own ? 'You · sent from WhatsApp' : row.bot === 'master' ? source?.name || 'WhatsApp' : '';
+        const text = (label ? `${label} · edited\n` : '') + body;
         try { await this.effect(`${key}:edit:${i}`, () => this.api.tg(this.token(row.bot), row.media ? 'editMessageCaption' : 'editMessageText', { ...extra, [row.media ? 'caption' : 'text']: text.slice(0, row.media ? 1000 : 4000) })); }
-        catch (e) { if (!(e instanceof ApiError) || e.status !== 400) throw e; await this.sendText('master', row.tg_chat, text, `${key}:notice:${i}`, { reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } }); }
+        catch (e) {
+          if (!(e instanceof ApiError) || e.status !== 400) throw e;
+          const fallback = row.tg_chat.startsWith('-') ? 'master' : row.bot;
+          const name = own ? 'You · sent from WhatsApp' : fallback === 'master' ? source?.name || 'WhatsApp' : '';
+          const ledger = this.store.db.prepare('SELECT thread FROM telegram_messages WHERE scope=? AND chat=? AND message=?').get(this.control.scope(row.bot, row.tg_chat), row.tg_chat, row.tg_id);
+          await this.sendText(fallback, row.tg_chat, (name ? `${name} · edited\n` : '') + body, `${key}:notice:${i}`,
+            { ...(ledger?.thread ? { message_thread_id: ledger.thread } : {}), reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } });
+        }
       } else {
         const text = event.event === 'poll.vote' ? `[Poll vote · ${m.voterId}] ${(m.selectedOptions || []).join(', ') || 'cleared'}` : `[Reaction · ${m.senderId || 'WhatsApp'}] ${m.reaction || 'removed'}`;
         await this.sendText('master', row.tg_chat, text, `${key}:reaction:${i}`, { reply_parameters: { message_id: row.tg_id, allow_sending_without_reply: true } });
@@ -291,7 +304,12 @@ export class Bridge {
     }
     if (update.message_reaction) {
       const r = update.message_reaction, map = this.store.byTelegram(r.chat.id, r.message_id, bot);
-      if (map) await this.effect(key + ':react', () => this.api.ow('messages/react', { chatId: map.wa_chat, messageId: map.wa_id, emoji: r.new_reaction?.[0]?.emoji || '' }));
+      const emoji = r.new_reaction?.find((value: Json) => typeof value.emoji === 'string')?.emoji;
+      if (r.new_reaction?.length && !emoji) return;
+      if (map) {
+        await this.effect(key + ':react', () => this.api.ow('messages/react', { chatId: map.wa_chat, messageId: map.wa_id, emoji: emoji || '' }));
+        await this.reactions.rememberOutgoing(map, r, bot);
+      }
       return;
     }
     if (!m) return;

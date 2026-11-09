@@ -50,6 +50,8 @@ Reply in an inbox topic to send a WhatsApp message. The topic header includes bu
 
 Follow the creation link, then select the contact in your private chat with the master to confirm the binding. Start the new contact bot for private replies. Add it to mirrored groups where you want that sender identity. If a bot is absent, blocked, not yet started, or cannot be created because of your owned-bot limit, the master continues relaying with the person's name.
 
+Member-bot messages use Telegram's sender identity without repeating that person's name in the text, captions or edits. Hermes includes the person's name when relaying on their behalf. History markers and the owner's “sent from WhatsApp” marker are preserved.
+
 To mirror a WhatsApp group, tap **Create / link Telegram group** in its management topic. In your private chat with Hermes, tap **Create / select Telegram group**, create a private group (or select one you own), and confirm Hermes's administrator permissions. The selected group is linked automatically. This uses Telegram's native picker and requires no separate account login. If your client has no create option in that picker, create the private group first and select it there.
 
 For an older topic, send `/group` inside the topic to get the button. The manual alternative is to create a private Telegram group, add the master as an administrator, then send:
@@ -117,7 +119,9 @@ Replace `all` with a known WhatsApp conversation ID to refresh just that group o
 
 ## Media and API differences
 
-Text, quotes, photos, videos, documents, audio, voice, stickers, contact cards, locations and poll creation have explicit mappings. Voice/image conversion uses FFmpeg where needed. Telegram animated/video stickers fall back to their original document when not a WhatsApp-compatible WebP sticker. Albums arrive as individual attachments with captions. Native reactions in groups and explicit `/react` are supported; WhatsApp reaction and poll-vote changes appear as attributed notices, since a single master cannot reproduce every person's native reaction identity.
+Text, quotes, photos, videos, documents, audio, voice, stickers, contact cards, locations and poll creation have explicit mappings. Voice/image conversion uses FFmpeg where needed. Telegram animated/video stickers fall back to their original document when not a WhatsApp-compatible WebP sticker. Albums arrive as individual attachments with captions. Native Telegram reactions and explicit `/react` send reactions to WhatsApp. Incoming WhatsApp reaction additions/removals now update native Telegram reactions instead of posting replies; a short attributed notice is used only when Telegram rejects the reaction. Poll-vote changes still appear as attributed notices.
+
+In groups, the reactor's registered member bot reacts when present; Hermes handles unbound/absent participants. Telegram allows [one reaction per bot per message](https://core.telegram.org/bots/api#setmessagereaction), so participants sharing Hermes are represented by their latest active reaction rather than separate counts. In private chats, only the bot owning that DM is used. Full WhatsApp reaction snapshots and LID aliases are respected, emoji presentation variants are normalized, and Telegram-owner reaction echoes do not create a duplicate bot reaction when the account identity can be resolved.
 
 Incoming poll choices appear as buttons. Poll voting and vote events require OpenWA's whatsapp-web.js engine; your inspected running gateway uses that engine. Multiple-choice buttons toggle the owner's selected choices. Unsupported API operations fail visibly rather than pretending to succeed.
 
