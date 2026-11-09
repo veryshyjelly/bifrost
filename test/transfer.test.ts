@@ -11,6 +11,7 @@ test('import keeps credentials literal, normalizes only local paths and removes 
   const result = environment(restoredEnvironment(text));
   assert.equal(result.BRIDGE_ENCRYPTION_KEY, 'original'); assert.equal(result.TELEGRAM_API_HASH, 'literal$hash');
   assert.equal(result.OPENWA_SESSION_ID, 'same-session'); assert.equal(result.BRIDGE_CALLBACK_URL, 'http://bifrost:3210');
+  assert.equal(result.BIFROST_ACCOUNT_ID, 'same-session');
   assert.equal(result.BRIDGE_DB, '/data/bridge.db'); assert.equal(result.N8N_MANAGEMENT_WEBHOOK, undefined);
 });
 
@@ -53,7 +54,7 @@ dockerTest('export/import round trip preserves identity, state, media and owners
   const backupRoot = join(import.meta.dirname, '../backups'); mkdirSync(backupRoot, { recursive: true, mode: 0o700 });
   const root = mkdtempSync(join(backupRoot, 'bifrost-roundtrip-')), source = join(root, 'source'), destination = join(root, 'destination');
   mkdirSync(source); mkdirSync(destination);
-  const project = 'bifrost-test-' + process.pid + '-' + Date.now(), restored = project + '-restored';
+  const project = 'bifrost-test-' + process.pid + '-' + Date.now(), restored = project + '-restored', legacy = project + '-legacy';
   const key = 'cd'.repeat(32), image = process.env.BIFROST_TEST_IMAGE || 'local/bifrost:0.1.0';
   const roles = ['data', 'media', 'telegram-data'];
   const volume = (p: string, role: string) => p + '_' + (role === 'telegram-data' ? role : 'bridge-' + role);
@@ -67,6 +68,7 @@ dockerTest('export/import round trip preserves identity, state, media and owners
       import {Store} from './src/store.ts'; import {writeFileSync,chownSync} from 'node:fs';
       const s=new Store('/data/bridge.db','${key}'); s.put('bot','42',{token:s.seal('original-child-token'),ready:true});
       s.put('contact','111@c.us',{bot:'42',name:'Fixture'}); s.map('111@c.us','wa-id','123',77,'42','in',true);
+      const {digest}=await import('./src/config.ts');s.put('status-mute','legacy',{session:digest('original-session'),sender:'111@c.us',active:true,revision:1});
       s.enqueue('n8n:old','n8n:old','n8n',{id:'old',type:'mark_read',data:{chatId:'111@c.us'},at:1});s.close();
       writeFileSync('/media/pending.bin','original-media');writeFileSync('/telegram-data/cached.bin','telegram-cache');
     `);
@@ -83,39 +85,60 @@ dockerTest('export/import round trip preserves identity, state, media and owners
     const values = environment(readFileSync(join(destination, 'bridge.env'), 'utf8'));
     assert.equal(values.BRIDGE_ENCRYPTION_KEY, key); assert.equal(values.TELEGRAM_MASTER_TOKEN, 'fixture-master');
     assert.equal(values.BRIDGE_CALLBACK_URL, 'http://bifrost:3210');
+    assert.equal(values.BIFROST_ACCOUNT_ID, 'original-session');
     for (const name of ['bridge.env', 'telegram-api.env', '.env']) assert.equal(statSync(join(destination, name)).mode & 0o777, 0o600);
     const restoredMounts = roles.flatMap(role => ['--mount', `type=volume,source=${volume(restored, role)},target=/${role}`]);
     const result = JSON.parse(docker('run', '--rm', '--network', 'none', ...restoredMounts, image, 'bun', '-e', `
       import {Store} from './src/store.ts'; import {readFileSync,writeFileSync} from 'node:fs';
+      import {Bridge} from './src/bridge.ts'; import {configuration} from './src/config.ts';
       const s=new Store('/data/bridge.db','${key}');writeFileSync('/media/writable','yes');
+      const b=new Bridge({...configuration({}),key:'${key}',account:'original-session',session:'replacement-session',openwaKey:'replacement-key'},s);
       console.log(JSON.stringify({token:s.unseal(s.get('bot','42').token),bot:s.get('contact','111@c.us').bot,
        messages:s.byWhatsApp('111@c.us','wa-id').length,jobs:s.db.prepare('SELECT type FROM jobs').all(),
-       media:readFileSync('/media/pending.bin','utf8'),telegram:readFileSync('/telegram-data/cached.bin','utf8')}));s.close();
+       media:readFileSync('/media/pending.bin','utf8'),telegram:readFileSync('/telegram-data/cached.bin','utf8'),account:b.c.account,muted:b.statuses.isMuted('111@c.us')}));s.close();
     `));
-    assert.deepEqual(result, { token: 'original-child-token', bot: '42', messages: 1, jobs: [{ type: 'n8n' }], media: 'original-media', telegram: 'telegram-cache' });
+    assert.deepEqual(result, { token: 'original-child-token', bot: '42', messages: 1, jobs: [{ type: 'n8n' }], media: 'original-media', telegram: 'telegram-cache', account: 'original-session', muted: true });
     assert.equal(docker('ps', '-aq', '--filter', 'label=com.docker.compose.project=' + restored), '');
     assert.throws(() => importState(file, restored, image, destination), /fresh checkout/);
+    // A future export must use the database identity even when connection settings changed.
+    writeFileSync(join(destination, 'bridge.env'), readFileSync(join(destination, 'bridge.env'), 'utf8').replace(/^BIFROST_ACCOUNT_ID=.*\n/m, '').replace('OPENWA_SESSION_ID=original-session', 'OPENWA_SESSION_ID=replacement-session'));
+    for (const service of ['bifrost', 'telegram-api']) containers.push(docker('create', '--network', 'none',
+      '--label', 'com.docker.compose.project=' + restored, '--label', 'com.docker.compose.service=' + service,
+      ...(service === 'telegram-api' ? restoredMounts.slice(4) : restoredMounts), image, 'bun', '-e', 'setInterval(()=>{},1000)'));
+    const nextExport = join(root, 'rotated.bifrost.tar.gz'); exportState(nextExport, restored, image, destination);
+    const nextEnv = environment(execFileSync('tar', ['-xOf', nextExport, './bridge.env'], { encoding: 'utf8' }));
+    assert.equal(nextEnv.BIFROST_ACCOUNT_ID, 'original-session'); assert.equal(nextEnv.OPENWA_SESSION_ID, 'replacement-session');
+    for (const id of containers.slice(2)) assert.equal(docker('inspect', '--format', '{{.State.Running}}', id), 'false');
     const corrupt = join(root, 'bad.bifrost.tar.gz'), empty = join(root, 'empty'); mkdirSync(empty); writeFileSync(corrupt, 'corrupt');
     assert.throws(() => importState(corrupt, project + '-bad', image, empty));
     assert.equal(existsSync(join(empty, 'bridge.env')), false);
     assert.equal(docker('volume', 'ls', '--filter', 'name=' + project + '-bad', '--format', '{{.Name}}'), '');
     const tampered = join(root, 'tampered'); mkdirSync(tampered);
     execFileSync('tar', ['-xzf', file, '-C', tampered]);
+    // Old version-1 exports have no account setting or database identity marker.
+    writeFileSync(join(tampered, 'bridge.env'), readFileSync(join(tampered, 'bridge.env'), 'utf8').replace(/^BIFROST_ACCOUNT_ID=.*\n/m, ''));
+    const oldManifest = JSON.parse(readFileSync(join(tampered, 'manifest.json'), 'utf8'));
+    oldManifest.files['bridge.env'] = createHash('sha256').update(readFileSync(join(tampered, 'bridge.env'))).digest('hex');
+    writeFileSync(join(tampered, 'manifest.json'), JSON.stringify(oldManifest));
+    const legacyFile = join(root, 'legacy.bifrost.tar.gz'), legacyDirectory = join(root, 'legacy'); mkdirSync(legacyDirectory);
+    execFileSync('tar', ['-czf', legacyFile, '-C', tampered, '.'], { env: { ...process.env, COPYFILE_DISABLE: '1' } });
+    importState(legacyFile, legacy, image, legacyDirectory);
+    assert.equal(environment(readFileSync(join(legacyDirectory, 'bridge.env'), 'utf8')).BIFROST_ACCOUNT_ID, 'original-session');
     writeFileSync(join(tampered, 'bridge.env'), readFileSync(join(tampered, 'bridge.env'), 'utf8').replace(key, 'ef'.repeat(32)));
     const broken = join(root, 'tampered.bifrost.tar.gz');
-    execFileSync('tar', ['-czf', broken, '-C', tampered, '.']);
+    execFileSync('tar', ['-czf', broken, '-C', tampered, '.'], { env: { ...process.env, COPYFILE_DISABLE: '1' } });
     assert.throws(() => importState(broken, project + '-bad', image, empty));
     const manifest = JSON.parse(readFileSync(join(tampered, 'manifest.json'), 'utf8'));
     manifest.files['bridge.env'] = createHash('sha256').update(readFileSync(join(tampered, 'bridge.env'))).digest('hex');
     writeFileSync(join(tampered, 'manifest.json'), JSON.stringify(manifest));
-    execFileSync('tar', ['-czf', broken, '-C', tampered, '.']);
+    execFileSync('tar', ['-czf', broken, '-C', tampered, '.'], { env: { ...process.env, COPYFILE_DISABLE: '1' } });
     assert.throws(() => importState(broken, project + '-bad', image, empty)); // correct checksums, wrong decryption key
     assert.equal(existsSync(join(empty, 'bridge.env')), false);
     assert.equal(docker('volume', 'ls', '--filter', 'name=' + project + '-bad', '--format', '{{.Name}}'), '');
   } finally {
     for (const id of containers) docker('rm', '-f', id);
     const volumes = new Set(docker('volume', 'ls', '--format', '{{.Name}}').split('\n'));
-    for (const p of [project, restored]) for (const role of roles) if (volumes.has(volume(p, role))) docker('volume', 'rm', volume(p, role));
+    for (const p of [project, restored, legacy]) for (const role of roles) if (volumes.has(volume(p, role))) docker('volume', 'rm', volume(p, role));
     rmSync(root, { recursive: true, force: true });
   }
 });

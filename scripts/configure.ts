@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { existsSync, writeFileSync, chmodSync, readFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,6 +9,7 @@ export function configure(directory = resolve(import.meta.dirname, '..')) {
   const created = !existsSync(path);
   if (created) {
     let template = readFileSync(new URL('../bridge.env.example', import.meta.url), 'utf8');
+    template = template.replace(/^BIFROST_ACCOUNT_ID=$/m, 'BIFROST_ACCOUNT_ID=' + randomUUID());
     for (const key of ['BRIDGE_ENCRYPTION_KEY', 'BRIDGE_ADMIN_TOKEN', 'OPENWA_WEBHOOK_SECRET']) {
       template = template.replace(new RegExp('^' + key + '=$', 'm'), key + '=' + randomBytes(32).toString('hex'));
     }

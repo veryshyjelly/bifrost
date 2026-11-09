@@ -60,7 +60,7 @@ test('expired and previous-session buttons produce guidance without opening a se
   store.put('action', id, { ...action, expires: Date.now() - 1 });
   await bridge.beginMirrorGroup(id, 'expired');
   assert.ok(!api.calls.some(c => c.body.reply_markup?.keyboard));
-  store.put('action', id, action); bridge.c.session = 'different-session';
+  store.put('action', id, { ...action, session: 'different-account' });
   await bridge.beginMirrorGroup(id, 'different-session');
   assert.ok(!api.calls.some(c => c.body.reply_markup?.keyboard));
 });

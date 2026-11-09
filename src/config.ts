@@ -20,6 +20,7 @@ export function configuration(env = process.env) {
     callback: env.BRIDGE_CALLBACK_URL || 'http://bifrost:3210',
     openwa: env.OPENWA_URL || 'http://openwa-api:2785',
     openwaKey: env.OPENWA_API_KEY || '', session: env.OPENWA_SESSION_ID || '',
+    account: env.BIFROST_ACCOUNT_ID || '',
     history: Math.min(2000, Math.max(0, Number(env.HISTORY_LIMIT || 20))),
     mediaLimit: Number(env.MAX_MEDIA_BYTES || 100 * 1024 * 1024),
     pace: Number(env.DELIVERY_INTERVAL_MS || 1100),

@@ -132,7 +132,7 @@ test('choices validate owner, bot, destination, message, session and expiry befo
   }
   f.store.put('revocation', task.id, { ...task, expires: Date.now() - 1 });
   await f.bridge.revocations.callback('master', query(task, task.id, 'delete'));
-  f.store.put('revocation', task.id, task); f.bridge.c.session = 'another-session';
+  f.store.put('revocation', task.id, { ...task, session: 'another-account' });
   await f.bridge.revocations.callback('master', query(task, task.id, 'delete'));
   assert.ok(!f.api.calls.some(c => c.method === 'deleteMessages')); assert.ok(f.api.messages.has('*:-200:5'));
 });

@@ -43,12 +43,39 @@ const command = (text: string, extra = {}) => ({ message_id: 1, from: { id: 123 
 const content = (api: Fixture) => api.calls.filter(call => call.method === 'sendMessage' && call.body.entities?.some(e => e.type === 'date_time' && e.date_time_format === 't'));
 async function drain(b: Bridge) { for (let i = 0; i < 100; i++) await b.tick(); }
 async function choose(b: Bridge, bot: string, m: any, key: string, mode = 'skip') {
-  const id = digest(JSON.stringify([b.c.session, bot, key])).slice(0, 24);
+  const id = digest(JSON.stringify([b.c.account, bot, key])).slice(0, 24);
   await b.telegram(bot, { callback_query: { id: key + ':callback', from: m.from, message: { ...m, message_id: b.store.get('history-choice', id)?.promptMessage }, data: `history:${mode}:${id}` } }, key + ':choice');
 }
 async function history(b: Bridge, bot: string, m: any, key: string, mode = 'skip') {
   await b.command(bot, m, key); await choose(b, bot, m, key, mode);
 }
+
+test('queued history resumes under its original checkpoint after OpenWA credentials change', async t => {
+  const { bridge, api, store, c } = fixture(t);
+  api.rows = [message('before-move', 1)];
+  await history(bridge, 'master', command('/history 1'), 'before-move');
+  const id = store.all('history-run')[0].id;
+  const movedConfig = { ...c, account: '', session: 'new-openwa-session', openwaKey: 'new-api-key' };
+  const movedApi = new Fixture(movedConfig), moved = new Bridge(movedConfig, store, movedApi);
+  movedApi.rows = api.rows;
+  await drain(moved);
+  assert.equal(store.get('history-run', id).status, 'complete');
+  assert.equal(store.all('history-run').length, 1);
+  assert.equal(store.byWhatsApp('g@g.us', 'before-move').length, 1);
+  assert.equal(moved.c.account, 's1');
+});
+
+test('an unexpired history choice remains usable after an OpenWA session rotation', async t => {
+  const { bridge, store, c } = fixture(t);
+  const m = command('/history 1'), key = 'pending-before-move';
+  await bridge.command('master', m, key);
+  const movedConfig = { ...c, account: '', session: 'new-openwa-session', openwaKey: 'new-api-key' };
+  const api = new Fixture(movedConfig), moved = new Bridge(movedConfig, store, api);
+  api.rows = [message('choice-after-move', 1)];
+  await choose(moved, 'master', m, key); await drain(moved);
+  assert.equal(store.all('history-choice')[0].status, 'selected');
+  assert.equal(store.byWhatsApp('g@g.us', 'choice-after-move').length, 1);
+});
 
 test('/history n fetches the complete batch first, posts oldest first, and recreates native reply chains', async t => {
   const { bridge, api, store } = fixture(t);

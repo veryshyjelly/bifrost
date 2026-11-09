@@ -15,9 +15,9 @@ const telegramEquivalents: Record<string, string> = {
 export class NativeReactions {
   b: Bridge;
   constructor(b: Bridge) { this.b = b; }
-  sourceKey(chat: string, message: string) { return digest(JSON.stringify([this.b.c.session, chat, message])); }
+  sourceKey(chat: string, message: string) { return digest(JSON.stringify([this.b.c.account, chat, message])); }
   async outgoing(bot: string, reaction: Json, key: string) {
-    const id = digest(JSON.stringify([this.b.c.session, bot, key])), previous = this.b.store.get('outgoing-reaction', id);
+    const id = digest(JSON.stringify([this.b.c.account, bot, key])), previous = this.b.store.get('outgoing-reaction', id);
     if (previous) return previous;
     const identity = (item: Json) => JSON.stringify([item.type, item.emoji || item.custom_emoji_id || '']);
     const old = new Set((reaction.old_reaction || []).map(identity)), next = reaction.new_reaction || [];
@@ -41,7 +41,7 @@ export class NativeReactions {
     this.b.store.put('outgoing-reaction', id, result); return result;
   }
   async rememberOutgoing(map: Json, reaction: Json, bot: string) {
-    const sessionKey = digest(this.b.c.session);
+    const sessionKey = digest(this.b.c.account);
     let self = this.b.store.get('reaction-self', sessionKey);
     if (!self) {
       try {

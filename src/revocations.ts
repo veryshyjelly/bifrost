@@ -6,7 +6,7 @@ import { ApiError } from './api.ts';
 export class Revocations {
   b: Bridge;
   constructor(b: Bridge) { this.b = b; }
-  get session() { return digest(this.b.c.session); }
+  get session() { return digest(this.b.c.account); }
   retry(e: unknown): never {
     if (e instanceof ApiError && (e.retry || e.uncertain)) throw new ApiError('Telegram deletion handling will retry', e.status, true, false, e.delay);
     throw e;

@@ -4,6 +4,7 @@ import { resolve, dirname, join } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { Store } from '../src/store.ts';
+import { accountIdentity } from '../src/identity.ts';
 
 const root = resolve(import.meta.dirname, '..');
 const imageDefault = 'local/bifrost:0.1.0';
@@ -40,7 +41,14 @@ export function environment(text: string) {
   return Object.fromEntries(text.split('\n').filter(line => /^[A-Z_]+=/.test(line))
     .map(line => [line.slice(0, line.indexOf('=')), line.slice(line.indexOf('=') + 1)]));
 }
-export function restoredEnvironment(text: string) {
+export function identityEnvironment(text: string, id: string) {
+  if (!id) throw new Error('Cannot determine the original Bifrost account identity');
+  return /^BIFROST_ACCOUNT_ID=.*$/m.test(text) ? text.replace(/^BIFROST_ACCOUNT_ID=.*$/m, () => 'BIFROST_ACCOUNT_ID=' + id)
+    : text.trimEnd() + '\nBIFROST_ACCOUNT_ID=' + id + '\n';
+}
+export function restoredEnvironment(text: string, account?: string) {
+  const previous = environment(text);
+  text = identityEnvironment(text, account || previous.BIFROST_ACCOUNT_ID || previous.OPENWA_SESSION_ID);
   const overrides: Record<string, string> = { BRIDGE_CALLBACK_URL: 'http://bifrost:3210', TELEGRAM_API_URL: 'http://telegram-api:8081', BRIDGE_DB: '/data/bridge.db', BRIDGE_MEDIA: '/media' };
   const lines = text.split('\n').filter(line => !/^N8N_/.test(line)).map(line => {
     const key = line.slice(0, line.indexOf('='));
@@ -85,7 +93,7 @@ function fingerprint(directory: string, names: string[]) {
 export function exportState(file: string, project: string, image = imageDefault, directory = root) {
   file = resolve(file);
   if (existsSync(file)) throw new Error('Export destination already exists');
-  validateConfig(directory);
+  const configuration = validateConfig(directory);
   console.log('Discovering source containers and volumes for ' + project);
   const ids = docker(['ps', '-aq', '--filter', 'label=com.docker.compose.project=' + project]).trim().split(/\s+/).filter(Boolean);
   if (!ids.length) throw new Error('No containers found for source project ' + project);
@@ -103,6 +111,12 @@ export function exportState(file: string, project: string, image = imageDefault,
     stopped = true;
     if (running.length) docker(['stop', '--time', '15', ...running]);
     helper(image, staging, ['export'], roles.flatMap(role => ['--mount', mount(volumes[role], '/volumes/' + role, 'volume', true)]));
+    const saved = JSON.parse(readFileSync(join(staging, 'account.json'), 'utf8'));
+    if (saved.id !== undefined && (typeof saved.id !== 'string' || !saved.id)) throw new Error('Invalid saved Bifrost account identity');
+    if (saved.id && configuration.BIFROST_ACCOUNT_ID && saved.id !== configuration.BIFROST_ACCOUNT_ID) throw new Error('BIFROST_ACCOUNT_ID does not match the database');
+    const account = saved.id || configuration.BIFROST_ACCOUNT_ID || configuration.OPENWA_SESSION_ID;
+    writeFileSync(join(staging, 'bridge.env'), identityEnvironment(readFileSync(join(staging, 'bridge.env'), 'utf8'), account), { mode: 0o600 });
+    rmSync(join(staging, 'account.json'));
     const names = ['bridge.env', 'telegram-api.env', ...roles.map(role => role + '.tar.gz')];
     let revision = 'unknown', dirty = true;
     try {
@@ -134,12 +148,16 @@ export function importState(file: string, project = 'bifrost', image = imageDefa
     helper(image, staging, ['unpack'], [], file);
     const values = validateConfig(staging);
     const store = new Store(join(staging, 'check-data/bridge.db'), values.BRIDGE_ENCRYPTION_KEY);
-    try { for (const bot of store.all('bot')) if (bot.token) store.unseal(bot.token); }
+    let account: string;
+    try {
+      for (const bot of store.all('bot')) if (bot.token) store.unseal(bot.token);
+      account = accountIdentity(store, values.BIFROST_ACCOUNT_ID, values.OPENWA_SESSION_ID);
+    }
     finally { store.close(); }
     for (const role of roles) { docker(['volume', 'create', volumes[role]]); created.push(volumes[role]); }
     helper(image, staging, ['restore'], roles.flatMap(role => ['--mount', mount(volumes[role], '/volumes/' + role, 'volume')]));
     const outputs: Record<string, string> = {
-      'bridge.env': restoredEnvironment(readFileSync(join(staging, 'bridge.env'), 'utf8')),
+      'bridge.env': restoredEnvironment(readFileSync(join(staging, 'bridge.env'), 'utf8'), account),
       'telegram-api.env': readFileSync(join(staging, 'telegram-api.env'), 'utf8'),
       '.env': readFileSync(join(root, '.env.example'), 'utf8').replace(/^COMPOSE_PROJECT_NAME=.*$/m, 'COMPOSE_PROJECT_NAME=' + project),
     };

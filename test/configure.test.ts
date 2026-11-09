@@ -14,6 +14,7 @@ test('fresh configuration generates independent private secrets from the tracked
   assert.ok(secrets.every(Boolean)); assert.equal(new Set(secrets).size, 3);
   assert.match(env, /^TELEGRAM_MASTER_TOKEN=$/m);
   assert.match(env, /^HISTORY_LIMIT=20$/m);
+  assert.match(env, /^BIFROST_ACCOUNT_ID=[a-f0-9-]{36}$/m);
   for (const file of ['bridge.env', 'telegram-api.env']) assert.equal(statSync(join(root, file)).mode & 0o777, 0o600);
 });
 

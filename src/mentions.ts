@@ -12,7 +12,7 @@ const person = (id: unknown): id is string => typeof id === 'string' && /^\d+(?:
 
 export class Mentions {
   constructor(public b: Bridge) {}
-  get session() { return digest(this.b.c.session); }
+  get session() { return digest(this.b.c.account); }
   canonical(id: string) { return this.b.store.canonical(id.replace(/:\d+@/, '@')); }
   cached(chat: string) { return this.b.store.get('sync-group', `${this.session}:${chat}`); }
   contact(id: string) { return this.b.store.all('contact').find(c => this.canonical(c.id) === this.canonical(id)); }
@@ -90,7 +90,7 @@ export class Mentions {
     for (const match of text.matchAll(/@\{[^{}\n]*(?:\}|(?=\n|$))/g)) {
       if (excluded(match.index!, match.index! + match[0].length)) continue;
       const id = /\|([a-f0-9]{8,64})\}$/.exec(match[0])?.[1], token = id && this.b.store.get('mention-token', id);
-      if (!token || token.session !== this.session || token.chat !== chat) throw new MentionError('This mention tag is unknown or belongs to another group/session. Use /mention to copy a new tag, then resend.');
+      if (!token || token.session !== this.session || token.chat !== chat) throw new MentionError('This mention tag is unknown or belongs to another group/account. Use /mention to copy a new tag, then resend.');
       add(match.index!, match.index! + match[0].length, token.person);
     }
     for (const match of text.matchAll(/(?<![\p{L}\p{N}_@/])@([a-zA-Z0-9_]+)(?![\p{L}\p{N}_])/gu)) {

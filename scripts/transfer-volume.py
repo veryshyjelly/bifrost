@@ -5,9 +5,14 @@ import os
 import sqlite3
 import sys
 import tarfile
+import tempfile
 from pathlib import Path, PurePosixPath
 
 FILES = {"bridge.env", "telegram-api.env", "data.tar.gz", "media.tar.gz", "telegram-data.tar.gz"}
+
+
+class TransferError(ValueError):
+    pass
 
 
 def safe_members(archive, outer=False):
@@ -15,17 +20,17 @@ def safe_members(archive, outer=False):
     for member in archive.getmembers():
         path = PurePosixPath(member.name)
         if path.is_absolute() or ".." in path.parts or "\\" in member.name or not (member.isfile() or member.isdir()):
-            raise ValueError("Unsafe archive entry")
+            raise TransferError("Unsafe archive entry")
         name = str(path)
         if name == "." and member.isdir():
             continue
         if name in seen:
-            raise ValueError("Duplicate archive entry")
+            raise TransferError("Duplicate archive entry")
         seen.add(name)
         if outer and (name not in FILES | {"manifest.json"} or not member.isfile()):
-            raise ValueError("Unexpected export entry")
+            raise TransferError("Unexpected export entry")
     if outer and seen != FILES | {"manifest.json"}:
-        raise ValueError("Incomplete export")
+        raise TransferError("Incomplete export")
 
 
 def sha256(path):
@@ -46,16 +51,26 @@ def main():
                 archive.add(f"/volumes/{name}", arcname=".")
             os.chmod(f"/transfer/{name}.tar.gz", 0o600)
             os.chown(f"/transfer/{name}.tar.gz", int(os.environ["TRANSFER_UID"]), int(os.environ["TRANSFER_GID"]))
+        # Read the frozen database copy, including WAL if present, rather than
+        # guessing account identity from a possibly rotated connection setting.
+        with tempfile.TemporaryDirectory(dir="/transfer") as directory:
+            with tarfile.open("/transfer/data.tar.gz", "r:gz") as archive:
+                safe_members(archive)
+                extract(archive, directory)
+            db = sqlite3.connect(f"file:{directory}/bridge.db?mode=ro", uri=True)
+            row = db.execute("SELECT value FROM kv WHERE kind='identity' AND id='account'").fetchone()
+            db.close()
+            Path("/transfer/account.json").write_text(row[0] if row else "{}")
     elif operation == "unpack":
         with tarfile.open("/export.tar.gz", "r:gz") as archive:
             safe_members(archive, outer=True)
             extract(archive, "/transfer")
         manifest = json.loads(Path("/transfer/manifest.json").read_text())
         if manifest.get("format") != "bifrost" or manifest.get("version") != 1 or set(manifest.get("files", {})) != FILES:
-            raise ValueError("Unsupported export manifest")
+            raise TransferError("Unsupported export manifest")
         for name in FILES:
             if sha256(f"/transfer/{name}") != manifest["files"][name]:
-                raise ValueError("Export checksum mismatch")
+                raise TransferError("Export checksum mismatch")
         for name in ["data", "media", "telegram-data"]:
             with tarfile.open(f"/transfer/{name}.tar.gz", "r:gz") as archive:
                 safe_members(archive)
@@ -65,10 +80,10 @@ def main():
                     extract(archive, destination)
         db = sqlite3.connect("file:/transfer/check-data/bridge.db?mode=ro", uri=True)
         if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
-            raise ValueError("Invalid bridge database")
+            raise TransferError("Invalid bridge database")
         required = {"kv", "jobs", "effects", "messages", "aliases", "telegram_messages"}
         if not required.issubset({row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}):
-            raise ValueError("Incomplete bridge database")
+            raise TransferError("Incomplete bridge database")
         db.close()
         for path in Path("/transfer").rglob("*"):
             if path.is_file():
@@ -77,7 +92,7 @@ def main():
     elif operation == "restore":
         for name in ["data", "media", "telegram-data"]:
             if any(Path(f"/volumes/{name}").iterdir()):
-                raise ValueError("Refusing nonempty destination volume")
+                raise TransferError("Refusing nonempty destination volume")
         for name in ["data", "media", "telegram-data"]:
             print(f"Restoring {name} volume", flush=True)
             with tarfile.open(f"/transfer/{name}.tar.gz", "r:gz") as archive:
@@ -88,12 +103,15 @@ def main():
             for path in [Path(f"/volumes/{name}"), *Path(f"/volumes/{name}").rglob("*")]:
                 os.chown(path, 1000, 1000)
     else:
-        raise ValueError("Unknown transfer operation")
+        raise TransferError("Unknown transfer operation")
 
 
 if __name__ == "__main__":
     try:
         main()
+    except TransferError as error:
+        print(f"Bifrost transfer rejected: {error}", file=sys.stderr)
+        sys.exit(1)
     except Exception:
         print("Bifrost transfer rejected: invalid archive or inaccessible state", file=sys.stderr)
         sys.exit(1)

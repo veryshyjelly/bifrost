@@ -15,6 +15,7 @@ import { waEvents } from './openwa.ts';
 import { StatusFeed } from './statuses.ts';
 import { ConversationHistory } from './history.ts';
 import { Mentions, MentionError } from './mentions.ts';
+import { accountIdentity } from './identity.ts';
 
 const updates = ['message', 'edited_message', 'callback_query', 'my_chat_member', 'managed_bot', 'message_reaction', 'poll_answer'];
 const chunks = (text: string, length = 3800) => {
@@ -26,6 +27,7 @@ const chunks = (text: string, length = 3800) => {
 export class Bridge {
   c: Config; store: Store; api: Api; media: Media; metadata: MetadataSync; control: TelegramControl; revocations: Revocations; reactions: NativeReactions; statuses: StatusFeed; busy = false;
   constructor(c: Config, store = new Store(c.db, c.key), api = new Api(c)) {
+    c.account = accountIdentity(store, c.account, c.session);
     this.c = c; this.store = store; this.api = api; this.media = new Media(c, api); this.metadata = new MetadataSync(this); this.control = new TelegramControl(this);
     this.revocations = new Revocations(this);
     this.reactions = new NativeReactions(this);
@@ -76,7 +78,7 @@ export class Bridge {
   acceptWhatsApp(payload: Json) {
     if (payload.sessionId !== this.c.session || !waEvents.includes(payload.event) || !payload.idempotencyKey || !payload.data) throw new ApiError('Unexpected OpenWA event or session', 400);
     const m = payload.data;
-    return this.store.enqueue('ow:' + payload.idempotencyKey, 'wa:' + (payload.event === 'status.received' ? 'status@broadcast' : m.chatId || 'session'), 'wa', payload);
+    return this.store.enqueue('ow:' + payload.idempotencyKey, 'wa:' + (payload.event === 'status.received' ? 'status@broadcast' : m.chatId || 'session'), 'wa', { ...payload, accountId: this.c.account });
   }
   acceptTelegram(bot: string, update: Json) {
     if (bot !== 'master' && !this.store.get('bot', bot)) throw new ApiError('Unknown bot', 404);
@@ -273,7 +275,7 @@ export class Bridge {
     this.store.put('contact', sender, { ...contact, name: contact.metadataSyncedAt ? contact.name : m.contact?.name || m.contact?.pushName || m.contact?.shortName || contact.name || sender });
     // In a private outgoing event, sender is the peer's chat ID. Only the session's
     // independently resolved self identity may be used for the "You" link.
-    const linkSender = m.fromMe ? this.store.get('reaction-self', digest(this.c.session))?.sender || '' : m.senderPhone ? `${m.senderPhone}@c.us` : sender;
+    const linkSender = m.fromMe ? this.store.get('reaction-self', digest(this.c.account))?.sender || '' : m.senderPhone ? `${m.senderPhone}@c.us` : sender;
     if (!event.replay || !this.store.get('wamessage', `${chat}:${m.id}`)) this.store.put('wamessage', `${chat}:${m.id}`, { sender, name: this.store.get('contact', sender).name, fromMe: !!m.fromMe,
       historical: !!event.historical, timestamp: m.timestamp, status, linkSender: this.store.canonical(linkSender), mentionedIds: m.mentionedIds || [] });
     if (event.replay) {
@@ -453,7 +455,7 @@ export class Bridge {
           if (saved) source = { ...source, historical: !!saved.historical, timestamp: saved.data.timestamp, mentionedIds: saved.data.mentionedIds };
         }
         const own = source?.fromMe || row.direction === 'out', body = m.body ?? m.newBody ?? m.text ?? '';
-        const linkSender = own ? this.store.get('reaction-self', digest(this.c.session))?.sender || '' : source.linkSender || source.sender || chat;
+        const linkSender = own ? this.store.get('reaction-self', digest(this.c.account))?.sender || '' : source.linkSender || source.sender || chat;
         const format: RelayFormat = this.store.get('message-presentation', digest(JSON.stringify([row.bot, row.tg_chat, row.tg_id]))) || { bot: row.bot, sender: this.store.canonical(linkSender), name: source.name || 'WhatsApp', own,
           historical: source.historical, status: source.status, timestamp: source.timestamp };
         const mentionBody = await this.mentions.incoming(body, m.mentionedIds ?? source.mentionedIds, chat, row.tg_chat, `${key}:edit-body:${i}`);
@@ -555,7 +557,7 @@ export class Bridge {
     const waText = outgoing.text, mentions = outgoing.mentions;
     if (update.edited_message) {
       if (mapped?.direction === 'out') {
-        const refusalKey = digest(JSON.stringify([this.c.session, key]));
+        const refusalKey = digest(JSON.stringify([this.c.account, key]));
         const refused = (notice: string, status: number) => {
           this.store.db.exec('BEGIN IMMEDIATE');
           try {
@@ -667,7 +669,7 @@ export class Bridge {
     if (command === 'start' && bot === 'master' && args[0]?.startsWith('sync_')) {
       const request = this.store.get('action', args[0].slice('sync_'.length));
       const route = request && this.store.get('route', request.chatId);
-      if (!request || request.kind !== 'sync-permission' || request.owner !== this.c.owner || request.session !== digest(this.c.session)
+      if (!request || request.kind !== 'sync-permission' || request.owner !== this.c.owner || request.session !== digest(this.c.account)
         || request.expires < Date.now() || String(request.tgChat) !== chat || String(route?.tgChat) !== chat) {
         await this.sendText(bot, chat, 'This permission link is no longer active for this group. Use /sync in the correct group for a fresh link.', key, extra); return;
       }
@@ -831,7 +833,7 @@ export class Bridge {
     throw new ApiError('Unsupported management operation', 400);
   }
   validMirrorRequest(request: Json, completedChat?: string) {
-    if (!request || request.owner !== this.c.owner || request.session !== digest(this.c.session) || request.expires < Date.now()) return false;
+    if (!request || request.owner !== this.c.owner || request.session !== digest(this.c.account) || request.expires < Date.now()) return false;
     const route = this.store.get('route', request.chatId);
     if (!route) return false;
     if (completedChat && request.used && request.selectedChat === completedChat && String(route.tgChat) === completedChat) return true;
@@ -841,7 +843,7 @@ export class Bridge {
     const route = this.store.get('route', chatId);
     if (!route || !chatId.endsWith('@g.us')) throw new ApiError('Choose a known WhatsApp group', 400);
     const me = await this.api.tg(this.token('master'), 'getMe');
-    const id = this.action({ kind: 'mirror-group', chatId, owner: this.c.owner, session: digest(this.c.session),
+    const id = this.action({ kind: 'mirror-group', chatId, owner: this.c.owner, session: digest(this.c.account),
       fromChat: String(route.tgChat), fromThread: Number(route.thread || 0), expires: Date.now() + 86400000 });
     return { text: 'Create / link Telegram group', url: `https://t.me/${me.username}?start=mirror_${id}` };
   }

@@ -6,7 +6,7 @@ Bifrost and the local Telegram Bot API communicate over Docker networking. No n8
 
 ## Moving to another PC
 
-Follow [Moving Bifrost to another PC](docs/MOVING.md) to export this installation, import its existing credentials and state into a fresh clone, configure OpenWA, and switch machines safely.
+Follow [Moving Bifrost to another PC](docs/MOVING.md) to export this installation, import its existing credentials and state into a fresh clone, configure a new OpenWA API key/session without changing the saved account identity, and switch machines safely.
 
 ## Start a fresh identity
 
@@ -50,7 +50,7 @@ To tag someone from Telegram, select their member bot from Telegram's mention me
 
 For someone without a bot, send `/mention Abhishek` in the WhatsApp group's management topic or separate mirror group. Search by name, known number or bot username; `/mention` lists members with pagination. Tap **Copy tag** beside a result, then paste it anywhere in your message. Bound members copy their bot username; others copy a token such as `@{Abhishek|a1b2c3d4}`. Multiple tags can be mixed with ordinary text and used in captions or edits. The bridge replaces these tokens before sending to WhatsApp. The short ID distinguishes identical names and survives restarts or renames; changing the displayed name does not change whom the token tags. Copying never sends a message or marks WhatsApp read.
 
-Mention searches use the synchronized group roster, refreshing it after five minutes. A failed refresh can show a clearly labeled cached picker, but sends requiring an expired roster are refused until it can refresh. Unknown, wrong-group or previous-session tokens and members missing from the current roster produce a temporary correction notice without sending the message. Ordinary usernames unrelated to registered member bots stay literal. Mention conversion excludes code, email and URL entities. Retrying a previously prepared send retains its original resolved tags and delivery key.
+Mention searches use the synchronized group roster, refreshing it after five minutes. A failed refresh can show a clearly labeled cached picker, but sends requiring an expired roster are refused until it can refresh. Unknown, wrong-group or other-account tokens and members missing from the current roster produce a temporary correction notice without sending the message. Ordinary usernames unrelated to registered member bots stay literal. Mention conversion excludes code, email and URL entities. Retrying a previously prepared send retains its original resolved tags and delivery key.
 
 Editing your Telegram text or media caption updates the existing WhatsApp message. If WhatsApp refuses the edit, a temporary reply explains that it was not applied and later messages continue normally. Clearing a caption is currently unsupported. Rate limits retain retry behavior, and uncertain delivery outcomes still require review.
 

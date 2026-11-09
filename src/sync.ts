@@ -16,7 +16,7 @@ export type SyncRequest = { scope: 'all' | 'group' | 'contact'; id?: string; sou
 export class MetadataSync {
   b: Bridge; matches: (date: Date) => boolean;
   constructor(bridge: Bridge) { this.b = bridge; this.matches = cronSchedule(bridge.c.syncCron, bridge.c.syncTimezone); }
-  get session() { return digest(this.b.c.session); }
+  get session() { return digest(this.b.c.account); }
   queue(request: SyncRequest) {
     if (request.scope !== 'all' && !request.id) throw new ApiError('Choose a conversation to sync', 400);
     const existing = this.b.store.all('sync-run').find(r => r.session === this.session && ['queued', 'running'].includes(r.status)

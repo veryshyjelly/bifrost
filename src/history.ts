@@ -10,7 +10,7 @@ export class ConversationHistory {
   b: Bridge;
   constructor(bridge: Bridge) { this.b = bridge; }
   scope(chat: string, target: HistoryTarget) {
-    return digest(JSON.stringify([this.b.c.session, this.b.store.canonical(chat), String(target.chat), Number(target.thread || 0), String(target.chat).startsWith('-') ? '*' : target.bot]));
+    return digest(JSON.stringify([this.b.c.account, this.b.store.canonical(chat), String(target.chat), Number(target.thread || 0), String(target.chat).startsWith('-') ? '*' : target.bot]));
   }
   target(chat: string): HistoryTarget | undefined {
     const route = this.b.store.get('route', chat); if (!route) return;
@@ -44,13 +44,13 @@ export class ConversationHistory {
     if (current && this.scope(chat, current) === this.scope(chat, target)) this.b.store.put('wa-complete', chat + ':' + id, true);
   }
   active(chatId: string) {
-    return this.b.store.all('history-run').find(run => run.session === this.b.c.session && run.chatId === chatId && ['queued', 'fetching', 'delivering'].includes(run.status));
+    return this.b.store.all('history-run').find(run => run.session === this.b.c.account && run.chatId === chatId && ['queued', 'fetching', 'delivering'].includes(run.status));
   }
   async prompt(chatId: string, target: HistoryTarget, count: number, bot: string, key: string) {
     chatId = this.b.store.canonical(chatId);
     if (this.active(chatId)) { await this.b.sendText(bot, target.chat, 'History is already importing for this conversation. Wait for it to finish, then run /history again.', key, target.thread ? { message_thread_id: target.thread } : {}); return; }
-    const id = digest(JSON.stringify([this.b.c.session, bot, key])).slice(0, 24);
-    if (!this.b.store.get('history-choice', id)) this.b.store.put('history-choice', id, { chatId, target, count, bot, owner: this.b.c.owner, session: this.b.c.session, status: 'pending', expires: Date.now() + this.b.c.controlTTL * 1000 });
+    const id = digest(JSON.stringify([this.b.c.account, bot, key])).slice(0, 24);
+    if (!this.b.store.get('history-choice', id)) this.b.store.put('history-choice', id, { chatId, target, count, bot, owner: this.b.c.owner, session: this.b.c.account, status: 'pending', expires: Date.now() + this.b.c.controlTTL * 1000 });
     const receipts = await this.b.sendText(bot, target.chat, `Import up to ${count} WhatsApp messages here?\nSkip existing avoids copies recorded as delivered. Import all restores a manually cleared chat, but can create duplicates if messages are still present.`, key,
       { ...(target.thread ? { message_thread_id: target.thread } : {}), reply_markup: { inline_keyboard: [[{ text: 'Skip existing', callback_data: `history:skip:${id}` }, { text: 'Import all', callback_data: `history:all:${id}` }], [{ text: 'Cancel', callback_data: `history:cancel:${id}` }]] } });
     this.b.store.put('history-choice', id, { ...this.b.store.get('history-choice', id), promptMessage: receipts[0].message_id });
@@ -61,7 +61,7 @@ export class ConversationHistory {
     const promptMatches = choice?.promptMessage ? q.message?.message_id === choice.promptMessage
       : q.message?.reply_markup?.inline_keyboard?.flat().some((button: Json) => button.callback_data === q.data);
     const valid = ['skip', 'all', 'cancel'].includes(mode) && choice && choice.bot === bot && choice.owner === String(q.from?.id) && choice.owner === this.b.c.owner
-      && choice.session === this.b.c.session && choice.expires > Date.now() && String(q.message?.chat.id) === choice.target.chat
+      && choice.session === this.b.c.account && choice.expires > Date.now() && String(q.message?.chat.id) === choice.target.chat
       && promptMatches && Number(context?.thread || 0) === Number(choice.target.thread || 0) && this.b.store.canonical(context?.route?.chatId || '') === choice.chatId && !['muted', 'ignored'].includes(context.route.mode);
     try { await this.b.api.tg(this.b.token(bot), 'answerCallbackQuery', { callback_query_id: q.id, ...(!valid ? { text: 'This history choice expired or its conversation changed. Run /history again.' } : choice.status !== 'pending' ? { text: 'This choice was already used. Run /history for a new import.' } : {}) }); }
     catch (e) { if (!(e instanceof ApiError) || e.status !== 400) this.b.control.retry(e); }
@@ -88,14 +88,14 @@ export class ConversationHistory {
     await this.b.sendText(bot, choice.target.chat, text, 'history-choice-confirm:' + id, choice.target.thread ? { message_thread_id: choice.target.thread } : {});
     return true;
   }
-  copyKey(run: string, chat: string, id: string) { return digest(JSON.stringify([this.b.c.session, run, chat, id])); }
+  copyKey(run: string, chat: string, id: string) { return digest(JSON.stringify([this.b.c.account, run, chat, id])); }
   request(chatId: string, target: HistoryTarget, count: number, key: string, enqueue = true, mode: HistoryMode = 'skip') {
     chatId = this.b.store.canonical(chatId);
-    const id = digest(JSON.stringify([this.b.c.session, chatId, target, key]));
+    const id = digest(JSON.stringify([this.b.c.account, chatId, target, key]));
     const previous = this.b.store.get('history-run', id); if (previous) return previous;
     const active = this.active(chatId);
     if (active) return active;
-    const run = { id, chatId, target, count, mode, historyStyle: 'compact', timeZone: this.b.c.syncTimezone, status: 'queued', createdAt: Date.now(), session: this.b.c.session };
+    const run = { id, chatId, target, count, mode, historyStyle: 'compact', timeZone: this.b.c.syncTimezone, status: 'queued', createdAt: Date.now(), session: this.b.c.account };
     this.b.store.put('history-run', id, run);
     if (enqueue) this.b.store.enqueue('history-fetch:' + id, 'history-fetch:' + id, 'history', { run: id });
     return run;
@@ -140,7 +140,7 @@ export class ConversationHistory {
       const target = this.target(data.chatId); if (!target) return;
       run = this.request(data.chatId, target, data.count || this.b.c.history || 20, key, false);
     }
-    if (run.session !== this.b.c.session || run.status === 'complete') return;
+    if (run.session !== this.b.c.account || run.status === 'complete') return;
     let plan = this.b.store.get('history-plan', run.id);
     if (!plan) {
       this.b.store.put('history-run', run.id, { ...run, status: 'fetching' });
@@ -162,7 +162,7 @@ export class ConversationHistory {
     this.b.store.enqueue('history-finish:' + run.id, 'history-delivery:' + run.id, 'history-finish', { run: run.id });
   }
   async process(job: Json) {
-    const run = this.b.store.get('history-run', job.payload.run); if (!run || run.session !== this.b.c.session) return;
+    const run = this.b.store.get('history-run', job.payload.run); if (!run || run.session !== this.b.c.account) return;
     if (job.type === 'history-message') {
       const message = this.b.store.get('history-plan', run.id)?.items[job.payload.index];
       if (!message) throw new ApiError('History snapshot is missing', 409);

@@ -11,8 +11,8 @@ const milliseconds = (value: unknown) => typeof value === 'number' ? value : typ
 export class StatusFeed {
   b: Bridge;
   constructor(bridge: Bridge) { this.b = bridge; }
-  get id() { return digest(JSON.stringify([this.b.c.session, this.b.c.management])); }
-  get session() { return digest(this.b.c.session); }
+  get id() { return digest(JSON.stringify([this.b.c.account, this.b.c.management])); }
+  get session() { return digest(this.b.c.account); }
   records(sender: string) {
     const canonical = this.b.store.canonical(sender);
     return this.b.store.all('status-mute').filter(row => row.session === this.session && this.b.store.canonical(row.sender) === canonical)

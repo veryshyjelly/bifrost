@@ -62,7 +62,8 @@ export class Store {
         AND json_extract(t.payload,'$.run')=json_extract(j.payload,'$.run') AND t.state IN ('pending','running')))
       AND (j.type!='wa' OR NOT EXISTS (SELECT 1 FROM kv h WHERE h.kind='history-run'
         AND json_extract(h.value,'$.status') IN ('queued','fetching','delivering')
-        AND json_extract(h.value,'$.session')=json_extract(j.payload,'$.sessionId')
+        AND json_extract(h.value,'$.session')=coalesce(json_extract(j.payload,'$.accountId'),
+          (SELECT json_extract(value,'$.id') FROM kv WHERE kind='identity' AND id='account'),json_extract(j.payload,'$.sessionId'))
         AND json_extract(h.value,'$.chatId')=coalesce((SELECT canonical FROM aliases WHERE alias=json_extract(j.payload,'$.data.chatId')),
           replace(json_extract(j.payload,'$.data.chatId'),'@s.whatsapp.net','@c.us'))))
       ORDER BY CASE WHEN j.type='history' OR j.type LIKE 'history-%' THEN 3 WHEN j.type LIKE 'control-%' THEN 2 WHEN j.type LIKE 'sync-%' OR j.type LIKE 'status-%' THEN 1 ELSE 0 END,id LIMIT 1`).get(Date.now());

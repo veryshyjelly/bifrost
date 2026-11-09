@@ -232,7 +232,7 @@ test('muted-person preferences survive reopening SQLite and resolve aliases with
   store.alias('opaque@lid', contact.id);
   assert.equal(bridge.statuses.isMuted('opaque@lid'), false); assert.equal(bridge.statuses.muted().length, 0);
   bridge.statuses.setMuted('opaque@lid', true, 'mute-again'); assert.equal(bridge.statuses.isMuted(contact.id), true);
-  bridge.c.session = 'different'; assert.equal(bridge.statuses.isMuted(contact.id), false);
+  bridge.c.session = 'different'; assert.equal(bridge.statuses.isMuted(contact.id), true);
   bridge.c.session = 's1'; assert.equal(bridge.statuses.isMuted(contact.id), true);
 });
 
