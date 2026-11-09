@@ -120,11 +120,10 @@ test('/clear log removes local notices and command messages, preserving chat mes
   assert.ok(!api.calls.some(c => c.method.startsWith('messages/') || c.method === 'chats/read'));
 });
 
-test('/clear all is exclusive to management General and preserves other topics and old/protected messages', async t => {
+test('/clear all in management General preserves other topics and old/protected messages', async t => {
   const { bridge, store, api } = fixture(t);
   await bridge.command('master', message(1, '/clear all'), 'mirror-all');
   const forum = { id: -1001, type: 'supergroup', is_forum: true };
-  await bridge.command('master', message(2, '/clear_all', { chat: forum, is_topic_message: true, message_thread_id: 7 }), 'topic-all');
   assert.equal(store.all('control-clear').length, 0);
   bridge.control.track('master', message(10, 'General chat', { chat: forum }), 'chat');
   bridge.control.track('master', message(11, 'Another topic', { chat: forum, message_thread_id: 7, is_topic_message: true }), 'chat');
@@ -134,6 +133,39 @@ test('/clear all is exclusive to management General and preserves other topics a
   assert.ok(deletedIds(api).includes(10)); assert.ok(deletedIds(api).includes(50));
   assert.ok(!deletedIds(api).includes(11)); assert.ok(!deletedIds(api).includes(12)); assert.ok(!deletedIds(api).includes(13));
   const run = store.all('control-clear')[0]; assert.equal(run.thread, 0); assert.equal(run.skipped, 2); assert.equal(run.status, 'completed');
+});
+
+test('both clear-all forms clear only the current management topic, preserving other chats, later messages and mappings', async t => {
+  for (const [text, thread, linked] of [['/clear all', 7, true], ['/clear_all', 8, false]] as const) {
+    const { bridge, store, api } = fixture(t), forum = { id: -1001, type: 'supergroup', is_forum: true };
+    const topicMessage = (id: number, text: string) => message(id, text, { chat: forum, is_topic_message: true, message_thread_id: thread });
+    if (linked) store.put('route', '111@c.us', { chatId: '111@c.us', tgChat: '-1001', thread, mode: 'inbox' });
+    bridge.control.track('master', topicMessage(10, 'Conversation history'), 'chat');
+    bridge.control.track('master', topicMessage(11, 'Notice'), 'log');
+    bridge.control.track('master', message(12, 'Another topic', { chat: forum, is_topic_message: true, message_thread_id: 9 }), 'chat');
+    bridge.control.track('master', message(13, 'General chat', { chat: forum }), 'chat');
+    bridge.control.track('master', message(14, 'Mirror chat'), 'chat');
+    store.map('111@c.us', 'history', '-1001', 10, 'master', 'in');
+    await bridge.command('master', topicMessage(50, text), 'topic-all');
+    bridge.control.track('master', topicMessage(51, 'Arrived after the command'), 'chat');
+    await drain(bridge);
+    for (const id of [10, 11, 50]) assert.ok(deletedIds(api).includes(id));
+    for (const id of [12, 13, 14, 51]) assert.ok(!deletedIds(api).includes(id));
+    const run = store.all('control-clear')[0]; assert.equal(run.thread, thread); assert.equal(run.status, 'completed');
+    assert.ok(store.byTelegram('-1001', 10)); assert.equal(store.get('contact', '111@c.us').bot, '42');
+    assert.ok(api.calls.filter(c => c.method === 'deleteMessages').every(c => c.body.chat_id === '-1001'));
+    assert.ok(!api.calls.some(c => c.method.startsWith('messages/') || c.method === 'chats/read'));
+  }
+});
+
+test('clear all remains unavailable in mirror groups, private chats and through member bots', async t => {
+  const { bridge, store, api } = fixture(t);
+  await bridge.command('master', message(1, '/clear all'), 'mirror');
+  await bridge.command('master', message(2, '/clear_all', { chat: { id: 123, type: 'private' } }), 'master-dm');
+  await bridge.command('42', message(3, '/clear all', { chat: { id: 123, type: 'private' } }), 'member-dm');
+  await bridge.command('42', message(4, '/clear_all@alice_bot', { chat: { id: -1001, type: 'supergroup' }, is_topic_message: true, message_thread_id: 7 }), 'member-management');
+  assert.equal(store.all('control-clear').length, 0);
+  assert.ok(!api.calls.some(c => c.method === 'deleteMessages'));
 });
 
 test('cleanup isolates private message IDs for each member bot', async t => {
@@ -167,13 +199,15 @@ test('ambiguous cleanup failures retry as idempotent deletes without uncertain d
   assert.equal(store.db.prepare("SELECT count(*) AS n FROM effects WHERE state='uncertain'").get()!.n, 0);
 });
 
-test('startup registers command menus for migrated master/member bots, including General-only clear_all', async t => {
+test('startup registers command menus for migrated master/member bots, including management-topic clear_all', async t => {
   const { bridge, store, api } = fixture(t);
   store.put('migrated', 'master', true); store.put('migrated', '42', true);
   bridge.control.startup(); await drain(bridge);
   const menus = api.calls.filter(c => c.method === 'setMyCommands');
   assert.ok(menus.some(c => c.token === 'master' && c.body.scope.type === 'default' && c.body.commands.some((x: any) => x.command === 'create')));
   assert.ok(menus.some(c => c.token === 'master' && c.body.scope.chat_id === '-1001' && c.body.commands.some((x: any) => x.command === 'clear_all')));
+  assert.ok(menus.some(c => c.token === 'master' && c.body.scope.chat_id === '-1001'
+    && c.body.commands.some((x: any) => x.command === 'clear_all' && x.description === 'Clear messages in the current management topic')));
   assert.ok(menus.some(c => c.token === 'child' && c.body.commands.some((x: any) => x.command === 'sync')));
   assert.ok(menus.filter(c => c.token === 'child').every(c => !c.body.commands.some((x: any) => x.command === 'clear_all')));
   assert.equal(api.calls.filter(c => c.method === 'setChatMenuButton').length, 2);

@@ -432,7 +432,7 @@ export class Bridge {
         const registered = this.store.get('bot', bot); registered.ready = true; this.store.put('bot', bot, registered);
         await this.sendText(bot, chat, contact ? 'Ready. Messages here will be sent to your linked WhatsApp contact.'
           : 'Connect this bot to a WhatsApp contact in the master bot first: select the contact in its binding message, then return here.', key);
-      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts, or /sync all here for every group and contact bot. In a conversation: /create, /read, /history, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all works only in management General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
+      } else await this.sendText(bot, chat, 'WhatsApp bridge ready. Use /statuses for WhatsApp Status posts, or /sync all here for every group and contact bot. In a conversation: /create, /read, /history, /keep, /mute, /ignore, /group. Reply with /delete or /react 👍. /clear log removes notices; /clear all clears the current management topic, including General. Commands and notices disappear automatically. Use /status for delivery and sync state.', key);
       return;
     }
     if (command === 'start' && bot !== 'master') {
@@ -442,10 +442,10 @@ export class Bridge {
     }
     if (['clear', 'clear_log', 'clear_all'].includes(command)) {
       const mode = command === 'clear_all' ? 'all' : command === 'clear_log' ? 'log' : args[0] || 'log';
-      if (!['all', 'log'].includes(mode) || args.length > (command === 'clear' ? 1 : 0)) { await this.sendText(bot, chat, 'Use /clear log for notices, or /clear all in management General.', key, extra); return; }
-      if (mode === 'all' && !(bot === 'master' && chat === this.c.management && !thread)) { await this.sendText(bot, chat, '/clear all is available only in management General. Use /clear log here to remove bot notices.', key, extra); return; }
+      if (!['all', 'log'].includes(mode) || args.length > (command === 'clear' ? 1 : 0)) { await this.sendText(bot, chat, 'Use /clear log for notices, or /clear all in a management topic.', key, extra); return; }
+      if (mode === 'all' && !(bot === 'master' && chat === this.c.management)) { await this.sendText(bot, chat, '/clear all is available only in the management group, where it clears the current topic. Use /clear log here to remove bot notices.', key, extra); return; }
       this.control.queueClear(bot, m, mode);
-      await this.sendText(bot, chat, `Clearing ${mode === 'all' ? 'recorded Telegram messages in management General' : 'bot notices in this chat/topic'} in the background. Telegram limits deletion to messages under 48 hours old.`, key, extra); return;
+      await this.sendText(bot, chat, `Clearing ${mode === 'all' ? 'recorded Telegram messages in this management topic' : 'bot notices in this chat/topic'} in the background. Telegram limits deletion to messages under 48 hours old.`, key, extra); return;
     }
     if (command === 'inbox' && bot === 'master') {
       const details = await this.api.tg(this.token('master'), 'getChat', { chat_id: chat });
@@ -474,7 +474,7 @@ export class Bridge {
       await this.sendText(bot, chat, 'Checking group permissions and queuing its metadata sync.', key, extra); return;
     }
     if (command === 'start' && bot === 'master') {
-      await this.sendText(bot, chat, 'Use /create while replying to a participant, /sync for metadata, /group for a mirror group, or /clear log for notices. Use /clear all only in management General. Open Hermes privately for full help.', key, extra); return;
+      await this.sendText(bot, chat, 'Use /create while replying to a participant, /sync for metadata, /group for a mirror group, or /clear log for notices. Use /clear all in management to clear only the current topic, including General. Open Hermes privately for full help.', key, extra); return;
     }
     if (command === 'sync' && bot === 'master' && (args[0] === 'all' || (m.chat.type === 'private' && !args[0]) || (chat === this.c.management && !thread && !args[0]))) {
       if ((args[0] && args[0] !== 'all') || !(m.chat.type === 'private' || chat === this.c.management)) { await this.sendText(bot, chat, 'Use /sync all in your private chat with Hermes or in the management group.', key, extra); return; }

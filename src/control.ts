@@ -54,7 +54,7 @@ export class TelegramControl {
     await this.b.api.tg(token, 'setMyCommands', { commands: bot === 'master' ? groupCommands : common, scope: { type: 'default' } });
     await this.b.api.tg(token, 'setChatMenuButton', { menu_button: { type: 'commands' } });
     if (bot === 'master') await this.b.api.tg(token, 'setMyCommands', { scope: { type: 'chat_member', chat_id: this.b.c.management, user_id: Number(this.b.c.owner) },
-      commands: [...groupCommands, ...commands([['inbox', 'Check the management forum'], ['link', 'Link a WhatsApp group manually'], ['clear_all', 'Clear messages in management General only']])] });
+      commands: [...groupCommands, ...commands([['inbox', 'Check the management forum'], ['link', 'Link a WhatsApp group manually'], ['clear_all', 'Clear messages in the current management topic']])] });
     this.b.store.put('telegram-menu', bot, { installedAt: Date.now() });
   }
   startup() {

@@ -54,7 +54,7 @@ Member-bot messages use Telegram's sender identity without repeating that person
 
 WhatsApp Status posts share one **WhatsApp Status** topic in the management forum. Hermes creates it on startup and imports currently available posts; new `status.received` events arrive automatically. `/statuses` in Hermes opens the topic and refreshes available posts without duplicating the archive. Text, images, videos and voice statuses carry the poster's linked name and a native Telegram posting time. Missing/expired media gets a notice while its available caption is retained. Reading or refreshing this feed sends no WhatsApp view/read receipt.
 
-The Status topic is an archive: source expiry does not remove its Telegram copies. It does not publish WhatsApp statuses or send replies/reactions; open the person's chat to respond. `/clear log` removes temporary notices while retaining archived posts. `/status` still shows bridge health.
+The Status topic is an archive: source expiry does not remove its Telegram copies. It does not publish WhatsApp statuses or send replies/reactions; open the person's chat to respond. `/clear log` removes temporary notices while retaining archived posts; `/clear all` clears recorded posts in this topic. `/status` still shows bridge health.
 
 To mirror a WhatsApp group, tap **Create / link Telegram group** in its management topic. In your private chat with Hermes, tap **Create / select Telegram group**, create a private group (or select one you own), and confirm Hermes's administrator permissions. The selected group is linked automatically. This uses Telegram's native picker and requires no separate account login. If your client has no create option in that picker, create the private group first and select it there.
 
@@ -83,7 +83,7 @@ Commands inside conversations:
 | `/status` | Show counts, queue state, metadata schedule and last sync result |
 | `/statuses` | Open the shared WhatsApp Status archive and refresh available posts through Hermes |
 | `/clear log`, `/clear_log`, `/clear` | Remove recorded bot notices and command messages in the current Telegram chat/topic |
-| `/clear all`, `/clear_all` | Remove recorded Telegram messages in management **General** only |
+| `/clear all`, `/clear_all` | Remove recorded Telegram messages in the current management topic, including General; unavailable in separate mirror groups |
 
 A successful outgoing reply schedules a read receipt. Merely receiving a Telegram relay does not mark WhatsApp read. Phone-originated sends are labeled and do not echo back.
 
@@ -91,9 +91,9 @@ Commands addressed to another bot are ignored by Hermes. A member bot can handle
 
 Commands and bot notices are temporary: they are deleted after **60 seconds**, with **10 minutes** for replies containing buttons or a group picker. Set `COMMAND_TTL_SECONDS` and `CONTROL_TTL_SECONDS` in `bridge.env` to change those lifetimes. Expiration survives restarts. WhatsApp conversation messages and attachments remain in the Telegram archive.
 
-`/clear log` clears notices in its current chat/topic without changing WhatsApp messages, bot bindings or delivery mappings. `/clear all` is available only in management General; other topics and mirrored groups keep their history. The bridge can remove only messages it has recorded, and Telegram normally permits deletion only within 48 hours. The completion notice reports older/protected messages or permission failures. Hermes needs **Delete Messages** in groups to remove the owner's commands and other bots' notices. Existing recorded history is indexed for manual clearing; it is not automatically expired on upgrade.
+`/clear log` clears notices in its current chat/topic without changing WhatsApp messages, bot bindings or delivery mappings. `/clear all` works in every topic of the management group, including General and WhatsApp Status, and removes only recorded messages in the topic where it is invoked. Other topics are preserved. Separate mirror groups and bot DMs support notice cleanup only. The bridge can remove only messages it has recorded, and Telegram normally permits deletion only within 48 hours. The completion notice reports older/protected messages or permission failures. Hermes needs **Delete Messages** in groups to remove the owner's commands and other bots' notices. Existing recorded history is indexed for manual clearing; it is not automatically expired on upgrade.
 
-The master and all registered member bots install their command menus on each configured startup. New bots also receive menus when their webhook is installed. Telegram's `/` autocomplete lists the commands; the extra `/clear_all` menu item is scoped to the management group and still checks for General when executed.
+The master and all registered member bots install their command menus on each configured startup. New bots also receive menus when their webhook is installed. Telegram's `/` autocomplete lists the commands; the extra `/clear_all` menu item is scoped to the management group and clears only its current topic when executed.
 
 ## WhatsApp metadata sync
 

@@ -167,12 +167,16 @@ test('/statuses opens and refreshes the feed from Hermes DM; /status remains the
   assert.ok(api.calls.filter(c => c.method === 'setMyCommands').every(c => c.body.commands.some((command: any) => command.command === 'statuses')));
 });
 
-test('/clear log in the Status topic preserves archived posts and clear all remains restricted to General', async t => {
+test('Status topic clear log preserves posts, while clear all removes only this topic’s recorded posts', async t => {
   const { bridge, api, store, c } = fixture(t);
   await bridge.whatsApp(story(), 'story'); const feed = store.all('status-feed')[0];
-  const message = { message_id: 1, from: { id: 123 }, chat: { id: Number(c.management), type: 'supergroup' }, message_thread_id: feed.thread, is_topic_message: true, text: '/clear all' };
-  await bridge.command('master', message, 'all'); assert.equal(store.all('control-clear').length, 0);
-  await bridge.command('master', { ...message, message_id: 2, text: '/clear log' }, 'log'); await drain(bridge);
+  const message = { message_id: 1, from: { id: 123 }, chat: { id: Number(c.management), type: 'supergroup' }, message_thread_id: feed.thread, is_topic_message: true, text: '/clear log' };
+  bridge.control.track('master', { ...message, message_id: 9000, text: 'Other topic', message_thread_id: feed.thread + 100 }, 'chat');
+  await bridge.command('master', message, 'log'); await drain(bridge);
   const original = store.byWhatsApp('status@broadcast', 'story')[0];
   assert.ok(!api.calls.filter(c => c.method === 'deleteMessages').some(c => c.body.message_ids.includes(original.tg_id)));
+  await bridge.command('master', { ...message, message_id: 2, text: '/clear_all' }, 'all'); await drain(bridge);
+  assert.ok(api.calls.filter(c => c.method === 'deleteMessages').some(c => c.body.message_ids.includes(original.tg_id)));
+  assert.ok(!api.calls.filter(c => c.method === 'deleteMessages').some(c => c.body.message_ids.includes(9000)));
+  assert.ok(store.byTelegram(c.management, original.tg_id));
 });
