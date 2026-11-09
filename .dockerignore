@@ -12,6 +12,7 @@ backups
 vendor
 test
 node_modules
+package-lock.json
 *.db*
 *.sqlite*
 *.log

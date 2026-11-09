@@ -2,6 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
+import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { Bridge } from '../src/bridge.ts';
 import { Store } from '../src/store.ts';
 import { configuration, sign } from '../src/config.ts';
@@ -50,4 +53,23 @@ test('real API transport preserves JSON, quotes, idempotency and handles rate li
   assert.deepEqual(requests[1].body, { events: ['status.received'] });
   await assert.rejects(api.tg('private-token', 'sendMessage', { text: 'hi' }), (e: any) => e.retry && !e.uncertain && e.delay === 2000 && !e.message.includes('private-token'));
   for (const method of ['getMyDescription', 'getUserProfilePhotos']) await assert.rejects(api.tg('private-token', method), (e: any) => e.retry && !e.uncertain);
+});
+
+test('real multipart transport preserves attachment bytes and caption entities', async t => {
+  let received = Buffer.alloc(0), contentType = '';
+  const root = await mkdtemp(join(tmpdir(), 'bridge-upload-')), path = join(root, 'sample.bin');
+  const bytes = Buffer.from([0, 255, 13, 10, 65, 66, 128, 1]); await writeFile(path, bytes);
+  const server = createServer(async (req, res) => {
+    const chunks: Buffer[] = []; for await (const chunk of req) chunks.push(Buffer.from(chunk));
+    received = Buffer.concat(chunks); contentType = String(req.headers['content-type']);
+    res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({ ok: true, result: { message_id: 1 } }));
+  });
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  t.after(async () => { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); await rm(root, { recursive: true, force: true }); });
+  const api = new Api({ ...configuration({}), telegram: `http://127.0.0.1:${(server.address() as any).port}` });
+  const entities = [{ type: 'bold', offset: 0, length: 4 }];
+  const result = await api.upload('fixture-token', 'sendDocument', 'document', path, 'sample.bin', { chat_id: 123, caption: 'Name: 😀 <text>', caption_entities: entities });
+  assert.equal(result.message_id, 1); assert.match(contentType, /^multipart\/form-data; boundary=/);
+  assert.ok(received.includes(bytes)); assert.ok(received.includes(Buffer.from('filename="sample.bin"')));
+  assert.ok(received.includes(Buffer.from('Name: 😀 <text>'))); assert.ok(received.includes(Buffer.from(JSON.stringify(entities))));
 });

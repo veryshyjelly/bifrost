@@ -9,6 +9,7 @@ media/
 backups/
 vendor/
 node_modules/
+package-lock.json
 *.db*
 *.sqlite*
 *.log

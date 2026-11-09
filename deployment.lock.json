@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
-  "node": "26.13.0",
+  "bun": "1.4.2",
+  "bridgeImage": "oven/bun:1.4.2-debian@sha256:4f6e31d1a54d6a3dd312daef655fc998101b5043d52e12592ac293ef04b9bc73",
   "n8n": {
     "version": "2.47.0",
     "image": "docker.n8n.io/n8nio/n8n:2.47.0",

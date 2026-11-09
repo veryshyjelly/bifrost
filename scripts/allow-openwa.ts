@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, copyFileSync, chmodSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-if (!process.argv[2]) throw new Error('Usage: node scripts/allow-openwa.ts /path/to/OpenWA/.env');
+if (!process.argv[2]) throw new Error('Usage: bun scripts/allow-openwa.ts /path/to/OpenWA/.env');
 const path = resolve(process.argv[2]);
 const original = readFileSync(path, 'utf8');
 const match = /^SSRF_ALLOWED_HOSTS=(.*)$/m.exec(original);

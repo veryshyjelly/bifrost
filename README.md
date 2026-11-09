@@ -11,7 +11,7 @@ This directory is a standalone Git repository. It contains the bridge, both Dock
 | `deploy/compose.n8n.yaml` | Adds a fresh upstream n8n instance |
 | `workflows/management.json` | Importable export of the deployed management workflow |
 | `bridge.env.example`, `.env.example` | Application and Compose configuration templates |
-| `deployment.lock.json` | Tested Node, n8n, OpenWA and Telegram Bot API versions/commits |
+| `deployment.lock.json` | Tested Bun, n8n, OpenWA and Telegram Bot API versions/commits |
 | [Installation](docs/INSTALL.md) | Fresh machine and existing dependency setup |
 | [Recovery](docs/RECOVERY.md) | State to back up, restore and verify |
 | [Current home deployment](docs/CURRENT-DEPLOYMENT.md) | How this repository relates to the existing running setup |
@@ -19,17 +19,18 @@ This directory is a standalone Git repository. It contains the bridge, both Dock
 
 ## Start with existing OpenWA and n8n
 
-Use Node **26.13.0**, Git, Docker with Buildx, and Compose **2.30+**. The bridge has no npm dependencies to install.
+Use Bun **1.4.2**, Git, Docker with Buildx, and Compose **2.30+**. The bridge has no runtime package dependencies; the lockfile pins development types.
 
 ```sh
-npm run configure
+bun install --frozen-lockfile
+bun run configure
 cp .env.example .env
 git config core.hooksPath .githooks
 ```
 
-Fill the account fields in the generated private `bridge.env`; set the existing Docker network names in `.env`. Run `npm run configure` again after setting the Telegram application ID/hash to refresh `telegram-api.env`. Existing values and encryption keys are preserved. The generated `n8n.env` is only for the optional standalone n8n deployment.
+Fill the account fields in the generated private `bridge.env`; set the existing Docker network names in `.env`. Run `bun run configure` again after setting the Telegram application ID/hash to refresh `telegram-api.env`. Existing values and encryption keys are preserved. The generated `n8n.env` is only for the optional standalone n8n deployment.
 
-Create a dedicated master bot with **Bot Management Mode**, start it privately, and add it as administrator to a **private forum supergroup** with Manage Topics and Delete Messages. Set the owner and management chat IDs. `node --env-file=bridge.env scripts/identify.ts` discovers them before the first webhook is installed. Set the existing ready OpenWA session ID and operator-or-higher API key without a chat allowlist. Allow `wa-telegram-bridge` in OpenWA's `SSRF_ALLOWED_HOSTS` and recreate that API service.
+Create a dedicated master bot with **Bot Management Mode**, start it privately, and add it as administrator to a **private forum supergroup** with Manage Topics and Delete Messages. Set the owner and management chat IDs. `bun --env-file=bridge.env scripts/identify.ts` discovers them before the first webhook is installed. Set the existing ready OpenWA session ID and operator-or-higher API key without a chat allowlist. Allow `wa-telegram-bridge` in OpenWA's `SSRF_ALLOWED_HOSTS` and recreate that API service.
 
 Import `workflows/management.json` into n8n and publish it. Its webhook path is `wa-telegram-management`; the HTTP node forwards the complete signed body to `http://wa-telegram-bridge:3210/v1/management`. It needs no n8n credential.
 
@@ -37,7 +38,7 @@ Import `workflows/management.json` into n8n and publish it. Its webhook path is 
 docker compose config --quiet
 docker compose build wa-telegram-bridge telegram-api
 docker compose up -d --no-deps wa-telegram-bridge telegram-api
-docker compose exec -T wa-telegram-bridge node scripts/setup.ts
+docker compose exec -T wa-telegram-bridge bun scripts/setup.ts
 ```
 
 Setup requires the existing WhatsApp session to be ready, verifies the private forum and permissions, migrates the dedicated master to the local Bot API, verifies the n8n webhook, and installs callbacks. For a new OpenWA/n8n installation, follow [the installation guide](docs/INSTALL.md).
@@ -117,7 +118,7 @@ SYNC_TIMEZONE=Asia/Kolkata
 Use `*/15 * * * *` for every 15 minutes, `0 */6 * * *` for every six hours, or `off` to disable scheduled checks. `/sync` and `/sync all` still work when the schedule is off. Commands go through the signed n8n management workflow; scheduled checks run independently of n8n's public connector. A local alternative queues the same durable work:
 
 ```sh
-docker compose exec -T wa-telegram-bridge node scripts/queue-sync.ts all
+docker compose exec -T wa-telegram-bridge bun scripts/queue-sync.ts all
 ```
 
 Replace `all` with a known WhatsApp conversation ID to refresh just that group or contact. Metadata lookup/update failures are reported per target so other targets can finish.
@@ -139,27 +140,29 @@ The local Telegram server supports large files, but `MAX_MEDIA_BYTES` defaults t
 ```sh
 docker compose ps
 docker compose logs -f --tail=50 wa-telegram-bridge
-docker compose exec wa-telegram-bridge node scripts/review.ts list
+docker compose exec wa-telegram-bridge bun scripts/review.ts list
 ```
 
 Only known rate refusals and safe reads are automatically retried. A timeout during a send pauses that conversation as **uncertain**. Inspect both chats before acting:
 
 ```sh
 # Already delivered, or deliberately discard this job:
-docker compose exec wa-telegram-bridge node scripts/review.ts skip JOB_ID
+docker compose exec wa-telegram-bridge bun scripts/review.ts skip JOB_ID
 # Confirmed absent from the destination; retry with the same idempotency key:
-docker compose exec wa-telegram-bridge node scripts/review.ts retry JOB_ID --confirmed-not-delivered
+docker compose exec wa-telegram-bridge bun scripts/review.ts retry JOB_ID --confirmed-not-delivered
 ```
 
 Skipping an uncertain send accepts that its reply mapping may be unavailable; future replies to that Telegram message may be unquoted. External API effects are journaled individually; completed effects are not replayed. Review jobs promptly: OpenWA's send idempotency records have a bounded retention window.
 
-After env edits, run `npm run configure`, then `docker compose up -d --no-deps wa-telegram-bridge telegram-api` from the repository root. Restarting alone does not reload env files. Preserve the `bridge-data`, `telegram-data`, and `bridge-media` volumes. To stop this bridge, stop only its two services; do not remove volumes or alter the existing n8n/OpenWA data.
+After env edits, run `bun run configure`, then `docker compose up -d --no-deps wa-telegram-bridge telegram-api` from the repository root. Restarting alone does not reload env files. Preserve the `bridge-data`, `telegram-data`, and `bridge-media` volumes. To stop this bridge, stop only its two services; do not remove volumes or alter the existing n8n/OpenWA data.
 
 ## Validation
 
 ```sh
-npm test
-npm run check:repository
+bun run test
+bun run check:repository
 ```
 
 Tests use fixtures and local HTTP servers. They cover routing, bot fallback, encrypted tokens, owner checks, signature verification, quoted replies, history, media dispatch, rate limits and crash recovery. They do not send to real contacts or prove live WhatsApp/Telegram interoperability. Local HTTP tests need permission to bind loopback.
+
+The bridge runtime, scripts, tests and container use Bun. Its Node-compatible built-in module imports run within Bun; they do not start a Node process. n8n and OpenWA retain their independent runtime requirements. See [Bun migration and rollback](docs/BUN-MIGRATION.md).
