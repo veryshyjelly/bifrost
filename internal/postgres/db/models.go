@@ -12,6 +12,13 @@ type BridgeBot struct {
 	AccountID string
 	BotID     string
 	Username  string
+	Started   bool
+}
+
+type BridgeContactBot struct {
+	AccountID string
+	ContactID string
+	BotID     string
 }
 
 type BridgeIdentity struct {
@@ -26,6 +33,8 @@ type BridgeRoute struct {
 	TelegramChatID int64
 	ThreadID       int64
 	InboxRetired   bool
+	Name           string
+	Mode           string
 }
 
 type Effect struct {

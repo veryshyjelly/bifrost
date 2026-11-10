@@ -50,3 +50,12 @@
 - [x] Assess the healthy live OpenWA layout and record the state-preserving migration contract; no move is needed for SDK validation.
 - [x] Implement opt-in durable OpenWA/Telegram/management admission, cleanup observations and restart deduplication without registering callbacks.
 - [ ] Implement callback registration, dispatch and remaining provider operations before switching the live bridge.
+
+## Worker and initial conversation implementation
+
+- [x] Run fenced claims with bounded concurrency, renewable leases, conservative effect handling and safe shutdown.
+- [x] Preserve original requests and completed receipts across partial delivery and local persistence failures.
+- [x] Explicitly close handled, definitely undelivered effect branches without bypassing uncertain-send review.
+- [x] Implement initial inbox creation, atomic route/management-notice persistence and private/mirror target selection.
+- [x] Preserve one-bot-per-contact binding and queue inbox retirement independently when a bound bot is started.
+- [ ] Connect full workflow handlers, verified aliases, routing transitions, rendering, provider dispatch and callbacks before starting the worker in the runtime.

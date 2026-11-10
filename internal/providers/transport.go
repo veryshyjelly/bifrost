@@ -35,6 +35,10 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("%s request failed (status=%d code=%s)", e.Service, e.Status, e.Code)
 }
 
+func (e *Error) DeliveryOutcome() (bool, bool, time.Duration) {
+	return e.Retry, e.Uncertain, e.RetryAfter
+}
+
 type attemptKey struct{}
 
 // Attempt belongs to one synchronous SDK call; it is never shared between calls.

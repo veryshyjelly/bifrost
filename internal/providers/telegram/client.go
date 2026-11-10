@@ -50,3 +50,33 @@ func (c *Client) SendText(ctx context.Context, request *bot.SendMessageParams) (
 	}
 	return result, nil
 }
+
+func (c *Client) CreateForumTopic(ctx context.Context, request *bot.CreateForumTopicParams) (*models.ForumTopic, error) {
+	if request == nil || request.Name == "" {
+		return nil, providers.ErrInvalidRequest
+	}
+	ctx, a := providers.Observe(ctx)
+	result, err := c.sdk.CreateForumTopic(ctx, request)
+	if err := providers.Outcome("telegram", true, err, a); err != nil {
+		return nil, err
+	}
+	if result == nil || result.MessageThreadID <= 0 {
+		return nil, providers.InvalidResponse("telegram", true)
+	}
+	return result, nil
+}
+
+func (c *Client) ChatMember(ctx context.Context, request *bot.GetChatMemberParams) (*models.ChatMember, error) {
+	if request == nil || request.UserID <= 0 {
+		return nil, providers.ErrInvalidRequest
+	}
+	ctx, a := providers.Observe(ctx)
+	result, err := c.sdk.GetChatMember(ctx, request)
+	if err := providers.Outcome("telegram", false, err, a); err != nil {
+		return nil, err
+	}
+	if result == nil || result.Type == "" {
+		return nil, providers.InvalidResponse("telegram", false)
+	}
+	return result, nil
+}

@@ -48,7 +48,7 @@ UPDATE jobs SET state = sqlc.arg(state), claim_token = '', lease_until = NULL,
  due = clock_timestamp() + sqlc.arg(delay_seconds)::integer * interval '1 second' WHERE id = sqlc.arg(id);
 
 -- name: UnfinishedEffects :one
-SELECT count(*) FROM effects WHERE job_id = $1 AND state <> 'done';
+SELECT count(*) FROM effects WHERE job_id = $1 AND state NOT IN ('done','discarded');
 
 -- name: GetEffect :one
 SELECT * FROM effects WHERE account_id = $1 AND effect_key = $2 FOR UPDATE;
@@ -86,3 +86,7 @@ SELECT state, count(*) FROM jobs GROUP BY state ORDER BY state;
 
 -- name: HasSendingEffect :one
 SELECT EXISTS(SELECT 1 FROM effects WHERE job_id = $1 AND state = 'sending');
+
+-- name: DiscardEffect :execrows
+UPDATE effects SET state = 'discarded'
+WHERE account_id = $1 AND effect_key = $2 AND job_id = $3 AND state = 'pending';

@@ -90,6 +90,25 @@ func (q *Queries) CreateIdentity(ctx context.Context, arg CreateIdentityParams) 
 	return err
 }
 
+const discardEffect = `-- name: DiscardEffect :execrows
+UPDATE effects SET state = 'discarded'
+WHERE account_id = $1 AND effect_key = $2 AND job_id = $3 AND state = 'pending'
+`
+
+type DiscardEffectParams struct {
+	AccountID string
+	EffectKey string
+	JobID     int64
+}
+
+func (q *Queries) DiscardEffect(ctx context.Context, arg DiscardEffectParams) (int64, error) {
+	result, err := q.db.Exec(ctx, discardEffect, arg.AccountID, arg.EffectKey, arg.JobID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const enqueue = `-- name: Enqueue :one
 WITH gate AS (
   SELECT pg_advisory_xact_lock(hashtextextended($1::text || ':' || $3::text, 0))
@@ -408,7 +427,7 @@ func (q *Queries) StartEffect(ctx context.Context, arg StartEffectParams) error 
 }
 
 const unfinishedEffects = `-- name: UnfinishedEffects :one
-SELECT count(*) FROM effects WHERE job_id = $1 AND state <> 'done'
+SELECT count(*) FROM effects WHERE job_id = $1 AND state NOT IN ('done','discarded')
 `
 
 func (q *Queries) UnfinishedEffects(ctx context.Context, jobID int64) (int64, error) {

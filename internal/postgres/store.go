@@ -186,7 +186,7 @@ func (s *Store) BeginEffect(ctx context.Context, job delivery.Job, key string, r
 			return err
 		}
 		effect = delivery.Effect{State: e.State, Request: e.Request, Result: e.Result}
-		if e.State == "done" {
+		if e.State == "done" || e.State == "discarded" {
 			return nil
 		}
 		if e.State == "uncertain" {
@@ -205,6 +205,18 @@ func (s *Store) BeginEffect(ctx context.Context, job delivery.Job, key string, r
 		return nil
 	})
 	return effect, err
+}
+
+// DiscardEffect closes an explicitly handled, definitely undelivered branch.
+// Completed, sending and uncertain effects cannot be discarded.
+func (s *Store) DiscardEffect(ctx context.Context, job delivery.Job, key string) error {
+	return s.withClaim(ctx, job, func(q *db.Queries, row db.Job) error {
+		n, err := q.DiscardEffect(ctx, db.DiscardEffectParams{AccountID: row.AccountID, EffectKey: key, JobID: row.ID})
+		if err == nil && n != 1 {
+			return delivery.ErrInvalid
+		}
+		return err
+	})
 }
 
 // ResolveEffect records success, a proven non-delivery, or an ambiguous outcome.

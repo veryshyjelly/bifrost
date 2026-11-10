@@ -1,2 +1,3 @@
-// Package delivery will own durable job ordering, external effect receipts and uncertain-outcome review.
+// Package delivery runs fenced jobs and retains frozen external-effect requests,
+// immutable receipts and explicit review of uncertain outcomes.
 package delivery

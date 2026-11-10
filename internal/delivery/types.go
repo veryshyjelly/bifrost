@@ -6,12 +6,15 @@ import (
 )
 
 var (
-	ErrNoJob      = errors.New("no eligible job")
-	ErrClaimLost  = errors.New("job claim expired or belongs to another worker")
-	ErrUncertain  = errors.New("delivery outcome requires explicit review")
-	ErrInFlight   = errors.New("effect is already sending")
-	ErrIncomplete = errors.New("job has incomplete effects")
-	ErrInvalid    = errors.New("invalid delivery operation")
+	ErrNoJob       = errors.New("no eligible job")
+	ErrClaimLost   = errors.New("job claim expired or belongs to another worker")
+	ErrUncertain   = errors.New("delivery outcome requires explicit review")
+	ErrInFlight    = errors.New("effect is already sending")
+	ErrIncomplete  = errors.New("job has incomplete effects")
+	ErrInvalid     = errors.New("invalid delivery operation")
+	ErrDiscarded   = errors.New("effect was explicitly discarded after a definite refusal")
+	ErrUnsupported = errors.New("job kind is not implemented")
+	ErrPersistence = errors.New("delivery persistence unavailable")
 )
 
 type State string
@@ -21,6 +24,7 @@ const (
 	Failed    State = "failed"
 	Uncertain State = "uncertain"
 	Done      State = "done"
+	Discarded State = "discarded" // Effects only; a job cannot enter this state.
 )
 
 // Event is the durable input, scoped to a permanent account and ordered stream.
