@@ -98,7 +98,7 @@ Provider integration SHALL preserve stable per-send idempotency, durable admissi
 
 ### Requirement: Measured outgoing WhatsApp sticker budget
 
-The Go bridge SHALL use a maximum complete-file encoding budget of 1,000,000 bytes for both static and animated outgoing WhatsApp WebP stickers, including metadata, while preserving animation and quality within the budget. It SHALL validate WebP container structure, decoded frames, dimensions and timing before freezing the outgoing payload. Telegram sticker constraints SHALL remain separate. This approved target change is based on docs/STICKER-LIMITS.md, where usable files reached 1,048,558 bytes and upload rejected 1,048,560 bytes.
+The Go bridge SHALL use a 1,000,000-byte complete-file budget, including metadata, for static and animated outgoing WhatsApp WebP stickers. It SHALL preserve animation and quality within budget and validate container structure, decoded frames, dimensions and timing before freezing the payload. Telegram constraints SHALL remain separate. Evidence: docs/STICKER-LIMITS.md.
 
 #### Scenario: Valid animation exceeds the old target
 

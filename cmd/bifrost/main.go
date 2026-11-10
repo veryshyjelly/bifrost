@@ -16,6 +16,7 @@ import (
 
 	"github.com/veryshyjelly/bifrost/internal/config"
 	"github.com/veryshyjelly/bifrost/internal/httpserver"
+	"github.com/veryshyjelly/bifrost/internal/ingress"
 	"github.com/veryshyjelly/bifrost/internal/postgres"
 )
 
@@ -80,17 +81,25 @@ func run(ctx context.Context, args []string) error {
 		return err
 	}
 	defer database.Close()
-	if _, err := database.InitializeIdentity(ctx, c.AccountID, c.EncryptionKey); err != nil {
+	accountID, err := database.InitializeIdentity(ctx, c.AccountID, c.EncryptionKey)
+	if err != nil {
 		return errors.New("identity initialization failed; migrate explicitly and verify the saved identity/key")
 	}
-	server := &http.Server{Addr: net.JoinHostPort("", strconv.Itoa(c.Port)), Handler: httpserver.Handler(database, c.AdminToken), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 60 * time.Second}
+	var input http.Handler
+	if c.IngressEnabled {
+		input, err = ingress.New(ingress.Options{AccountID: accountID, SessionID: c.OpenWASession, WebhookSecret: c.WebhookSecret, AdminToken: c.AdminToken, OwnerID: c.OwnerID, ManagementChatID: c.ManagementChatID, MasterBotID: c.MasterBotID}, database)
+		if err != nil {
+			return err
+		}
+	}
+	server := &http.Server{Addr: net.JoinHostPort("", strconv.Itoa(c.Port)), Handler: httpserver.Handler(database, c.AdminToken, httpserver.Options{Ingress: input}), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 60 * time.Second}
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
 		return errors.New("cannot bind bridge HTTP port")
 	}
 	result := make(chan error, 1)
 	go func() { result <- server.Serve(listener) }()
-	slog.Info("diagnostic runtime started", "port", c.Port, "configured", false)
+	slog.Info("diagnostic runtime started", "port", c.Port, "configured", false, "ingress", c.IngressEnabled)
 	select {
 	case err := <-result:
 		if !errors.Is(err, http.ErrServerClosed) {

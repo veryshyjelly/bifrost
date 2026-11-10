@@ -34,7 +34,7 @@
 - [x] Verify real PostgreSQL concurrency, recovery and cross-database permission denial with disposable test state.
 - [x] Build Go/OpenWA images and smoke-test shared PostgreSQL, Redis, OpenWA and diagnostic Bifrost in a disposable Compose project.
 - [ ] Build/test the pinned official Telegram API service with the provider-adapter slice; it was excluded from this smoke test.
-- [ ] Implement provider adapters and authenticated webhook admission before enabling any relaying.
+- [x] Implement initial provider adapters and authenticated durable webhook admission before enabling any relaying.
 - [ ] Port conversation routing, controls and remaining capability scenarios.
 - [ ] Implement and test the explicit SQLite state importer and live cutover procedure.
 
@@ -48,4 +48,5 @@
 - [x] Update the integrated gateway build pin to stable OpenWA v0.30.0, build it from source and validate the disposable shared-PostgreSQL/Redis stack startup.
 - [x] Authenticate the Telegram SDK against the existing local API using read-only getMe.
 - [x] Assess the healthy live OpenWA layout and record the state-preserving migration contract; no move is needed for SDK validation.
-- [ ] Implement automatic webhook admission/dispatch and remaining provider operations before switching the live bridge.
+- [x] Implement opt-in durable OpenWA/Telegram/management admission, cleanup observations and restart deduplication without registering callbacks.
+- [ ] Implement callback registration, dispatch and remaining provider operations before switching the live bridge.

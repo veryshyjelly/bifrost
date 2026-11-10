@@ -1,0 +1,17 @@
+[
+  {
+    "raw": "{\"id\":\"new\",\"type\":\"new_conversation\",\"data\":{\"chatId\":\"fixture@c.us\"},\"at\":1794300000000}",
+    "canonical": "{\"id\":\"new\",\"type\":\"new_conversation\",\"data\":{\"chatId\":\"fixture@c.us\"},\"at\":1794300000000}",
+    "signature": "aa869b17d0b6202cf257f4844dcc96265d487d20553bfae09e7e99f52bc9b008"
+  },
+  {
+    "raw": "{\"type\":\"new_conversation\",\"id\":\"ordered\",\"data\":{\"10\":\"ten\",\"2\":\"two\",\"n\":1e-7,\"tiny\":0.000001,\"large\":1e21,\"negative\":-0,\"tag\":\"<>& \\u2028 💫\"},\"at\":1794300000000}",
+    "canonical": "{\"type\":\"new_conversation\",\"id\":\"ordered\",\"data\":{\"2\":\"two\",\"10\":\"ten\",\"n\":1e-7,\"tiny\":0.000001,\"large\":1e+21,\"negative\":0,\"tag\":\"<>&   💫\"},\"at\":1794300000000}",
+    "signature": "a8fb88b0c983e8f23e04566f8ff9bd03cf41815f5e8640b710033853ce83040a"
+  },
+  {
+    "raw": "{\"id\":\"first\",\"id\":\"last\",\"at\":1794300000000,\"type\":\"new_conversation\",\"data\":{\"slash\":\"a/b\",\"escaped\":\"\\\\u003c\",\"boolean\":true,\"array\":[null,false,1.23e+22]}}",
+    "canonical": "{\"id\":\"last\",\"at\":1794300000000,\"type\":\"new_conversation\",\"data\":{\"slash\":\"a/b\",\"escaped\":\"\\\\u003c\",\"boolean\":true,\"array\":[null,false,1.23e+22]}}",
+    "signature": "71b6f9be143309be5dfc21c03ab9e875af905904071a1395a6109d52df933522"
+  }
+]

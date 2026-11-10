@@ -10,6 +10,7 @@ x-bifrost: &bifrost
     BRIDGE_ADMIN_TOKEN: ${BRIDGE_ADMIN_TOKEN:?Run make configure}
     BIFROST_ACCOUNT_ID: ${BIFROST_ACCOUNT_ID:?Run make configure}
     BRIDGE_PORT: '3210'
+    BRIDGE_INGRESS_ENABLED: ${BRIDGE_INGRESS_ENABLED:-false}
     BRIDGE_MEDIA: /media
     BRIDGE_CALLBACK_URL: http://bifrost:3210
     TELEGRAM_API_URL: http://telegram-api:8081

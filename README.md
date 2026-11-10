@@ -2,7 +2,7 @@
 
 A personal WhatsApp–Telegram bridge being ported to Go. The [approved OpenSpec contract](openspec/README.md) preserves existing routing, linked-name formatting, deletion choices and delivery safety, with conditional caption clearing when the released provider API permits it.
 
-The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients and diagnostic HTTP/CLI checks. **WhatsApp/Telegram forwarding and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist.
+The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients, authenticated durable event admission and diagnostic HTTP/CLI checks. **WhatsApp/Telegram forwarding and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist.
 
 ## Complete Compose setup
 
@@ -63,7 +63,7 @@ BIFROST_TEST_DATABASE_URL='postgres://bifrost:YOUR_TEST_PASSWORD@localhost:5433/
 
 Use a disposable test instance, never the live database. CI runs these tests against PostgreSQL. Without the variable, those integration tests are explicitly skipped. Go tests verify only the implemented slice; the historical 263 passing tests are reference evidence for remaining parity work.
 
-The CLI also supports `migrate`, `serve`, `healthcheck` and explicit read-only `check-openwa` / `check-telegram` diagnostics. See [provider checks](docs/PROVIDER-CHECKS.md) for authorized test sends and live evidence. It reads environment variables directly; Compose supplies them from `.go.env`. It never automatically sources the legacy `.env` or `bridge.env`. HTTP currently implements `/healthz`, admin-protected `/v1/status` and reviewed `/v1/review`; provider webhook ingress is still pending.
+The CLI also supports `migrate`, `serve`, `healthcheck` and explicit read-only `check-openwa` / `check-telegram` diagnostics. See [provider checks](docs/PROVIDER-CHECKS.md) for authorized test sends and live evidence. It reads environment variables directly; Compose supplies them from `.go.env`. It never automatically sources the legacy `.env` or `bridge.env`. HTTP implements `/healthz`, admin-protected `/v1/status` and reviewed `/v1/review`. Authenticated durable OpenWA/Telegram ingress and signed `/v1/management` are available with explicit `BRIDGE_INGRESS_ENABLED=true`; see [ingress setup and limits](docs/INGRESS.md). Admission does not enable automatic routing or register provider callbacks.
 
 ## Existing installations
 

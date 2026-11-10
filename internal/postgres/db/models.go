@@ -8,10 +8,24 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type BridgeBot struct {
+	AccountID string
+	BotID     string
+	Username  string
+}
+
 type BridgeIdentity struct {
 	Singleton      bool
 	AccountID      string
 	KeyFingerprint string
+}
+
+type BridgeRoute struct {
+	AccountID      string
+	WhatsappChat   string
+	TelegramChatID int64
+	ThreadID       int64
+	InboxRetired   bool
 }
 
 type Effect struct {
@@ -36,4 +50,17 @@ type Job struct {
 	ClaimToken string
 	LeaseUntil pgtype.Timestamptz
 	Created    pgtype.Timestamptz
+}
+
+type TelegramObservation struct {
+	Seq         int64
+	AccountID   string
+	Scope       string
+	BotID       string
+	ChatID      int64
+	MessageID   int64
+	ThreadID    int64
+	Kind        string
+	MessageDate int64
+	Payload     []byte
 }

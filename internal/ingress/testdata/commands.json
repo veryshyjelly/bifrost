@@ -1,0 +1,42 @@
+[
+  {
+    "value": "/history@PeerBot 10",
+    "match": true,
+    "recipient": "PeerBot"
+  },
+  {
+    "value": "﻿/history@PeerBot 10",
+    "match": true,
+    "recipient": "PeerBot"
+  },
+  {
+    "value": "/history@PeerBot 10",
+    "match": true,
+    "recipient": "PeerBot"
+  },
+  {
+    "value": "/history@PeerBot10",
+    "match": false,
+    "recipient": ""
+  },
+  {
+    "value": "/start@PeerBot@wrong",
+    "match": false,
+    "recipient": ""
+  },
+  {
+    "value": "/start@PeerBot",
+    "match": false,
+    "recipient": ""
+  },
+  {
+    "value": "/start@PeerBot﻿",
+    "match": true,
+    "recipient": "PeerBot"
+  },
+  {
+    "value": " /start@PeerBot ",
+    "match": true,
+    "recipient": "PeerBot"
+  }
+]

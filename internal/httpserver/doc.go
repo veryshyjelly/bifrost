@@ -1,2 +1,2 @@
-// Package httpserver will authenticate provider ingress and acknowledge only durably admitted events.
+// Package httpserver exposes diagnostics, reviewed recovery and optional durable ingress.
 package httpserver

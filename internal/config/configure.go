@@ -43,6 +43,8 @@ OPENWA_API_KEY=
 TELEGRAM_MASTER_TOKEN=
 TELEGRAM_OWNER_ID=
 TELEGRAM_MANAGEMENT_CHAT_ID=
+# Admission only; enable explicitly after configuring provider identities.
+BRIDGE_INGRESS_ENABLED=false
 # Optional local source override: OPENWA_SOURCE=../OpenWa
 `, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7])
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)

@@ -6,16 +6,20 @@ import (
 	"errors"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 // Config contains the settings needed by the persistence and diagnostic runtime.
 // Provider configuration is added with the provider adapters.
 type Config struct {
-	DatabaseURL   string
-	EncryptionKey [32]byte
-	AdminToken    string
-	AccountID     string
-	Port          int
+	DatabaseURL                            string
+	EncryptionKey                          [32]byte
+	AdminToken                             string
+	AccountID                              string
+	Port                                   int
+	IngressEnabled                         bool
+	OpenWASession, WebhookSecret           string
+	OwnerID, ManagementChatID, MasterBotID int64
 }
 
 func Load(getenv func(string) string) (Config, error) {
@@ -36,6 +40,31 @@ func Load(getenv func(string) string) (Config, error) {
 		c.Port, err = strconv.Atoi(p)
 		if err != nil || c.Port < 1 || c.Port > 65535 {
 			return Config{}, errors.New("BRIDGE_PORT must be between 1 and 65535")
+		}
+	}
+	if flag := getenv("BRIDGE_INGRESS_ENABLED"); flag != "" {
+		c.IngressEnabled, err = strconv.ParseBool(flag)
+		if err != nil {
+			return Config{}, errors.New("BRIDGE_INGRESS_ENABLED must be true or false")
+		}
+	}
+	if c.IngressEnabled {
+		c.OpenWASession, c.WebhookSecret = getenv("OPENWA_SESSION_ID"), getenv("OPENWA_WEBHOOK_SECRET")
+		c.OwnerID, err = strconv.ParseInt(getenv("TELEGRAM_OWNER_ID"), 10, 64)
+		if err != nil || c.OwnerID <= 0 || c.OwnerID > 9007199254740991 {
+			return Config{}, errors.New("TELEGRAM_OWNER_ID must be a positive safe integer")
+		}
+		c.ManagementChatID, err = strconv.ParseInt(getenv("TELEGRAM_MANAGEMENT_CHAT_ID"), 10, 64)
+		if err != nil || c.ManagementChatID >= 0 || c.ManagementChatID < -9007199254740991 {
+			return Config{}, errors.New("TELEGRAM_MANAGEMENT_CHAT_ID must be a negative safe integer")
+		}
+		bot, token, ok := strings.Cut(getenv("TELEGRAM_MASTER_TOKEN"), ":")
+		c.MasterBotID, err = strconv.ParseInt(bot, 10, 64)
+		if !ok || token == "" || err != nil || c.MasterBotID <= 0 || c.MasterBotID > 9007199254740991 {
+			return Config{}, errors.New("TELEGRAM_MASTER_TOKEN must identify the master bot")
+		}
+		if c.OpenWASession == "" || len(c.WebhookSecret) < 32 {
+			return Config{}, errors.New("ingress requires OPENWA_SESSION_ID and a 32-character OPENWA_WEBHOOK_SECRET")
 		}
 	}
 	return c, nil

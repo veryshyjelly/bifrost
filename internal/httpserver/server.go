@@ -18,16 +18,31 @@ type Store interface {
 	Review(context.Context, int64, bool, bool) error
 }
 
-// Handler exposes diagnostics and manual review. Provider ingress is added with adapters.
-func Handler(store Store, admin string) http.Handler {
+type Options struct {
+	Ingress http.Handler
+}
+
+// Handler exposes diagnostics, manual review and optional durable provider ingress.
+func Handler(store Store, admin string, options ...Options) http.Handler {
 	mux := http.NewServeMux()
+	var input http.Handler
+	if len(options) > 0 {
+		input = options[0].Ingress
+	}
 	write := func(w http.ResponseWriter, status int, value any) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(status)
 		_ = json.NewEncoder(w).Encode(value)
 	}
+	if input != nil {
+		mux.Handle("/webhooks/", input)
+		mux.Handle("/v1/management", input)
+	}
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		write(w, 404, map[string]string{"error": "Not found"})
+	})
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
-		write(w, 200, map[string]any{"status": "ok", "configured": false})
+		write(w, 200, map[string]any{"status": "ok", "configured": false, "ingress": input != nil})
 	})
 	auth := func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +68,7 @@ func Handler(store Store, admin string) http.Handler {
 			rows = append(rows, row{state, count})
 		}
 		sort.Slice(rows, func(i, j int) bool { return rows[i].State < rows[j].State })
-		write(w, 200, map[string]any{"configured": false, "jobs": rows})
+		write(w, 200, map[string]any{"configured": false, "ingress": input != nil, "jobs": rows})
 	}))
 	mux.HandleFunc("POST /v1/review", auth(func(w http.ResponseWriter, r *http.Request) {
 		r.Body = http.MaxBytesReader(w, r.Body, 2<<20)
