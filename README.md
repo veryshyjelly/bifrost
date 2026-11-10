@@ -2,7 +2,7 @@
 
 A personal WhatsApp–Telegram bridge being ported to Go. The [approved OpenSpec contract](openspec/README.md) preserves existing routing, linked-name formatting, deletion choices and delivery safety, with conditional caption clearing when the released provider API permits it.
 
-The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients, authenticated durable event admission, a fenced delivery worker, initial inbox/target routing and diagnostic HTTP/CLI checks. **WhatsApp/Telegram forwarding and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist. The [worker and initial routing](docs/WORKER.md) are tested components; `serve` does not automatically dispatch provider work yet.
+The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients, authenticated durable event admission, a fenced delivery worker, initial inbox/target routing, scoped text-relay components and diagnostic HTTP/CLI checks. **Automatic forwarding integration and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist. The [worker and initial routing](docs/WORKER.md) are tested components; `serve` does not automatically dispatch provider work yet. [Text-relay capabilities and limits](docs/TEXT-RELAY.md) are tested through the real SDKs against isolated fixtures.
 
 ## Complete Compose setup
 

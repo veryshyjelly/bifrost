@@ -61,6 +61,33 @@ type Job struct {
 	Created    pgtype.Timestamptz
 }
 
+type MessageMapping struct {
+	Seq               int64
+	AccountID         string
+	Scope             string
+	TelegramChatID    int64
+	TelegramMessageID int64
+	ThreadID          int64
+	BotID             string
+	WhatsappChat      string
+	WhatsappMessageID string
+	Direction         string
+	PlanKey           pgtype.Text
+	Part              int32
+	Deleted           bool
+	Receipt           []byte
+}
+
+type RelayPlan struct {
+	AccountID    string
+	PlanKey      string
+	JobID        int64
+	Direction    string
+	WhatsappChat string
+	Payload      []byte
+	Complete     bool
+}
+
 type TelegramObservation struct {
 	Seq         int64
 	AccountID   string
@@ -72,4 +99,5 @@ type TelegramObservation struct {
 	Kind        string
 	MessageDate int64
 	Payload     []byte
+	Deleted     bool
 }

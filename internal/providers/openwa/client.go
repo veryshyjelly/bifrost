@@ -11,6 +11,22 @@ import (
 
 type Client struct{ sdk *sdk.Client }
 
+// MarkRead is idempotent and retries as a read-state update, never as a send.
+func (c *Client) MarkRead(ctx context.Context, session, chat string) error {
+	if session == "" || chat == "" {
+		return providers.ErrInvalidRequest
+	}
+	ctx, a := providers.Observe(ctx)
+	result, err := c.sdk.Chats.MarkRead(ctx, session, sdk.MarkChatReadRequest{ChatID: chat})
+	if err := providers.Outcome("openwa", false, err, a); err != nil {
+		return err
+	}
+	if result == nil || !result.Success {
+		return providers.InvalidResponse("openwa", false)
+	}
+	return nil
+}
+
 func New(baseURL, apiKey string, transport http.RoundTripper) (*Client, error) {
 	if !providers.ValidURL(baseURL) || apiKey == "" {
 		return nil, providers.ErrInvalidRequest

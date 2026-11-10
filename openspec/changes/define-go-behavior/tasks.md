@@ -59,3 +59,12 @@
 - [x] Implement initial inbox creation, atomic route/management-notice persistence and private/mirror target selection.
 - [x] Preserve one-bot-per-contact binding and queue inbox retirement independently when a bound bot is started.
 - [ ] Connect full workflow handlers, verified aliases, routing transitions, rendering, provider dispatch and callbacks before starting the worker in the runtime.
+
+## Text relay implementation
+
+- [x] Port literal/native-entity sender presentation and UTF-16 splitting against legacy runtime golden fixtures.
+- [x] Persist complete text delivery plans before sending, retaining original targets, entities, quotes, packet keys and receipts across retries.
+- [x] Record scoped mappings and cleanup observations after confirmed receipts; isolate private bot IDs and management topics.
+- [x] Suppress outgoing echoes using both message mappings and confirmed effect receipts; defer own events during unresolved sends.
+- [x] Queue read receipts independently after successful outgoing sends and preserve owner pause decisions for definitely unsent parts.
+- [ ] Integrate verified identities/mentions, command and media dispatch, edits, repair/cleanup and full worker startup before enabling runtime forwarding.

@@ -115,9 +115,9 @@ The Go bridge SHALL use a 1,000,000-byte complete-file budget, including metadat
 - **WHEN** a file decodes locally but fails structural validation, such as trailing bytes outside the declared RIFF container
 - **THEN** local decoding or an API acknowledgement does not establish sticker validity and the bridge repairs or re-encodes the file before sending
 
-### Requirement: Explicit handling of definite effect refusals
+### Requirement: Explicit handling of definitely undelivered effects
 
-The Go implementation SHALL permit an explicitly handled, definitely undelivered effect to become terminal without representing it as a successful provider receipt. Its frozen request SHALL remain retained. Sending, uncertain and completed effects SHALL NOT be discarded through this operation.
+The Go implementation SHALL permit a definitely undelivered effect to become terminal after an explicitly handled refusal or an authorized muted/ignored route decision, without representing it as successful. Its frozen request and existing completed receipts SHALL remain retained. Sending, uncertain and completed effects SHALL NOT be discarded.
 
 #### Scenario: Definite topic refusal is handled
 
@@ -133,3 +133,8 @@ The Go implementation SHALL permit an explicitly handled, definitely undelivered
 
 - **WHEN** a later part retries after a definitively refused branch was explicitly closed
 - **THEN** that closed branch is not sent again
+
+#### Scenario: Owner pauses a partial relay
+
+- **WHEN** a route becomes muted or ignored after some parts completed and other parts are definitely unsent
+- **THEN** only the unsent parts close without delivery, completed copies remain mapped, and no sending or uncertain operation is discarded
