@@ -9,7 +9,7 @@ Checked items record narrowly verified work from implementation checkpoint `chec
 - [x] 1.3 Run the original default suite with provider networking disabled; verify the recorded Linux result is 234 pass, 11 skip, zero failures.
 - [x] 1.4 Establish independent deterministic rule/storage/adapter/effect/text replay; verify shared synthetic inputs produce strictly compared traces and per-transition state without sharing implementation logic.
 - [x] 1.5 Record remaining transport/media/structured-content baseline scenarios with frozen time, bytes and scripted failure responses; verify independently reproducible traces and state without provider access.
-- [ ] 1.6 Record Managed Bots, picker/link/unmirror and command/control baseline transcripts; verify partial/stale/unauthorized cases and their inventory references before candidate comparison.
+- [x] 1.6 Record Managed Bots, picker/link/unmirror and command/control baseline transcripts; verify partial/stale/unauthorized cases and their inventory references before candidate comparison.
 - [ ] 1.7 Record edit/reaction/revocation/poll baseline transcripts; verify message-copy scope, retries, retained controls and the known correctness candidates are characterized without preapproving fixes.
 - [ ] 1.8 Record history baseline transcripts and actual legacy checkpoint shapes; verify ordering/cycles, choices, fresh copies, day markers and partial recovery deterministically.
 - [ ] 1.9 Record Status and metadata baseline transcripts; verify refresh races, mutes, roster validity, permissions and quiet scheduling without live collection.

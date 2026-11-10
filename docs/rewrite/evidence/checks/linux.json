@@ -2,7 +2,7 @@
   "baseline": "checkpoint-clojure-baseline",
   "candidate": {
     "status": "uncommitted",
-    "sourceFingerprint": "cd0ef28cd41e31e7a9bb41ac008bb1dc82d9f925bb6e551d0a866be97b4a4728",
+    "sourceFingerprint": "23572196e729916971b5d5e7a805c29cea6fc8a038bd2467fbcbd8d8d216013e",
     "files": {
       ".bun-version": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
       "bun.lock": "a9c5196f5b880e31efcd2e4d7e55e4ea50a8dcbeb20584d09924791e956ecc3c",
@@ -18,14 +18,18 @@
       "scripts/review.ts": "b8c30de2604aa4c544f333d4781ebd064a9d111e1db3e78c14c9b5de28d75be5",
       "scripts/rewrite/api.cljs": "9975ffe3fbf25b0344aa18d52ea114157faec4f48d67e30163a29bf3a49e2b76",
       "scripts/rewrite/check.ts": "c777e15789f7e46a749aa0ff565a4b2f52e98fc07edbf50e75ab93080c84b48b",
+      "scripts/rewrite/control-baseline.ts": "7f995a63e067681b7a4fc593ba4bba59bb17e3a122d83a9d1bd2ac1fb04da498",
+      "scripts/rewrite/control-scenarios.ts": "c9d65e7631726795761b1aab5955da0ea5da2c60164e3f35cfb5e5394cfe7b7d",
       "scripts/rewrite/effects.cljs": "fa68e0f32a49d8e4550e75c90f10f79aa642be42dddb85f135b328ade86409ca",
       "scripts/rewrite/ingress-driver.ts": "b328179f84dd28cf0a06b1fbacc68647ff202c18d66caf080a80d22120c9e092",
       "scripts/rewrite/ingress.cljs": "9ba3ed40e7bcaf2d040412e5435a55cf864eff22063f1142b381b6dcf93febcb",
       "scripts/rewrite/inventory.ts": "5abeb140ce5ee51eafa812f75a24541156b747e121810323ee4072023a6cb8fd",
+      "scripts/rewrite/managed-bot-scenarios.ts": "a7733c08edb29cec73dfe3f78f644c19fb64d25e2feacd9eb8d879a8e9d9f6d0",
       "scripts/rewrite/media-baseline.ts": "5e10348d47442b411c674b43727e3f535a105311c256819e4e018ffaa1125de5",
       "scripts/rewrite/media-scenarios.ts": "b7afd7098dff919170eb57a0dd291ea708223c233a01e8b032dda8e3244ab7a6",
       "scripts/rewrite/oracle.ts": "69aef6bbe77979a3f2c1c6b6dc4a863225bfdbde3f257ca1d757af6bf411e083",
       "scripts/rewrite/original-api.ts": "23a469f09645bdced8c6a1fc1ff77c21cf80813c848ebf47880b63a75505d689",
+      "scripts/rewrite/original-controls.ts": "89cd2cad308422cc26c8a447fb5265a4293a72821535363b1d185bca0238c3e8",
       "scripts/rewrite/original-effects.ts": "6d589af0a885e0786bbd3ce6fae6eab68bbae41de4ce15b64b124a844550b276",
       "scripts/rewrite/original-ingress.ts": "d3c4b8cc20e49032026ff6064cafc2eb363d1bc7a2e8004a6d8bb94d53b0d132",
       "scripts/rewrite/original-media.ts": "d5b543ad85fcc091e0bd2d39fedc767c5c6c10c0877191af408cb5160bc93690",
@@ -92,8 +96,10 @@
       "test/reactions.test.ts": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
       "test/revocations.test.ts": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
       "test/rewrite/api.test.ts": "be0b935e23d2cde00fc5408441ac8cc599398812dedd9388daf38a641ee7a743",
+      "test/rewrite/control-baseline.test.ts": "bce9624cabae1816bdb6ced8c3b07566dd6574dd665bbe6150e75ef00798aeef",
       "test/rewrite/crash.test.ts": "a03999d76faca06188b89877648d3f5286a912b95b691e8503d223b5f3804659",
       "test/rewrite/effects.test.ts": "084c0da4f1fe937d5c9d28a05ec0121610c02ff807d4e2e9f5d258c755e43b0b",
+      "test/rewrite/fixtures/control-baseline.json": "88515a70209ca97a1d478f49be3530acf0c1ce9341de7b43d2adc7bac00d3332",
       "test/rewrite/fixtures/media-baseline.json": "ef3d723f4d03acc5798dae5727d3c69cd5d5ea1f1f58e5cb880a2cb07df73512",
       "test/rewrite/fixtures/rules.json": "67c1bfd0e576cf1589582e8a3c7c0f7e68dc4bbd74cdf68597263d045f5d70e5",
       "test/rewrite/ingress.test.ts": "a5c435796667fa62f14d66b193b1400cb01576b37820220a2767f8420ae10b96",
@@ -110,8 +116,8 @@
       "test/unmirror.test.ts": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54"
     }
   },
-  "startedAt": "2026-11-10T07:55:41.418Z",
-  "completedAt": "2026-11-10T07:56:00.082Z",
+  "startedAt": "2026-11-10T08:04:50.542Z",
+  "completedAt": "2026-11-10T08:05:09.232Z",
   "command": [
     "docker",
     "run",
@@ -127,12 +133,12 @@
     "/app",
     "--entrypoint",
     "bun",
-    "sha256:155f0d8a3a7671e823d9dcc204af8f10e52a9ac257a02beacd79c2cba62387f2",
+    "sha256:d0c2ed1390a444a122fc9be76b590789a0020ddb752868d463442386276029ce",
     "test",
     "./test"
   ],
-  "image": "sha256:155f0d8a3a7671e823d9dcc204af8f10e52a9ac257a02beacd79c2cba62387f2",
-  "imageInputs": "38265169744d7af28477dc758b2096d95eff931c42e59514181db0afaba21068",
+  "image": "sha256:d0c2ed1390a444a122fc9be76b590789a0020ddb752868d463442386276029ce",
+  "imageInputs": "98c9f2a6c4ae6307f5a80434f645f31ffe057855b0d864a5bd33709d4d29c103",
   "environment": "Linux arm64, network none, read-only filesystem, tmpfs only; no production mounts or published ports",
   "bun": "1.4.2",
   "nbb": "1.6.214",
@@ -140,10 +146,10 @@
   "exitCode": 0,
   "signal": null,
   "summary": [
-    " 279 pass",
+    " 280 pass",
     " 11 skip",
     " 0 fail",
-    "Ran 290 tests across 26 files. [18.15s]"
+    "Ran 291 tests across 27 files. [18.17s]"
   ],
   "skips": [
     "9 opt-in sticker/codec cases",
@@ -151,7 +157,7 @@
   ],
   "artifact": {
     "path": "data/rewrite/evidence/linux.txt",
-    "sha256": "5ab4a5e6e3eb9a34c5f12d8f5c073c946b70b5f5c9d937a54b15f40fb8c97e16"
+    "sha256": "d4e2b5c978ace0fb63966fa45616f53fe710a3c5bc5c19c055cd56f056b20d98"
   },
   "limitations": "This check does not complete an acceptance gate. See evidence-ledger.md."
 }

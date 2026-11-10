@@ -1,0 +1,2858 @@
+{
+  "baseline": "checkpoint-clojure-baseline",
+  "clock": 1794240000000,
+  "timezone": "UTC",
+  "cases": [
+    {
+      "file": "test/control.test.ts",
+      "name": "Bifrost ignores commands for another bot, while the addressed member bot handles its own group Start",
+      "inventory": "baseline:test/control.test.ts:43",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "2e74f56ee99870991f9dde15bfbdfd20c35c860b13fcaa73b837bdadef45c317",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "734649a488f7438d8b752b25e8a3c0626746c3bd3086e549062fe0bbd96af859",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "bfe4920802e13adaf21314611ee34cd7da6fb5a27e4198e92f6a79b27cf1579a"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "bad72031fc35a610ace69ea0158080a5f4c766276a6d663cbc46a5e359493460"
+        },
+        {
+          "operation": "tick",
+          "trace": "797ab8a3fc6ba42467aa11b0fe62b8354040489160bd5b6a096009d1963e842a"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "bae72cf0a814ca81afe7e933e725e9fb8068d3da9ede052855a029fa73b7c354"
+        },
+        {
+          "operation": "close",
+          "trace": "31c0ed8ca4b7dbc1bef19158ff676abb7e9e74cef78032714e6273eb7e6e20b2"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "join, leave, title and forum service events produce no unsupported-message replies or WhatsApp operations",
+      "inventory": "baseline:test/control.test.ts:56",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "b34ee5095b1af98e1a536ce59ebb8edfe24eaf51daa0f0759dc74d6cd9320bad",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "aea919ab5db6d14ab8f691ed978f7465e1fe1badb6484983edad43f00350edc0"
+        },
+        {
+          "operation": "tick",
+          "trace": "b3ec41f6f16dab31484c83c48fddbc447e75fd111362fbc01cd36c7067334311"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "000a4992c1015e450fd068727ae80256c348b7616af1bf5e1f4e7eacb014728c"
+        },
+        {
+          "operation": "tick",
+          "trace": "9141770ddcbdd44aaab3d6cefac1adea8ed3333d60d1d7f3b38f8f0542b0dfce"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "93866a8dbe59d093c0049ca7b577463c1949eff3ce4c1d1c19253c5a3d88eff6"
+        },
+        {
+          "operation": "tick",
+          "trace": "3d90eb0ae1876ed2daadddfef0ef0e522c80846bed75d3661a26b74f61b127ac"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "8e04505f5820c0872e607358f2350ca1d8bc78a9a449e714d3f23f270b0c62b5"
+        },
+        {
+          "operation": "tick",
+          "trace": "60d89e2d70e3cdbb4baccd3618dbf78b2a0416a1eddb4731ab7d9393dedf529e"
+        },
+        {
+          "operation": "close",
+          "trace": "cb93c70d140ec226b964090cdb20cc5ce8edefa2b693ba3e2fe0d444a0a1f6dd"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "edited commands and edits of former commands never become WhatsApp messages",
+      "inventory": "baseline:test/control.test.ts:65",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "0096a670bc9d2c6f357e471b99c2ff767f36ba5d709322b5e6e0a4afbb891419",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "85694fa4b035a4fc65b6ef672a8c33cf37050cb608058bf0861cb2c2e6371c82",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "18a80facc22620a7822fcbb4fd3a695255cc08c464f2a5ef97c33b2beafc3ab5"
+        },
+        {
+          "operation": "tick",
+          "trace": "725da114b057eb7f1a8cc1a3a5edf2b94783d0832386aab837d7b18c76c3bba2"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "781fd6e54797554ab4dd43a49731d1b2ed9970bff681797a0800aa0112fc6d2c"
+        },
+        {
+          "operation": "tick",
+          "trace": "04191dc1f14a65e2970dafc62b70bef8d178538a9dc8b9b45d716bb5243089c4"
+        },
+        {
+          "operation": "telegram",
+          "trace": "f4050b8ff39346a78b929524d8d77ad7349771860aad8013c3c450cdb5c19137"
+        },
+        {
+          "operation": "telegram",
+          "trace": "6a0302364a0baa5b0e74aac095511bb869dd3200263967189870eaa9b062d46c"
+        },
+        {
+          "operation": "telegram",
+          "trace": "418fdf09db85087cc60735cb9488b66f0eb156e5267b96012864b36328feb63e"
+        },
+        {
+          "operation": "close",
+          "trace": "3b5e165054cb1b31c4905a0d2d8d92d7d6ba9b8233b1dd37266d3642ed3f3e59"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "commands and notices expire durably, while WhatsApp text and poll relays remain ordinary chat messages",
+      "inventory": "baseline:test/control.test.ts:74",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "551752b5693cfeb32997f7a523650c6fa94a316576cabfb46fd08a98e4a24c55",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "79e64ec12636498889508615c9ea329271aae31f8890f096ab574d241480ddea",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "command",
+          "trace": "be618a6e3a5bf4d911dd612dd6b633aacde83b240a4d43c870bc641e11f81add"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "7122bb710f97f2b38778d20ec37a49f7ef8f0e9b458476c3629905ec2bc7df81"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "c2407070036ecbf29d5258d4800aa96bcf6f4f8a2aebc7833c317d3ee14552fa"
+        },
+        {
+          "operation": "exec",
+          "trace": "115eab84dd270e23311d7ade1485e480e41ee92e0df0570b70ccac608ef18b34"
+        },
+        {
+          "operation": "tick",
+          "trace": "05f053aa37c4f691962ebe0f126b5c3aeffe383ef07851946eb93124d1e62247"
+        },
+        {
+          "operation": "tick",
+          "trace": "e9f078430772e4dcf3ae8a07d25984170430c0be7f354dce1df5d977e7326858"
+        },
+        {
+          "operation": "close",
+          "trace": "87443e81709b3fca0f6a6447884047e029d079c2272fd695fabe4b0b11f1549c"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "interactive command replies get a longer lifetime",
+      "inventory": "baseline:test/control.test.ts:92",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "ad78fc1f85d7f5f1a8517cb96865e424bcf22e514057749de5671d70bc469120",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "e8c67eb1a4fa6af6d62466b9224f7006dcef02512535dfe6481d3c31bd1e5fa3",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "be3333b673543c8aac6f547637c0086993b9ac6959364a0b4be71490fd1ea051"
+        },
+        {
+          "operation": "sql",
+          "trace": "c762771d17905176d17d0e3285920cb29b804981be82cd1b0b45a397fb133a23"
+        },
+        {
+          "operation": "sql",
+          "trace": "87c32486fa331ed4f7f1df330eb90c97f6d92ec094830208001698c1db6a956d"
+        },
+        {
+          "operation": "sql",
+          "trace": "58e352103dee9c7dd5ff5091f59b5fe47cdd4dcf9dc8a2a62fb679ea31698b0b"
+        },
+        {
+          "operation": "close",
+          "trace": "f164f289f4e71c7cd2c97f48456a035614b61838480808b4ee56a81807e8f286"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "observing a member-bot notice through Bifrost keeps its expiration and owner-only execution checks",
+      "inventory": "baseline:test/control.test.ts:99",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "bc04e613ad4c45138932e02f5ff6d433d63907f24f02f202d3608e496c6301b4",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "97f646f0ead4d381050cabe1aed2c15ef9548b938fbd2228dbf59a979c63b35c",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "87fd425fb2da536d64eeb5b87ba86c2e22915ec75ecfe0773efec5006090d669"
+        },
+        {
+          "operation": "sql",
+          "trace": "7b47ec1b455b13ee8efd3ee54a4b91a5f273ef84bb06d8ae82bead5700175097"
+        },
+        {
+          "operation": "sql",
+          "trace": "08af743622a4f3b757cb9a5fa8738d2224c2759541759f04fe084133d285fcfb"
+        },
+        {
+          "operation": "sql",
+          "trace": "261339a3c4e1e4ccca4deb8aa48254fd06ccd607824e014013dbc5584ac243f3"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "c74708aa55296569615219e80bfcafc38b14c85d53bfecaca29304fe693318ca"
+        },
+        {
+          "operation": "close",
+          "trace": "961b3b0e0ab6c11f2dd12231d1268b459eaa4fb2b815fa2eb56b2d3bdbc6fe89"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "/clear log removes local notices and command messages, preserving chat messages, bindings and mappings",
+      "inventory": "baseline:test/control.test.ts:109",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "e71d6aaff42a730c902dc7bf9a0209dcc9725d1fd183994118d60ba05c212f7e",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "26b5185e3eb85e811d77306fac6c6252c7a4c0a3027b05dfcaf9bcb97f6ac20f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "2be0b18cffed8d5f57c728a72418ae2bd188bc6e4a53a6f9e5216f4456910921"
+        },
+        {
+          "operation": "sql",
+          "trace": "d10bbcdc261400e19e1887c3e06a0ba04ecf8101b9979e80a997e25528fac3f3"
+        },
+        {
+          "operation": "sql",
+          "trace": "ecc359a3d39eff41bbfbf7bab917f4dea73b2b538bb228a016eed3770a675b40"
+        },
+        {
+          "operation": "sql",
+          "trace": "d07a1af5730f3eea5c446255460082fbe46ffad725b3d166d663b2771d56d94d"
+        },
+        {
+          "operation": "command",
+          "trace": "afc7892d560ee501b9a0eafa2d54cf6a7776286f9a0b39f1481688a86b2c3ea8"
+        },
+        {
+          "operation": "tick",
+          "trace": "9fe36b8641ddf91a33b412a6319a088d81876d4751c57a20921ecd44ebbc43a5"
+        },
+        {
+          "operation": "tick",
+          "trace": "46b0b0a5c400d184e34c54349d3f44997ee892cc99e360cb38ff59318f789196"
+        },
+        {
+          "operation": "close",
+          "trace": "5a2293842ab50781d61526b4ba5cc3cd5085d53380e08f97cc9b74c4ca20efef"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "/clear all in management General preserves other topics and old/protected messages",
+      "inventory": "baseline:test/control.test.ts:123",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "98763ba95635b3d01061aedeee863346a2932e759189670c95db3183f8a38709",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "e679b6ceb4cda2bf3a09b499fa2bb6c1cd65b81451b5e11e4c595613ba93b6af",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "command",
+          "trace": "0e437396d4c71460c51857d420ca27329ea752614c399cf8e2bcc64f571af96a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cec204620fdfec4dca6784a7ca9a169ffa2827196f33c8a7c2c02446da0b2613"
+        },
+        {
+          "operation": "sql",
+          "trace": "25cab4e4f6a43ab739271bc1fa2e29e0476c5373fbb8f9a314aef03c6ecd45c2"
+        },
+        {
+          "operation": "sql",
+          "trace": "7851d373d9182097a9690b46587cf2e849b0fe6e3e5774feb8be566fe5ca8b66"
+        },
+        {
+          "operation": "sql",
+          "trace": "f3cefce7d426fe26877925d252206de6c7db2085c9b50d536ff0a12aa9f71f95"
+        },
+        {
+          "operation": "command",
+          "trace": "56559fca8ea60ae0bd0476e4ad415463bb5b7b227354edd3f3c15cd2d4c9a9c5"
+        },
+        {
+          "operation": "tick",
+          "trace": "c2f0a03de6f4cc9ca5ceae32d2f430a4db6c3c18a796530bba12c2fe6b409fc0"
+        },
+        {
+          "operation": "tick",
+          "trace": "2cd79c4cc0febf076931b35b6c743b53b56e6d8c0ed25f41fde512ed44b3726e"
+        },
+        {
+          "operation": "close",
+          "trace": "ef3a993d29e6aa508b332525d3e88096aebf91741b43e94a90dfcc6b5fc6c1ad"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "both clear-all forms clear only the current management topic, preserving other chats, later messages and mappings",
+      "inventory": "baseline:test/control.test.ts:138",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "c2796166665978141d629716b385ca8af1aec6776b63208c24e45dcbfbd92ca5",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5c6dc214d3bbe45579684fcc082f82337a0723e70bc57efda78961766fb05309",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "fbecc5ae1bfc8d418c2f94c5b846ca2ef581704edb622be63f9c83ece977d2da"
+        },
+        {
+          "operation": "sql",
+          "trace": "546063762e2d677acf8af9e2562b2a5c1957a6a99fd024711272a8b938e18057"
+        },
+        {
+          "operation": "sql",
+          "trace": "7b372ceb88c88cb694105f69139993499281d18d1c67f9c7a729ca4b8d13351a"
+        },
+        {
+          "operation": "sql",
+          "trace": "17ace62486fd3640bcd59da4e86b2a0f6c70f143b0ce5074635359d200a1b985"
+        },
+        {
+          "operation": "sql",
+          "trace": "e35000e03932448ae81ec07180087101b6056a2c5ded6ebe6a2a702a887f715b"
+        },
+        {
+          "operation": "sql",
+          "trace": "6c649207177ebb1f8eab06b01e7558cca7fee4c292495994caee2ffa6a8e8f4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "7880a4b22c62636f9aa18c2acefc740bf0885930e0f8ba232a60f9dad930b5ae"
+        },
+        {
+          "operation": "command",
+          "trace": "a2c5c6c3ec44a0774546c48d844fc947eae96c6c2fa8f5c61f203038cd0a6d6b"
+        },
+        {
+          "operation": "sql",
+          "trace": "58c16e43f0cd838938c4cea47b8ec586f148d061b829cd8bc53ee98be1bac29b"
+        },
+        {
+          "operation": "tick",
+          "trace": "4b502b3efc31df09bb737265862ab4d7891f316a4aab66a4ae678b870ef0c19f"
+        },
+        {
+          "operation": "tick",
+          "trace": "f53418ccd6a63dc1a8e7c477ff49ed7b786d1e9b3458668d88e891d824237c10"
+        },
+        {
+          "operation": "open",
+          "trace": "326a8f61fa5558d740ba1d2cc93c5dd9312b9386a5a52ba9c0bfe15e409ea5bc"
+        },
+        {
+          "operation": "sql",
+          "trace": "5d1bd7a02ea4c4552d648dbebd7077700f7c4c2f73883fea31f9f4163cf87d47"
+        },
+        {
+          "operation": "sql",
+          "trace": "1dbdd5ecdae1e2be4e2d98dddf4c5e429a1222171d1353679a8a0a406bf71b85"
+        },
+        {
+          "operation": "sql",
+          "trace": "812d054bc98735926fadf38bd59877953b84cb6f17e2d65f51790da0eb0eae7b"
+        },
+        {
+          "operation": "sql",
+          "trace": "328b5f7f32b21d9280f854a0e9d39124e79a29c092b478f62ab291e313609fde"
+        },
+        {
+          "operation": "sql",
+          "trace": "8e576efa16f949cdbff3b99ccd3f976cf6e015faee8888cb7e2a3a73be273cf5"
+        },
+        {
+          "operation": "sql",
+          "trace": "a3483cc783bcbe39607342af708ef45cf5a5c690b24f632179b6f820ef9c3796"
+        },
+        {
+          "operation": "sql",
+          "trace": "2ffbebbc36e28d4dc784d36b53e15ad3652ed062f889c7fb459fec840439cb2d"
+        },
+        {
+          "operation": "sql",
+          "trace": "488483ff2c436b0577093e00a547b43a1122be415cc93081574ef4efa6c25ea4"
+        },
+        {
+          "operation": "sql",
+          "trace": "b95e97ff0864ec120a683b44fb36865edb69f4a6632e4d993aaa77c0f91e2b1d"
+        },
+        {
+          "operation": "sql",
+          "trace": "f4b649996e6757a110c5776f2a44f2376d87f8e8992c35e52c1d3302875e9e33"
+        },
+        {
+          "operation": "command",
+          "trace": "94547d9ae8bdd02a13177dffad94849e9f24e372c823a02c131953685b999887"
+        },
+        {
+          "operation": "sql",
+          "trace": "83b9586d5c50817b5055e51e190172f031ac77fce8b19886e841d6a956a743c8"
+        },
+        {
+          "operation": "tick",
+          "trace": "b00588d0d38ff4c3ee3be0ce8bb93e474be84c2c3e2aee7b196ccf63cec4c015"
+        },
+        {
+          "operation": "tick",
+          "trace": "54070a0611ac44e090e4cc4607162f1eb6e77c66f4f61d7b64161aa76091b26d"
+        },
+        {
+          "operation": "close",
+          "trace": "1fb8f23bb468445ea32c0ed35aee3b078f936533736977760f3928fc9b3bf626"
+        },
+        {
+          "operation": "close",
+          "trace": "1fb8f23bb468445ea32c0ed35aee3b078f936533736977760f3928fc9b3bf626"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "clear all remains unavailable in mirror groups, private chats and through member bots",
+      "inventory": "baseline:test/control.test.ts:161",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "654124a16385058555e9fee694ba7cc817e9a5c3df2e08000f078820001cd3eb",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d9db40c18643ba67b685237b910876f18adceff8e054b86ab6c46d4217edb336",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "command",
+          "trace": "40ed7ca9a50cfe25fdb10b8e05cc1c57d2a2c9e499895df2dc0ff099d5defda8"
+        },
+        {
+          "operation": "command",
+          "trace": "59aa8ac8281b5ffc0503487ce624c944a1ad15bc32ca3f9bf6bae142f1bc8b49"
+        },
+        {
+          "operation": "command",
+          "trace": "5c4cae7b86cf1d0e0f2a96f7d5cd57ef48cf4ca7614763121070a1a76e339856"
+        },
+        {
+          "operation": "command",
+          "trace": "10c59e9755df11190a73885d879d300c83002bf5a15870fe6ac1dad96f102d13"
+        },
+        {
+          "operation": "close",
+          "trace": "13bb7ea4e58d5b97487783c5411d296881b941744061ec9aed37af72ed8e72c9"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "cleanup isolates private message IDs for each member bot",
+      "inventory": "baseline:test/control.test.ts:171",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "af6fdbccde1007fd9713330eb4a459906ccd39f4f83b1691db42b4d09105bdd1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d2dfd6d1488d02c9a06287614ca8ef0b29edc779a02fe74b5ac61b14719bf84d",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "30166bd8cb7f3d07e3478a9ce98460a2442cdac81f08175187dc5865ceebcb61"
+        },
+        {
+          "operation": "sql",
+          "trace": "93996c74922f7dc3217798e50320fb720209ac5b42c6f2963ab99bcc9b2fd00d"
+        },
+        {
+          "operation": "command",
+          "trace": "a0a9ff6a80f6c57685554d60a15ffe6a46f0b0ffc1b0f321e7b28e2dc0f55865"
+        },
+        {
+          "operation": "tick",
+          "trace": "362c78b553d06cd6c2d721ee9211ff029ede391a8a1793fcb4f150e1ec69a922"
+        },
+        {
+          "operation": "tick",
+          "trace": "3ebfe9f677bdd7bc60facdd61eaeb6e1734291a916506efcd71f639cc00b69eb"
+        },
+        {
+          "operation": "close",
+          "trace": "a5c3bf4ae4f5b98d8821661a2c173d7644ff8384454a45cb535f5f0c38c1e38f"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "one undeletable message does not prevent removal of other notices",
+      "inventory": "baseline:test/control.test.ts:181",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "46cb6c8eb4787545451ba8dbede48c47da6311ee9ba915a6447df84593aecadc",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "21198af5f50f4558f57821dabace1e71485fa92d3e8b0319bf84071791fe91a8",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "2be0b18cffed8d5f57c728a72418ae2bd188bc6e4a53a6f9e5216f4456910921"
+        },
+        {
+          "operation": "sql",
+          "trace": "0a923dccedeb4ef272c4b89d1112bc110261a353c9679a945141142b59301159"
+        },
+        {
+          "operation": "sql",
+          "trace": "14f723eb251e09dd752e043ca2124a5b467dfa506b682ef5ef580b0444cf3380"
+        },
+        {
+          "operation": "command",
+          "trace": "9c1cf9de41709f0c567ad81b7fbb079c3cd2864e799659bbdff28a57cae63dac"
+        },
+        {
+          "operation": "tick",
+          "trace": "2a9965b1257f7c12e62e8743a0b2e7574e7840c0c96f9635ed872d2437f52a8f"
+        },
+        {
+          "operation": "tick",
+          "trace": "6b5f1088ceeba1704b1c21e272269d32206b4f91b89c52c66ab1d796078bb80e"
+        },
+        {
+          "operation": "tick",
+          "trace": "8e68e1b6d45e55602491587e50a4abc68c8b2bc8c59f2616f85f75db376b116f"
+        },
+        {
+          "operation": "tick",
+          "trace": "250b6675dbeda85cff60fe57eabb5fa9a4d75fc627a0af00f4cb846360eb9e0f"
+        },
+        {
+          "operation": "tick",
+          "trace": "debff869a275ff05f32e09bee20c30fcd0861e28797c9e2a721528585bb18067"
+        },
+        {
+          "operation": "tick",
+          "trace": "b3ecf0c5ad31b90dd37d20f13f64ad1de8260a6bdcd9c088f0083941ea8104ee"
+        },
+        {
+          "operation": "close",
+          "trace": "bbf4a7369b3e8be0fc48ad6ac97b1ea39e23ae1d08237cb63ce2e6672794bb54"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "ambiguous cleanup failures retry as idempotent deletes without uncertain delivery effects",
+      "inventory": "baseline:test/control.test.ts:191",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "0988b86435681263f142118c7a503039c1ab5e2192c80e9a37c63541e39223ce",
+      "logs": "2d9ef1c9a4a218bef4599b9dfe417282686fa688d557e9711567d481375b3460",
+      "state": "1182bf78693c4570129b848600a65f49c74b87b78c95fb24696526b7f845d568",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "9a8ed28b0a59f79bf5bfe9204e2ea831f5a182ef551c80c34b76e1afc023f543"
+        },
+        {
+          "operation": "sql",
+          "trace": "c5d1958199dfd1f03a307f8adcefd17600821361c0fc72dc89599e15027f6f9d"
+        },
+        {
+          "operation": "sql",
+          "trace": "9a0a0294260e6069eb305727268d2e322376bddfc1c7199298cc0ef28cc83f59"
+        },
+        {
+          "operation": "sql",
+          "trace": "2e86c18e73e9b56a188f37efc43e4faa867a9d118b064aa82d0d7dd29eb69651"
+        },
+        {
+          "operation": "exec",
+          "trace": "7f128362f0ebf195f04e89b3cd2f5b39b5782853eebf98969f3ebecfece44f78"
+        },
+        {
+          "operation": "tick",
+          "trace": "dd2e905f483e3f5071f8107bb9f319fb34e0f0d7f413a9ad0b92954c11aba8fc"
+        },
+        {
+          "operation": "exec",
+          "trace": "13ec67be8734b83cb0975f6193c1e962ecbf7fa032a1ff4ff8ff293ccaa88bf4"
+        },
+        {
+          "operation": "tick",
+          "trace": "dcf1952ba2e368677e42ada670d494aea4014857159ae4fe431fd9373c1791a6"
+        },
+        {
+          "operation": "close",
+          "trace": "8d1f2e5b44a7edbab97168f4b9b493bfbef2d92ea89d381fd36954f8c6e1b680"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "startup registers command menus for migrated master/member bots, including management-topic clear_all",
+      "inventory": "baseline:test/control.test.ts:202",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "88b265825d7921153bd23496f6c062c95306caac7c00cd6835fa62a46c93d498",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "287486ceb9b7f45b54098f54f9235cf49a4e5307c2662ec7aa2119915a3a71c5",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "eca72d0a2c62b67f888263df44069aefb0277629fd9309577e59ba39d7dab9d5"
+        },
+        {
+          "operation": "sql",
+          "trace": "44ba166ca4ce27c6f54549638c22e53588b5af5c78fab228a3f9ae1f6afc8a39"
+        },
+        {
+          "operation": "sql",
+          "trace": "d3a1ec89176d39bc727fc28ffe2c6f17707ddf48d4e2e5c296e33210d4d03405"
+        },
+        {
+          "operation": "sql",
+          "trace": "7942dc5dcff4b156c5df74632da6c5749978b62ffc54da96abe291b6527115fa"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b71a3aa0236aaae4a4fd0e57d2f42f263589cf1586f254cbb85bbb3d4a16bf0"
+        },
+        {
+          "operation": "tick",
+          "trace": "11efea9c06a796d319985e78fac152eda2446bfaa848a170e5abb1cee6e0fe86"
+        },
+        {
+          "operation": "tick",
+          "trace": "d43aee7617f34a274cbc6eaa25c5b156dbab023913f8f7cd5556ab7601f463b3"
+        },
+        {
+          "operation": "sql",
+          "trace": "7b4dc241c31768f7a2ee64db305929e1ef44e52bb653433e915c48205ef30103"
+        },
+        {
+          "operation": "sql",
+          "trace": "66e56a08bb0ca3943a8c880ff92905f051306f1c931adf13943baf8f5886bbcc"
+        },
+        {
+          "operation": "tick",
+          "trace": "fbd9e69bc5bfd200df802d00618367bc3bf0337a8afb9c631b7a9881b5aac80a"
+        },
+        {
+          "operation": "tick",
+          "trace": "bb55e671b6e59c319d0540814b6846ad84170297f10d027600911af91449fa99"
+        },
+        {
+          "operation": "close",
+          "trace": "403b18e64a2632c167dfdd59238eb212caaa062f36b4e6cd76e77cda1b5f81c4"
+        }
+      ]
+    },
+    {
+      "file": "test/control.test.ts",
+      "name": "existing recorded chat/history is indexed for cleanup without expiring mirrored conversations",
+      "inventory": "baseline:test/control.test.ts:220",
+      "sourceSha256": "d7c26dc0ca275ff143e30e1089ca40518e3718003ff0469aa673c2de8c1f9fa6",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "cad169ce25f474891d78018631cd777076311f9a1b5e1ca32a8cf7191d96d328",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f69f04a023dd0afc75e8fe0c45ee7b41e0b512949a784eacdb1e339dc596dd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e33424a5a3091cf53b02a1ca2f17e87f89a0680a1be35a182b151a3ac72621dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "c93f4ce7b69fb233ce3678de5ce361c61b30465e9853347f312d0c0607f8c9a8"
+        },
+        {
+          "operation": "sql",
+          "trace": "8e21f2d5af76ba65e1cb4e0d22b71e7814cabf0986243b44dfd64e5d5ff8a533"
+        },
+        {
+          "operation": "sql",
+          "trace": "42697767069a9f38235d711f3cb5304c6df99c1d3145dacb3b954bb9121e3ded"
+        },
+        {
+          "operation": "sql",
+          "trace": "2798503fb8483453c2728cadb162bc8774bd26279d4b07970501d6ce4f810f4d"
+        },
+        {
+          "operation": "sql",
+          "trace": "6339a866497621acabdfd06cb6aad5a6c7aa5b59ff9288f27826dc54c1b55dca"
+        },
+        {
+          "operation": "sql",
+          "trace": "eaa07e1c86910885f0fb3502694b1bd1e6f9cda468c0a50b4d733535d12918d6"
+        },
+        {
+          "operation": "close",
+          "trace": "96d47711b438c8c5f535fe848d1bce6a507fbd9ae052306148f6a837117c4918"
+        }
+      ]
+    },
+    {
+      "file": "test/group-picker.test.ts",
+      "name": "native group creation/selection grants master rights and links only after the owner shares a group",
+      "inventory": "baseline:test/group-picker.test.ts:32",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "calls": "dace3a24c8a56a85ece4bd42f54d34f2dfd35722cb7ecc4480d7928cd184efe1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5e920ee2a27118a1f5111028cee7693dc51ffc2836bdad0bbe1a65654925f0dc",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "6696b49643cf4586b51b0bef17cb9c328536af4e0202941898c6675c454875de"
+        },
+        {
+          "operation": "sql",
+          "trace": "80cc2e6ed2f5a7a6c4f283afbba67ba017ff79ab8774003140a712d1fd03a9bc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "47e5f743e9a35c3db98fe5e36e4d428728ac6f16c4c575a46823a917443ef6b5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "f99d3b5677ae0412421e7b98ad73c35ec8cb9c77cd8e9142c0fa1432c93773d7"
+        },
+        {
+          "operation": "manage",
+          "trace": "85aa701f03b6e8184b12b2d8e3baef787966b5be54acf2d7389e387ced0a6990"
+        },
+        {
+          "operation": "manage",
+          "trace": "117b9910c5351ab0415a6a163b4c13f4f537d35044c5fd3bea8b480234d9f29d"
+        },
+        {
+          "operation": "manage",
+          "trace": "138ebf59b839e7638ff0eabe3348029a2099d99e24105083890b043fbb0b4311"
+        },
+        {
+          "operation": "close",
+          "trace": "3f5573b4e343f6e21a4a8980c518cced539ebb501270f8dd979a219c8e22aaa0"
+        }
+      ]
+    },
+    {
+      "file": "test/group-picker.test.ts",
+      "name": "expired and previous-session buttons produce guidance without opening a selector",
+      "inventory": "baseline:test/group-picker.test.ts:55",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "calls": "bbff9c5bb9a09554a758b4bd8b4b1ac47a4abb015d1f11ba0aa5319772fd5da1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "e35bec21799f4f2939fd7dd5ae590b3a1a39f4cb01b0b814120de107e8c15e21",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "6696b49643cf4586b51b0bef17cb9c328536af4e0202941898c6675c454875de"
+        },
+        {
+          "operation": "sql",
+          "trace": "80cc2e6ed2f5a7a6c4f283afbba67ba017ff79ab8774003140a712d1fd03a9bc"
+        },
+        {
+          "operation": "sql",
+          "trace": "ecb85469e0719623b548fc588c4447cce9d40797de51ebc2c134db919a4df421"
+        },
+        {
+          "operation": "sql",
+          "trace": "553bff3fad9897e3cdb92bf48e34b79889d397bdd55b1584fd0070ccd3159e60"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65ef85f5d3375c22303e227ff4e55240ea2265fb35146955e483dad0990501"
+        },
+        {
+          "operation": "sql",
+          "trace": "ae40566d411e9ae0cc7c1402e7fc36392ebf695d845971326ea03d96f46c89a1"
+        },
+        {
+          "operation": "sql",
+          "trace": "46300d3dabb7487a1f44e7c655fdf01388e7193d8cd1b215db31ce4caeeee93d"
+        },
+        {
+          "operation": "sql",
+          "trace": "69ec17989fc1a352caee743e3c1c6bc452220411e15f5ed033c09d4d1a7a4512"
+        },
+        {
+          "operation": "sql",
+          "trace": "162c7fc7370dbd12c12aea3e274113d8e6ed71d99664dbc8cab6fcfcf11aa080"
+        },
+        {
+          "operation": "sql",
+          "trace": "93dcbe706b66c9f7de338583feeb13707f8f0ad49b17a1ca1168182122b55e8f"
+        },
+        {
+          "operation": "sql",
+          "trace": "926dce3a201cbef80a999d7432d8de161c12ae0838c2c53f9064df4acd1a912e"
+        },
+        {
+          "operation": "sql",
+          "trace": "7b7527a97561f386603365b7ed5ea8ddd53337d40d7cfb1b0e938e39c9dbeca1"
+        },
+        {
+          "operation": "close",
+          "trace": "e8c74ba3f9ccb06175a4f41f9cc48d3993d883d91ede1fa7c92379c803b6665e"
+        }
+      ]
+    },
+    {
+      "file": "test/group-picker.test.ts",
+      "name": "unknown requests and other Telegram users cannot link a group",
+      "inventory": "baseline:test/group-picker.test.ts:68",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "calls": "47032311fc602f0d5e8aec9e4eeb16385862401a1a9667ec9802787c0f4d5280",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "a08c9cdb01b6320faf110526296ddc6ad0484326d69b0d7989cff30759303863",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "6696b49643cf4586b51b0bef17cb9c328536af4e0202941898c6675c454875de"
+        },
+        {
+          "operation": "sql",
+          "trace": "80cc2e6ed2f5a7a6c4f283afbba67ba017ff79ab8774003140a712d1fd03a9bc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "47e5f743e9a35c3db98fe5e36e4d428728ac6f16c4c575a46823a917443ef6b5"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "3de1736b0fbd5dfe715870634b16c4db799abf74293db1bded25b2d43cb79df7"
+        },
+        {
+          "operation": "telegram",
+          "trace": "5373da64e254d07879d0e85f2aca1d8537400910cfa584b91cb381f0d73c74ad"
+        },
+        {
+          "operation": "close",
+          "trace": "75a71598e5f3fb1ab6bb156d492c84cc3ccc58cffad3d3be30d7866c874ea26a"
+        }
+      ]
+    },
+    {
+      "file": "test/group-picker.test.ts",
+      "name": "picker rejects public destinations and the management group",
+      "inventory": "baseline:test/group-picker.test.ts:78",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "calls": "313d2eff3989beb3a3e5f4bd58b409ce17762558e993b37a3b7b0e2025ed0932",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "25a54eb35634558e7278d7f4d16276355db026054ea5dff82fcacd169d6ea03a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "6696b49643cf4586b51b0bef17cb9c328536af4e0202941898c6675c454875de"
+        },
+        {
+          "operation": "sql",
+          "trace": "80cc2e6ed2f5a7a6c4f283afbba67ba017ff79ab8774003140a712d1fd03a9bc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "47e5f743e9a35c3db98fe5e36e4d428728ac6f16c4c575a46823a917443ef6b5"
+        },
+        {
+          "operation": "manage",
+          "trace": "9fea86c64ca84de898bf013d954e5a48a5c5f22b68a62151da6bb83189d3434c"
+        },
+        {
+          "operation": "manage",
+          "trace": "b54591c9981554cb149a412838e02b71370e2bf0a59e059ca6f012c02c5bd5cb"
+        },
+        {
+          "operation": "close",
+          "trace": "be85115d2bd50246d6a341fbe8a6c505c50a27606f50b8972fd863e89ab7cefe"
+        }
+      ]
+    },
+    {
+      "file": "test/group-picker.test.ts",
+      "name": "new group inbox controls include the button and /group works for existing topics",
+      "inventory": "baseline:test/group-picker.test.ts:88",
+      "sourceSha256": "f57404735f9170a833d727dc96cb1d66f4fe95959f14f4819129f62e09e0141c",
+      "calls": "e49cfa57bdbf9aadf71b508328a323c38b3451cf409fafdadd669e6b3081048c",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5eb1320e348dc28dc690377abcf00bb1334cdfbc6cdbd73d035f64d9fd0b4fc0",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "6696b49643cf4586b51b0bef17cb9c328536af4e0202941898c6675c454875de"
+        },
+        {
+          "operation": "manage",
+          "trace": "1f55ddc67a452e5f25886308178095d1616b966a992229bc99627722cc0c4871"
+        },
+        {
+          "operation": "command",
+          "trace": "c54714acc649aec92aa74fe429929ab068acf8833492306526d046da6bcdf77d"
+        },
+        {
+          "operation": "close",
+          "trace": "9af2db176a70ccb5857c8da8bd82b8855a2dc7c67fa1e0bf614f7fd0f2f12cf2"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "/unmirror queues a durable move and restores the topic controls without deleting archived messages",
+      "inventory": "baseline:test/unmirror.test.ts:34",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "f4689a5d2ac9acc44948b3d0ce9dada725796c2492a3d7863fc0f94d06dfde7a",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "44b9b6ef02d5fa63d34d5dd0b4fce97d5ed041257da07f5102c2c57a40866136",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "sql",
+          "trace": "06281d755b7cfdc2fdc60986b6ea2dc5275578ddf68ea8a21903091d3e6b6052"
+        },
+        {
+          "operation": "sql",
+          "trace": "de0547511fa5a64e32a6f1a9d24358d7bf92f3ae6206aaf58cdcccf66dc48f72"
+        },
+        {
+          "operation": "command",
+          "trace": "03453e5bd3645bf0e3301f9037b245b6f4f844e2dfde7834fc0b9b481ca7803a"
+        },
+        {
+          "operation": "manage",
+          "trace": "f4224389e66b6110e07a8b8a5fab07b0c72ab7a9f8cd98f6ba2fb0e88dec7b7d"
+        },
+        {
+          "operation": "close",
+          "trace": "ab9b82b7c2f17f2fa071181c57ae8a8db5d21169720feb2e6b8acd167ab5943c"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "new WhatsApp messages and Telegram replies use management while the former mirror stops sending",
+      "inventory": "baseline:test/unmirror.test.ts:61",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "1c3e4dbb5c8811ebfea5ee2e9525939f2098c61b0cfbf485536dba8147330858",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5c38559f4451e6ae64834d06c55ebb096bc557a6ce4d0521f3a85cae47d2de1e",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "sql",
+          "trace": "06281d755b7cfdc2fdc60986b6ea2dc5275578ddf68ea8a21903091d3e6b6052"
+        },
+        {
+          "operation": "manage",
+          "trace": "fea70247806e90379849eec6f12681f8a320b951f1fbb7f6c8868328689df90b"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "cfbc99781d602c2654d47d55d14aea8b10a4743d2136fdc9dc931072a3a26190"
+        },
+        {
+          "operation": "telegram",
+          "trace": "f923970915cc4e9dec891f876d0aae07c14862fb8f831d4ebb0ce4d9c4bcc400"
+        },
+        {
+          "operation": "telegram",
+          "trace": "eac6fc721e088c950b114bf02efcc8e803c1e7ec3ab27e341f5e7cf928246737"
+        },
+        {
+          "operation": "telegram",
+          "trace": "44fcee644112eacddd6321e0f508e71de2e968c1104ef42bf6667d3366671bc2"
+        },
+        {
+          "operation": "telegram",
+          "trace": "eed9d3f64dc75c750270f9edde1cd7a4f965c584e17ca306e3bce0dab3c936de"
+        },
+        {
+          "operation": "close",
+          "trace": "b5f8df1517345bc8b7805a48522c977d0cafbfccf254ce3fe079435ab8068d7d"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "notification retries reuse the created topic and leave uncertain deliveries intact",
+      "inventory": "baseline:test/unmirror.test.ts:81",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "703b2a4fbecae3d5f1d6db2c441827c9732ddeea715d8aef1e50d06b4675da56",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "c12a940ecd6922ab6f5262cabe872b990262f23c6f720d63087c6c0da55b1034",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "sql",
+          "trace": "e13a0969135ad130e668bbc1c2c2233a669da217b8e164f2ba8df980cebd6f99"
+        },
+        {
+          "operation": "sql",
+          "trace": "76c89299f06633a08277553f74a152e25bc6a3f9e9906f1294a1fa337e05bdc5"
+        },
+        {
+          "operation": "manage",
+          "trace": "77c1e031b9ef88b7545d470e58e3711e06057c0344072fc9b7cb3e2cb684e0a8"
+        },
+        {
+          "operation": "manage",
+          "trace": "ab60564886e933b2759faad5686e5d49e0175314f4f6f818b664069639b12cd3"
+        },
+        {
+          "operation": "manage",
+          "trace": "1a8b955fc92c1c1777fc4425cc4b1667832aaa502907a32f27e08f6bea31ac67"
+        },
+        {
+          "operation": "close",
+          "trace": "9734f0a9b424c8e4943668e0b7e96a7c61a47573689093f884fdc65222db064b"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "topic permission errors keep the existing mirror and explain how to retry",
+      "inventory": "baseline:test/unmirror.test.ts:96",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "3db1b8a9c0106ab58488d738d50d74eee4f446de1e8efdf73f0b5dbbf78cb3b8",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "05806af471daef896d6ed84555051006a087b0e3e99f6c43a7bb4a01d87f2fce",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "manage",
+          "trace": "c250269bed70b429a0cc53ce5f5f95c685e73cac1520a73d911db1af3192eedd"
+        },
+        {
+          "operation": "close",
+          "trace": "b3fa23685c71b19725045710daec8a6fc4339cd4f8a6545073581f368ebf5124"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "uncertain topic creation is preserved for review without replaying the creation",
+      "inventory": "baseline:test/unmirror.test.ts:105",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "667d55d3ccefc977217fbf05d2e761c4364c58210798bc859c734aaccb6aa172",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "3eb63becfd0a4838e73ea3527f6647882b28328986651bb4b45359e23c7e316b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "manage",
+          "trace": "c96a1a119a5bfea6b80b4c4a67dce15c2fdb33ed32db26bb09d5175cadd2e3d2"
+        },
+        {
+          "operation": "manage",
+          "trace": "506e6a02c5d9418714f7d8dc4681eb3bb4ca261b9c642c510a8f790d162b0a1f"
+        },
+        {
+          "operation": "close",
+          "trace": "ea3c52becdf2f867cb1561db6cc0268c2fb17422c403908cbfd10f5dc5b307f3"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "muted and ignored mirrors retain their setting after returning to management",
+      "inventory": "baseline:test/unmirror.test.ts:113",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "84ac9b0afa38ed2d91a9d278427e88d2506d5cb78dcd0072a7a54100d6b6b724",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ed45f2504e559c728817e8b6dd9929650240f9183f462a5a64cd1e3831ace79b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "sql",
+          "trace": "bb9597231c5dc5d1a499409ee2ee98f38ad8337fb922db995fc958d34b18ddb9"
+        },
+        {
+          "operation": "manage",
+          "trace": "2e5669a4739d0204ad76f9126f736fd4a2ebd8e15bbb33c5a8f85743085d3dae"
+        },
+        {
+          "operation": "open",
+          "trace": "5203448caeae0fcc7a06d0d3c8e120e72b3cddc95e8f420ed1deb36f47fc0a49"
+        },
+        {
+          "operation": "sql",
+          "trace": "66446859c872c7968926a09c30cb31fec472f32811741807d20301a1f26ca7c1"
+        },
+        {
+          "operation": "sql",
+          "trace": "d4589765934f2676e2a26e9ac324f2aeb4e16205ad3c22bd1808f2cd17d9d2d2"
+        },
+        {
+          "operation": "sql",
+          "trace": "57c42abac68aba681bcc609117520904e5f0361c9232aeac14b996332c978600"
+        },
+        {
+          "operation": "manage",
+          "trace": "ee77308ea326efcb31c8af21d0951962c84119a11243981cfe54c2f03864faa2"
+        },
+        {
+          "operation": "close",
+          "trace": "b3256a183a9296c6f51afd4c85dfa028d0c51fda34d35c5706c916febd9fc008"
+        },
+        {
+          "operation": "close",
+          "trace": "b3256a183a9296c6f51afd4c85dfa028d0c51fda34d35c5706c916febd9fc008"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "an active history import finishes before the mirror can be moved",
+      "inventory": "baseline:test/unmirror.test.ts:123",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "f7796cff1e4eb7bac748e759e4567e7457d2aea48d896a61ab0a64621c62a9e6",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "b2a348a22826781947bd1c5bc2a98e0a61de081b1d18c3cd5340fa001376710a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "sql",
+          "trace": "9fcc222ba275bbb060486c3755122406e6c3d12ed89d7fd56c4794a6392b6a7e"
+        },
+        {
+          "operation": "sql",
+          "trace": "186db2dada3d38dcfa2956ee0cc2c66b52d3fd858697bc29902ab1ab6f043fb1"
+        },
+        {
+          "operation": "manage",
+          "trace": "3ec7daf6ac7c6849199d06c901f289fe0c71379d529df49f2699e481b9189c8e"
+        },
+        {
+          "operation": "close",
+          "trace": "c2a393f32a3873ed7ca45194fa754ab07d83e990e6bba62f9e040e76c09461c3"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "stale move requests and notification retries cannot undo later routing choices",
+      "inventory": "baseline:test/unmirror.test.ts:132",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "7b1164eb3cdef3c9549a2acde0456ca949f5b405630b65a34ae7e6e60f8245f3",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "240f701eda28e93883689377e17d8e18fe3dd79e41baff8de127ebf2f5db14cc",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "sql",
+          "trace": "a642ea03627037b55a8b7152c84b9fbfcaeef1fe5e3793f348580be07f3a7473"
+        },
+        {
+          "operation": "manage",
+          "trace": "a48ade18fc79690fe168a9fdf0053c23ec9814c1cf66f16ae8519e7f2227e6c2"
+        },
+        {
+          "operation": "sql",
+          "trace": "739e486862c4ca1f661c8e34faf279c9447125ed0b4211e1cdf75155c6db5121"
+        },
+        {
+          "operation": "manage",
+          "trace": "b2643bc6993eb75fb33f445d179bbec22dd45e162cf95b104bb2bdd5aaf9d27d"
+        },
+        {
+          "operation": "sql",
+          "trace": "8c9ea158291999344ae8747b8928b4ece94db18fb4bd7c7994c099b4317a0157"
+        },
+        {
+          "operation": "manage",
+          "trace": "33b4bdd5742c1dd00cb86ab1bf4884d4d75aeb7d5970e6468d696c0a3f560e90"
+        },
+        {
+          "operation": "manage",
+          "trace": "6ccdf54e40f3bff50103d02258eb9eaf7928350ad9e1ce43ac4419edae1a75d9"
+        },
+        {
+          "operation": "close",
+          "trace": "31f0027269e0cad1a0e59f82aa42a7ac7d03bab0184439eb3c390719cb0a892c"
+        }
+      ]
+    },
+    {
+      "file": "test/unmirror.test.ts",
+      "name": "/unmirror requires the owner, master bot and a linked WhatsApp mirror group",
+      "inventory": "baseline:test/unmirror.test.ts:146",
+      "sourceSha256": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54",
+      "calls": "98febfe26fdb746ab1ab010e86e8c714d3b8537e5f4ed57c8eae9e220850f480",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ed3bad815dcbeb71e73d60ef0401d97cf72e00d7243b24de353f3d048935b212",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e26f250d38b3c152a887ef4b31621a38f8499c1da83d2b995a96054e32684017"
+        },
+        {
+          "operation": "sql",
+          "trace": "6c4a73d7244675b31762e70c779459f8fbb65f0b9723bed6a723607c16090bf3"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "8b7829f77596b1b04621b18be393d680a28912cea540a59b4711250386c328b3"
+        },
+        {
+          "operation": "command",
+          "trace": "e7049387af7748dc08fa55b7b692632e27b8291e8f1d83e263e1243bcece4dfa"
+        },
+        {
+          "operation": "command",
+          "trace": "9e342ca6719e0e231431e1dbeba35134fdac4adfcf9000fc7eef765a21c15271"
+        },
+        {
+          "operation": "command",
+          "trace": "8a10e07546587d5c44f14cf8e16aedea3628e475f77ee590cb89a78fcb935f5d"
+        },
+        {
+          "operation": "command",
+          "trace": "1a16251b3cf580733214867b08a93417eed6095c915520371ee2306e42ad30cb"
+        },
+        {
+          "operation": "command",
+          "trace": "1a1e3625d80005ff41dee52ef953ea68f20a9b851679476aadc005791e94b270"
+        },
+        {
+          "operation": "close",
+          "trace": "a404b822fed682a33ee8635fa5747aa9855d78d254bfec28b489df73c06ab23e"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "unbound member DMs explain the missing binding instead of silently dropping the message",
+      "inventory": "baseline:test/bridge.test.ts:71",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "87a559a7da15c3944c03c5a9f9e3fd64398f91c7f2f707456bbfe6dd54cd289d",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "cd68587c090b203065bf7c70b472a6260813b247c1141a963e03630812185bc3",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "c8c9ace07abdcc487b8d9ae082e415583011704829b87ecaa8d60ef9d387e5f8"
+        },
+        {
+          "operation": "telegram",
+          "trace": "95f043bef6d5a927e6bf8565f37e8821a1bd2b530996a906c8a15fb60ce42474"
+        },
+        {
+          "operation": "close",
+          "trace": "a2f5de272b4b46ac0dcb80f596739448ca267f72fdac8827dfc81bbc30921204"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "/create in a linked whole group accepts Telegram reply-thread IDs and selects the replied-to participant",
+      "inventory": "baseline:test/bridge.test.ts:256",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "5848ffad4476ebb9e6afa151c8ed4a77811789edf04ed98c991c06ff3d847130",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "7371ee02ed3704ff1fc77f89e39afa3cacd1ced7f11f7113898364f61ab39b94",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "004143a4c947b6dea9bbc37c080f522e120ad3f39afa584d647d3940c4ef66a7"
+        },
+        {
+          "operation": "sql",
+          "trace": "8b85d571990d91efb7b8de7c9d1a7810edfc1fec6a2e7ac8be9165e2f4dfcee8"
+        },
+        {
+          "operation": "sql",
+          "trace": "d2dde3d00201c4a6bcc7071e32283e0722890311108161591b976a762073f6e0"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "6523d30cce90117f9ee5d18ea7270b7c6350157e7b93dd95d4a2433406e09d2f"
+        },
+        {
+          "operation": "tick",
+          "trace": "473b399acd795b29556be01085f7277c6024696127172199ca12ece3e784dd4f"
+        },
+        {
+          "operation": "manage",
+          "trace": "b052086d82143efde0f3353c8b75f9b8ad067737d1cfe10fac9c9b9372255a15"
+        },
+        {
+          "operation": "close",
+          "trace": "358a8f973601cd2bb2a87b1f350f21ca70363354f8a62aa6cfca95fe240cdae1"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "configured inbox topics still require an exact topic match",
+      "inventory": "baseline:test/bridge.test.ts:295",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "e9e864e67a3f386aa4c8d01e6243dcb80cbef4b61eba0259fd6895375d341e7f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "1a182e954c6ce9a3d97333e590a4fb015edb020a957c76f0535854a496a8a2c6",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "9d43606bb9b45328e79e3ec21f2782133cecfd4af289f36e5210902abe806a00"
+        },
+        {
+          "operation": "sql",
+          "trace": "2f10d28930e0319fa89a81f20c30c987771c81cdcf7c3774a8496c9f12215df3"
+        },
+        {
+          "operation": "sql",
+          "trace": "fbe5bbe0beeb13460d4b299df2530e7ffa2f7d13f46aee8f7b6e78e5a5c6d7d5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "c1313223b195f97068c996be9776665d48d499c39660bfbd39b137fa228e8cbe"
+        },
+        {
+          "operation": "telegram",
+          "trace": "9237fd1ba5ec096715c47a24a63d69982e14db78bcb6388cc45578cb589997d8"
+        },
+        {
+          "operation": "close",
+          "trace": "71c87812136763ff1162b0cb7203883155c21fb67422085329df21bcc165e0f5"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "dedicated private bot waits for Start, then routes private replies to the contact",
+      "inventory": "baseline:test/bridge.test.ts:465",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "d6f9738a8f5e072f151dab9667a8728ae56c16ab6afc8f916fdeb5fd717037bb",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6b5152f5eae78040ef2f00cc42e66ce2d8fe2fbd8139ca9013061fcfd15ad299",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "38ab54039c0db21c5aff2c666805a4974683cf1c9e22606d70430bf4ce0515c1"
+        },
+        {
+          "operation": "sql",
+          "trace": "be90611c56b34d15c8a47667844645a6ccddb299d1e13cb8db4cb45be949a206"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "608c580c4c04b1ed012415f05d00508cfafaeb2dd1a6ae9654482cc6a079c87a"
+        },
+        {
+          "operation": "telegram",
+          "trace": "c45bc335d7d0ebcde7fa14aef7caa2c85b2b0b8773499612b91a812ff9a763e0"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "3386b775f7b68ffb1f05655eef65abd3a07a46785fad66e6c2f21c128f825487"
+        },
+        {
+          "operation": "telegram",
+          "trace": "9ab788bbc9f8a030a23f9dfb0d0c68a03ac53041f5c57dc44c7530330bdaf885"
+        },
+        {
+          "operation": "close",
+          "trace": "f5be55c7fe8f08fc90b23f2fe6e0fcea28acde854ce6737df616fcfa4623a591"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "muted conversations can resume; creating a bot at capacity leaves master routing intact",
+      "inventory": "baseline:test/bridge.test.ts:478",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "66bb268c65b57b13398a0c4c449c7de8a9f3edafce98865b9537aba2d1d6c89f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "b85787105b94eb6ea4aac0f35cd061b166fc79d1363d6d55f989674adf7f53d3",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "e863d1b8b3249c5072c5399cd01292a7bb89d695eb409e5118e9a3fcd89aaba6"
+        },
+        {
+          "operation": "manage",
+          "trace": "4f2b8afdaad5986f6cb097ba9c07710f9a4a6c88bbcfaf8df0c783a6ed5a669a"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "c4f94313b729a6ab089e7a0ed35a6e0a462a327644c3077f38559c11bb3b6ccc"
+        },
+        {
+          "operation": "manage",
+          "trace": "7932c7e866204e9ce0b8ddcd2b5af964e6eb891f9a99e846e82d6264589230ec"
+        },
+        {
+          "operation": "manage",
+          "trace": "0b8033b9a91fb5c1b7c3147646d9779d2f8ce5249d6858afc94e66a05b8ae518"
+        },
+        {
+          "operation": "close",
+          "trace": "6be1a96695e5f0e6b05e3df8708ad3fc45f581044d59ec27f2d75c523ab54ed2"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "starting a bound DM retires its inbox separately and cleanup refusal does not block messaging",
+      "inventory": "baseline:test/history.test.ts:215",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "9be0ba0ded02b621fb4d0e14980192d2cd924051c242376a484c838fb77da618",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "68a61097ea71b29d7bc84f41d3b534e3202c7627700cca4a9babbcfd3f7632a0",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "348404e0ee1608cfa6674db9dcb4c61040cd4a6cb2664b6178c55fbeecdf3b9e"
+        },
+        {
+          "operation": "sql",
+          "trace": "a5434d9bc7e28b027cc2ab4334bdee47b97a6cd6bbf396d610151931d6a770a5"
+        },
+        {
+          "operation": "command",
+          "trace": "37e29bf8823f11f1efa323613aabf8e7d6c0418a027f7b501c3098389b360e72"
+        },
+        {
+          "operation": "sql",
+          "trace": "573d2a7fac9318a1de84c04348611f16f961d5c5e4fa80db9c0332683953de57"
+        },
+        {
+          "operation": "sql",
+          "trace": "119bbb4290971e9e69914fe868fb5172657a93ead2fef91b23b2a38b711709ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "f5499279c898ac81234c4a86d16811dac47f488192e46baf88d41ed11a764821"
+        },
+        {
+          "operation": "sql",
+          "trace": "03fd7f00505742cdf8e099264c1d9b3d4f8ae9b54be0fff094113e3884429e9d"
+        },
+        {
+          "operation": "sql",
+          "trace": "2340f08b2d17e225ec583888920c9ade4ce497ada306c0c649e9056c6c9fda82"
+        },
+        {
+          "operation": "sql",
+          "trace": "9e41006d0e525751e5c37c7c33ef0eb05de778e8bfc747c3d71db965faecfcde"
+        },
+        {
+          "operation": "telegram",
+          "trace": "8d57a0f7f04beabd17a14e9bfdec2da58926884e7df7c00aaca2cbc6da70fe76"
+        },
+        {
+          "operation": "close",
+          "trace": "2c63c685434051811db6b20d3cc9bab8da5f599c82b9407cce978a9b1d97c8a0"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "retiring a DM topic is durable and a blocked member recreates an inbox lazily",
+      "inventory": "baseline:test/history.test.ts:228",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "1e81aae0abe1a90e6f9fbb076e85f7248d61f3f89ea6b0f08859815b2dadab2f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "73ca103e0502bde7c847103296c51f6201d41d1fd96ae2756a5d1b44f62fcefd",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "4999eb44076e319f063a07a1f499e55662b7c047ea2f8793f50d985024307f2a"
+        },
+        {
+          "operation": "sql",
+          "trace": "e0591a06808363c07eb5a410c6d00f3ef328481743b9cc2973aee3f80d2f79de"
+        },
+        {
+          "operation": "sql",
+          "trace": "be2e56e318da4e269cb49f386a65a7504c649464e12deb40f89e40715ba83d89"
+        },
+        {
+          "operation": "sql",
+          "trace": "7a9a86f96abf892f16795880df46708b28cd24bf60dd2f3d701f4eac736e0a39"
+        },
+        {
+          "operation": "sql",
+          "trace": "e2a0460d22d5f4ecbc10a7ad1e7d1ec45af4bb14e31db84c7130da997a9e85ee"
+        },
+        {
+          "operation": "sql",
+          "trace": "fd2725fc1e76bd755026ff8b59389d91eae40f18c4e3118d04fa14b0ecec3feb"
+        },
+        {
+          "operation": "sql",
+          "trace": "674e3beb01f43a106a18906207394d61ef8f06111fd034244dc30b1b8d6792ec"
+        },
+        {
+          "operation": "sql",
+          "trace": "674e3beb01f43a106a18906207394d61ef8f06111fd034244dc30b1b8d6792ec"
+        },
+        {
+          "operation": "deliverWhatsApp",
+          "trace": "78011abd90e18f8a76d309a15f17d11bf72d95de716f12b2fd5bab58f626206d"
+        },
+        {
+          "operation": "close",
+          "trace": "0d6ff4ae726e8dbeb55e7daaa4fe30aea68843f88225568076aca3b055cd147d"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "General and management topics shared with another conversation cannot be deleted by retirement",
+      "inventory": "baseline:test/history.test.ts:240",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "2da2fcfdf763a0201790b8b4e5b772977dd00f23814b378f001151ba6d39c982",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cf855610be82cc4a27a0021b8eff1a0339f79dbee9a2ecc644359773394801a9"
+        },
+        {
+          "operation": "sql",
+          "trace": "91ba13f130b6f8d565c34974a4630e55b9990a101b96ad8807a688baf2849f10"
+        },
+        {
+          "operation": "sql",
+          "trace": "c965358e3d65de9f6763570f6088ae549dae173c1691ff7d43bfffc7a9050630"
+        },
+        {
+          "operation": "sql",
+          "trace": "cf453d01a9868a3045f20fca24b85660706526805e2737e9affb7bcc8210dc47"
+        },
+        {
+          "operation": "close",
+          "trace": "09fe2ed1f3cd2bf92c686bff9e2cde345e3c06c4c300b700066a17e123f35a53"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "a retired direct route cannot capture General or another management topic",
+      "inventory": "baseline:test/history.test.ts:249",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "3a7822ae0d5bc24ecf72f02b9722c6c5da4441ac8a530440fe66c3878d25a713",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "bfdeacb2d4e061a8409307eb0fbd36c462ef740486d04ca085d110228934f759"
+        },
+        {
+          "operation": "sql",
+          "trace": "cbeacefa537485fa0195d1985c413d5e090af96620c20dd741605317811f238a"
+        },
+        {
+          "operation": "close",
+          "trace": "d30852db5308ded315a1dca14d78155639cd393d6e3bc1f51108a443206a6a54"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed registration preserves explicit contact choices through binding and private Start",
+      "calls": "75a50ce2ae239146764b45dfe2f20476d05f2b023ba24921d3cad4acf1ffde97",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d93c77eb2159ca9fe6253d989162c504bcf31802fba3e756d329be55372963bc",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "telegram",
+          "trace": "cf9848a2342c84b53f882c58c41710b3bfc4d67185cec3be947ab5380d779a6c"
+        },
+        {
+          "operation": "manage",
+          "trace": "9a779a0e0599bc67b455bdfe4678ff73c3572b3a218f5f5a61f5236c90aa7732"
+        },
+        {
+          "operation": "telegram",
+          "trace": "e2f274df2bf505792bd523c4db915b1a76aa7e370c4c1fd383bdcc1edbed337d"
+        },
+        {
+          "operation": "close",
+          "trace": "3ff40f859410e5bc74e14835d4e37459378b9a2f5b7f53c71d891b09409a14ed"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed registration rejects other users and unauthorized binding callbacks at ingress",
+      "calls": "abdfdcdc746e5353c1c6c56d5d46962b646936dc47d7366d539854d247ae6ca7",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ac40a18fd141c0ba97562b97caaa9c192cf6acc6a34bbd8462189c43ecf041b4",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "5191bb6d206a2cef3c392f490555f1214207a7d6a2fd01836d65cff37d1fc1e4"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "2e7ac8d3f760123a0899703b9534cfcf84e1f2a77b78395d6ff4a1e6c9403653"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "8fa528e76d6564043dc1a59c2172466257541f17fbeadeb0083e9abc819565b2"
+        },
+        {
+          "operation": "close",
+          "trace": "ed8715e535edc329eb3963e3fbad7b9950c300f4c7db6ec0e2ba5d67eba7a97b"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed token rotation keeps readiness and binding and does not reissue contact choices",
+      "calls": "18c64e229cba5372e4c4892881e6200f27e4b1e6c2ee6b6e1a62a450ddfe04af",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "fb119b0bdee09c58513b47085ed3a67ecab21059ec3979a744412949581ae941",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "2e7ac8d3f760123a0899703b9534cfcf84e1f2a77b78395d6ff4a1e6c9403653"
+        },
+        {
+          "operation": "manage",
+          "trace": "9a779a0e0599bc67b455bdfe4678ff73c3572b3a218f5f5a61f5236c90aa7732"
+        },
+        {
+          "operation": "sql",
+          "trace": "8a23771cdb593cb3816cc96fe1caa2cd2b6573c5f38172db02e2eb8bc6d3994a"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "6831e9f3deba1e1fec65bf152bd269e18257d4c9db0cee62a13cbba4d3270e09"
+        },
+        {
+          "operation": "close",
+          "trace": "29764cd5fed1befaba9ee9d1ff035ddef14a10ed234c0b4be69a5b33d1412796"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed registration caps visible choices at twenty while retaining all pending requests",
+      "calls": "a2a15721231f5d89b4c455289f3c59a6bba647ae055003c092d05601ed16685e",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "9bbbbabc60d13cac4f4fb91ee5c44217deb6a7c33da62e6287b37fb867a4012a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "sql",
+          "trace": "c60b5270e7e5a7901dda1057bdbe6e97b4adbd3c38f003d0c800ff0b0a1f184b"
+        },
+        {
+          "operation": "sql",
+          "trace": "f2bde26d4302fb09c55a3770fbf042e508a4942aced5b48a4ec0912f2edcc8ca"
+        },
+        {
+          "operation": "sql",
+          "trace": "b2a8602e8897e403e50c375ed7e8341fe82a7b49a7132ea4c3937cb712bd0e08"
+        },
+        {
+          "operation": "sql",
+          "trace": "3d56c5a55b4828950240379184a83f9e3a1695588635ed1fb644a1cfdaefddf6"
+        },
+        {
+          "operation": "sql",
+          "trace": "24368ade270dc7c91873ed5249485e67627f0082686f1de20586df86743f7814"
+        },
+        {
+          "operation": "sql",
+          "trace": "98155204ef183c249ea1b18f6c16dad787d36ac06496480c4c85f08a44079b88"
+        },
+        {
+          "operation": "sql",
+          "trace": "912c70913d452c516a08b10a507238e9112ef089e6642ff65f90900ece10f823"
+        },
+        {
+          "operation": "sql",
+          "trace": "5e1deefd34d116f8237d8d606c99d8804578891e0fcd71925c998b348c6c1cd2"
+        },
+        {
+          "operation": "sql",
+          "trace": "50819e13ef7da99743f4777fc3b49e3540ead8ec796c59ee007097f23f647d7e"
+        },
+        {
+          "operation": "sql",
+          "trace": "c469b8b0e0d3d73f012d49047fe45f2d8142f17f19ea3d05df8c9e1e990c46d0"
+        },
+        {
+          "operation": "sql",
+          "trace": "0ebeb29df8444ab354abf6cf08cddde45d4feadff085091a484001384678b46c"
+        },
+        {
+          "operation": "sql",
+          "trace": "15b24a9622f3766e0d7227d575ed8666d071c8cd3dff5077f9254cfb2805cb22"
+        },
+        {
+          "operation": "sql",
+          "trace": "c48808d784480a5780a6abc3ee1d280794c6540f6e9e1053052d03ee5eeff447"
+        },
+        {
+          "operation": "sql",
+          "trace": "fbc27cc6b7cc0026c3e2159d323f5f7877de10cf8b408741f9da38402f23b346"
+        },
+        {
+          "operation": "sql",
+          "trace": "bd613b55126781405c2b45300495ecf61783c49e4108f88a5e777bc7d96f6350"
+        },
+        {
+          "operation": "sql",
+          "trace": "6c839c0b506a5c7ac06fdc17effab48c22b017313164033cf647b7c55c95dfe2"
+        },
+        {
+          "operation": "sql",
+          "trace": "eaa59cedfdac1fce7c09f194e1b8a5154f622d02081ec47faea4ec207bc4c733"
+        },
+        {
+          "operation": "sql",
+          "trace": "7e5c1c1ea2310052626b6386374686ec99f2436b57cc5507bbd8c92d7b509902"
+        },
+        {
+          "operation": "sql",
+          "trace": "1ce60978c6e178efca8672e5b7c0bdf3da0b18116d6c6719a9e6ab0666ffaf5e"
+        },
+        {
+          "operation": "sql",
+          "trace": "345530d86995ed5d074e1507d66afb02072345804170a1d8b104ac4347125fc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a5f57218ed884ee229a380e356033bbe519bee07a15a1f4bf0f78904371fc661"
+        },
+        {
+          "operation": "sql",
+          "trace": "3e9cf2d70a738ffd068e59eb4c51cf0d9a944e831ebef544b0e48e91b09ee950"
+        },
+        {
+          "operation": "sql",
+          "trace": "b90eba5413a7bfe9c09f353ca2efb9b5a1edfac3e7930bb957cdc79896a2f008"
+        },
+        {
+          "operation": "sql",
+          "trace": "86a8af0fe740968a52d57fb0ef09b4f6f8f39ce92dfa8b31ad71545478c08be0"
+        },
+        {
+          "operation": "sql",
+          "trace": "0e576e43c5939c499200f29dfe14500481c69946653fcadb022d9a7edd5e22a6"
+        },
+        {
+          "operation": "sql",
+          "trace": "68cf86869dd5e4ff73900091c8a117bcece567a4173a21e3987f963723a27600"
+        },
+        {
+          "operation": "sql",
+          "trace": "deeb7aabb4228b4e89248e3ab6a80a1fafa48abc29969c7249c56bb5ff92daa5"
+        },
+        {
+          "operation": "sql",
+          "trace": "f3f8e36074f08243d7c39cd892260cd2ab2c1502687bf503e619edba64391578"
+        },
+        {
+          "operation": "sql",
+          "trace": "f70a3349cf3955c0989857e8eceaa723c908164af7b5c4ef2177dc62a48957ed"
+        },
+        {
+          "operation": "sql",
+          "trace": "46b0aeb3c7b7c6c5e2b7cb4bb463f42e3b3ffd4b93e940fab03cfba6b4f79209"
+        },
+        {
+          "operation": "sql",
+          "trace": "f1ded8786eea5ef7e8760c98e0934ccd0be2465cd6bee2fb5e95649b80830a1d"
+        },
+        {
+          "operation": "sql",
+          "trace": "8d655fefa5d485296507b7ff941d8af5b264bf1a8b1d7709f200bc6343483e5e"
+        },
+        {
+          "operation": "sql",
+          "trace": "7d7947277ca9172468d224269d402ca88f8503f47e9a2646b2f6fb0e9f426d8b"
+        },
+        {
+          "operation": "sql",
+          "trace": "a06f130537971972196695f024fdb1a32d8053473ffd2b721c45fe258482c02c"
+        },
+        {
+          "operation": "sql",
+          "trace": "a2eea88ccabb49305a4bf580819b903a83b873d1fc7c64571ebefefe87faa86f"
+        },
+        {
+          "operation": "sql",
+          "trace": "7f7ef60eb889b542a9414ad7923cf50751e754ca5d4c909a652997f1fc0baf99"
+        },
+        {
+          "operation": "sql",
+          "trace": "d7c16d82ade054cd7e8b7cee52206d0b3cda5b990ace7466540b4d2f08a1e5a6"
+        },
+        {
+          "operation": "sql",
+          "trace": "f6ddb969128a2b424d1da43755ba27952c0f30bc647065a1a07d5d982e9f17ab"
+        },
+        {
+          "operation": "sql",
+          "trace": "29cca0c5800a07a9fdc8902079bdbfebea8c174eee5140b229f2a3c8af48be74"
+        },
+        {
+          "operation": "sql",
+          "trace": "77ba899a9ab025a0c45f5662d1ab05359eea0ed27232a9f19fae021bd8c2c625"
+        },
+        {
+          "operation": "sql",
+          "trace": "122660646d841055c0fbf806a1699fab7ecf31cd47eb29de84ebe80bbc2b037b"
+        },
+        {
+          "operation": "sql",
+          "trace": "c88b02a38fd4327616e8f2104e5c5ac699181230afa021849679e1ad3b5db434"
+        },
+        {
+          "operation": "sql",
+          "trace": "799160bac603eb82bc8c750d8e899797508047ecaf30ca0b04ea1aad89e88b93"
+        },
+        {
+          "operation": "sql",
+          "trace": "5b98950bc687ad5d602c263669e2d5d4c0cb0e687502ecd5097756b2f37e33a1"
+        },
+        {
+          "operation": "sql",
+          "trace": "cf237bf3bc0f39a3de5dcc338d11138ae9358979ba0972ecf6977ff9fdb7d258"
+        },
+        {
+          "operation": "sql",
+          "trace": "5a63b3328d67c4f823ffdb6741e101cad759433c2e1a025f4214764bf00de11d"
+        },
+        {
+          "operation": "sql",
+          "trace": "5057cc84ac57e91bb00ab2d47601b5be004e70c681aaf806f644146dddd47514"
+        },
+        {
+          "operation": "sql",
+          "trace": "e91d6980f70b1d17f1958c662411c189b920d82c1343a3d13125d01ad5252103"
+        },
+        {
+          "operation": "sql",
+          "trace": "40147699d9e8f62c07159c9fe9fa6d17547e34751a8664513be8ac32c22fd184"
+        },
+        {
+          "operation": "sql",
+          "trace": "b39f2c9298f044adfd1b87aa51be930492ba6d2259ac2b6f174b95348f48871f"
+        },
+        {
+          "operation": "sql",
+          "trace": "2145cd3d7f63c288f2001064bb501246c0098fcef3e0df74d4ba3837694fb617"
+        },
+        {
+          "operation": "sql",
+          "trace": "00e6595b5a5c38fbae7c7ebdcb38b7ab77bb027ab990db456095e765fadd000b"
+        },
+        {
+          "operation": "sql",
+          "trace": "7fc916970292acd1e657fa761cb62455e0a8acc898eac153dc1f296cba891f65"
+        },
+        {
+          "operation": "sql",
+          "trace": "e6e41c22be60253e01b72b212a2447d2ac0eaa5d622edf885e182a78d56c647d"
+        },
+        {
+          "operation": "sql",
+          "trace": "85a887d4c0796ee9d13b40a53d77d5ad7656fb13d30e5fb93b41157472d87d73"
+        },
+        {
+          "operation": "sql",
+          "trace": "04543506d7181675812a3a8ad99f6b395b0cf8a55fcab0e247119b33ebfeeecf"
+        },
+        {
+          "operation": "sql",
+          "trace": "6a8e3e220dbc3a90ac3bd15d8736c153dfbbba5681138ab1156b3b12c67271b8"
+        },
+        {
+          "operation": "sql",
+          "trace": "d1753a59e1f65742ec8d8872dfce04a4eddea8df2798fea6c36bd07161cee02a"
+        },
+        {
+          "operation": "sql",
+          "trace": "1486b9832f1c19ffa99bdc69eb38adaeaaf86d5e221fe9edca2059f02d662184"
+        },
+        {
+          "operation": "sql",
+          "trace": "1dfe579d440251cd8e8f63827785f66cf82bf82ad5d2b78ad44579fa6af0c28e"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "334d19422b009653d7eaf2da09dd721cbe0f19d446639940507b333f7135ac7d"
+        },
+        {
+          "operation": "close",
+          "trace": "6bf7cc344c6217dc54dbbc1f3a27fb6e04b4ba4e6bcb29c49604acbf4f988a2c"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed registration resumes original partial setup after getManagedBotToken refusal",
+      "calls": "4a5cbb463b40df85e65c454df146eeabbd36e9212778119dcc0694e45fa295ef",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5476b4304a3d843bd33892466970480f4ed54b886ba7011ea307ee9a3c53aa27",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "0f324f613b28d8c9fd87a5ca9378632c149ba1fa69fbb900556ecfc50d8e3914"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "36f669675024a5cf67380bbd6014c5b4443551112192458c3a382ee05a977e1b"
+        },
+        {
+          "operation": "close",
+          "trace": "89aad049c585d2f271bb706b1eee70f77e10ae67f7eceff7c8498f12bc1c9d81"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed registration resumes original partial setup after logOut refusal",
+      "calls": "bf7eccff3e1b69a2c4cbef177d07cfc2b8a83712a2e5ef1396043e3be7e2fba4",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0352bf9516d1a0b5f26de4a01145143952c9e3940e0cb526bf50d90fc3fdf127",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "a4d4f5c9d1cb38c8deff33aa20a83c9b22d4373c2b71898e5272eb0452bd2345"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "45230b328bf7ec5004009f4b7ff67f4c7864d19566746f26fba089535395f421"
+        },
+        {
+          "operation": "close",
+          "trace": "6f1b416463c99a16c3e24c888ae7eb6a5341b65472948078c2150003a7894e15"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed registration resumes original partial setup after setWebhook refusal",
+      "calls": "1422184d657454bf6f2029daa13a65ef8fe10e9d9ed4f939feab1425d707d7fe",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0352bf9516d1a0b5f26de4a01145143952c9e3940e0cb526bf50d90fc3fdf127",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "b68a041a11948f9ae89f6b8bf606fbc001c6e61ab1f47fa6f3a1ce7124e4ce9c"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "2a59ee8857e2929be0f1e47b7736504f7db234122bbfcaad47efd6e3ffd4aa4e"
+        },
+        {
+          "operation": "close",
+          "trace": "6f1b416463c99a16c3e24c888ae7eb6a5341b65472948078c2150003a7894e15"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed registration resumes original partial setup after setMyCommands refusal",
+      "calls": "350cdd0b98dac30338e8bd87cc79e5cbdec8c0a4db52223cae5ac8f1ee59299e",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0352bf9516d1a0b5f26de4a01145143952c9e3940e0cb526bf50d90fc3fdf127",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "f25479bf5fccdc24c87969e9da295c42eb6263fd4f4916d0b308a7c4a4866caf"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "2a59ee8857e2929be0f1e47b7736504f7db234122bbfcaad47efd6e3ffd4aa4e"
+        },
+        {
+          "operation": "close",
+          "trace": "6f1b416463c99a16c3e24c888ae7eb6a5341b65472948078c2150003a7894e15"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/managed-bot-scenarios.ts",
+      "name": "managed binding rejects consumed requests and bots already bound to another contact",
+      "calls": "e96eaf8c26ca76e9358d20ef7061558d5c78bae252c69c58b46e559c972c34d5",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "445e084fff7def4d29d7dd518d0d59078d7ac097f0d9e03915813dd50937c535",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "3ac742bb60755895c9c7a81e708c710c50bc01fafa8cf3d8bcf0f78e9589b27e"
+        },
+        {
+          "operation": "sql",
+          "trace": "924286757d545e046b311a2958fef5596e7fb1d529c897737c365af8a52705aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a4b1d29e300bdb2475fcb86914a261b24be82da4052a14845344a7ede160d36"
+        },
+        {
+          "operation": "sql",
+          "trace": "77e295dd7956e42870968a3c5684f50ce43f6afbc237b07599d39b19d74f2441"
+        },
+        {
+          "operation": "sql",
+          "trace": "a575e5df37736616e019342041ea86a974b97cf3e68ed4bdbf87a3d3c53e401a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f65dd2154bb70b7695052ab2a8517acbf4ae9b230678f43a2be2967d13c6399"
+        },
+        {
+          "operation": "registerBot",
+          "trace": "2e7ac8d3f760123a0899703b9534cfcf84e1f2a77b78395d6ff4a1e6c9403653"
+        },
+        {
+          "operation": "manage",
+          "trace": "9a779a0e0599bc67b455bdfe4678ff73c3572b3a218f5f5a61f5236c90aa7732"
+        },
+        {
+          "operation": "manage",
+          "trace": "0a408fe7fd2d11cf71cf9b4cd9aa69f8fc428bd8d576ff7eb53cd505196271bc"
+        },
+        {
+          "operation": "manage",
+          "trace": "f4fd8a4e23a0227b7937bd20c3398e312b803daa32ee82d39cc8113db7633903"
+        },
+        {
+          "operation": "close",
+          "trace": "ed3cfc47cac67acbeb1b9f24fc55635a93d763ca418102ceb82bdf82adb1ee51"
+        }
+      ]
+    }
+  ]
+}
