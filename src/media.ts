@@ -18,27 +18,74 @@ export class Media {
     const path = resolve(this.c.media, randomUUID() + extname(basename(filename)).slice(0, 12));
     await writeFile(path, bytes, { mode: 0o600 }); return path;
   }
-  async download(url: string, headers: Json = {}, name = 'attachment', limit = this.c.mediaLimit) {
-    const response = await fetch(url, { headers, redirect: 'error', signal: AbortSignal.timeout(120000) });
-    if (!response.ok) throw new ApiError(`Attachment unavailable (${response.status})`, response.status, response.status >= 500);
-    if (Number(response.headers.get('content-length')) > limit) throw new ApiError('Attachment exceeds configured bridge media limit', 413);
+  async download(url: string, headers: Json = {}, name = 'attachment', limit = this.c.mediaLimit,
+    options: { metadata?: { name?: string; mime?: string }; signal?: AbortSignal } = {}) {
+    const signal = AbortSignal.any([AbortSignal.timeout(120000), ...(options.signal ? [options.signal] : [])]);
+    let response: Response;
+    try { response = await fetch(url, { headers, redirect: 'error', signal }); }
+    catch { throw new ApiError('Attachment request interrupted; retry download', 0, true); }
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({})) as Json;
+      const retryAfter = response.headers.get('retry-after');
+      const delay = retryAfter && !Number.isNaN(Number(retryAfter)) ? Number(retryAfter) * 1000
+        : retryAfter ? Date.parse(retryAfter) - Date.now() : 5000;
+      const error = new ApiError(`Attachment request failed (${response.status})`, response.status,
+        [408, 409, 429].includes(response.status) || response.status >= 500,
+        false, Number.isFinite(delay) ? Math.max(1000, delay) : 5000);
+      if (['MEDIA_NOT_STORED', 'MEDIA_SOURCE_UNAVAILABLE'].includes(body.code)) error.code = body.code;
+      if (body.code === 'MEDIA_DOWNLOAD_DISABLED') error.retry = false;
+      if (error.code === 'MEDIA_SOURCE_UNAVAILABLE') error.message = 'WhatsApp cannot supply this attachment';
+      // Compatibility with OpenWA's original stored-only endpoint. A route/session 404 is not a cache miss.
+      if (response.status === 404 && body.message === 'No media stored for this message') error.code = 'MEDIA_NOT_STORED';
+      throw error;
+    }
+    if (Number(response.headers.get('content-length')) > limit) {
+      await response.body?.cancel();
+      throw new ApiError('Attachment exceeds configured bridge media limit', 413);
+    }
+    if (options.metadata) {
+      const disposition = response.headers.get('content-disposition') || '';
+      const encoded = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
+      const plain = /filename="([^"]+)"/i.exec(disposition)?.[1];
+      try { if (encoded || plain) options.metadata.name = basename(encoded ? decodeURIComponent(encoded) : plain!); } catch {}
+      const mime = (response.headers.get('x-media-mimetype') || response.headers.get('content-type'))?.split(';')[0].trim();
+      if (mime && mime !== 'application/octet-stream') options.metadata.mime = mime;
+    }
     const path = await this.save(Buffer.alloc(0), name);
     let size = 0;
     const cap = new Transform({ transform: (chunk, _encoding, callback) => {
       size += chunk.length; callback(size > limit ? new ApiError('Attachment exceeds configured bridge media limit', 413) : null, chunk);
     } });
-    try { await pipeline(Readable.fromWeb(response.body as any), cap, createWriteStream(path, { mode: 0o600 })); }
-    catch (e) { await unlink(path).catch(() => {}); throw e; }
+    try { await pipeline(Readable.fromWeb(response.body as any), cap, createWriteStream(path, { mode: 0o600 }), { signal }); }
+    catch (e) {
+      await unlink(path).catch(() => {});
+      if (e instanceof ApiError) throw e;
+      throw new ApiError('Attachment transfer interrupted; retry download', 0, true);
+    }
     return path;
   }
-  async fromWhatsApp(message: Json) {
+  async fromWhatsApp(message: Json, signal?: AbortSignal): Promise<{ path: string; name: string; mime?: string }> {
     const name = basename(message.media?.filename || `attachment.${({ image: 'jpg', video: 'mp4', voice: 'ogg', sticker: 'webp', audio: 'mp3' } as Json)[message.type] || 'bin'}`);
-    if (message.media?.data) return { path: await this.save(Buffer.from(message.media.data.replace(/^data:[^,]*,/, ''), 'base64'), name), name };
+    if (message.media?.data) return { path: await this.save(Buffer.from(message.media.data.replace(/^data:[^,]*,/, ''), 'base64'), name), name, mime: message.media.mimetype };
     if (message.statusId && message.media?.omitted) throw new ApiError('OpenWA did not retain this status media', 404);
     const endpoint = message.statusId ? `status/${encodeURIComponent(message.statusId)}/media`
       : `messages/${encodeURIComponent(message.chatId)}/${encodeURIComponent(message.id)}/media`;
-    const path = await this.download(`${this.c.openwa}/api/sessions/${encodeURIComponent(this.c.session)}/${endpoint}`, { 'X-API-Key': this.c.openwaKey }, name);
-    return { path, name };
+    const url = `${this.c.openwa}/api/sessions/${encodeURIComponent(this.c.session)}/${endpoint}`;
+    const metadata = { name, mime: message.media?.mimetype as string | undefined };
+    const download = (source: string) => this.download(source, { 'X-API-Key': this.c.openwaKey }, name, this.c.mediaLimit, { metadata, signal });
+    try { return { path: await download(url), ...metadata }; }
+    catch (e) {
+      if (!(e instanceof ApiError) || e.status !== 404 || message.statusId) throw e;
+      if (e.code === 'MEDIA_SOURCE_UNAVAILABLE') throw e;
+      if (e.code !== 'MEDIA_NOT_STORED') throw new ApiError('OpenWA stored-media route or session not found; check API configuration', 502, true);
+    }
+    try { return { path: await download(`${url}/download?maxBytes=${this.c.mediaLimit}`), ...metadata }; }
+    catch (e) {
+      if (e instanceof ApiError && e.status === 404 && e.code !== 'MEDIA_SOURCE_UNAVAILABLE') {
+        throw new ApiError('OpenWA on-demand media API not found; update OpenWA or check session configuration', 502, true);
+      }
+      throw e;
+    }
   }
   async fromTelegram(token: string, message: Json) {
     const kind = ['photo', 'video', 'animation', 'voice', 'audio', 'document', 'sticker', 'video_note'].find(k => message[k]);

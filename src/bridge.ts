@@ -394,7 +394,7 @@ export class Bridge {
           }
         }
         else attachment = await this.media.fromWhatsApp(m);
-        if (!attachment) throw new ApiError('Archived attachment is unavailable', 404);
+        if (!attachment) attachment = await this.media.fromWhatsApp(m);
         if (attachment.mime) m.media = { ...m.media, mimetype: attachment.mime };
       }
       catch (e) {

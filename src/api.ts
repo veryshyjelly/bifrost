@@ -4,6 +4,7 @@ import type { Config, Json } from './config.ts';
 export class ApiError extends Error {
   retry: boolean; uncertain: boolean; delay: number; status: number;
   service?: string;
+  code?: string;
   reason?: 'thread_missing' | 'message_missing' | 'reply_missing';
   constructor(message: string, status = 0, retry = false, uncertain = false, delay = 5000) {
     super(message); Object.assign(this, { status, retry, uncertain, delay });

@@ -4,6 +4,8 @@ import { Bridge } from '../src/bridge.ts';
 import { Store } from '../src/store.ts';
 import { Api, ApiError } from '../src/api.ts';
 import { configuration, digest } from '../src/config.ts';
+import { mediaServer, mediaError } from './helpers/media-server.ts';
+import { readFile } from 'node:fs/promises';
 
 class Fixture extends Api {
   calls: any[] = []; rows: any[] = []; sequence = 100; failHistory = false; failDelete = false; failMessage = 0; contentSends = 0;
@@ -393,6 +395,72 @@ test('reactions prefer a fresh unavailable-media placeholder over a stale attach
 });
 
 const dates = (api: Fixture) => api.calls.filter(call => call.method === 'sendMessage' && call.body.entities?.some(e => e.type === 'date_time' && e.date_time_format === 'D'));
+
+test('media import survives API/session rotation and retries without replaying completed attachments', async t => {
+  const { bridge, api, store, c } = fixture(t);
+  const requests: string[] = []; let unavailable = true;
+  const { url, directory } = await mediaServer(t, (req, res) => {
+    assert.equal(req.headers['x-api-key'], 'new-api-key');
+    assert.ok(req.url!.startsWith('/api/sessions/new-session/'));
+    requests.push(req.url!);
+    if (!req.url!.includes('/download')) return mediaError(res, 404, 'MEDIA_NOT_STORED');
+    if (req.url!.includes('/second/') && unavailable) return mediaError(res, 503, 'TEMPORARY');
+    res.writeHead(200, { 'content-type': 'application/pdf', 'content-disposition': "attachment; filename*=UTF-8''original.pdf" });
+    res.end('document');
+  });
+  api.rows = [message('first', 1, 'First caption', { type: 'document' }), message('second', 2, 'Second caption', { type: 'document', quotedMessage: { id: 'first' } })];
+  await history(bridge, 'master', command('/history 2'), 'media-before-move');
+  const run = store.all('history-run')[0].id, account = bridge.c.account;
+  const next = { ...c, openwa: url, media: directory, account, session: 'new-session', openwaKey: 'new-api-key' };
+  const movedApi = new Fixture(next), moved = new Bridge(next, store, movedApi); movedApi.rows = api.rows;
+  const upload = movedApi.upload.bind(movedApi);
+  movedApi.upload = async (...args: Parameters<Fixture['upload']>) => {
+    assert.equal(await readFile(args[3], 'utf8'), 'document'); assert.equal(args[4], 'original.pdf');
+    return upload(...args);
+  };
+  await drain(moved);
+  assert.equal(store.byWhatsApp('g@g.us', 'first').length, 1);
+  assert.equal(store.byWhatsApp('g@g.us', 'second').length, 0);
+  assert.notEqual(store.get('history-run', run).status, 'complete');
+  unavailable = false;
+  store.db.prepare("UPDATE jobs SET due=0 WHERE state='pending'").run();
+  await drain(moved);
+  assert.equal(store.get('history-run', run).status, 'complete');
+  assert.equal(store.all('history-run').length, 1); assert.equal(moved.c.account, account);
+  const uploads = movedApi.calls.filter(call => call.method === 'sendDocument');
+  assert.equal(uploads.length, 2); assert.match(uploads[1].body.caption, /Alice.*Second caption/);
+  assert.equal(uploads[1].body.reply_parameters.message_id, store.byWhatsApp('g@g.us', 'first')[0].tg_id);
+  assert.equal(requests.filter(path => path.includes('/first/media/download')).length, 1);
+});
+
+test('a genuine source-media miss retains its caption and completes a history receipt', async t => {
+  const { bridge, api, store } = fixture(t);
+  const { url, directory } = await mediaServer(t, (req, res) => mediaError(res, 404, req.url!.includes('/download') ? 'MEDIA_SOURCE_UNAVAILABLE' : 'MEDIA_NOT_STORED'));
+  bridge.c.openwa = url; bridge.c.media = directory;
+  api.rows = [message('missing', 1, 'Keep this caption', { type: 'video' })];
+  await history(bridge, 'master', command('/history 1'), 'source-unavailable'); await drain(bridge);
+  const caption = content(api).find(call => call.body.text.includes('Keep this caption'));
+  assert.match(caption.body.text, /video unavailable/); assert.doesNotMatch(caption.body.text, /expired/i);
+  assert.equal(store.byWhatsApp('g@g.us', 'missing').length, 1);
+  assert.equal(store.all('history-run')[0].status, 'complete');
+});
+
+for (const animated of [false, true]) test(`downloaded ${animated ? 'animated' : 'static'} historical stickers use native sticker preparation`, async t => {
+  const { bridge, api } = fixture(t); let conversions = 0;
+  const { url, directory } = await mediaServer(t, (req, res) => {
+    if (!req.url!.includes('/download')) return mediaError(res, 404, 'MEDIA_NOT_STORED');
+    res.writeHead(200, { 'content-type': 'image/webp' }); res.end('fixture webp');
+  });
+  bridge.c.openwa = url; bridge.c.media = directory;
+  bridge.media.sticker = async (file, target) => {
+    assert.equal(target, 'telegram'); assert.equal(file.mime, 'image/webp');
+    assert.equal(await readFile(file.path, 'utf8'), 'fixture webp'); conversions++;
+    return { ...file, name: animated ? 'sticker.webm' : 'sticker.webp', mime: animated ? 'video/webm' : 'image/webp' };
+  };
+  api.rows = [message('sticker', 1, '', { type: 'sticker' })];
+  await history(bridge, 'master', command('/history 1'), `downloaded-sticker-${animated}`); await drain(bridge);
+  assert.equal(conversions, 1); assert.equal(api.calls.filter(call => call.method === 'sendSticker').length, 1);
+});
 
 test('history posts one retained date marker per day with time-only messages and replies across midnight', async t => {
   const { bridge, api, store } = fixture(t);
