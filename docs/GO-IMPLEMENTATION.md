@@ -50,6 +50,10 @@ The Compose project `bifrost-go` now owns the diagnostic bridge, one PostgreSQL 
 
 Do not reuse the old SQLite data volume as a PostgreSQL volume. Do not start two bridge runtimes against the live identity. Implement import as an offline, explicit, validated transfer with a snapshot of the source. Preserve encryption keys, permanent identity, aliases, routes, bots, jobs, effects, mappings, history runs/receipts, prepared snapshots, mutes and cleanup state. Compare counts and identity/receipt keys before enabling outbound processing. Preserve uncertain states and immutable completed effects. Keep the original SQLite snapshot and a tested rollback path; migration does not mean resending old jobs.
 
+## Outgoing WhatsApp sticker budget
+
+The owner approved a 1,000,000-byte budget for the complete static or animated WebP, including metadata, based on the [live experiment](STICKER-LIMITS.md). The measured usable boundary was 1,048,558 bytes; 1,048,560 bytes was rejected during WhatsApp upload. Preserve an already valid animation within budget instead of re-encoding solely to meet the old 500,000-byte target. Validate container structure, decoded frames, dimensions and timing before freezing the outgoing payload; decoding or a send acknowledgement alone does not establish a renderable sticker. Telegram constraints remain separate. The Go codec workflow is still pending; this changes the target policy, not the live legacy runtime.
+
 ## Implementation order and acceptance
 
 1. Define typed configuration, safe errors, structured logs and PostgreSQL schema/migrations. Test key uniqueness, transaction rollback and permanent identity conflicts.

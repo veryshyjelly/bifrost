@@ -15,9 +15,13 @@ context: |
   Preserve permanent identity, encryption keys, receipts, stable delivery keys and
   explicit review of uncertain sends across any storage migration.
   The owner approved preserving all current behavior, including linked-name formatting
-  and intentional deletion rules. One exception: support clearing outgoing captions
+  and intentional deletion rules. Approved changes: support clearing outgoing captions
   when the latest released provider API permits it. Preserve the current caption and
   explain the limitation when unsupported. Never drop behavior due to an SDK gap.
+  Outgoing WhatsApp stickers in Go MUST use a 1,000,000-byte complete WebP budget
+  for static and animated files, including metadata. Validate container structure,
+  dimensions and timing; preserve Telegram limits. Measured WhatsApp Web usability
+  reached 1,048,558 bytes and upload rejected 1,048,560; see docs/STICKER-LIMITS.md.
 rules:
   proposal:
     - Distinguish current behavior from approved target changes and pending decisions.

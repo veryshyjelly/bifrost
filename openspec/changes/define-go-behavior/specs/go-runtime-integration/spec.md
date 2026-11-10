@@ -95,3 +95,22 @@ Provider integration SHALL preserve stable per-send idempotency, durable admissi
 
 - **WHEN** a library call times out after the request may have reached the provider
 - **THEN** the send remains uncertain and is not automatically replayed by SDK retry middleware
+
+### Requirement: Measured outgoing WhatsApp sticker budget
+
+The Go bridge SHALL use a maximum complete-file encoding budget of 1,000,000 bytes for both static and animated outgoing WhatsApp WebP stickers, including metadata, while preserving animation and quality within the budget. It SHALL validate WebP container structure, decoded frames, dimensions and timing before freezing the outgoing payload. Telegram sticker constraints SHALL remain separate. This approved target change is based on docs/STICKER-LIMITS.md, where usable files reached 1,048,558 bytes and upload rejected 1,048,560 bytes.
+
+#### Scenario: Valid animation exceeds the old target
+
+- **WHEN** an outgoing WhatsApp animation is structurally valid, meets dimension/timing requirements and is 800,000 bytes including metadata
+- **THEN** it remains eligible for animated delivery without re-encoding solely to meet the former 500,000-byte target
+
+#### Scenario: Metadata pushes an encoding over budget
+
+- **WHEN** the complete outgoing WebP exceeds 1,000,000 bytes after metadata is added
+- **THEN** the encoder adjusts it to fit before freezing or sending the payload, following the existing fallback behavior if it cannot produce a valid sticker
+
+#### Scenario: Decodable fixture has an unsuitable container
+
+- **WHEN** a file decodes locally but fails structural validation, such as trailing bytes outside the declared RIFF container
+- **THEN** local decoding or an API acknowledgement does not establish sticker validity and the bridge repairs or re-encodes the file before sending

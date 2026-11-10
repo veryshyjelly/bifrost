@@ -1,12 +1,14 @@
 # Repository Guidelines
 
-Bifrost is being ported to Go on `port/golang`. The approved behavior contract is in `openspec/`. Preserve every current behavior except the explicit conditional caption-clearing change. Linked-name formatting, source deletion choices and former-topic deletion are intentional.
+Bifrost is being ported to Go on `port/golang`. The approved behavior contract is in `openspec/`. Preserve every current behavior except the approved conditional caption-clearing change and larger outgoing WhatsApp sticker budget. Linked-name formatting, source deletion choices and former-topic deletion are intentional.
 
 ## Structure and design
 
 Use one Go module, `cmd/bifrost` for composition, capability-focused `internal/` packages, narrow consumer-defined interfaces, explicit dependency injection and provider adapters. See `docs/GO-IMPLEMENTATION.md`. PostgreSQL delivery persistence and a diagnostic runtime are implemented; SDK clients and explicit provider diagnostics are implemented; automatic provider workflows and legacy import are not implemented yet.
 
 Use PostgreSQL with pgx/v5, explicit SQL/sqlc and Goose migrations. Use the OpenWA Go SDK and go-telegram/bot, strictly resolving latest stable releases and pinning exact versions when implementing their first real use. Verify current native features and API coverage. The gateway comes from the owner-maintained https://github.com/veryshyjelly/OpenWA fork at an explicitly reviewed commit; preserve its media/mention patches when updating the upstream base. Use the maintained Go SDK module github.com/veryshyjelly/OpenWA/sdk/go; its releases are independent of the gateway and other language SDKs. Do not silently replace libraries, drop features or float the gateway build on main.
+
+For outgoing WhatsApp stickers in the Go port, use a 1,000,000-byte budget for the complete static or animated WebP, including metadata. The measured usable boundary is 1,048,558 bytes; 1,048,560 was rejected. Validate container structure as well as decoding, dimensions and timing; API acknowledgement alone does not prove rendering. Preserve Telegram limits. See docs/STICKER-LIMITS.md.
 
 Use standard context, errors, net/http, log/slog and testing where they suffice. Run gofmt; prefer idiomatic Go naming and small packages over broad frameworks or generic repositories.
 
