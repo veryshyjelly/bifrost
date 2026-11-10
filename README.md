@@ -4,6 +4,8 @@ A standalone personal WhatsApp–Telegram bridge. OpenWA supplies WhatsApp; Bifr
 
 Bifrost and the local Telegram Bot API communicate over Docker networking. No n8n instance, workflow, public domain or tunnel is required. OpenWA is installed and paired separately.
 
+The [OpenSpec behavior baseline](openspec/README.md) documents the current bridge and tracks desired behavior for the Go port, including the required Go libraries, PostgreSQL and Docker Compose setup.
+
 ## Moving to another PC
 
 Follow [Moving Bifrost to another PC](docs/MOVING.md) to export this installation, import its existing credentials and state into a fresh clone, configure a new OpenWA API key/session without changing the saved account identity, and switch machines safely.

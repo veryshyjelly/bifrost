@@ -1,0 +1,23 @@
+schema: spec-driven
+context: |
+  Bifrost is a personal owner-only WhatsApp–Telegram bridge.
+  Current behavior baseline: commit checkpoint-go-contract-baseline.
+  This phase documents behavior and reviews desired changes; do not implement Go yet.
+  Go target MUST use github.com/rmyndharis/OpenWA/sdk/go and github.com/go-telegram/bot.
+  Resolve the latest stable releases at implementation time and pin exact versions;
+  recheck latest releases and applicable native features before completing the port.
+  Go target MUST use PostgreSQL instead of SQLite and Docker Compose for setup.
+  Preserve permanent identity, encryption keys, receipts, stable delivery keys and
+  explicit review of uncertain sends across any storage migration.
+  The owner approved preserving all current behavior, including linked-name formatting
+  and intentional deletion rules. One exception: support clearing outgoing captions
+  when the latest released provider API permits it. Preserve the current caption and
+  explain the limitation when unsupported. Never drop behavior due to an SDK gap.
+rules:
+  proposal:
+    - Distinguish current behavior from approved target changes and pending decisions.
+  specs:
+    - State observable requirements with concrete scenarios and evidence references.
+    - Keep provider SDK choices in target integration specs, not current behavior specs.
+  tasks:
+    - Keep release-coverage verification separate from approved owner behavior decisions.
