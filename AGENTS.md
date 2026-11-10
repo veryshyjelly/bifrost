@@ -4,6 +4,8 @@
 
 Bifrost is a personal WhatsApp–Telegram bridge. `src/` contains the Bun/TypeScript runtime: `bridge.ts` routes events, `store.ts` persists queues and effects in SQLite, and focused modules handle history, media, mentions and controls. `scripts/` holds setup, transfer and Python codec helpers. Tests live in `test/*.test.ts`; operational documentation lives in `docs/`. Runtime assets belong in ignored `data/`, `media/` and `backups/`.
 
+Migration progress is tracked in [OpenSpec tasks](openspec/changes/rewrite-bridge-in-clojurescript/tasks.md), governed by [the implementation contract](docs/rewrite/08-implementation-specification.md).
+
 ## Build, Test, and Development Commands
 
 Use Bun 1.4.2, matching `.bun-version`.
