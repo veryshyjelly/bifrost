@@ -4,7 +4,7 @@ Bifrost is being ported to Go on `port/golang`. The approved behavior contract i
 
 ## Structure and design
 
-Use one Go module, `cmd/bifrost` for composition, capability-focused `internal/` packages, narrow consumer-defined interfaces, explicit dependency injection and provider adapters. See `docs/GO-IMPLEMENTATION.md`. The current packages are scaffolding; no runnable Go bridge exists yet.
+Use one Go module, `cmd/bifrost` for composition, capability-focused `internal/` packages, narrow consumer-defined interfaces, explicit dependency injection and provider adapters. See `docs/GO-IMPLEMENTATION.md`. PostgreSQL delivery persistence and a diagnostic runtime are implemented; provider workflows and legacy import are not implemented yet.
 
 Use PostgreSQL with pgx/v5, explicit SQL/sqlc and Goose migrations. Use the OpenWA Go SDK and go-telegram/bot, strictly resolving latest stable releases and pinning exact versions when implementing their first real use. Verify current native features and API coverage. Do not silently replace libraries, drop features or use unreleased main.
 
@@ -15,9 +15,9 @@ Use standard context, errors, net/http, log/slog and testing where they suffice.
 - `make check`: formatting, go vet, race-enabled Go tests, repository audit and Compose validation.
 - `make spec-check`: strict OpenSpec validation (requires installed OpenSpec).
 - `go test ./internal/<package>`: focused tests once implementations exist.
-- `docker compose -p bifrost-go --env-file .go.env up -d postgres`: isolated development PostgreSQL, after copying `.go.env.example` and selecting a private password.
+- `make configure`, then fill Telegram API credentials and run `make up`: complete isolated Compose setup with one PostgreSQL instance (separate app databases/users), Redis, OpenWA, Telegram API and Bifrost.
 
-Current package checks prove scaffold compilation, not behavior parity. Port observable OpenSpec scenarios and historical fixtures into Go. Use real isolated PostgreSQL for persistence/concurrency tests. Cover duplicate events, retries, partial/uncertain delivery, owner checks, crash recovery and migration. No numeric coverage target is imposed.
+Package checks cover the implemented persistence/diagnostic slice, not full behavior parity. Port observable OpenSpec scenarios and historical fixtures into Go. Use real isolated PostgreSQL for persistence/concurrency tests. Cover duplicate events, retries, partial/uncertain delivery, owner checks, crash recovery and migration. No numeric coverage target is imposed.
 
 ## History and operational safety
 

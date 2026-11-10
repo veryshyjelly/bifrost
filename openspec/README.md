@@ -21,4 +21,4 @@ No private environment files, databases or deployment identity data are included
 
 ## Go preparation checkpoint
 
-The legacy runtime and fixtures are preserved at commit `checkpoint-typescript-baseline`; evidence links now point to that snapshot. The active tree contains Go scaffolding and PostgreSQL development Compose configuration. See [the implementation design](../docs/GO-IMPLEMENTATION.md) and [historical recovery](../docs/legacy/README.md). No Go behavior parity is claimed yet.
+The legacy runtime and fixtures are preserved at commit `checkpoint-typescript-baseline`; evidence links now point to that snapshot. The active tree contains the first PostgreSQL delivery implementation, a diagnostic Go runtime and complete Compose service definitions. Provider relaying and legacy import remain pending. See [the implementation design](../docs/GO-IMPLEMENTATION.md) and [historical recovery](../docs/legacy/README.md). No Go behavior parity is claimed yet.

@@ -1,21 +1,164 @@
 name: bifrost-go
+
+x-bifrost: &bifrost
+  build: .
+  image: local/bifrost-go:development
+  init: true
+  environment: &bridge-env
+    DATABASE_URL: postgres://bifrost:${POSTGRES_PASSWORD:?Run make configure}@postgres:5432/bifrost
+    BRIDGE_ENCRYPTION_KEY: ${BRIDGE_ENCRYPTION_KEY:?Run make configure}
+    BRIDGE_ADMIN_TOKEN: ${BRIDGE_ADMIN_TOKEN:?Run make configure}
+    BIFROST_ACCOUNT_ID: ${BIFROST_ACCOUNT_ID:?Run make configure}
+    BRIDGE_PORT: '3210'
+    BRIDGE_MEDIA: /media
+    BRIDGE_CALLBACK_URL: http://bifrost:3210
+    TELEGRAM_API_URL: http://telegram-api:8081
+    OPENWA_URL: http://openwa:2785
+    OPENWA_WEBHOOK_SECRET: ${OPENWA_WEBHOOK_SECRET:?Run make configure}
+    OPENWA_SESSION_ID: ${OPENWA_SESSION_ID:-}
+    OPENWA_API_KEY: ${OPENWA_API_KEY:-}
+    TELEGRAM_MASTER_TOKEN: ${TELEGRAM_MASTER_TOKEN:-}
+    TELEGRAM_OWNER_ID: ${TELEGRAM_OWNER_ID:-}
+    TELEGRAM_MANAGEMENT_CHAT_ID: ${TELEGRAM_MANAGEMENT_CHAT_ID:-}
+  volumes:
+    - bridge-media:/media
+    - telegram-data:/telegram-data:ro
+  networks: [bridge]
+
 services:
   postgres:
     image: postgres:18.6
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-bifrost}
-      POSTGRES_USER: ${POSTGRES_USER:-bifrost}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .go.env}
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Run make configure}
+      BIFROST_DB_PASSWORD: ${POSTGRES_PASSWORD:?Run make configure}
+      OPENWA_DB_PASSWORD: ${OPENWA_POSTGRES_PASSWORD:?Run make configure}
     ports:
       - '127.0.0.1:${POSTGRES_PORT:-5433}:5432'
     volumes:
       - postgres-data:/var/lib/postgresql
+      - ./deploy/postgres/001-databases.sh:/docker-entrypoint-initdb.d/001-databases.sh:ro
     healthcheck:
-      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
       interval: 5s
       timeout: 3s
       retries: 10
     stop_grace_period: 30s
+    networks: [bridge, openwa]
+
+  migrate:
+    <<: *bifrost
+    profiles: [tools]
+    command: [migrate]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  bifrost:
+    <<: *bifrost
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:${BRIDGE_HTTP_PORT:-3211}:3210'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, bifrost, healthcheck]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    stop_grace_period: 15s
+
+  redis:
+    image: redis:8.10.3-alpine
+    restart: unless-stopped
+    command: [redis-server, --appendonly, 'yes', --maxmemory-policy, noeviction]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [openwa]
+
+  openwa:
+    build:
+      # Latest stable gateway release, independently pinned from its Go SDK.
+      context: ${OPENWA_SOURCE:-https://github.com/rmyndharis/OpenWA.git#v0.29.1}
+      dockerfile: Dockerfile
+    image: local/bifrost-openwa:v0.29.1
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: '2785'
+      DATABASE_TYPE: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
+      DATABASE_NAME: openwa
+      DATABASE_USERNAME: openwa
+      DATABASE_PASSWORD: ${OPENWA_POSTGRES_PASSWORD:?Run make configure}
+      DATABASE_SYNCHRONIZE: 'false'
+      MAIN_DATABASE_SYNCHRONIZE: 'false'
+      MAIN_DATABASE_NAME: /app/data/main.sqlite
+      API_KEY_PEPPER: ${OPENWA_API_KEY_PEPPER:?Run make configure}
+      REDIS_ENABLED: 'true'
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+      CACHE_ENABLED: 'true'
+      QUEUE_ENABLED: 'true'
+      SSRF_ALLOWED_HOSTS: bifrost
+      HOME: /tmp
+      XDG_CONFIG_HOME: /tmp/.config
+      XDG_CACHE_HOME: /tmp/.cache
+    ports:
+      - '127.0.0.1:${OPENWA_HTTP_PORT:-2786}:2785'
+    volumes:
+      - openwa-data:/app/data
+    tmpfs: [/tmp]
+    read_only: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, KILL, SETGID, SETUID]
+    pids_limit: 2048
+    mem_limit: 2g
+    stop_grace_period: 75s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:2785/api/health/ready]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
+    networks: [bridge, openwa]
+
+  telegram-api:
+    build:
+      context: .
+      dockerfile: deploy/telegram-api.Dockerfile
+    image: local/bifrost-telegram-api:7232881b39df
+    restart: unless-stopped
+    environment:
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID:?Fill TELEGRAM_API_ID in .go.env}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH:?Fill TELEGRAM_API_HASH in .go.env}
+    volumes:
+      - telegram-data:/telegram-data
+    stop_grace_period: 30s
+    networks: [bridge]
+
 volumes:
   postgres-data:
+  bridge-media:
+  telegram-data:
+  openwa-data:
+  redis-data:
+
+networks:
+  bridge:
+  openwa:

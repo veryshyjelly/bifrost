@@ -22,3 +22,18 @@
 - [x] Record preliminary SDK feature coverage and integration verification needs, including explicit empty-caption serialization.
 - [ ] During the separate Go implementation design, verify every required operation against exact latest released SDK/gateway/API versions, including conditional caption clearing.
 - [x] Confirm the desired behavior contract is complete before beginning a separate Go implementation design.
+
+## 4. Go implementation progress
+
+- [x] Add pinned pgx/Goose dependencies and sqlc tool/query generation.
+- [x] Implement permanent identity/key binding and legacy-compatible AES-GCM token sealing.
+- [x] Implement durable admission, stream-head claims, priority, renewable fenced leases and explicit recovery.
+- [x] Preserve frozen effect requests, immutable successful receipts and explicit uncertain-send review.
+- [x] Implement private configuration generation, explicit migration CLI, diagnostics and admin review HTTP.
+- [x] Include the complete Compose service definitions, one PostgreSQL instance with isolated app databases/users, OpenWA/Redis and the local Telegram API.
+- [x] Verify real PostgreSQL concurrency, recovery and cross-database permission denial with disposable test state.
+- [x] Build Go/OpenWA images and smoke-test shared PostgreSQL, Redis, OpenWA and diagnostic Bifrost in a disposable Compose project.
+- [ ] Build/test the pinned official Telegram API service with the provider-adapter slice; it was excluded from this smoke test.
+- [ ] Implement provider adapters and authenticated webhook admission before enabling any relaying.
+- [ ] Port conversation routing, controls and remaining capability scenarios.
+- [ ] Implement and test the explicit SQLite state importer and live cutover procedure.

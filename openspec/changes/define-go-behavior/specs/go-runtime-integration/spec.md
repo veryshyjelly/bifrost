@@ -49,12 +49,43 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 
 ### Requirement: Docker Compose setup
 
-The Go setup SHALL use Docker Compose for the bridge, PostgreSQL and local Telegram API, with persistent state and media storage, database readiness checks and private configurable credentials. Existing external OpenWA connectivity SHALL remain supported.
+The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.
 
 #### Scenario: Database starts slowly
 
 - **WHEN** Compose starts the bridge before PostgreSQL is ready
 - **THEN** the bridge waits or retries readiness without discarding state or accepting undurable delivery
+
+#### Scenario: Fresh complete stack
+
+- **WHEN** an owner generates private configuration, fills Telegram API credentials and runs the documented startup command
+- **THEN** Compose builds/starts Bifrost, OpenWA, the local Telegram API, Redis and PostgreSQL without an external OpenWA checkout
+- **AND** Bifrost and OpenWA use separate databases and restricted users on one PostgreSQL instance
+
+#### Scenario: Existing state during setup
+
+- **WHEN** configuration is generated again or a PostgreSQL volume already contains data
+- **THEN** configuration keys are not overwritten and database bootstrap does not recreate existing roles, databases or delivery state
+
+
+### Requirement: Application database isolation
+
+Bifrost and OpenWA SHALL use separate databases and non-superuser roles on the shared PostgreSQL instance. App roles SHALL be denied access to each other’s databases. Database bootstrap SHALL run only on an empty data volume.
+
+#### Scenario: Cross-application access
+
+- **WHEN** Bifrost credentials are used to connect to the OpenWA database, or OpenWA credentials are used for the Bifrost database
+- **THEN** PostgreSQL refuses the connection without granting elevated privileges
+
+### Requirement: OpenWA source and persistent state
+
+Fresh setup SHALL build a pinned stable OpenWA release without requiring a sibling checkout, while an explicit source override SHALL support local development. OpenWA’s required boot/auth and browser state SHALL persist on its own data volume alongside PostgreSQL message storage.
+
+#### Scenario: Local source override
+
+- **WHEN** the owner explicitly sets OPENWA_SOURCE to the sibling OpenWa checkout
+- **THEN** Compose builds that source without modifying the sibling installation or reusing its runtime volumes
+
 
 ### Requirement: Delivery safety with SDKs
 

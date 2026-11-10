@@ -9,7 +9,7 @@ The Go port needs an explicit behavioral contract so a language and storage chan
 - Document the TypeScript baseline and review every capability with the owner.
 - Require the OpenWA Go SDK and go-telegram/bot at their latest stable releases and review applicable new native features.
 - **BREAKING**: replace runtime SQLite storage with PostgreSQL in the Go target, with an explicit state-preserving import path.
-- Use Docker Compose for the Go bridge, PostgreSQL and the local Telegram API; retain the existing external OpenWA integration unless the owner changes that deployment boundary.
+- Use Docker Compose for the Go bridge, OpenWA, Redis, local Telegram API and one PostgreSQL instance with separate app databases/users, as explicitly approved by the owner.
 - Preserve all current route types and intentional deletion of the former management topic when moving to a dedicated route, as approved by the owner. Manual /history and /unmirror remain the recovery workflows.
 - Preserve all other current behavior, explicitly approved by the owner, including linked-name formatting and intentional deletion rules.
 - Support clearing outgoing captions when the latest released provider API permits it; otherwise retain the caption and explain the limitation.
@@ -26,4 +26,4 @@ The Go port needs an explicit behavioral contract so a language and storage chan
 
 ## Impact
 
-This phase changes documentation only. Future implementation affects provider clients, persistence, setup, transfer tooling and deployment. Existing HTTP endpoints and operational workflows remain the baseline until an explicit delta changes them. The current SQLite runtime and Compose setup remain operational during this documentation phase.
+Implementation has begun with the PostgreSQL delivery foundation and diagnostic runtime. The full port affects provider clients, persistence, setup, transfer tooling and deployment. Existing HTTP endpoints and operational workflows remain the baseline until an explicit delta changes them. The current SQLite runtime and Compose setup remain operational during this documentation phase.

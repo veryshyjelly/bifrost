@@ -54,7 +54,8 @@ func privateValues(root string) ([][]byte, error) {
 		"BRIDGE_ENCRYPTION_KEY": true, "BRIDGE_ADMIN_TOKEN": true,
 		"OPENWA_WEBHOOK_SECRET": true, "OPENWA_API_KEY": true,
 		"TELEGRAM_MASTER_TOKEN": true, "TELEGRAM_API_HASH": true,
-		"N8N_ENCRYPTION_KEY": true, "POSTGRES_PASSWORD": true, "DATABASE_URL": true,
+		"N8N_ENCRYPTION_KEY": true, "POSTGRES_PASSWORD": true, "POSTGRES_ADMIN_PASSWORD": true, "DATABASE_URL": true,
+		"OPENWA_POSTGRES_PASSWORD": true, "OPENWA_API_KEY_PEPPER": true,
 	}
 	var secrets [][]byte
 	for _, name := range []string{"bridge.env", "telegram-api.env", "n8n.env", ".go.env"} {

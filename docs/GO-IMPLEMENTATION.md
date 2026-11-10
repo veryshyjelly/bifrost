@@ -1,6 +1,6 @@
 # Go implementation design
 
-This is the implementation foundation, not a completed bridge. The approved contract is in OpenSpec. All existing behavior remains required, including linked names, intentional topic deletion and reviewed uncertain sends. Caption clearing is conditional on released provider support.
+The PostgreSQL delivery foundation and diagnostic runtime are now implemented; this is not a completed bridge. The approved contract is in OpenSpec. All existing behavior remains required, including linked names, intentional topic deletion and reviewed uncertain sends. Caption clearing is conditional on released provider support.
 
 ## Shape and dependency direction
 
@@ -8,7 +8,7 @@ Build one modular application and one PostgreSQL database. Use `cmd/bifrost` as 
 
 Workflow packages define small interfaces at their point of use. Adapters implement those interfaces; they must not call back into workflow packages to route new work. Pass concrete dependencies through constructors. Prefer explicit Go types and functions, wrapped errors with errors.Is/As, context cancellation, bounded goroutines and structured log/slog output. Use standard net/http and ServeMux before adding a web framework. Avoid a dependency injection framework, generic service/repository base classes, global database/provider clients or a second queue service.
 
-Create capability packages such as history, mentions and statuses when implementing those workflows; do not collapse them into an ever-growing Bridge object. Keep formatting and identity resolution independently testable. No business interfaces or wire schemas are invented by the preparation scaffold.
+Create capability packages such as history, mentions and statuses when implementing those workflows; do not collapse them into an ever-growing Bridge object. Keep formatting and identity resolution independently testable. Introduce interfaces alongside the workflow and tests that consume them; avoid placeholder API designs.
 
 ## Tool choices
 
@@ -32,7 +32,7 @@ Versions resolved through `go list -m -json <module>@latest` on 2026-11-10:
 | sqlc | v1.31.1 |
 | gopls | v0.24.0 (installed and verified) |
 
-The empty Go module has no runtime dependencies yet. Resolve latest again and add exact requirements plus go.sum when the first adapters/storage implementation actually uses them; do not retain unused imports solely to keep dependency declarations. Tool versions will be pinned using Go tool dependencies when their configurations and inputs exist. PostgreSQL development uses 18.6, the current stable minor listed in the inspected official version policy; do not use a release candidate or floating latest image for database state.
+pgx/v5 and Goose are now runtime dependencies pinned in go.mod/go.sum, and sqlc is pinned as a Go tool dependency. Resolve latest again when adding the provider adapters. Do not retain unused imports solely to keep dependency declarations. PostgreSQL development uses 18.6, the current stable minor listed in the inspected official version policy; do not use a release candidate or floating latest image for database state.
 
 ## Delivery and PostgreSQL invariants
 
@@ -46,7 +46,7 @@ Distinguish known rate refusal and pre-connection failure from ambiguous mutatio
 
 ## Compose and cutover
 
-The current preparation Compose file starts only isolated PostgreSQL under project `bifrost-go`. The bridge binary and its Dockerfile do not exist yet. Add the bridge and current official local Telegram API services after adapter implementation, using readiness checks, persistent named volumes, restricted host bindings and exact verified image versions. Retain external OpenWA connectivity.
+The Compose project `bifrost-go` now owns the diagnostic bridge, one PostgreSQL instance with separate Bifrost/OpenWA databases and non-superuser roles, Redis, OpenWA and the official local Telegram API. A fresh instance is initialized by deploy/postgres/001-databases.sh; app roles cannot connect to each other’s databases. OpenWA builds the pinned stable release by default, with an optional sibling-source override. All state uses new project volumes. OpenWA message storage uses PostgreSQL; its upstream boot/auth SQLite remains in openwa-data. No existing OpenWA installation or external network is required. Provider workflows remain unimplemented even though the service definitions exist.
 
 Do not reuse the old SQLite data volume as a PostgreSQL volume. Do not start two bridge runtimes against the live identity. Implement import as an offline, explicit, validated transfer with a snapshot of the source. Preserve encryption keys, permanent identity, aliases, routes, bots, jobs, effects, mappings, history runs/receipts, prepared snapshots, mutes and cleanup state. Compare counts and identity/receipt keys before enabling outbound processing. Preserve uncertain states and immutable completed effects. Keep the original SQLite snapshot and a tested rollback path; migration does not mean resending old jobs.
 

@@ -1,3 +1,3 @@
-# Bifrost entrypoint
+# Bifrost CLI
 
-The future main package will wire configuration, PostgreSQL, provider adapters, workers and the HTTP server. No runnable bridge exists in this preparation commit.
+`configure` creates private Compose configuration without overwriting existing keys. `migrate` explicitly applies embedded PostgreSQL migrations. `serve` exposes diagnostics and reviewed recovery; provider relaying is not implemented yet. `healthcheck` probes the local diagnostic endpoint for Docker. See the root README for setup.

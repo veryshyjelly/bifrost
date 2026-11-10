@@ -15,9 +15,9 @@ Baseline source: `checkpoint-go-contract-baseline`, branch `port/golang`. Bun/Ty
 
 Use the two required provider clients and their current typed/native functionality. Resolve each Go module independently at implementation time; the OpenWA gateway release tag does not establish the nested SDK module version. Pin exact versions and record the tested gateway/Telegram API compatibility. Do not silently use an unreleased branch to satisfy a missing feature.
 
-PostgreSQL replaces SQLite for all durable runtime state, not just new tables. Atomic enqueue/deduplication, job claiming, immutable completed effects and uncertainty recovery must survive the change. PostgreSQL schema, driver, supported version, import tooling and rollback procedure belong to the later port design; no choices are implied by this document. Preserve opaque encrypted values and stable keys during migration; do not reset or replay delivery state.
+PostgreSQL replaces SQLite for all durable runtime state, not just new tables. Atomic enqueue/deduplication, job claiming, immutable completed effects and uncertainty recovery must survive the change. The first implementation slice selects PostgreSQL 18.6, pgx/v5, sqlc-generated queries and embedded Goose migrations for identity, jobs and effects. Remaining schemas, import tooling and rollback/cutover procedures belong to subsequent slices. Preserve opaque encrypted values and stable keys during migration; do not reset or replay delivery state.
 
-Compose will run the bridge, PostgreSQL and local Telegram API with persistent database/media/API storage. Support an external OpenWA endpoint when configuring the Compose boundary. Configure readiness and database connectivity explicitly. Normal restart and recreation must retain state. No implementation or live deployment occurs here.
+The owner subsequently required the complete setup in this Compose project, including OpenWA and Redis, and selected one PostgreSQL instance with separate restricted Bifrost/OpenWA databases/users. Fresh setup builds the stable OpenWA release without requiring its sibling checkout; an explicit local source override is supported. Shared database bootstrap applies only to fresh volumes. Go implementation has begun with delivery persistence and diagnostics; no live cutover or provider relaying is enabled.
 
 ## Important compatibility checks for the port
 

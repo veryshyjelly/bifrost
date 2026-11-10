@@ -2,11 +2,13 @@ schema: spec-driven
 context: |
   Bifrost is a personal owner-only WhatsApp–Telegram bridge.
   Current behavior baseline: commit checkpoint-go-contract-baseline.
-  This phase documents behavior and reviews desired changes; do not implement Go yet.
+  Go implementation is underway; preserve the approved behavior contract.
   Go target MUST use github.com/rmyndharis/OpenWA/sdk/go and github.com/go-telegram/bot.
   Resolve the latest stable releases at implementation time and pin exact versions;
   recheck latest releases and applicable native features before completing the port.
-  Go target MUST use PostgreSQL instead of SQLite and Docker Compose for setup.
+  Go target MUST use PostgreSQL instead of SQLite. Docker Compose MUST own the full
+  setup: Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance
+  with separate Bifrost/OpenWA databases and non-superuser roles.
   Preserve permanent identity, encryption keys, receipts, stable delivery keys and
   explicit review of uncertain sends across any storage migration.
   The owner approved preserving all current behavior, including linked-name formatting
