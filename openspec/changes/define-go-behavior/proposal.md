@@ -8,6 +8,7 @@ The Go port needs an explicit behavioral contract so a language and storage chan
 
 - Document the TypeScript baseline and review every capability with the owner.
 - Require the OpenWA Go SDK and go-telegram/bot at their latest stable releases and review applicable new native features.
+- Build the gateway from the owner-maintained veryshyjelly/OpenWA fork at a reviewed commit so its bounded media and mention patches are retained.
 - **BREAKING**: replace runtime SQLite storage with PostgreSQL in the Go target, with an explicit state-preserving import path.
 - Use Docker Compose for the Go bridge, OpenWA, Redis, local Telegram API and one PostgreSQL instance with separate app databases/users, as explicitly approved by the owner.
 - Preserve all current route types and intentional deletion of the former management topic when moving to a dedicated route, as approved by the owner. Manual /history and /unmirror remain the recovery workflows.

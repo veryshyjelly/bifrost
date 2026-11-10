@@ -4,7 +4,7 @@
 
 ### Requirement: Required provider libraries
 
-The Go bridge SHALL use github.com/rmyndharis/OpenWA/sdk/go for WhatsApp and github.com/go-telegram/bot for Telegram, using applicable native features instead of duplicating supported provider functionality.
+The Go bridge SHALL use github.com/veryshyjelly/OpenWA/sdk/go for WhatsApp and github.com/go-telegram/bot for Telegram, using applicable native features instead of duplicating supported provider functionality.
 
 #### Scenario: Provider integration
 
@@ -79,7 +79,7 @@ Bifrost and OpenWA SHALL use separate databases and non-superuser roles on the s
 
 ### Requirement: OpenWA source and persistent state
 
-Fresh setup SHALL build a pinned stable OpenWA release without requiring a sibling checkout, while an explicit source override SHALL support local development. OpenWA’s required boot/auth and browser state SHALL persist on its own data volume alongside PostgreSQL message storage.
+Fresh setup SHALL build a reviewed commit of the owner-maintained veryshyjelly/OpenWA fork, preserving its media/mention patches over the upstream release base without requiring a sibling checkout. An explicit source override SHALL support local development. OpenWA’s required boot/auth and browser state SHALL persist on its own data volume alongside PostgreSQL message storage.
 
 #### Scenario: Local source override
 

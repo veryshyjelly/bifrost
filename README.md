@@ -27,7 +27,7 @@ make up
 
 Database bootstrap runs only on an empty PostgreSQL volume. App roles cannot connect to each other's databases and never receive the PostgreSQL administrator password. Changing an environment password later does not rotate database credentials automatically. No external Docker network, pre-existing OpenWA checkout or socket proxy is required.
 
-OpenWA builds the latest verified stable release (`v0.30.0`) directly from its Git repository. To use the sibling checkout during development, put `OPENWA_SOURCE=../OpenWa` in `.go.env`; this explicitly builds that checkout, including its local changes. OpenWA's upstream release still requires SQLite for boot/auth configuration even when message storage uses PostgreSQL; its entire `/app/data` directory remains persistent. Bifrost runtime state uses PostgreSQL only.
+OpenWA builds [your maintained fork](https://github.com/veryshyjelly/OpenWA) at reviewed commit `6ef0ab6e9` (upstream 0.30.0 plus media/mention fixes), using a full commit pin for reproducible builds. To use the sibling checkout during development, put `OPENWA_SOURCE=../OpenWa` in `.go.env`; this explicitly builds that checkout, including its local changes. OpenWA's upstream release still requires SQLite for boot/auth configuration even when message storage uses PostgreSQL; its entire `/app/data` directory remains persistent. Bifrost runtime state uses PostgreSQL only.
 
 Default host endpoints bind loopback and avoid the legacy bridge/OpenWA ports:
 

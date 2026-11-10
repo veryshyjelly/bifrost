@@ -40,6 +40,7 @@ type attemptKey struct{}
 // Attempt belongs to one synchronous SDK call; it is never shared between calls.
 type Attempt struct {
 	started      bool
+	streaming    bool
 	status       int
 	code         string
 	reason       string
@@ -51,6 +52,13 @@ type Attempt struct {
 func Observe(ctx context.Context) (context.Context, *Attempt) {
 	a := &Attempt{}
 	return context.WithValue(ctx, attemptKey{}, a), a
+}
+
+// ObserveStream bypasses JSON buffering only for successful GET media responses.
+func ObserveStream(ctx context.Context) (context.Context, *Attempt) {
+	ctx, attempt := Observe(ctx)
+	attempt.streaming = true
+	return ctx, attempt
 }
 
 func ValidURL(value string) bool {
@@ -106,7 +114,10 @@ func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 	if a != nil {
 		a.status = response.StatusCode
 	}
-	// Text/control JSON only. Large media streams need a separate bounded streaming adapter.
+	if a != nil && a.streaming && request.Method == http.MethodGet && response.StatusCode >= 200 && response.StatusCode < 300 {
+		return response, nil // The SDK enforces the explicit byte cap and stream lifetime.
+	}
+	// Text/control JSON only; source streams use the bounded SDK reader above.
 	const maxResponse = 8 << 20
 	body, err := io.ReadAll(io.LimitReader(response.Body, maxResponse+1))
 	_ = response.Body.Close()
@@ -188,7 +199,7 @@ func Outcome(service string, mutation bool, err error, a *Attempt) error {
 			e.RetryAfter = 5 * time.Second
 		}
 		return e
-	case "SEND_PACING_LIMITED", "IDEMPOTENCY_KEY_REUSED", "IDEMPOTENCY_KEY_INVALID":
+	case "SEND_PACING_LIMITED", "IDEMPOTENCY_KEY_REUSED", "IDEMPOTENCY_KEY_INVALID", "MEDIA_NOT_STORED", "MEDIA_SOURCE_UNAVAILABLE":
 		e.Code = a.code
 	}
 	if a.status == 429 {

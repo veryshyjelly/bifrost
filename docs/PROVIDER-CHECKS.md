@@ -1,13 +1,14 @@
 # Provider adapter checks
 
-The Go clients use `github.com/rmyndharis/OpenWA/sdk/go` v0.11.0 and `github.com/go-telegram/bot` v1.28.0, resolved independently through the Go module proxy's latest-release queries. The gateway setup is separately pinned to OpenWA v0.30.0, confirmed through GitHub's release API; cached latest-release HTML still returned the previous release during this check.
+The Go clients use `github.com/veryshyjelly/OpenWA/sdk/go` v0.11.1 and `github.com/go-telegram/bot` v1.28.0, versioned independently from the gateway. Both exact module versions resolve through the public Go module proxy without a local replacement. The gateway setup now uses the owner-maintained veryshyjelly/OpenWA fork at reviewed commit 6ef0ab6e9, based on OpenWA v0.30.0 with bounded-media and mention patches.
 
-Run `make update-providers` to resolve the newest stable Go client modules and update go.mod/go.sum. Commit and validate the resulting exact pins. Gateway source pins are updated separately after checking its release notes. Running the bridge never silently changes dependencies or upgrades a live gateway.
+Run `make update-providers` to resolve the newest stable Go client modules and update go.mod/go.sum. Commit and validate the resulting exact pins. Gateway source pins are updated separately after reviewing the maintained fork and its upstream base; do not replace the fork pin with an upstream tag that omits its patches. Running the bridge never silently changes dependencies or upgrades a live gateway.
 
 ## Implemented coverage
 
 - OpenWA: session readiness/restrictions, idempotent text sends with native quotes, passive stored-message lookup without inline media, and explicit-body edits including empty captions when the gateway supports them.
 - Telegram: explicit getMe and native sendMessage parameters, including topics, replies and entities. Constructing a client does not poll, migrate a token or install webhooks.
+- Source media: explicit SDK streaming download with cancellation, declared and streamed byte caps, original MIME/filename metadata, and distinct missing-source, disabled-download and unsupported-engine outcomes. This is an adapter operation; the media retrieval workflow is still pending.
 - Transport: bounded JSON responses, no redirects, no SDK retry middleware or hidden retries on reused connections, safe error fields, rate delays and conservative mutation uncertainty. Raw SDK errors, provider bodies and tokens never become returned/logged error text.
 - Media streaming, managed-bot operations, webhook admission, durable dispatch and conversation routing remain subsequent implementation slices. The clients alone do not constitute a working Go relay.
 

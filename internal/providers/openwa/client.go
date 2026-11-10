@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	sdk "github.com/rmyndharis/OpenWA/sdk/go"
+	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 

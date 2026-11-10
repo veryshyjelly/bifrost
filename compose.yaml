@@ -86,10 +86,10 @@ services:
 
   openwa:
     build:
-      # Latest stable gateway release, independently pinned from its Go SDK.
-      context: ${OPENWA_SOURCE:-https://github.com/rmyndharis/OpenWA.git#v0.30.0}
+      # Maintained fork: upstream 0.30.0 plus reviewed media/mention fixes.
+      context: ${OPENWA_SOURCE:-https://github.com/veryshyjelly/OpenWA.git#6ef0ab6e9d82751c62aefe93767ec1497ccefe6a}
       dockerfile: Dockerfile
-    image: local/bifrost-openwa:v0.30.0
+    image: local/bifrost-openwa:fork-6ef0ab6e9
     restart: unless-stopped
     environment:
       NODE_ENV: production

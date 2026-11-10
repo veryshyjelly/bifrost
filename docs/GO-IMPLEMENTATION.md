@@ -12,7 +12,7 @@ Create capability packages such as history, mentions and statuses when implement
 
 ## Tool choices
 
-- Required provider modules: `github.com/rmyndharis/OpenWA/sdk/go` and `github.com/go-telegram/bot`.
+- Required provider modules: `github.com/veryshyjelly/OpenWA/sdk/go` and `github.com/go-telegram/bot`.
 - PostgreSQL: pgx/v5 with pgxpool. Use explicit SQL and sqlc-generated pgx/v5 methods for persistence; keep SQL transactions visible rather than hiding them in an ORM.
 - Migrations: Goose SQL migrations in `migrations/`, embedded into the eventual migration command. Migration execution is an explicit operation; starting the bridge must not accidentally run a destructive import.
 - Formatting and static checks: gofmt and go vet. Add govulncheck with a pinned current version when runtime dependencies exist. Add other analyzers only for actionable coverage, not to accumulate overlapping linters.
@@ -25,7 +25,7 @@ Versions resolved through `go list -m -json <module>@latest` on 2026-11-10:
 | Module/tool | Latest resolved version |
 | --- | --- |
 | Go | 1.27.3 (also installed) |
-| OpenWA SDK | v0.11.0 |
+| OpenWA SDK (maintained fork) | v0.11.1 |
 | go-telegram/bot | v1.28.0 |
 | pgx/v5 | v5.12.0 |
 | Goose/v3 | v3.29.0 |
@@ -46,7 +46,7 @@ Distinguish known rate refusal and pre-connection failure from ambiguous mutatio
 
 ## Compose and cutover
 
-The Compose project `bifrost-go` now owns the diagnostic bridge, one PostgreSQL instance with separate Bifrost/OpenWA databases and non-superuser roles, Redis, OpenWA and the official local Telegram API. A fresh instance is initialized by deploy/postgres/001-databases.sh; app roles cannot connect to each other’s databases. OpenWA builds the pinned stable release by default, with an optional sibling-source override. All state uses new project volumes. OpenWA message storage uses PostgreSQL; its upstream boot/auth SQLite remains in openwa-data. No existing OpenWA installation or external network is required. Provider workflows remain unimplemented even though the service definitions exist.
+The Compose project `bifrost-go` now owns the diagnostic bridge, one PostgreSQL instance with separate Bifrost/OpenWA databases and non-superuser roles, Redis, OpenWA and the official local Telegram API. A fresh instance is initialized by deploy/postgres/001-databases.sh; app roles cannot connect to each other’s databases. OpenWA builds a reviewed commit of the owner-maintained veryshyjelly/OpenWA fork by default, with an optional sibling-source override. All state uses new project volumes. OpenWA message storage uses PostgreSQL; its upstream boot/auth SQLite remains in openwa-data. No existing OpenWA installation or external network is required. Provider workflows remain unimplemented even though the service definitions exist.
 
 Do not reuse the old SQLite data volume as a PostgreSQL volume. Do not start two bridge runtimes against the live identity. Implement import as an offline, explicit, validated transfer with a snapshot of the source. Preserve encryption keys, permanent identity, aliases, routes, bots, jobs, effects, mappings, history runs/receipts, prepared snapshots, mutes and cleanup state. Compare counts and identity/receipt keys before enabling outbound processing. Preserve uncertain states and immutable completed effects. Keep the original SQLite snapshot and a tested rollback path; migration does not mean resending old jobs.
 

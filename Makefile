@@ -35,5 +35,5 @@ logs:
 
 # Resolve current stable module releases independently from the OpenWA gateway tag.
 update-providers:
-	go get github.com/rmyndharis/OpenWA/sdk/go@latest github.com/go-telegram/bot@latest
+	go get github.com/veryshyjelly/OpenWA/sdk/go@latest github.com/go-telegram/bot@latest
 	go mod tidy

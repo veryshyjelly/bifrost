@@ -29,3 +29,7 @@ PostgreSQL and Compose requirements are explicit owner decisions. Their implemen
 ## Provider implementation verification
 
 The subsequent implementation resolved OpenWA Go SDK **v0.11.0** and go-telegram/bot **v1.28.0** through the module proxy and added them as direct dependencies. The gateway build pin is now **v0.30.0**, verified through the release API rather than cached latest-page HTML. See [provider checks](../docs/PROVIDER-CHECKS.md) for exercised operations and private-data boundaries. Existing live OpenWA remains 0.29.1 until a state-preserving cutover is implemented; successful SDK checks did not require migrating it.
+
+## Maintained fork SDK update
+
+The owner selected the maintained `veryshyjelly/OpenWA` fork for its bounded source-media and mention patches. The Go SDK module now uses `github.com/veryshyjelly/OpenWA/sdk/go`; v0.11.1 is published at `sdk/go/v0.11.1` and resolves through the public Go module proxy. Its typed streaming helper preserves API errors, cancellation, original metadata and byte limits. The gateway pin retains the reviewed patch series described in [OPENWA-FORK.md](../docs/OPENWA-FORK.md). Other language clients retain their upstream base; their source-media gap is explicit in the fork coverage matrix.

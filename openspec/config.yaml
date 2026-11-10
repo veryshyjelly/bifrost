@@ -3,7 +3,10 @@ context: |
   Bifrost is a personal owner-only WhatsApp–Telegram bridge.
   Current behavior baseline: commit checkpoint-go-contract-baseline.
   Go implementation is underway; preserve the approved behavior contract.
-  Go target MUST use github.com/rmyndharis/OpenWA/sdk/go and github.com/go-telegram/bot.
+  Go target MUST use github.com/veryshyjelly/OpenWA/sdk/go and github.com/go-telegram/bot.
+  Gateway source is the owner-maintained https://github.com/veryshyjelly/OpenWA fork,
+  pinned to a reviewed commit that retains the bounded media and mention patches.
+  The maintained Go SDK uses the fork module path and independent sdk/go/v* release tags.
   Resolve the latest stable releases at implementation time and pin exact versions;
   recheck latest releases and applicable native features before completing the port.
   Go target MUST use PostgreSQL instead of SQLite. Docker Compose MUST own the full
