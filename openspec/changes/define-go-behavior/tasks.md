@@ -68,3 +68,13 @@
 - [x] Suppress outgoing echoes using both message mappings and confirmed effect receipts; defer own events during unresolved sends.
 - [x] Queue read receipts independently after successful outgoing sends and preserve owner pause decisions for definitely unsent parts.
 - [ ] Integrate verified identities/mentions, command and media dispatch, edits, repair/cleanup and full worker startup before enabling runtime forwarding.
+
+## Identity and mention implementation
+
+- [x] Store account-scoped verified aliases, readable contact profiles, mention tokens and fresh roster snapshots behind fenced writes.
+- [x] Serialize alias and bot binding changes to reject conflicting canonical identities, including concurrent registration.
+- [x] Render metadata-backed incoming tags as native present-bot mentions or profile/WhatsApp links with UTF-16 offsets.
+- [x] Resolve outgoing native name entities, registered usernames and copied tokens, excluding code, URLs and email spans.
+- [x] Validate outgoing group membership against a roster younger than five minutes; allow labeled cached data only for picker display.
+- [x] Freeze resolved mentions inside text relay plans and send native WhatsApp mention IDs through the released SDK.
+- [ ] Implement webhook-to-canonical-message/self resolution, the mention picker commands/callbacks and owner-facing refusal notices; integrate captions, edits and history.

@@ -22,11 +22,12 @@ func (s *Store) ConversationRoute(ctx context.Context, account, chat string) (co
 	return conversation.Route{ChatID: r.WhatsappChat, Name: r.Name, TelegramChatID: r.TelegramChatID, ThreadID: r.ThreadID, Mode: conversation.Mode(r.Mode), InboxRetired: r.InboxRetired}, err == nil, err
 }
 func (s *Store) ContactBot(ctx context.Context, account, contact string) (conversation.Binding, bool, error) {
-	b, err := s.queries.ContactBot(ctx, db.ContactBotParams{AccountID: account, ContactID: contact})
-	if errors.Is(err, pgx.ErrNoRows) {
-		return conversation.Binding{}, false, nil
+	d, err := s.IdentityDirectory(ctx, account)
+	if err != nil {
+		return conversation.Binding{}, false, err
 	}
-	return conversation.Binding{BotID: b.BotID, Started: b.Started}, err == nil, err
+	p := d.Person(contact, nil)
+	return conversation.Binding{BotID: p.Bot.ID, Started: p.Bot.Started}, p.Registered, nil
 }
 
 // CreateInbox is fenced against stale workers and never overwrites an existing
@@ -78,12 +79,23 @@ func (s *Store) BindContactBot(ctx context.Context, job delivery.Job, contact, b
 		if row.Kind != "tg" && row.Kind != "management" {
 			return delivery.ErrInvalid
 		}
-		err := q.BindContactBot(ctx, db.BindContactBotParams{AccountID: row.AccountID, ContactID: contact, BotID: botID})
+		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
+			return err
+		}
+		d, err := directory(ctx, q, row.AccountID)
+		if err != nil {
+			return err
+		}
+		contact = d.Canonical(contact)
+		err = q.BindContactBot(ctx, db.BindContactBotParams{AccountID: row.AccountID, ContactID: contact, BotID: botID})
 		var failure *pgconn.PgError
 		if errors.As(err, &failure) && (failure.Code == "23505" || failure.Code == "23503") {
 			return delivery.ErrInvalid
 		}
 		if err != nil {
+			return err
+		}
+		if _, err := directory(ctx, q, row.AccountID); err != nil {
 			return err
 		}
 		return q.BindDirectRouteMode(ctx, db.BindDirectRouteModeParams{AccountID: row.AccountID, WhatsappChat: contact})

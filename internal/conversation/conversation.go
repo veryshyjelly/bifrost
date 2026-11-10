@@ -13,6 +13,7 @@ import (
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
+	"github.com/veryshyjelly/bifrost/internal/identity"
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
@@ -101,6 +102,9 @@ func (s *Service) EnsureInbox(ctx context.Context, job delivery.Job, effects *de
 	}
 	binding, bound, err := s.store.ContactBot(ctx, job.AccountID, chat)
 	if err != nil {
+		if errors.Is(err, identity.ErrConflict) {
+			return Route{}, err
+		}
 		return Route{}, delivery.ErrLocalRetry
 	}
 	route = Route{ChatID: chat, Name: name, TelegramChatID: s.management, Mode: Inbox}
@@ -172,6 +176,9 @@ func (s *Service) SelectTarget(ctx context.Context, account string, route Route,
 	if !flags.ForceMaster && !flags.Status && !(flags.FromMe && !private) {
 		binding, found, err := s.store.ContactBot(ctx, account, sender)
 		if err != nil {
+			if errors.Is(err, identity.ErrConflict) {
+				return Target{}, err
+			}
 			return Target{}, delivery.ErrLocalRetry
 		}
 		if found {

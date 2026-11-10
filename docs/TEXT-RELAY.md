@@ -2,7 +2,7 @@
 
 `internal/relay` now implements typed incoming/outgoing text capabilities over the fenced worker and native provider SDKs. `internal/presentation` ports the literal-text/native-entity formatter. These are tested components, not an enabled live bridge: `serve` still does not start the worker or install callbacks.
 
-The caller must supply verified canonical identities and select the appropriate capability before invoking a text operation. Identity/alias resolution, mentions and roster validation, command/media handlers, edits, repair/cleanup, managed-bot credentials and the legacy importer remain pending. Commands, edits and mention-dependent text fail closed in this component; the eventual dispatcher must send them to their dedicated handlers instead of forwarding a partial text representation. Unsupported work is retained through the normal failed-job/review protocol.
+The caller must supply verified canonical identities and select the appropriate capability before invoking a text operation. [Identity and mention components](IDENTITY-MENTIONS.md) provide alias-aware directory lookups, mention rendering and roster validation through `relay.Options.Mentions`. Commands and edits still fail closed; new mention-dependent text requires the resolver. The webhook identity resolver, command/media handlers, edits, repair/cleanup, managed-bot credentials and the legacy importer remain pending. The eventual dispatcher must send unsupported messages to their dedicated handlers instead of forwarding a partial text representation. Unsupported work is retained through the normal failed-job/review protocol.
 
 ## Rendering and frozen plans
 

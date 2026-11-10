@@ -23,6 +23,7 @@ import (
 type Options struct {
 	SessionID                 string
 	OwnerID, ManagementChatID int64
+	Mentions                  Mentions
 }
 type Service struct {
 	store    Store
@@ -65,9 +66,6 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 	if e == nil || job.Kind != "wa" || m.ChatID == "" || m.MessageID == "" || job.Stream != "wa:"+m.ChatID || !utf8.ValidString(m.Body) {
 		return delivery.ErrInvalid
 	}
-	if len(m.MentionedIDs) > 0 {
-		return delivery.ErrUnsupported
-	}
 	echo, err := s.store.RelayEcho(ctx, job.AccountID, m.ChatID, m.MessageID)
 	if err != nil {
 		return local(err)
@@ -97,6 +95,9 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 		return nil
 	}
 	if !found {
+		if len(m.MentionedIDs) > 0 && s.c.Mentions == nil {
+			return delivery.ErrUnsupported
+		}
 		name := m.ConversationName
 		if name == "" {
 			name = m.Name
@@ -136,7 +137,14 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 		if displayName == "" {
 			displayName = m.ChatID
 		}
-		body, err := presentation.Relay(presentation.Options{Bot: target.BotID, Sender: link, Name: displayName, Own: m.Own}, presentation.Plain(m.Body))
+		content := presentation.Plain(m.Body)
+		if s.c.Mentions != nil && len(m.MentionedIDs) > 0 {
+			content, err = s.c.Mentions.Incoming(ctx, job, m.ChatID, m.Body, m.MentionedIDs, target.ChatID)
+			if err != nil {
+				return err
+			}
+		}
+		body, err := presentation.Relay(presentation.Options{Bot: target.BotID, Sender: link, Name: displayName, Own: m.Own}, content)
 		if err != nil {
 			return delivery.ErrInvalid
 		}
@@ -200,11 +208,17 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 	return local(s.store.CompleteRelay(ctx, job, plan.Key))
 }
 
-func plainOutgoing(m *models.Message) bool {
+func ordinaryText(m *models.Message) bool {
 	if m.Text == "" || !utf8.ValidString(m.Text) {
 		return false
 	}
 	if strings.HasPrefix(strings.TrimFunc(m.Text, func(r rune) bool { return r == 0xfeff || (r != 0x85 && unicode.IsSpace(r)) }), "/") {
+		return false
+	}
+	return true
+}
+func plainOutgoing(m *models.Message) bool {
+	if !ordinaryText(m) {
 		return false
 	}
 	for _, entity := range m.Entities {
@@ -242,7 +256,7 @@ func (s *Service) OutgoingText(ctx context.Context, job delivery.Job, e *deliver
 	if m.From == nil || m.From.IsBot || m.From.ID != s.c.OwnerID {
 		return nil
 	}
-	if input.Edited || m.EditDate != 0 || !plainOutgoing(m) {
+	if input.Edited || m.EditDate != 0 || !ordinaryText(m) {
 		return delivery.ErrUnsupported
 	}
 	if m.Chat.Type != models.ChatTypePrivate && input.BotID != "master" {
@@ -269,6 +283,9 @@ func (s *Service) OutgoingText(ctx context.Context, job delivery.Job, e *deliver
 		}
 	}
 	if !found {
+		if s.c.Mentions == nil && !plainOutgoing(m) {
+			return delivery.ErrUnsupported
+		}
 		route, exists, err := s.store.OutgoingRoute(ctx, job, input.BotID, m.Chat.ID, int64(m.MessageThreadID), s.c.ManagementChatID)
 		if err != nil {
 			return local(err)
@@ -304,7 +321,16 @@ func (s *Service) OutgoingText(ctx context.Context, job delivery.Job, e *deliver
 				}
 			}
 		}
-		plan = Plan{Key: key, Prefix: key, Direction: "out", WhatsAppChat: route.ChatID, BotID: input.BotID, TelegramChat: m.Chat.ID, TelegramMessage: int64(m.ID), ThreadID: route.ThreadID, Route: route, Outgoing: &WhatsAppRequest{ChatID: route.ChatID, Text: m.Text, QuotedMessageID: quote}}
+		out := WhatsAppRequest{ChatID: route.ChatID, Text: m.Text, QuotedMessageID: quote}
+		if s.c.Mentions != nil {
+			resolved, err := s.c.Mentions.Outgoing(ctx, job, route.ChatID, m.Text, m.Entities)
+			if err != nil {
+				return err
+			}
+			out.Text = resolved.Text
+			out.Mentions = resolved.Mentions
+		}
+		plan = Plan{Key: key, Prefix: key, Direction: "out", WhatsAppChat: route.ChatID, BotID: input.BotID, TelegramChat: m.Chat.ID, TelegramMessage: int64(m.ID), ThreadID: route.ThreadID, Route: route, Outgoing: &out}
 		plan, err = s.store.PrepareRelay(ctx, job, plan)
 		if err != nil {
 			return local(err)
@@ -319,7 +345,7 @@ func (s *Service) OutgoingText(ctx context.Context, job delivery.Job, e *deliver
 		if json.Unmarshal(raw, &p) != nil {
 			return nil, delivery.ErrInvalid
 		}
-		r, err := s.wa.SendText(ctx, s.c.SessionID, sdk.SendTextRequest{ChatID: p.ChatID, Text: p.Text, QuotedMessageID: p.QuotedMessageID}, digest(plan.Prefix))
+		r, err := s.wa.SendText(ctx, s.c.SessionID, sdk.SendTextRequest{ChatID: p.ChatID, Text: p.Text, QuotedMessageID: p.QuotedMessageID, Mentions: p.Mentions}, digest(plan.Prefix))
 		if err != nil {
 			return nil, err
 		}

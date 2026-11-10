@@ -37,6 +37,19 @@ type BridgeRoute struct {
 	Mode           string
 }
 
+type ContactAlias struct {
+	AccountID string
+	Alias     string
+	Canonical string
+}
+
+type ContactProfile struct {
+	AccountID      string
+	PersonID       string
+	Name           string
+	MetadataSynced bool
+}
+
 type Effect struct {
 	AccountID string
 	EffectKey string
@@ -59,6 +72,20 @@ type Job struct {
 	ClaimToken string
 	LeaseUntil pgtype.Timestamptz
 	Created    pgtype.Timestamptz
+}
+
+type MentionRoster struct {
+	AccountID string
+	ChatID    string
+	Payload   []byte
+	FetchedAt int64
+}
+
+type MentionToken struct {
+	AccountID string
+	Token     string
+	ChatID    string
+	PersonID  string
 }
 
 type MessageMapping struct {

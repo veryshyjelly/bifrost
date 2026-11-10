@@ -17,9 +17,11 @@ import (
 	"time"
 
 	"github.com/go-telegram/bot/models"
+	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
 	"github.com/veryshyjelly/bifrost/internal/conversation"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
+	"github.com/veryshyjelly/bifrost/internal/mentions"
 	wa "github.com/veryshyjelly/bifrost/internal/providers/openwa"
 	tg "github.com/veryshyjelly/bifrost/internal/providers/telegram"
 	"github.com/veryshyjelly/bifrost/internal/relay"
@@ -29,7 +31,10 @@ type tgTextCall struct {
 	Bot, Text, Entities, Reply, Preview, ParseMode string
 	Chat, Thread                                   int64
 }
-type waTextCall struct{ ChatID, Text, QuotedMessageID, Key string }
+type waTextCall struct {
+	ChatID, Text, QuotedMessageID, Key string
+	Mentions                           []string
+}
 type relayFixture struct {
 	store                *Store
 	service              *relay.Service
@@ -44,9 +49,15 @@ type relayFixture struct {
 	topics               atomic.Int32
 	readFailure          atomic.Bool
 	waEntered, waRelease chan struct{}
+	groupRows            []sdk.GroupParticipant
+	groupCalls           atomic.Int32
+	groupFailure         atomic.Bool
+	memberLeft           atomic.Bool
+	memberCalls          atomic.Int32
+	failWA               int
 }
 
-func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store) *relayFixture {
+func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions ...bool) *relayFixture {
 	t.Helper()
 	f := &relayFixture{store: testStore(t), botSeq: map[string]int{}}
 	tgServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -56,6 +67,15 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store) *relayFixture 
 		if strings.HasSuffix(r.URL.Path, "createForumTopic") {
 			f.topics.Add(1)
 			fmt.Fprint(w, `{"ok":true,"result":{"message_thread_id":44,"name":"Fixture"}}`)
+			return
+		}
+		if strings.HasSuffix(r.URL.Path, "getChatMember") {
+			f.memberCalls.Add(1)
+			status := "member"
+			if f.memberLeft.Load() {
+				status = "left"
+			}
+			fmt.Fprintf(w, `{"ok":true,"result":{"status":%q,"user":{"id":200,"is_bot":true,"first_name":"Alice"}}}`, status)
 			return
 		}
 		if !strings.HasSuffix(r.URL.Path, "sendMessage") {
@@ -88,6 +108,17 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store) *relayFixture 
 	}))
 	t.Cleanup(tgServer.Close)
 	waServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, "/groups/") && r.Method == "GET" {
+			f.groupCalls.Add(1)
+			if f.groupFailure.Load() {
+				w.WriteHeader(503)
+				return
+			}
+			f.mu.Lock()
+			defer f.mu.Unlock()
+			json.NewEncoder(w).Encode(map[string]any{"id": "123@g.us", "name": "Group", "participants": f.groupRows})
+			return
+		}
 		if strings.HasSuffix(r.URL.Path, "/chats/read") {
 			f.reads.Add(1)
 			if f.readFailure.Load() {
@@ -103,13 +134,21 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store) *relayFixture 
 			w.WriteHeader(500)
 			return
 		}
-		var body struct{ ChatID, Text, QuotedMessageID string }
+		var body struct {
+			ChatID, Text, QuotedMessageID string
+			Mentions                      []string
+		}
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			t.Error(err)
 		}
 		f.mu.Lock()
 		defer f.mu.Unlock()
-		f.waCalls = append(f.waCalls, waTextCall{ChatID: body.ChatID, Text: body.Text, QuotedMessageID: body.QuotedMessageID, Key: r.Header.Get("Idempotency-Key")})
+		f.waCalls = append(f.waCalls, waTextCall{ChatID: body.ChatID, Text: body.Text, QuotedMessageID: body.QuotedMessageID, Key: r.Header.Get("Idempotency-Key"), Mentions: body.Mentions})
+		if f.failWA == len(f.waCalls) {
+			w.WriteHeader(429)
+			fmt.Fprint(w, `{"retryAfterSeconds":60}`)
+			return
+		}
 		if f.waEntered != nil {
 			close(f.waEntered)
 			<-f.waRelease
@@ -140,12 +179,19 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store) *relayFixture 
 	if wrap != nil {
 		store = wrap(f.store)
 	}
+	options := relay.Options{SessionID: "fixture-session", OwnerID: 123, ManagementChatID: -100}
+	if len(withMentions) > 0 && withMentions[0] {
+		options.Mentions, err = mentions.New(f.store, whatsapp, master, "fixture-session")
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
 	f.service, err = relay.New(store, routes, func(_ context.Context, _ string, id string) (relay.Telegram, error) {
 		if c := clients[id]; c != nil {
 			return c, nil
 		}
 		return nil, delivery.ErrInvalid
-	}, whatsapp, relay.Options{SessionID: "fixture-session", OwnerID: 123, ManagementChatID: -100})
+	}, whatsapp, options)
 	if err != nil {
 		t.Fatal(err)
 	}

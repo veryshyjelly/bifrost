@@ -11,12 +11,18 @@ import (
 	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
 	"github.com/veryshyjelly/bifrost/internal/conversation"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
+	"github.com/veryshyjelly/bifrost/internal/mentions"
+	"github.com/veryshyjelly/bifrost/internal/presentation"
 )
 
 type Telegram interface {
 	SendText(context.Context, *bot.SendMessageParams) (*models.Message, error)
 }
 type TelegramClients func(context.Context, string, string) (Telegram, error)
+type Mentions interface {
+	Incoming(context.Context, delivery.Job, string, string, []string, int64) (presentation.Value, error)
+	Outgoing(context.Context, delivery.Job, string, string, []models.MessageEntity) (mentions.Outgoing, error)
+}
 type WhatsApp interface {
 	SendText(context.Context, string, sdk.SendTextRequest, string) (*sdk.MessageResponse, error)
 	MarkRead(context.Context, string, string) error
@@ -42,9 +48,10 @@ type TelegramRequest struct {
 	ReplyTo  int64                  `json:"reply_to"`
 }
 type WhatsAppRequest struct {
-	ChatID          string `json:"chatId"`
-	Text            string `json:"text"`
-	QuotedMessageID string `json:"quotedMessageId,omitempty"`
+	ChatID          string   `json:"chatId"`
+	Text            string   `json:"text"`
+	QuotedMessageID string   `json:"quotedMessageId,omitempty"`
+	Mentions        []string `json:"mentions,omitempty"`
 }
 type Plan struct {
 	Key                                     string `json:"key"`

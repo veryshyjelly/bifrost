@@ -9,19 +9,21 @@ import (
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
+	"github.com/veryshyjelly/bifrost/internal/identity"
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
 type fixtureStore struct {
-	binding Binding
-	found   bool
+	binding    Binding
+	found      bool
+	contactErr error
 }
 
 func (f *fixtureStore) ConversationRoute(context.Context, string, string) (Route, bool, error) {
 	return Route{}, false, nil
 }
 func (f *fixtureStore) ContactBot(context.Context, string, string) (Binding, bool, error) {
-	return f.binding, f.found, nil
+	return f.binding, f.found, f.contactErr
 }
 func (f *fixtureStore) CreateInbox(context.Context, delivery.Job, Route) (Route, error) {
 	return Route{}, errors.New("unexpected write")
@@ -90,6 +92,23 @@ func TestSuppressedRoutesNeverInspectMembershipOrSend(t *testing.T) {
 		if err != nil || !target.Suppressed || tg.calls != 0 {
 			t.Fatal(target, err)
 		}
+	}
+}
+
+func TestIdentityConflictsStopRoutingBeforeProviderCalls(t *testing.T) {
+	store := &fixtureStore{contactErr: identity.ErrConflict}
+	tg := &fixtureTelegram{}
+	s, err := New(store, tg, -100, 123)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = s.SelectTarget(t.Context(), "fixture", Route{ChatID: "123@g.us", TelegramChatID: -200, Mode: Group}, "987654321@lid", Flags{})
+	if !errors.Is(err, identity.ErrConflict) || tg.calls != 0 {
+		t.Fatal(err, tg.calls)
+	}
+	_, err = s.EnsureInbox(t.Context(), delivery.Job{Event: delivery.Event{AccountID: "fixture", Kind: "wa", Stream: "wa:987654321@lid"}}, &delivery.Effects{}, "987654321@lid", "Alice")
+	if !errors.Is(err, identity.ErrConflict) || tg.calls != 0 {
+		t.Fatal(err, tg.calls)
 	}
 }
 

@@ -4,6 +4,8 @@ A personal WhatsApp–Telegram bridge being ported to Go. The [approved OpenSpec
 
 The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients, authenticated durable event admission, a fenced delivery worker, initial inbox/target routing, scoped text-relay components and diagnostic HTTP/CLI checks. **Automatic forwarding integration and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist. The [worker and initial routing](docs/WORKER.md) are tested components; `serve` does not automatically dispatch provider work yet. [Text-relay capabilities and limits](docs/TEXT-RELAY.md) are tested through the real SDKs against isolated fixtures.
 
+The [identity and mention components](docs/IDENTITY-MENTIONS.md) preserve verified aliases, native mention entities, copied group tags and roster validation. Text plans retain resolved tags across retries; the event dispatcher and mention-picker controls are still being implemented.
+
 ## Complete Compose setup
 
 ```sh
