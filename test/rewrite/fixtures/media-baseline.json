@@ -1,0 +1,2215 @@
+{
+  "baseline": "checkpoint-clojure-baseline",
+  "clock": 1794240000000,
+  "timezone": "UTC",
+  "media": {
+    "incoming-image": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "8bd5ed74f064e315bac81232da7f18bdfe73a876e3445c80dfd3e172857b907a",
+          "state": "2af348379fa35ff6e097977fffb0b1297a0a19adc521a327f57809176c4dd900",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "incoming-video": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "3a91f2d7baf73cd5cacafbd777ce7e6d5b530e35c4a830be2f5cc077e133daf6",
+          "state": "e4bd570e42a065bc9b4741808ffb937d18314792e45fa378bc30f0a5589c7834",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendVideo"
+      ],
+      "errors": []
+    },
+    "incoming-audio": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "12368c93d74078716a4df90db82120e778d045a93661dc153d63ed62b1748eee",
+          "state": "5dfea7cd3c36a2c885fcd4e265dbbb5f91181d29f760182ca961226e2a7a4f21",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendAudio"
+      ],
+      "errors": []
+    },
+    "incoming-voice": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ec914fed8eb0c1d1d31b3f902a39850019655ffefc61eb821ae3e58c69d4df47",
+          "state": "f1ae5ffbfbfc7a9567df548903d0a752516b514754d3a2999f2abe3cc0e2fbee",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendVoice"
+      ],
+      "errors": []
+    },
+    "incoming-sticker": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "074ebfe7e42158d8da1ff5b3cb6208c3a4048df49f076efbbe8a9ee8fd367322",
+          "state": "a236c9f6882bf10083ac9ec224852bbac2ee10569a016ed023376d31d423b318",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sticker",
+        "sendMessage",
+        "sendSticker"
+      ],
+      "errors": []
+    },
+    "incoming-document": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "65df18ef81bab8c01d9287ace88ae98e3420f4a6451fdaeff06ff494ceac1abf",
+          "state": "0786fafd5f260e46a7e989e8000db30f16937936ec305c32aa06d04333ed4330",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendDocument"
+      ],
+      "errors": []
+    },
+    "outgoing-photo": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "f65505df0fbdafb2aed9124ea25f93473860ffef264e4300975339b4c3d10a95",
+          "state": "766791531f0c7ec4997338d80af11d92d2c84e1d23193dde0ab0dbe8935cbae5",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-image"
+      ],
+      "errors": []
+    },
+    "outgoing-video": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "5de37a68544ecd211b558bb8f8039cbef63866762e33fbf59a706aa56574f368",
+          "state": "7f5360818b7f71b6b1048e6d52d79551e563a93152ac9b55d94205edbd13e017",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-video"
+      ],
+      "errors": []
+    },
+    "outgoing-video_note": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "5de37a68544ecd211b558bb8f8039cbef63866762e33fbf59a706aa56574f368",
+          "state": "7f5360818b7f71b6b1048e6d52d79551e563a93152ac9b55d94205edbd13e017",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-video"
+      ],
+      "errors": []
+    },
+    "outgoing-animation": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "5de37a68544ecd211b558bb8f8039cbef63866762e33fbf59a706aa56574f368",
+          "state": "7f5360818b7f71b6b1048e6d52d79551e563a93152ac9b55d94205edbd13e017",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-video"
+      ],
+      "errors": []
+    },
+    "outgoing-audio": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "81712962ef62a597b14357e7d1ce9a32a91f71518842f7e32badf083f8abac06",
+          "state": "ac6619f831ef6f95aa736b8bf0789269e0888af4eb42573638c2bc198c968b0d",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-audio"
+      ],
+      "errors": []
+    },
+    "outgoing-voice": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "808ffd8a7be2896c7fc5b47edbe783297ade8195a7eff34bda5ec069526a99f1",
+          "state": "6a933a24957cc77fd45a593a270c0e5f827eab9e32101decb5528a9ee7a991c6",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-audio"
+      ],
+      "errors": []
+    },
+    "outgoing-sticker": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "e71b39aa4a6d0f6c90634aea956fe5adbd9d2357c6647a1de2e3929dbe367375",
+          "state": "c9b2b7471236cff3d6f0efcdd87809056561a05a82178538e5ce61a2d01d6cd7",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-sticker"
+      ],
+      "errors": []
+    },
+    "outgoing-document": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "68d3752171e4ba8dd6d20bcb213d8cb057ef05981ce7cc71796fa646c9c5fae4",
+          "state": "ac6619f831ef6f95aa736b8bf0789269e0888af4eb42573638c2bc198c968b0d",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-document"
+      ],
+      "errors": []
+    },
+    "voice-converted": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "70d916daead08150c53669604e131e16ee209489b0329f25a37ff2f7b80de2fd",
+          "state": "f3d20d9deb068f8f0b106fb125caee848a1a7ebd89e72cb2e39e38f74b0abd9f",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "convert",
+        "sendVoice"
+      ],
+      "errors": []
+    },
+    "voice-conversion-failed": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "953186c13229c90860f6f603fff7c36a6b1f589d819b79952d62660fde374915",
+          "state": "db780926d2b3daf2f1500fd0f0e164fb9f69194bb3d658f7dd9966875dc053bd",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "convert",
+        "sendDocument"
+      ],
+      "errors": []
+    },
+    "image-converted": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4b6f53038f0a696413c73c5839143827c1ce969e912b145750fdee4f377ccbff",
+          "state": "a338b7598f867f13558f9de927c3a90cfda10e71d2caad2bdf2959d53d5d7315",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "convert",
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "image-conversion-failed": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "94ab47c8cda329f8b2c4e11471b719ae7bd8ebb785ff53d8dab93fe9ec8bdb92",
+          "state": "b7faa38a71815ad125f0f412f01c2ec100abd42a57f15fc787a3d321b50a170f",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "convert",
+        "sendDocument"
+      ],
+      "errors": []
+    },
+    "sticker-unsupported": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "742a977f51811799ec2fc080b454d644bd0f29d1061ea722f271b16bcada7963",
+          "state": "606461c8ebf22c2c710f5ceeb4fd7448b51b3441dd125cc74efa00096345890a",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sticker",
+        "sendMessage",
+        "sendDocument"
+      ],
+      "errors": []
+    },
+    "long-caption": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "9f1e19ebf4d68cf6d6298ff0d27218d77d17200d30b9d98f96a84aa01650b941",
+          "state": "ec76aa7e395ba6e714933730d264eefa7dc15b31b860fc05a741c8ac940b30b2",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage",
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "view-once-image": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "8bd5ed74f064e315bac81232da7f18bdfe73a876e3445c80dfd3e172857b907a",
+          "state": "c2d7820cc4ce09c24305f576678255b322007e260ddd007ece2e4152a0af47af",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "sticker-webm": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "f011d5cbe75760d94795e23f0ca6664eee4ad965c7df7697789fbf68b2ee95ab",
+          "state": "ec552d728f59e40155310a6ee0b696e3b24422e24eddd192aa752797ce5364e7",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sticker",
+        "sendMessage",
+        "sendSticker"
+      ],
+      "errors": []
+    },
+    "long-caption-native-fallback": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "72d89f80e5abffe1822b361f7a2af5ffdcc37f2257c41fb2955c11736b308615",
+          "state": "28fcc9954a7bfa67a59f42b1894ecf754c2c19dcff4d472b2ae8a1dbcf1336d7",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage",
+        "sendPhoto",
+        "sendDocument"
+      ],
+      "errors": []
+    },
+    "member-image": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "132c77447aa709e00046d609900a461c178c9a51c6fedbb3092a8674645a1136",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "8dad1123b3f7af7000e2e6f240c0bd2d7bdbc6ff82e8b02f7bcbc9dab47209ff",
+          "state": "c36977028f55e7daa589c96a32acc5eecc355ddc57cac3aebb8b50507a783b78",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getChatMember",
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "member-sticker": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "132c77447aa709e00046d609900a461c178c9a51c6fedbb3092a8674645a1136",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "e4b5e084d3e3ff3c35e09a14f24f47f4ae88b2e04b799f1ea8328f67a236a434",
+          "state": "a0368ee3253e9331994122401424fa863a02963406f9ef5d6858d2d0a55bfe9d",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getChatMember",
+        "sticker",
+        "sendMessage",
+        "sendSticker"
+      ],
+      "errors": []
+    },
+    "member-location": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "132c77447aa709e00046d609900a461c178c9a51c6fedbb3092a8674645a1136",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "3d6290b2e50c90f6a777b44f7d8ad0a3165819eba46ced89c2f50c20d3a0ffe7",
+          "state": "5bf7b71d03ff8536e1317b2d505a72eb354fe9e6fd5fc29a709f84184eb881a5",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getChatMember",
+        "sendMessage",
+        "sendLocation"
+      ],
+      "errors": []
+    },
+    "member-contact": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "132c77447aa709e00046d609900a461c178c9a51c6fedbb3092a8674645a1136",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "87d5fa6152544a64406354d05d19ea014cced73ff4a2bc0f42d0a50b1f63a357",
+          "state": "186eda83e4d8e4d92b76dd191e673f21f5bd2eb20b7d86eae7e7c92f598ef264",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getChatMember",
+        "sendContact"
+      ],
+      "errors": []
+    },
+    "member-poll": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "132c77447aa709e00046d609900a461c178c9a51c6fedbb3092a8674645a1136",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "312d8f28f46770beb0adb919711795f0c6cbc87969b5136a5f4dd9404c944083",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ebd7b5d385e732d988348b4f3f1353a2a6269a2e3fd4fc0a9551e8c0141c4c5f",
+          "state": "912194177328d2004ebdda7e4c2d4ebaf341151cae016397f038f4a9a7c9e448",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getChatMember",
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "incoming-download-404": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "01a0aad32d42e9fb1be34f6a62af03818bcc6f97cb2a394944c36cb580dcd552",
+          "state": "9c158ebec9091fbde09449aa4a7da8bf5fffcda36b42e741d6f88dcc8085f6f5",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "download",
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "incoming-download-413": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ad2cc6286a60e0d2afcaa2c94fd2a66ee31c964b2dd4a5abbac1bf4dcd7504ad",
+          "state": "b599216befeea2134b93fe2113f37c6caeb60a3b4ce87d926971bc5db020480c",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "download",
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "incoming-download-503": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "79db97b5f1881a2a8505ba9fa115926f8adf0f71743cb35bac81ab9fd870b282",
+          "state": "ab151eb3ea6eed4722a8f9c944e519d856b9a86dbfd04b93d363aa3d08f2c7af",
+          "outcome": "c86dcd23728a01e89124a12fffb6c6939c3a5476af975ddba25d380b4c10f1f9"
+        }
+      ],
+      "methods": [
+        "download"
+      ],
+      "errors": [
+        {
+          "step": 1,
+          "status": 503,
+          "message": "Attachment unavailable (503)",
+          "retry": true,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "incoming-inline-oversize": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "25a7bb093ad5b3099f451a7dd6e5a30bb2e8b2bc4ee8567b480556966c3561ca",
+          "state": "43f1376ed87e3d668e10d211e89b8327068b0e05711c6fcd60a1863e74eef94c",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "incoming-omitted-status": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "000c326a2b894087610f6c868c3dc44d6340d7cfe61154deb99d87d05fe16821",
+          "state": "5dbe0629d128af6dd52f20402b1a000169197d232bcc246daa05db2830bf0850",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "upload-400": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "dd20d9a5eda29c000313aa65fc09de10c9795077d029e144853f6e20d9ede4b8",
+          "state": "120cd8f23931ceef2239d3d2d8e1ae925b520a945d19e3dfc845051029d992aa",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        },
+        {
+          "trace": "dd20d9a5eda29c000313aa65fc09de10c9795077d029e144853f6e20d9ede4b8",
+          "state": "120cd8f23931ceef2239d3d2d8e1ae925b520a945d19e3dfc845051029d992aa",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendPhoto",
+        "sendDocument"
+      ],
+      "errors": []
+    },
+    "upload-415": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "dd20d9a5eda29c000313aa65fc09de10c9795077d029e144853f6e20d9ede4b8",
+          "state": "81ec5a90206473a66ae505f8124969fd1d42c56514f24c403846c60d56e7a075",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        },
+        {
+          "trace": "dd20d9a5eda29c000313aa65fc09de10c9795077d029e144853f6e20d9ede4b8",
+          "state": "81ec5a90206473a66ae505f8124969fd1d42c56514f24c403846c60d56e7a075",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendPhoto",
+        "sendDocument"
+      ],
+      "errors": []
+    },
+    "upload-429": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "8bd5ed74f064e315bac81232da7f18bdfe73a876e3445c80dfd3e172857b907a",
+          "state": "6354aab64405764dc17d5b76f0317af6e9c0d10ec26abbdf3152a9f443a860d1",
+          "outcome": "70352baaf034d9a7bf6859162c50aa40c8e5de756e6b5dc3b8db3857358907c3"
+        },
+        {
+          "trace": "6ee209b710e61b6a359da6731df5868b4e6ccebc2fed858ea355fbbcbdff93d8",
+          "state": "ad98adf3f9c1c8282a53104c43138e7b4642f81132367825d1cc3c8eaee1cdff",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendPhoto",
+        "sendPhoto"
+      ],
+      "errors": [
+        {
+          "step": 2,
+          "status": 429,
+          "message": "synthetic refusal",
+          "retry": true,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "telegram"
+        }
+      ]
+    },
+    "upload-503": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "8bd5ed74f064e315bac81232da7f18bdfe73a876e3445c80dfd3e172857b907a",
+          "state": "a2a5d38ab9051711dd4064077ee73c5df4c3fa14cca85108d4d1682c40137954",
+          "outcome": "1b545f91fce92d047ceec57257ac7f79a8f27a68fb29cc6ba00d841939e4713b"
+        },
+        {
+          "trace": "8bd5ed74f064e315bac81232da7f18bdfe73a876e3445c80dfd3e172857b907a",
+          "state": "e2b5f9650799c2e8e5c0e4361f54a16d371342f106246fd8b4b616a4019e61da",
+          "outcome": "e378f09b8d5330c584e83be427eaa6e566108987cab125b2bac0d1e44f01bfb8"
+        }
+      ],
+      "methods": [
+        "sendPhoto"
+      ],
+      "errors": [
+        {
+          "step": 2,
+          "status": 503,
+          "message": "synthetic refusal",
+          "retry": false,
+          "uncertain": true,
+          "delay": 5000,
+          "service": "telegram"
+        },
+        {
+          "step": 3,
+          "status": 0,
+          "message": "Uncertain external delivery; review before retrying",
+          "retry": false,
+          "uncertain": true,
+          "delay": 5000
+        }
+      ]
+    },
+    "sticker-partial-retry": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "074ebfe7e42158d8da1ff5b3cb6208c3a4048df49f076efbbe8a9ee8fd367322",
+          "state": "a293c6412b55c0b283f43c92cc0f0c7c05d7de145c1198e16a9d587bcfb1392d",
+          "outcome": "70352baaf034d9a7bf6859162c50aa40c8e5de756e6b5dc3b8db3857358907c3"
+        },
+        {
+          "trace": "57fbb64e61f1b951061a38e6cfd205a79bb7751df507da5091543762307e9612",
+          "state": "4f63be9927cf32c24fd0fc2cce76686f5aac659a01382961b9abd4272213cddc",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sticker",
+        "sendMessage",
+        "sendSticker",
+        "sticker",
+        "sendSticker"
+      ],
+      "errors": [
+        {
+          "step": 2,
+          "status": 429,
+          "message": "synthetic refusal",
+          "retry": true,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "telegram"
+        }
+      ]
+    },
+    "document-refusal-no-fallback": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "65df18ef81bab8c01d9287ace88ae98e3420f4a6451fdaeff06ff494ceac1abf",
+          "state": "f821b3c2ad70a984495a5358e9352641d89db4f2ee7a96e4af31ce32c7fb9d5f",
+          "outcome": "cabe215f97de2a23d2b8a39208397e0e6631ee7e895ae30bad8862ead9763094"
+        }
+      ],
+      "methods": [
+        "sendDocument"
+      ],
+      "errors": [
+        {
+          "step": 2,
+          "status": 400,
+          "message": "synthetic refusal",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "telegram"
+        }
+      ]
+    },
+    "upload-thread_missing": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "8bd5ed74f064e315bac81232da7f18bdfe73a876e3445c80dfd3e172857b907a",
+          "state": "36ee2b2510f7e4e476dbc766860f8f4f12e07fecc057b0481d726647ceeae8b4",
+          "outcome": "282db9db5873b8aa8640d265bf1c4f76874bdd89785669f00ea3cffb289733ec"
+        }
+      ],
+      "methods": [
+        "sendPhoto"
+      ],
+      "errors": [
+        {
+          "step": 2,
+          "status": 400,
+          "message": "synthetic refusal",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "telegram",
+          "reason": "thread_missing"
+        }
+      ]
+    },
+    "upload-reply_missing": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "8bd5ed74f064e315bac81232da7f18bdfe73a876e3445c80dfd3e172857b907a",
+          "state": "29db290812465a0fb018f8afa3d4241eac73b23ab6569f3e63a02fa54a885854",
+          "outcome": "747b4104506a4468472bb740ca49113dbcc3064a66e51a870ae839534969ccb7"
+        }
+      ],
+      "methods": [
+        "sendPhoto"
+      ],
+      "errors": [
+        {
+          "step": 2,
+          "status": 400,
+          "message": "synthetic refusal",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "telegram",
+          "reason": "reply_missing"
+        }
+      ]
+    },
+    "archive-400": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "7105c4fc22c65e71dc1f4c7921e7027918ad89d4b1843a509c103d1294c228f8",
+          "state": "55bff84dd9b93d734ad8d12a4677ee5a6700260cc82d07dc2265eaf3329fa0a2",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "archive-403": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "7105c4fc22c65e71dc1f4c7921e7027918ad89d4b1843a509c103d1294c228f8",
+          "state": "36845dfcc62a97be7cdfbf9c74050bc3b59298f63d917b8eab093659e17d3639",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "archive-404": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "7105c4fc22c65e71dc1f4c7921e7027918ad89d4b1843a509c103d1294c228f8",
+          "state": "a2e0456dce88cdc8ee9c2c33d50d3e65e9293909999e3e03c9bc79f8aa4509c8",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "archive-503": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ee15fd81997e5500af2b033152795b13b6f29d1c008b317cddad670bee40f14d",
+          "state": "65c2cc2834cbdbed14a4337f8c43d4d1fea76833519e18c71ba4616054dd9e35",
+          "outcome": "50b45138515ac1d09f650bc84e8e78fd19a0fafd15b6e10c0729a250da0ad2ca"
+        }
+      ],
+      "methods": [
+        "getFile"
+      ],
+      "errors": [
+        {
+          "step": 2,
+          "status": 503,
+          "message": "synthetic refusal",
+          "retry": true,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "archive-reuse": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "83d67030d329c607b76a3a66a833211f2a9dc87f3671c4cfed834b0e37d85cf6",
+          "state": "408e52908c7c1a8eba4ea695ca875498dec506ff0f47a2ab216af8e24eaae7e3",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sendPhoto"
+      ],
+      "errors": []
+    },
+    "sticker-regeneration-same": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "b16c96106214aec08fe229236aac8f1c0658c0f10d666f1679da3699f6795c97",
+          "state": "75a18154b79f5503bd9ff49bcd89565f858a54c4c02f16a31962cb0e4812b3f7",
+          "outcome": "15d405be278aeba737a15439919376cd0a6fa5e1fabf8677c2281ac669c704df"
+        },
+        {
+          "trace": "b16c96106214aec08fe229236aac8f1c0658c0f10d666f1679da3699f6795c97",
+          "state": "5ff2e7cbaeb65b7fce20e48b14295d5915f9346f2b96317e3ac9f414751c1869",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        },
+        {
+          "trace": "b16c96106214aec08fe229236aac8f1c0658c0f10d666f1679da3699f6795c97",
+          "state": "5ff2e7cbaeb65b7fce20e48b14295d5915f9346f2b96317e3ac9f414751c1869",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "d6c8b3b1a37825a6b6b9191bf9f9a93c178d6f4bfdca59e6eda6631fb428ac4b",
+          "state": "c8648b185752442bdf41b12ced84acc40202dbd19f9360301aec74821fe190a0",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-sticker",
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-sticker"
+      ],
+      "errors": [
+        {
+          "step": 3,
+          "status": 429,
+          "message": "synthetic refusal",
+          "retry": true,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "openwa"
+        }
+      ]
+    },
+    "sticker-regeneration-changed": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "b16c96106214aec08fe229236aac8f1c0658c0f10d666f1679da3699f6795c97",
+          "state": "7c99cc87dd6cd3de77f96ef2ebcc88abe681ff823d4bc49dbc7049bddae11abd",
+          "outcome": "15d405be278aeba737a15439919376cd0a6fa5e1fabf8677c2281ac669c704df"
+        },
+        {
+          "trace": "b16c96106214aec08fe229236aac8f1c0658c0f10d666f1679da3699f6795c97",
+          "state": "dab9c8d75f61a7613290764bf818ed3554368e5b02749d39e9faa2a5f361578d",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        },
+        {
+          "trace": "b16c96106214aec08fe229236aac8f1c0658c0f10d666f1679da3699f6795c97",
+          "state": "dab9c8d75f61a7613290764bf818ed3554368e5b02749d39e9faa2a5f361578d",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ee9483840a7c8d1d6e4210f4b7eebd6f89e8808e93f2649dd109e537143853b3",
+          "state": "3516842bf107291a648b179231cd3576193891933fc1d9bd9ede862e96990b98",
+          "outcome": "6b5dd06334d7803d0e30762f9d88d6c2a36ddb63c4a8f72ef7e8f2c4f3a1e7db"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-sticker",
+        "getFile",
+        "download",
+        "sticker"
+      ],
+      "errors": [
+        {
+          "step": 3,
+          "status": 429,
+          "message": "synthetic refusal",
+          "retry": true,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "openwa"
+        },
+        {
+          "step": 6,
+          "status": 409,
+          "message": "Prepared sticker changed; inspect before retrying",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "outgoing-sticker-unsupported": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "316ec0259254d50f9b0345e0dff42f61e6cbdf9105d8940d33139127ce6abcf5",
+          "state": "803e7c991b16bcb2558e731eb0f1256e415651a4009196a63364d42b74632ce9",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-document"
+      ],
+      "errors": []
+    },
+    "outgoing-sticker-frozen-fallback": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "316ec0259254d50f9b0345e0dff42f61e6cbdf9105d8940d33139127ce6abcf5",
+          "state": "f1274ebc9e8de6240f0524a98f233c6dd9a8db269a013007cfd528d19c0da521",
+          "outcome": "15d405be278aeba737a15439919376cd0a6fa5e1fabf8677c2281ac669c704df"
+        },
+        {
+          "trace": "9e92b2fc488c74a33f6cf3e36b7f1692ac744d429f2fc5d9e858fd932d3c2387",
+          "state": "4b6141f8e7b9770ba69b670e1f276d2742ae65cfd022a62064aa3ae7003748a5",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-document",
+        "messages/send-document"
+      ],
+      "errors": [
+        {
+          "step": 3,
+          "status": 429,
+          "message": "synthetic refusal",
+          "retry": true,
+          "uncertain": false,
+          "delay": 5000,
+          "service": "openwa"
+        }
+      ]
+    },
+    "outgoing-sticker-tgs": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "2fd0d2e68cbcaf4273936fbe3896408259f21ef07a3ddbded0d7e584d9ebb936",
+          "state": "f69abca21b09877ba238a6c74e8b999239e86ae02d98e601cd16371c2dfdf723",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-sticker"
+      ],
+      "errors": []
+    },
+    "outgoing-sticker-webm": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "3755de63770025d71939feb3f82f0206366655e738d727b348f77df38866ef43",
+          "state": "15dfec6d517a207fb5420e80aa44327406220c1906716d3b896ecff12526bd3a",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "sticker",
+        "messages/send-sticker"
+      ],
+      "errors": []
+    },
+    "outgoing-missing-id": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "f415e0fe25b9fcd2fdc868a787a99cf1fd136b989480e34f9bd9170f1e7b58b2",
+          "state": "256087c182817f2251dff1cb10c8951979a9ef8455bbd4523792a49be3ba363f",
+          "outcome": "1e104c480b811836173d3e166c20f082f0f0916816c997cc1eacb25c62cf2512"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-document"
+      ],
+      "errors": [
+        {
+          "step": 3,
+          "status": 0,
+          "message": "WhatsApp did not return a message ID; inspect before retrying",
+          "retry": false,
+          "uncertain": true,
+          "delay": 5000
+        }
+      ]
+    },
+    "outgoing-media-quote": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "98870bd536bdb1928a0e203b3950d31cd8d9f8eb1719694c12411a3f8050b583",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "98870bd536bdb1928a0e203b3950d31cd8d9f8eb1719694c12411a3f8050b583",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "88b39847bfb5dc80e4934f69a1b732d071a832acabfadc63b7ff1e4fe53d3847",
+          "state": "2c095788bbe4d77183b726cadf1ad8e9a60376e5ada72ca9357005be3dc18f06",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "getFile",
+        "download",
+        "messages/send-document"
+      ],
+      "errors": []
+    },
+    "location": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "82c4f67d9ac41f97700f6080c6f73da61c1956b3f342e75a91dbb294caa47868",
+          "state": "92dfcf16da80ff79bc6378805f32f763cd6a3a306771f2e6df90fddafc6ca879",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage",
+        "sendLocation"
+      ],
+      "errors": []
+    },
+    "contact": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "af7c998403282a9b6eca89b69dee379cba9142612a40b550578f6dd06a6f0d33",
+          "state": "3b80d6044ff91c2a632d214bb4a8200241b8cc366c3db9b091c03342a29c7e53",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage",
+        "sendContact"
+      ],
+      "errors": []
+    },
+    "contact-malformed": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "10ea0a45ca433e30fdb4c4587b89e7c8f1578168e0d354d48bb6944f787a7fa8",
+          "state": "ce147eca3741113f92c7d514800a2cfc81d2677beed29620fceea9d7b08a5dbe",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "poll": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "e880c8ca561d1a3789de7a125faa4ecc7d79b6876e559f0e574831349553437e",
+          "state": "09788637ba3628def59d34c3e94bceb06e8a749b3945fdb4a25255ec675f33ec",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "unsupported": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "12d304c81039e8b3c467aab6355d5e7b3e2c857a131b147393d7e011977c08a1",
+          "state": "7c6e130ad2530a1b6b3097d5dfb5e25f6c3215682a5a094b7b2f283ec5bc2fe8",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "sendMessage"
+      ],
+      "errors": []
+    },
+    "outgoing-location": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "6a9eeb1fb90e63f6c07d3b5ed3b8a143fe4085166448b1877cfb63caebe64acd",
+          "state": "5c3569b8938b4ee022522bdefa074c3e18ef187c7a612bb733c21ed2fe297101",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "messages/send-location"
+      ],
+      "errors": []
+    },
+    "outgoing-contact": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "583c794e4c5061f228abd86bc838deffea5b51468e5a728b0f739b0c34b32ad1",
+          "state": "5c3569b8938b4ee022522bdefa074c3e18ef187c7a612bb733c21ed2fe297101",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "messages/send-contact"
+      ],
+      "errors": []
+    },
+    "outgoing-poll": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "13935f2ffaa4eecb99c0fa9da5a20fe5185bcc935412119a31739b3350534bea",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "10fe19997a920f254035ab0befab06e18d07161b43abf93444719187f3740e80",
+          "state": "5c3569b8938b4ee022522bdefa074c3e18ef187c7a612bb733c21ed2fe297101",
+          "outcome": "76e9dd6dee8295f595d24f41801f3a81f1eedc9fbda94a5c227e9853ba06d99c"
+        }
+      ],
+      "methods": [
+        "messages/send-poll"
+      ],
+      "errors": []
+    },
+    "telegram-oversize": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "c292706ac864b1635ee6e8cb3af2cbfb2950e6d88e403c2ad6388e3e772168ea"
+        }
+      ],
+      "methods": [],
+      "errors": [
+        {
+          "step": 0,
+          "status": 413,
+          "message": "Attachment exceeds configured bridge media limit",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "shared-file": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ee15fd81997e5500af2b033152795b13b6f29d1c008b317cddad670bee40f14d",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "2b9363623aee05cb2663e33c63e075f2c0f3cda4382755e3d0f33e01cb0a367d"
+        }
+      ],
+      "methods": [
+        "getFile"
+      ],
+      "errors": []
+    },
+    "shared-symlink-escape": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ee15fd81997e5500af2b033152795b13b6f29d1c008b317cddad670bee40f14d",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "08c7f830561b9e97608d81fe3c1820c2f51e733c41e615ebf6540066a7878f93"
+        }
+      ],
+      "methods": [
+        "getFile"
+      ],
+      "errors": [
+        {
+          "step": 1,
+          "status": 400,
+          "message": "Telegram returned a file outside its shared directory",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "shared-outside": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ee15fd81997e5500af2b033152795b13b6f29d1c008b317cddad670bee40f14d",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "08c7f830561b9e97608d81fe3c1820c2f51e733c41e615ebf6540066a7878f93"
+        }
+      ],
+      "methods": [
+        "getFile"
+      ],
+      "errors": [
+        {
+          "step": 1,
+          "status": 400,
+          "message": "Telegram returned a file outside its shared directory",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "shared-oversize": {
+      "transitions": [
+        {
+          "trace": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "4c9cbce3abd214e0e57f2766b4198aa53f38a64f8e8673215efa9d31961217b9"
+        },
+        {
+          "trace": "ee15fd81997e5500af2b033152795b13b6f29d1c008b317cddad670bee40f14d",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "c292706ac864b1635ee6e8cb3af2cbfb2950e6d88e403c2ad6388e3e772168ea"
+        }
+      ],
+      "methods": [
+        "getFile"
+      ],
+      "errors": [
+        {
+          "step": 1,
+          "status": 413,
+          "message": "Attachment exceeds configured bridge media limit",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "stream-exact-cap": {
+      "transitions": [
+        {
+          "trace": "323f4d64f91f39f0acb683cde30825c2a54daa4a13c8a720f19154fb51a66099",
+          "state": "4a75ec8562df591421498aec43eaa1cf7567fb342b7574eff75923e54566df72",
+          "outcome": "a9466d6ae762bffa8dfe934758d0d540d50ff31fd0478b3f3ba6aaf177b097f6"
+        }
+      ],
+      "methods": [
+        "download"
+      ],
+      "errors": []
+    },
+    "header-over-cap": {
+      "transitions": [
+        {
+          "trace": "323f4d64f91f39f0acb683cde30825c2a54daa4a13c8a720f19154fb51a66099",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "c292706ac864b1635ee6e8cb3af2cbfb2950e6d88e403c2ad6388e3e772168ea"
+        }
+      ],
+      "methods": [
+        "download"
+      ],
+      "errors": [
+        {
+          "step": 0,
+          "status": 413,
+          "message": "Attachment exceeds configured bridge media limit",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "stream-over-cap": {
+      "transitions": [
+        {
+          "trace": "323f4d64f91f39f0acb683cde30825c2a54daa4a13c8a720f19154fb51a66099",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "c292706ac864b1635ee6e8cb3af2cbfb2950e6d88e403c2ad6388e3e772168ea"
+        }
+      ],
+      "methods": [
+        "download"
+      ],
+      "errors": [
+        {
+          "step": 0,
+          "status": 413,
+          "message": "Attachment exceeds configured bridge media limit",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "stream-interrupted": {
+      "transitions": [
+        {
+          "trace": "323f4d64f91f39f0acb683cde30825c2a54daa4a13c8a720f19154fb51a66099",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "bf59e6b8f959dece477c21a2cc027f27cc21f2d50219a04b812ebd042dcd29d7"
+        }
+      ],
+      "methods": [
+        "download"
+      ],
+      "errors": [
+        {
+          "step": 0,
+          "message": "synthetic interrupted stream"
+        }
+      ]
+    },
+    "download-refused": {
+      "transitions": [
+        {
+          "trace": "323f4d64f91f39f0acb683cde30825c2a54daa4a13c8a720f19154fb51a66099",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "40e3bcfde064afb786712c3ec2930e79def133d5375f1302e5ea28a98da6aaa0"
+        }
+      ],
+      "methods": [
+        "download"
+      ],
+      "errors": [
+        {
+          "step": 0,
+          "status": 403,
+          "message": "Attachment unavailable (403)",
+          "retry": false,
+          "uncertain": false,
+          "delay": 5000
+        }
+      ]
+    },
+    "download-timeout": {
+      "transitions": [
+        {
+          "trace": "323f4d64f91f39f0acb683cde30825c2a54daa4a13c8a720f19154fb51a66099",
+          "state": "f7fc34802a619978955d262a21bb3c8f496e86192f50f7e651eec6350ba9ee78",
+          "outcome": "d9f15b73ca8719b74768c269db0f60b48fcf56a5ec14448f995fac298f3e643a"
+        }
+      ],
+      "methods": [
+        "download"
+      ],
+      "errors": [
+        {
+          "step": 0,
+          "message": "synthetic download failure"
+        }
+      ]
+    }
+  },
+  "transport": [
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "dcccf377d2619f3eaacf8ad5f579b7994c4b013ba2bc0e88fdb84a2be09f36bf",
+      "error": {
+        "message": "API refused request (429)",
+        "status": 429,
+        "retry": true,
+        "uncertain": false,
+        "delay": 7000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "7ec5780549e372e10f98a20b90f88885a663f20c20b58519668027f5b10d73a7",
+      "error": {
+        "message": "API refused request (429)",
+        "status": 429,
+        "retry": true,
+        "uncertain": false,
+        "delay": 2000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "e87ef39246d4acc4c4d702171ca31539e5e8bbf755810add50d1007393815fba",
+      "error": {
+        "message": "API refused request (409:IDEMPOTENCY_OUTCOME_UNKNOWN)",
+        "status": 409,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "8f0305135fd7d82f2aaec8e67a1a27ae6fa97c3a7830b01ec9d1e9f2d9dba449",
+      "error": {
+        "message": "API refused request (500)",
+        "status": 500,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "71e7064e76ddc4b2c402e1466a21f643f6d2bbae8d294a95e128da591de8d67e",
+      "error": {
+        "message": "API refused request (501)",
+        "status": 501,
+        "retry": false,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "8ef910f19b890b57bd3f615e6a6e29fec38d7db279a0b4e45c0047f4fa2029e4",
+      "error": {
+        "message": "Invalid API response",
+        "status": 200,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "763188b1bd41da07b1aced7e3838c94a371f1753af1c5bda8bfdabf4cc8a4980",
+      "error": {
+        "message": "Remote service is not reachable yet",
+        "status": 0,
+        "retry": true,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "9b1dcb76c7a5d5518936b84909e10cac6b0323329c6a95ecd72a06171b442567",
+      "error": {
+        "message": "Remote request failed; inspect delivery outcome",
+        "status": 0,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "3f6b2c758e284ba34fadebe09cce473e5aef4eefd361deaa347fc61abf72c65e",
+      "outcome": "8c5a36e8ede023f001632c73c2a439cf99b6e4110f821fc72e0a84b4530df93f",
+      "error": {
+        "message": "API refused request (400) [reply_missing]",
+        "status": 400,
+        "retry": false,
+        "uncertain": false,
+        "delay": 5000,
+        "reason": "reply_missing",
+        "service": "telegram"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "8958b2be4d326141d7330a224c484f702c833ab48c7ca5f8211a509fc4310253",
+      "error": {
+        "message": "API refused request (429)",
+        "status": 429,
+        "retry": true,
+        "uncertain": false,
+        "delay": 7000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "f4fe2a165ba80d4230eb089da6b9993bba0b4901089c55481ba6547c0be21b30",
+      "error": {
+        "message": "API refused request (429)",
+        "status": 429,
+        "retry": true,
+        "uncertain": false,
+        "delay": 2000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "9d239aca94319c151b883c44c65b28173a9afb2d354600b00a22e0f55e9b82dd",
+      "error": {
+        "message": "API refused request (409:IDEMPOTENCY_OUTCOME_UNKNOWN)",
+        "status": 409,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "54a6cd67f8d148556781f1d67302d1b0afbb1ea13358e394cd7fdf4d849c5f33",
+      "error": {
+        "message": "API refused request (500)",
+        "status": 500,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "eeb77b8cda29362c224a17f52dbc722d67fb65334a9e7fabfa2530d2eabdc594",
+      "error": {
+        "message": "API refused request (501)",
+        "status": 501,
+        "retry": false,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "9e4eb35eb57cda3e0bac9b8bc02d9ebb2e4671b3ab27d2289ee100d55baeb07c",
+      "error": {
+        "message": "Invalid API response",
+        "status": 200,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "c171134824b617c8f8f663a808de3bce549b7b5deea75923a075e3e0f61bccfd",
+      "error": {
+        "message": "Remote service is not reachable yet",
+        "status": 0,
+        "retry": true,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "2db2bd98bb176246aa0b66e058120b5ee3abf6155963a30c718cd6fff8e88efd",
+      "error": {
+        "message": "Remote request failed; inspect delivery outcome",
+        "status": 0,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "96a8df7b9e567a78a02256be1265bdc433332dfac4598d40dd8c472f7eb2868f",
+      "outcome": "b43147559f20a83311597d45da30d867518f2cb6fb62b4bd4bfb8bf7e8122dce",
+      "error": {
+        "message": "API refused request (400) [reply_missing]",
+        "status": 400,
+        "retry": false,
+        "uncertain": false,
+        "delay": 5000,
+        "reason": "reply_missing",
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "8958b2be4d326141d7330a224c484f702c833ab48c7ca5f8211a509fc4310253",
+      "error": {
+        "message": "API refused request (429)",
+        "status": 429,
+        "retry": true,
+        "uncertain": false,
+        "delay": 7000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "f4fe2a165ba80d4230eb089da6b9993bba0b4901089c55481ba6547c0be21b30",
+      "error": {
+        "message": "API refused request (429)",
+        "status": 429,
+        "retry": true,
+        "uncertain": false,
+        "delay": 2000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "9d239aca94319c151b883c44c65b28173a9afb2d354600b00a22e0f55e9b82dd",
+      "error": {
+        "message": "API refused request (409:IDEMPOTENCY_OUTCOME_UNKNOWN)",
+        "status": 409,
+        "retry": false,
+        "uncertain": true,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "b14d9e8b625af1cedccc384ba2533c07df5e8e7b43558b7349b0a4431c1c8d8f",
+      "error": {
+        "message": "API refused request (500)",
+        "status": 500,
+        "retry": true,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "6207af9466b372fe8da958182b3301ec71472d8d14df0b32ffb6c54467041d69",
+      "error": {
+        "message": "API refused request (501)",
+        "status": 501,
+        "retry": true,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "fa1e606c6f85cb7969cbfbf1730ccf33c7f33a6b200e210624299577f7bc05f2",
+      "error": {
+        "message": "Invalid API response",
+        "status": 200,
+        "retry": true,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "c171134824b617c8f8f663a808de3bce549b7b5deea75923a075e3e0f61bccfd",
+      "error": {
+        "message": "Remote service is not reachable yet",
+        "status": 0,
+        "retry": true,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "e664cb06a60a5669468fa5702fba7dfd16df94c686c92c9b27daa0c557400dbc",
+      "error": {
+        "message": "Remote request failed; inspect delivery outcome",
+        "status": 0,
+        "retry": true,
+        "uncertain": false,
+        "delay": 5000,
+        "service": "openwa"
+      }
+    },
+    {
+      "trace": "7534f24b267265cdca2627ce18b4537b8a373ca68793dae48b36ab2da4e02d4b",
+      "outcome": "b43147559f20a83311597d45da30d867518f2cb6fb62b4bd4bfb8bf7e8122dce",
+      "error": {
+        "message": "API refused request (400) [reply_missing]",
+        "status": 400,
+        "retry": false,
+        "uncertain": false,
+        "delay": 5000,
+        "reason": "reply_missing",
+        "service": "openwa"
+      }
+    }
+  ]
+}

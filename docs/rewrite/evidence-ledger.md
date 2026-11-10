@@ -77,3 +77,9 @@ Native Clojure MCP evaluation is now available and verified against Bun 1.4.2, w
 Latest local/Linux full-suite checks are recorded in `evidence/checks/` with exact source fingerprints. All eight release gates remain pending; this slice does not complete media, commands/registration/groups/history/Status/metadata, codecs, lifecycle, live canary or deployment validation.
 
 Recorded completion of this slice: **278 pass, 11 skip, 0 fail** on both macOS/Bun and isolated Linux/Bun (289 cases across 25 files). The frozen original independently reports **234 pass, 11 skip, 0 fail** in the same Linux image. The 14 SIGKILL scenarios exercise 28 crashed writer processes and 56 old/new recovery continuations. Logs and immutable image/source identifiers are in the linked check reports; the 11 original codec/transfer skips remain outstanding.
+
+## Media/structured transport recordings
+
+[Task 1.5 evidence](media-baseline.md) adds 73 original-only media/structured scenarios and 27 transport failure scenarios, reproduced twice in independent subprocesses. The checked-in manifest fingerprints exact ordered traces, returned metadata and per-transition durable state; complete synthetic transcripts are regenerated in ignored `data/rewrite/evidence/media-baseline.json`. Real download/stream limits and shared-file containment execute original code; codec outputs remain scripted. Candidate media, codec validation and all eight acceptance gates remain pending.
+
+The full suite now reports **279 pass, 11 skip, 0 fail** (290 cases across 26 files) on macOS/Bun and isolated Linux/Bun with networking disabled. The initial sandboxed local attempt could not bind its nine existing loopback tests; the loopback-enabled rerun and Linux run passed without source changes for that environmental restriction. Current source fingerprints and Linux image identity are in `evidence/checks/local.json` and `evidence/checks/linux.json`.

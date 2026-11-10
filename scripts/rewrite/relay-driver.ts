@@ -1,4 +1,5 @@
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 type CrashFixture = { point?: string; method?: string; journal?: string };
 
@@ -63,13 +64,19 @@ export function providers(makeError: (error: any) => Error, settings: CrashFixtu
       const plan = planned(method); if (plan.matched) return accepted(method, body, plan.result);
       if (method === 'getChatMember') return { status: members.has(String(body.user_id)) ? 'member' : 'left' };
       if (method === 'createForumTopic') return { message_thread_id: ++sequence };
-      if (method === 'sendMessage') return accepted(method, body, { message_id: ++sequence, chat: { id: body.chat_id }, text: body.text, entities: body.entities });
+      if (['sendMessage', 'sendLocation', 'sendContact'].includes(method)) return accepted(method, body, { message_id: ++sequence, chat: { id: body.chat_id }, text: body.text, entities: body.entities });
       throw new Error(`Unscripted Telegram call: ${method}`);
+    },
+    async upload(token: string, method: string, field: string, path: string, name: string, body: any) {
+      const bytes = readFileSync(path);
+      calls.push({ token, method, field, name, file: { size: bytes.length, base64: bytes.toString('base64'), sha256: createHash('sha256').update(bytes).digest('hex') }, body });
+      const plan = planned(method);
+      return accepted(method, body, plan.matched ? plan.result : { message_id: ++sequence, chat: { id: body.chat_id } });
     },
     async ow(path: string, body?: any, key?: string, method?: string) {
       calls.push({ method: path, body, key, ...(method === undefined ? {} : { httpMethod: method }) });
       const plan = planned(path); if (plan.matched) return accepted(path, body, plan.result);
-      if (['messages/reply', 'messages/send-text', 'chats/read'].includes(path)) return accepted(path, body, { messageId: 'wa-' + (++sequence) });
+      if (['messages/reply', 'messages/send-text', 'chats/read', 'messages/send-image', 'messages/send-video', 'messages/send-audio', 'messages/send-sticker', 'messages/send-document', 'messages/send-location', 'messages/send-contact', 'messages/send-poll'].includes(path)) return accepted(path, body, { messageId: 'wa-' + (++sequence) });
       throw new Error(`Unscripted OpenWA call: ${path}`);
     },
   };
@@ -91,7 +98,7 @@ export async function exercise(dependencies: any, fixture: any, input: any) {
       if (['put', 'sql', 'map', 'reopen'].includes(step.op)) value = true;
       // Void workflow results are deliberately not a transport contract. The
       // observed calls and every durable table are compared after each step.
-      result = ['put', 'sql', 'map', 'plan', 'members', 'advance', 'reopen', 'incomingMention', 'outgoingMention', 'acceptWhatsApp', 'acceptTelegram'].includes(step.op) ? { value } : {};
+      result = ['put', 'sql', 'map', 'plan', 'members', 'advance', 'reopen', 'incomingMention', 'outgoingMention', 'acceptWhatsApp', 'acceptTelegram', 'fromWhatsApp', 'fromTelegram'].includes(step.op) ? { value } : {};
     } catch (error) { result = { error: dependencies.error(error) }; }
     results.push({ ...result, calls: structuredClone(fixture.calls), logs: structuredClone(fixture.logs), state: dependencies.snapshot() });
   }
