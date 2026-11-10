@@ -9,15 +9,30 @@ export class MentionError extends Error {}
 const cleanName = (name: string) => Array.from(String(name).replace(/[{}|\r\n\t\x00-\x1f]/g, ' ').trim()).slice(0, 48).join('');
 const local = (id: string) => id.split('@')[0].split(':')[0];
 const person = (id: unknown): id is string => typeof id === 'string' && /^\d+(?::\d+)?@(?:c\.us|s\.whatsapp\.net|lid)$/.test(id);
+const displayName = (value: unknown) => {
+  const name = typeof value === 'string' ? cleanName(value) : '';
+  return !name || person(name) || /^[+\d\s().-]+$/.test(name) ? '' : name;
+};
+const mentionId = (value: unknown) => {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return undefined;
+  const wid = value as { _serialized?: unknown; $1?: unknown };
+  return wid._serialized ?? wid.$1;
+};
 
 export class Mentions {
   constructor(public b: Bridge) {}
   get session() { return digest(this.b.c.account); }
   canonical(id: string) { return this.b.store.canonical(id.replace(/:\d+@/, '@')); }
   cached(chat: string) { return this.b.store.get('sync-group', `${this.session}:${chat}`); }
-  contact(id: string) { return this.b.store.all('contact').find(c => this.canonical(c.id) === this.canonical(id)); }
+  contacts(id: string) { return this.b.store.all('contact').filter(c => this.canonical(c.id) === this.canonical(id)); }
+  contact(id: string) {
+    const matches = this.contacts(id);
+    return matches.find(c => c.bot && this.b.store.get('bot', c.bot)) || matches.find(c => c.id === this.canonical(id)) || matches[0];
+  }
   name(id: string, chat: string) {
-    return cleanName(this.contact(id)?.name || this.cached(chat)?.members.find((m: Json) => this.canonical(m.id) === this.canonical(id))?.name || local(id));
+    return displayName(this.contact(id)?.name) || this.contacts(id).map(c => displayName(c.name)).find(Boolean)
+      || displayName(this.cached(chat)?.members.find((m: Json) => this.canonical(m.id) === this.canonical(id))?.name) || local(id);
   }
   async roster(chat: string, allowCached = false) {
     const old = this.cached(chat);
@@ -42,12 +57,15 @@ export class Mentions {
     this.b.store.put('mention-token', key, { session: this.session, chat, person: id });
     return `@{${this.name(id, chat)}|${key}}`;
   }
-  async incoming(body: string, ids: string[] | undefined, chat: string, destination: string, key: string): Promise<Formatted> {
+  async incoming(body: string, ids: unknown[] | undefined, chat: string, destination: string, key: string): Promise<Formatted> {
     body = String(body || '');
-    const cacheKey = digest(JSON.stringify([this.session, key, body, ids || []]));
+    // Older history snapshots contain WhatsApp WID objects even though OpenWA documents strings.
+    // Normalize before freezing the rendering so retries use the same identity and cached result.
+    const mentioned = (Array.isArray(ids) ? ids : []).map(mentionId).filter(person);
+    const cacheKey = digest(JSON.stringify([this.session, key, body, mentioned]));
     const saved = this.b.store.get('mention-render', cacheKey); if (saved) return saved;
     const targets = new Map<string, Set<string>>();
-    for (const id of (Array.isArray(ids) ? ids : []).filter(person)) {
+    for (const id of mentioned) {
       const canonical = this.canonical(id);
       for (const candidate of [id, canonical, ...this.b.store.db.prepare('SELECT alias FROM aliases WHERE canonical=?').all(canonical).map(row => String(row.alias))]) {
         const n = local(candidate), matches = targets.get(n) || new Set(); matches.add(canonical); targets.set(n, matches);
@@ -60,7 +78,7 @@ export class Mentions {
       const id = [...people][0];
       let tag = rendered.get(id);
       if (!tag) {
-        const contact = this.contact(id), bot = contact?.bot && this.b.store.get('bot', contact.bot), label = '@' + this.name(id, chat);
+        const contact = this.contact(id), bot = contact?.bot && this.b.store.get('bot', contact.bot), label = '@' + this.name(id, chat).replace(/^@+/, '');
         let member = false;
         if (bot && destination.startsWith('-')) {
           try { const response = await this.b.api.tg(this.b.token('master'), 'getChatMember', { chat_id: destination, user_id: Number(contact.bot) }); member = ['member', 'administrator', 'creator'].includes(response.status); }

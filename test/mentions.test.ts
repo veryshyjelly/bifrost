@@ -95,6 +95,52 @@ test('manual history renders mention entities alongside native dates and keeps s
   assert.ok(imported.body.entities.some(e => e.type === 'text_mention'));
 });
 
+test('saved history WID objects resolve names and native mention entities without fetching history again', async t => {
+  const { bridge, api, store } = fixture(t);
+  api.rows = [event('saved-mentions', { body: 'Hi @12025550123 and @987654321; literal @123456',
+    mentionedIds: [{ server: 'c.us', user: '12025550123', _serialized: alice }, { $1: lid }] }).data];
+  const run = bridge.conversationHistory.request(group, { chat: '-200' }, 1, 'object-history', false);
+  await bridge.history({ run: run.id }, 'fetch-objects');
+  api.rows = []; // Only the persisted metadata plan is available during delivery.
+  const job = store.db.prepare("SELECT dedup,payload FROM jobs WHERE type='history-message'").get()!;
+  await bridge.conversationHistory.process({ type: 'history-message', dedup: job.dedup, payload: JSON.parse(job.payload as string) });
+  const imported = sent(api).find(call => call.body.entities?.some((e: any) => e.type === 'date_time' && e.date_time_format === 't'))!;
+  assert.ok(imported.body.text.includes('Hi @Alice and @Hidden; literal @123456'));
+  const tags = imported.body.entities.filter((e: any) => ['text_mention', 'text_link'].includes(e.type) && imported.body.text.slice(e.offset, e.offset + e.length).startsWith('@'));
+  assert.deepEqual(tags.map((e: any) => imported.body.text.slice(e.offset, e.offset + e.length)), ['@Alice', '@Hidden']);
+  assert.equal(tags[0].type, 'text_mention'); assert.equal(tags[0].user.id, 42);
+  assert.equal(tags[1].url, 'https://wa.me/');
+  assert.equal(store.byWhatsApp(group, 'saved-mentions').length, 1);
+  assert.equal(api.calls.filter(call => call.path?.includes('/history?')).length, 1);
+});
+
+test('serialized mention IDs and string IDs share frozen rendering, while malformed IDs never authorize replacements', async t => {
+  const { bridge, api } = fixture(t);
+  const first = await bridge.mentions.incoming('😀 @12025550123 @987654321', [{ _serialized: alice }, { $1: lid }], group, '-200', 'wid-retry');
+  api.members.clear();
+  assert.deepEqual(await bridge.mentions.incoming('😀 @12025550123 @987654321', [alice, lid], group, '-200', 'wid-retry'), first);
+  const malformed = await bridge.mentions.incoming('@12025550123 @987654321', [null, {}, { _serialized: 123 }, { user: '12025550123', server: 'c.us' }, { _serialized: 'bad@g.us' }], group, '-200', 'bad-wids');
+  assert.equal(malformed.text, '@12025550123 @987654321'); assert.deepEqual(malformed.entities, []);
+});
+
+test('device contact placeholders do not hide cached names or a registered bot for the same person', async t => {
+  const { bridge, store } = fixture(t);
+  store.put('contact', '12025550123:7@c.us', { name: '12025550123:7@c.us' });
+  store.put('contact', '987654321:2@lid', { name: '987654321:2@lid' });
+  store.put('contact', lid, { name: '@Hidden' });
+  const value = await bridge.mentions.incoming('Hi @12025550123 and @987654321', [{ _serialized: '12025550123:7@c.us' }, { _serialized: lid }], group, '-200', 'device-wids');
+  assert.equal(value.text, 'Hi @Alice and @Hidden');
+  assert.equal(value.entities[0].type, 'text_mention'); assert.equal((value.entities[0].user as { id: number }).id, 42);
+  assert.equal(value.entities[1].type, 'text_link'); assert.equal(value.entities[1].url, 'https://wa.me/');
+});
+
+test('a named roster entry takes precedence over identifier placeholders when no contact has a display name', async t => {
+  const { bridge, store } = fixture(t);
+  store.put('contact', bob, { name: bob });
+  store.put('sync-group', digest(bridge.c.account) + ':' + group, { members: [{ id: bob, name: 'Roster Bob' }], fetchedAt: Date.now() });
+  assert.equal((await bridge.mentions.incoming('@12025550124', [bob], group, '-200', 'roster-name')).text, '@Roster Bob');
+});
+
 test('incoming mention rendering remains stable across retries and text splitting preserves offsets', async t => {
   const { bridge, api } = fixture(t);
   const first = await bridge.mentions.incoming('😀'.repeat(2000) + ' @12025550123', [alice], group, '-200', 'same');
