@@ -18,3 +18,5 @@
 nbb꞉user꞉> 
 (when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
 nbb꞉user꞉> 
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+nbb꞉user꞉> 

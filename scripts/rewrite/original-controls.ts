@@ -18,7 +18,9 @@ mock.module('node:crypto', () => ({ ...crypto,
 const cases: any[] = [];
 const photoPaths = new Map<string, string>();
 await import('node:test');
-mock.module('node:test', () => ({ test: (name: string, run: any) => cases.push({ file: currentFile, name, run }) }));
+const register: any = (name: string, run: any) => cases.push({ file: currentFile, name, run });
+register.skip = (name: string, run: any) => cases.push({ file: currentFile, name, run, skip: true });
+mock.module('node:test', () => ({ test: register }));
 globalThis.fetch = async () => { throw new Error('Provider network forbidden in control baseline'); };
 const baseline = oracle(), uri = (file: string) => pathToFileURL(`${baseline}/${file}`).href;
 const input = await Bun.stdin.json();
@@ -115,18 +117,56 @@ class RecordingBridge extends OriginalBridge {
   }
 }
 mock.module(uri('src/bridge.ts'), () => ({ Bridge: RecordingBridge }));
+if (input.observeTooling) {
+  const toolCall = (name: string, invoke: (...args: any[]) => any) => (...args: any[]) => {
+    const call: any = { method: name, args: copy(args) }; active.calls.push(call);
+    try {
+      const result = invoke(...args);
+      if (result?.then) return result.then((value: any) => { call.result = copy({ value }); return value; }, (e: any) => { call.error = { message: e.message }; throw e; });
+      call.result = copy({ value: result }); return result;
+    } catch (e: any) { call.error = { message: e.message }; throw e; }
+  };
+  for (const file of ['scripts/configure.ts', 'scripts/setup.ts', 'scripts/transfer.ts']) {
+    const original = await import(uri(file)), replacement = { ...original };
+    for (const name of file.endsWith('configure.ts') ? ['configure'] : file.endsWith('setup.ts') ? ['setup'] : ['environment', 'restoredEnvironment', 'exportVolumes']) {
+      const invoke = original[name];
+      replacement[name] = (...args: any[]) => {
+        if (name === 'configure') {
+          const directory = args[0];
+          if (typeof directory !== 'string' || !basename(directory).startsWith('bridge-configure-') || realpathSync(dirname(directory)) !== realpathSync(tmpdir())) throw new Error('Configuration recording requires an original disposable test directory');
+          const value = invoke(...args);
+          const files = ['bridge.env', 'telegram-api.env', 'n8n.env'].filter(f => existsSync(join(directory, f))).map(f => ({ name: f, bytes: readFileSync(join(directory, f)).toString('base64'), mode: statSync(join(directory, f)).mode & 0o777 }));
+          active.transitions.push(copy({ operation: 'configure', args: ['$CONFIG'], result: value, files, state: allState() }));
+          return value;
+        }
+        if (name === 'setup') {
+          const bridge = args[1];
+          args[1] = { ...bridge, api: apiObserver(bridge.api),
+            migrateBot: toolCall('migrateBot', bridge.migrateBot.bind(bridge)), installWebhook: toolCall('installWebhook', bridge.installWebhook.bind(bridge)),
+            store: { all: toolCall('store.all', bridge.store.all.bind(bridge.store)) },
+            statuses: { startup: toolCall('statuses.startup', bridge.statuses.startup.bind(bridge.statuses)) } };
+        }
+        const result = toolCall(file + ':' + name, invoke)(...args);
+        const finish = (value: any) => { active.transitions.push(copy({ operation: name, result: { value }, state: allState() })); return value; };
+        return result?.then ? result.then(finish) : finish(result);
+      };
+    }
+    mock.module(uri(file), () => replacement);
+  }
+}
 for (const file of input.files) {
   currentFile = file;
   await import(uri(file));
 }
 const supplement = input.supplement ?? 'managed-bot-scenarios.ts';
 if (supplement !== false) {
-  if (!['managed-bot-scenarios.ts', 'action-scenarios.ts', 'history-scenarios.ts', 'metadata-scenarios.ts'].includes(supplement)) throw new Error('Unknown baseline supplement');
+  if (!['managed-bot-scenarios.ts', 'action-scenarios.ts', 'history-scenarios.ts', 'metadata-scenarios.ts', 'operational-scenarios.ts'].includes(supplement)) throw new Error('Unknown baseline supplement');
   currentFile = 'scripts/rewrite/' + supplement;
   await import('./' + supplement);
 }
 const output: any[] = [];
 for (const entry of cases) {
+  if (entry.skip) continue;
   if (input.selection[entry.file] && !input.selection[entry.file].includes(entry.name)) continue;
   const watchdog = setTimeout(() => { process.stderr.write(`Control baseline timed out: ${entry.name}\n`); process.exit(2); }, 5000);
   entropy = 0; depth = 0; stores.length = 0; photoPaths.clear();

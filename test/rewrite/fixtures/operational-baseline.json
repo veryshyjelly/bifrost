@@ -1,0 +1,579 @@
+{
+  "baseline": "checkpoint-clojure-baseline",
+  "clock": 1794240000000,
+  "timezone": "UTC",
+  "cases": [
+    {
+      "file": "test/configure.test.ts",
+      "name": "fresh configuration generates independent private secrets from the tracked template",
+      "inventory": "baseline:test/configure.test.ts:8",
+      "sourceSha256": "cbf56d897f990f3d25d527b5b09d1c9a56cf5ca48763818c88fb2579570c5d74",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "transitions": [
+        {
+          "operation": "configure",
+          "trace": "0ab653569e18423e112548ed016260007e444fcb86b77a3dee2fb5c72a46945a"
+        }
+      ]
+    },
+    {
+      "file": "test/configure.test.ts",
+      "name": "reconfiguration preserves existing encryption keys and all operator configuration",
+      "inventory": "baseline:test/configure.test.ts:21",
+      "sourceSha256": "cbf56d897f990f3d25d527b5b09d1c9a56cf5ca48763818c88fb2579570c5d74",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "transitions": [
+        {
+          "operation": "configure",
+          "trace": "cbb27a31f7ab3a5296ffe4f432e025fb55943dbb3981ea632d1e74a79ba69951"
+        }
+      ]
+    },
+    {
+      "file": "test/setup.test.ts",
+      "name": "setup accepts OpenWA ready, migrates before local Telegram calls and installs both webhooks",
+      "inventory": "baseline:test/setup.test.ts:32",
+      "sourceSha256": "349ad1d40d373c2a18e7702cb2b33d8fc7b4e867c660573e93518431367d34aa",
+      "calls": "5707596d052e754e370e629a95ecaf1bc55e553ffbcdb03a447c3799f8c79c20",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "transitions": [
+        {
+          "operation": "setup",
+          "trace": "42e9beda1cdc9fb848d65180240118ae6e332c7b68933a3a2f3d2acbcf352df2"
+        }
+      ]
+    },
+    {
+      "file": "test/setup.test.ts",
+      "name": "setup refuses incomplete or disconnected sessions before migrating or registering callbacks",
+      "inventory": "baseline:test/setup.test.ts:42",
+      "sourceSha256": "349ad1d40d373c2a18e7702cb2b33d8fc7b4e867c660573e93518431367d34aa",
+      "calls": "e9421ba5761180bf1d64348f6fa98c322817d92ce8f41ba23fbdf142aba51864",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "transitions": []
+    },
+    {
+      "file": "test/transfer.test.ts",
+      "name": "import keeps credentials literal, normalizes only local paths and removes the retired n8n setting",
+      "inventory": "baseline:test/transfer.test.ts:9",
+      "sourceSha256": "5ac6aa670507feceb3d7ea64b2871ef046eb5a2c46c6a018c21902e862fa3b4b",
+      "calls": "b4d0f86702d90676aab050c13595945327e0a63e954122aa83382988806ec8a1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "transitions": [
+        {
+          "operation": "environment",
+          "trace": "785a80f3b5d7887add2772247c7914b2a44b937baae6253167995cccd7da56d6"
+        },
+        {
+          "operation": "restoredEnvironment",
+          "trace": "1d53688c9e250f8cdd4452e7d8b0f0fa6e8297c243171d304d1a78f279483e84"
+        },
+        {
+          "operation": "environment",
+          "trace": "ac43ef94a40b6d4a79e1b21fab70b50a6875ffa3e74330a73ef8eb2b2831682c"
+        }
+      ]
+    },
+    {
+      "file": "test/transfer.test.ts",
+      "name": "export discovers legacy and Bifrost named volumes and refuses ambiguous or bind-mounted state",
+      "inventory": "baseline:test/transfer.test.ts:18",
+      "sourceSha256": "5ac6aa670507feceb3d7ea64b2871ef046eb5a2c46c6a018c21902e862fa3b4b",
+      "calls": "a933a4ef40e4334162a4457b637b580268ebf82d7d79d35cbd68715b314170c6",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "transitions": [
+        {
+          "operation": "exportVolumes",
+          "trace": "3ac2a2df080a69b8496a1245497f1c66118ea888c3ca5a15c49ee67080277b35"
+        },
+        {
+          "operation": "exportVolumes",
+          "trace": "aceee18c6047052ec998c00a4a38c734101be0af0be21c0d7df9e8e9e992adb2"
+        }
+      ]
+    },
+    {
+      "file": "test/identity.test.ts",
+      "name": "legacy database keeps its original state identity after restart with new OpenWA credentials",
+      "inventory": "baseline:test/identity.test.ts:13",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "c31528209ec5d08de94a3677d4f419c6a5e8d9a0302800ea6fa991495595835e",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "e11c15b901f29f09a8fe09bc39a23f2de6e64ed3ed7a04f0c6ee2bb706a0f43f"
+        },
+        {
+          "operation": "sql",
+          "trace": "c6e00ed1c06f2f2816ede569d4529c53832d408b7940cea9103a4b11abd56bd4"
+        },
+        {
+          "operation": "sql",
+          "trace": "f5fd56f799e0c91dcee14489967471a2a8154112c635728491bf4eb1fbd4387c"
+        },
+        {
+          "operation": "sql",
+          "trace": "6905622f1c46ca1490a35507fe620bdaf2a4d3e6189ca92334c24804dc584ff5"
+        },
+        {
+          "operation": "sql",
+          "trace": "88c5609bc3ac7c5ba78a9005af729f715e870c795f69a4828f0c519c830d544f"
+        },
+        {
+          "operation": "sql",
+          "trace": "f98c56b93d09538fe63a4e2209e881fa0814b15d29a427fffc876f2ccb0a58ac"
+        },
+        {
+          "operation": "sql",
+          "trace": "514d0797a068cc06463daf1628620fd446a37c0edab88886e9223856c5972f3a"
+        },
+        {
+          "operation": "close",
+          "trace": "7bb93b0a63b347ae01e99e0ccd299af78b5f1f80bcb769646198f256d2fefcbd"
+        },
+        {
+          "operation": "open",
+          "trace": "51fdbd555589c0984264afb3683e1604a8e4780bbeaa8453f99ffa2754dee1ee"
+        },
+        {
+          "operation": "sql",
+          "trace": "8bb109aad61f6286113889e1d940cef311edb38f07d4c1bd6dfc95eb5a400c12"
+        },
+        {
+          "operation": "close",
+          "trace": "31c32468cd5cb4e31a270150542469399afbde2a5280e1cb5dbef3175b608fa4"
+        }
+      ]
+    },
+    {
+      "file": "test/identity.test.ts",
+      "name": "explicit permanent identity is independent of OpenWA and a conflicting identity is refused",
+      "inventory": "baseline:test/identity.test.ts:42",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "bffcf57d9ea30bd93e5187a2afe50e10d8e525ec94ace15ebc76bdec275bdc08",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "a6728e50a402458fd8828357bec6767b36ca6a258db04cb9a30c21d7fd79a021"
+        },
+        {
+          "operation": "close",
+          "trace": "0c4f40f2b2ed045c59e0edd1611c15aa0adabd5d8229e647e0c09712a398a42e"
+        }
+      ]
+    },
+    {
+      "file": "test/identity.test.ts",
+      "name": "new webhook transport rejects the old session and cannot override the permanent account",
+      "inventory": "baseline:test/identity.test.ts:51",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "87b201a07ebe5fcf7a6314c95356d1814458df63a8adee1c57364270aef45b30",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "b9f22eeacfe0a4e20ca68a8c7289ab1807971b52a3318a3bb4838ccb868c1fab"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "a76ad1f6de300dd3caefde23858985585b8e0efdf59d11606a5f1a6e183da5f5"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "e60f949087c13bb2fb8bce926f2aa9467d8aad2d178af3636fb754c87444c110"
+        },
+        {
+          "operation": "sql",
+          "trace": "05c7ecda66a3208ba4be974208c00d756cc0738ea59c4ea5d2b5f117ce13f812"
+        },
+        {
+          "operation": "close",
+          "trace": "743032e49f38d467c378a009ac78a498429c0f74e5e4ddf6513c8d11f91e8a1b"
+        }
+      ]
+    },
+    {
+      "file": "test/identity.test.ts",
+      "name": "active history still holds new and legacy live jobs after the OpenWA session changes",
+      "inventory": "baseline:test/identity.test.ts:68",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d324348bf75e1343f2666b89714576bf529538c77529c4e23cbfd1bb3fac808a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "b9f22eeacfe0a4e20ca68a8c7289ab1807971b52a3318a3bb4838ccb868c1fab"
+        },
+        {
+          "operation": "sql",
+          "trace": "5fbaee0af0e9e9e364c2d758d36b962d4aa1bc3d3ddd1b0a170dac0d1a5a6ad5"
+        },
+        {
+          "operation": "sql",
+          "trace": "3201c3b3196a9e7bbfbd5a606b6b8638661bbcfad4c0d03e08a4898f664c0243"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "305c245b72589f34297dabacf7281e504f929e6dcbf239d8bdb4a361d1c7425c"
+        },
+        {
+          "operation": "sql",
+          "trace": "6db1fe8d1c6d92d70484c69f7978fa988eb3bd049528447ecb6dc958d595f651"
+        },
+        {
+          "operation": "sql",
+          "trace": "68a52ab44bd801ef9d5b0aaef4ec756b666fef789b5aa52dc821e23b7f474b4f"
+        },
+        {
+          "operation": "sql",
+          "trace": "1cdd706c3784bad7bcfaab7e00ce81b99de55e2fc60f06a293fdc4a66b80f46d"
+        },
+        {
+          "operation": "sql",
+          "trace": "68c946fe50ba3f74f0dccab9ac54cff3dadcca436d306f93367000183fb90f9e"
+        },
+        {
+          "operation": "close",
+          "trace": "c3353883145ac5193ad6edbb93b539b7214f733282ee5cd36a1347e88480c7a1"
+        }
+      ]
+    },
+    {
+      "file": "test/identity.test.ts",
+      "name": "uncertain outgoing sends remain blocked when the API key and session are replaced",
+      "inventory": "baseline:test/identity.test.ts:81",
+      "sourceSha256": "a2ef9c1628534d3d04924570618c92bb306816927a70c549c39c6c7540aa999b",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0913f14b4417df546b9aa9d5440b066a2d983388729f0288cf926a271bf30eb0",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "b9f22eeacfe0a4e20ca68a8c7289ab1807971b52a3318a3bb4838ccb868c1fab"
+        },
+        {
+          "operation": "sql",
+          "trace": "f34f2d1737568a7e4f0928e50465ac1793a7f3b4156f0586bf8559b286777c1c"
+        },
+        {
+          "operation": "sql",
+          "trace": "95d9b515847dd1e7318b6bf14d06c7eb76007648fd9ccf04c5c2915ae23a6559"
+        },
+        {
+          "operation": "close",
+          "trace": "6fda870b2ed8c9b0a2444e3e882ab926a30aa512c38482186f2bf7cca4fd581e"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "standalone management and legacy forwarding jobs converge on one durable action without HTTP forwarding",
+      "inventory": "baseline:test/bridge.test.ts:45",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "9dc06c1a505dd8280516f62c9a8ff3f4674a07dccf2d5c3a9db47263ae876e3a",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "53f491c5ae2a73d01625a22caf3c476a2479bd2eba105a5f456c0a940f3cf882",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "8382619fb9e79c8c27ba0d14ac0a4be648fac8b2c94b29b467374589c28c0745"
+        },
+        {
+          "operation": "sql",
+          "trace": "151b65980d83955055c286d7b4dff5a8e56efdf28ec2b2b958aa362c16597f86"
+        },
+        {
+          "operation": "tick",
+          "trace": "1aa06c1e33a2e9aa838f7f73be80da25f69466795940b697df4e91f338a15b8c"
+        },
+        {
+          "operation": "tick",
+          "trace": "72ab04732dd28addd7199404d2f873d0ca6b4e60d318a49638739bb62c79e1ec"
+        },
+        {
+          "operation": "close",
+          "trace": "44b8d780ddacf9e7e3791c240288c003c807504cabf4c95e1f93960ebe143ef6"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/operational-scenarios.ts",
+      "name": "unhandled Telegram update envelopes and foreign or bot actors remain ignored without invented forwarding",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "7b7efa9c4c16bfa0031951482cb5c54c4b2941f4e3fd2dd97b68c66710d19d15",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "fb15549e6cfdf64e3faeb0bda636c66fe41b8b11f8ead242a312efe4868421da"
+        },
+        {
+          "operation": "telegram",
+          "trace": "07613cc3505bd56426659a07f41b8f24591fb13cdd918a5cc139f3e4fe4399f0"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "98642f1b2d70b5bd8c820b5d0411dd53d4e55b25fd242045a80c4242a6493419"
+        },
+        {
+          "operation": "telegram",
+          "trace": "a6ac86759db5d20fcd2799168b8273fea3179a63531c276643eec38db3e5b2ff"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "42385a3fede3a7fa8401b42ff9ec2f6acb98ff836c7d335929b9f67f4a94bd92"
+        },
+        {
+          "operation": "telegram",
+          "trace": "f5ddeeeb097cf6c6fae45212783a3eaaa1e43a7bc159a88f49c61e39d06d1bab"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "9d4895b3f0feca0d568f3e92d28cb825cfcf3d8935ea115bc8dd710012318bb7"
+        },
+        {
+          "operation": "telegram",
+          "trace": "8d553a295f07a6972926aaea016fdbe92a8497f3b9870fb4d42e4a22936a55c9"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "ecd14a1b35fe543d69ef8b1f9808fd33e42761586d84c58d541d4cd657797f36"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "a7decdf58d8926ec47606d975eca3abfe65addcbf54177419386f71147671336"
+        },
+        {
+          "operation": "close",
+          "trace": "c49559c1857daaa5c70b6f854bcdfa5847a31d440c9034d3a8775ed0afcdf899"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/operational-scenarios.ts",
+      "name": "admitted unsupported WhatsApp scopes complete without mappings or provider calls",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "37b309f2f639208562ca3fa69558033eef06d2cacff1602c7205767b6b443f6b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "a0bf75eba62f1eb0378b83c83268f85b73e2dddba86f57c3e7a1ad37787fa4ab"
+        },
+        {
+          "operation": "tick",
+          "trace": "45457ca5e96d2db7dc42039cc6b0c5c08bc90bb7d8488e6e8c8def903bca7bbe"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "bcd2f83dcf0bb138f5946e344b1d4755abec103e1a1d3853c37762a79c82f8c6"
+        },
+        {
+          "operation": "tick",
+          "trace": "a8d4e00716da2d5302e94a48aee4dceb2fe127485b06beb3c099b71ba56c3403"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "219d77641f1e369e46ed3ed33adf0a103db1806f74cc1fa775c15625fa268674"
+        },
+        {
+          "operation": "tick",
+          "trace": "7cca4a3ba29f2a9d6563c3d9c6df6c83eb4dcb5e82d9ac828e29ba0ba5c12adf"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "3929df27eb71228ca6e8709933792de5279d9993ef32069ffc5b06d0b0575819"
+        },
+        {
+          "operation": "tick",
+          "trace": "2a0a4521b48166882255da9c2fa9ef71ac9d9f2b1a2f86b9b61c1067f3a05584"
+        },
+        {
+          "operation": "close",
+          "trace": "58d3cd25d38e8bd202559744765bf39f1e99e62b2e85f00a6832727b444e7be3"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/operational-scenarios.ts",
+      "name": "invalid transport session, event, bot and owner update IDs remain explicit refusals",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "8eb136d8f47ed6b33b38edd181d0cea8989b62597c076460edf78a140f416fd8",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "d7af79412054400fe7537bd803b7a1c54e44b4bccb81bc4b05c942be965ba325"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "e02a6b4233d860f28f8b7b1590409daed574675edccfa09850a0e060f827115e"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "471c1805e30113579a5b0b17dbee57a5b57733ab4a6c0dca612079c6666d179c"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "730662a532d8e75fcdcad55962985d46cacae4fd7005c8d3482f2bd12ff09596"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "341ff37e534aba27eed51656a5e1fa31f2458b26cdcd0ba490f22b4f640cc261"
+        },
+        {
+          "operation": "close",
+          "trace": "bc2bf44196e3c4183b9c573c841e9eb3dd2aa1a200d032d9b3cb27b875cab0e5"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/operational-scenarios.ts",
+      "name": "legacy recovery retains absent event IDs and the original unknown-job completion behavior",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "ae6d88b94660673446fbe2335accd34c374319640408f2ac44e2eb8f012fc401",
+      "state": "c39781dab256003279eda8642614fd882a7cfe35dc94084d6617b748627757e5",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "0867f3668aea167c9042e69ead9510f7240af3323364e657aca74205d8abd772"
+        },
+        {
+          "operation": "tick",
+          "trace": "399f67d0f761160fd11ea960820db04a64528dbada1eb7ec95cbe9dc383fedaf"
+        },
+        {
+          "operation": "sql",
+          "trace": "c4b0bfbe5fbe4ee59c513e657b51fd3df36bdcce17c5731f933f742f37565374"
+        },
+        {
+          "operation": "tick",
+          "trace": "1ed722a1580c903df1c1601f9b7ef32121a2e2167c90954b366af6a1eb6230ea"
+        },
+        {
+          "operation": "tick",
+          "trace": "db3ef2279e3e31b4fd96464aff9882cc90a610a41b8d2c884520fa2985ca1bd4"
+        },
+        {
+          "operation": "close",
+          "trace": "d8ec468328b1dfa9941fac2743e08c64f1f64b408bd8fb572d45e99c6dd4cdaf"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/operational-scenarios.ts",
+      "name": "legacy recovery retains null event IDs and the original unknown-job completion behavior",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "ae6d88b94660673446fbe2335accd34c374319640408f2ac44e2eb8f012fc401",
+      "state": "cbea2fdd037f3e3136ae1f75d0b85af70055a6ce6ae05aeb01fc944f7acb8ee0",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "0867f3668aea167c9042e69ead9510f7240af3323364e657aca74205d8abd772"
+        },
+        {
+          "operation": "tick",
+          "trace": "399f67d0f761160fd11ea960820db04a64528dbada1eb7ec95cbe9dc383fedaf"
+        },
+        {
+          "operation": "sql",
+          "trace": "721bdbbf8106b25fb643358c2e98e35387d123a4a3cd528c639f07d771d4400c"
+        },
+        {
+          "operation": "tick",
+          "trace": "96f537a968d548d5c5d6cf65eaaabf6abffbfc2be558e97273686a404466296d"
+        },
+        {
+          "operation": "tick",
+          "trace": "581b31dc17367e1f4b2bcf11e4bc3716c1b0b48ab0d779f50c61e764fe3ac775"
+        },
+        {
+          "operation": "close",
+          "trace": "20f7e52666a37d662beb0a7d5b9456b98dd7c12f2b4278ba68e073b22ab957f9"
+        }
+      ]
+    }
+  ]
+}

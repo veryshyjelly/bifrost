@@ -107,3 +107,9 @@ Latest full-suite verification: **282 pass, 11 skip, 0 fail** (293 cases across 
 [Task 1.9 evidence](status-metadata-baseline.md) adds 33 original-only cases with 414 observed transitions: all 32 original Status/metadata assertions plus a quiet populated-group scheduled run. Exact observations retain refresh races, persistent mutes and scopes, roster/permission safeguards, photo bytes/hashes, coalesced notifications and cron deduplication. Argument-free Date construction shares the fixed clock; only the photo fixture's random temporary parent is aliased. No live provider access or application behavior changes are involved. Candidate replay and all eight release gates remain pending.
 
 Latest full-suite verification: **283 pass, 11 skip, 0 fail** (294 cases across 30 files) on both macOS/Bun and network-disabled read-only Linux/Bun. Earlier baseline manifests remain unchanged; current source and image fingerprints are retained in the check reports.
+
+## Operational and legacy recordings
+
+[Task 1.10 evidence](operational-baseline.md) adds 17 original-only cases with 99 observed transitions: 12 unchanged assertions plus ignored-update and malformed-legacy cases. Setup/helper outputs, generated synthetic configuration bytes/modes, literal credentials, identity reopening and n8n convergence remain exact. Absent and null legacy IDs remain distinct; unknown-job completion is characterized without changing it. The two opt-in Docker transfer tests remain separately pending alongside codec opt-ins. No production state or provider access is involved; candidate comparison and all eight gates remain pending.
+
+Latest full-suite verification: **284 pass, 11 skip, 0 fail** (295 cases across 31 files) on macOS/Bun and isolated Linux/Bun. Baseline source hashes and current candidate/image inputs remain auditable in the check reports.
