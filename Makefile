@@ -1,4 +1,4 @@
-.PHONY: check fmt-check fmt vet test audit spec-check compose-check generate generate-check configure up down logs
+.PHONY: check fmt-check fmt vet test audit spec-check compose-check generate generate-check configure up down logs update-providers
 check: fmt-check vet test audit compose-check generate-check
 fmt-check:
 	@test -z "$$(gofmt -l cmd internal migrations)" || { gofmt -l cmd internal migrations; exit 1; }
@@ -32,3 +32,8 @@ down:
 	$(COMPOSE) down
 logs:
 	$(COMPOSE) logs -f bifrost openwa
+
+# Resolve current stable module releases independently from the OpenWA gateway tag.
+update-providers:
+	go get github.com/rmyndharis/OpenWA/sdk/go@latest github.com/go-telegram/bot@latest
+	go mod tidy

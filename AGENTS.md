@@ -4,7 +4,7 @@ Bifrost is being ported to Go on `port/golang`. The approved behavior contract i
 
 ## Structure and design
 
-Use one Go module, `cmd/bifrost` for composition, capability-focused `internal/` packages, narrow consumer-defined interfaces, explicit dependency injection and provider adapters. See `docs/GO-IMPLEMENTATION.md`. PostgreSQL delivery persistence and a diagnostic runtime are implemented; provider workflows and legacy import are not implemented yet.
+Use one Go module, `cmd/bifrost` for composition, capability-focused `internal/` packages, narrow consumer-defined interfaces, explicit dependency injection and provider adapters. See `docs/GO-IMPLEMENTATION.md`. PostgreSQL delivery persistence and a diagnostic runtime are implemented; SDK clients and explicit provider diagnostics are implemented; automatic provider workflows and legacy import are not implemented yet.
 
 Use PostgreSQL with pgx/v5, explicit SQL/sqlc and Goose migrations. Use the OpenWA Go SDK and go-telegram/bot, strictly resolving latest stable releases and pinning exact versions when implementing their first real use. Verify current native features and API coverage. Do not silently replace libraries, drop features or use unreleased main.
 

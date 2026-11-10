@@ -2,7 +2,7 @@
 
 A personal WhatsApp–Telegram bridge being ported to Go. The [approved OpenSpec contract](openspec/README.md) preserves existing routing, linked-name formatting, deletion choices and delivery safety, with conditional caption clearing when the released provider API permits it.
 
-The first Go slice implements PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery and diagnostic HTTP endpoints. **WhatsApp/Telegram forwarding and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist.
+The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients and diagnostic HTTP/CLI checks. **WhatsApp/Telegram forwarding and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist.
 
 ## Complete Compose setup
 
@@ -27,7 +27,7 @@ make up
 
 Database bootstrap runs only on an empty PostgreSQL volume. App roles cannot connect to each other's databases and never receive the PostgreSQL administrator password. Changing an environment password later does not rotate database credentials automatically. No external Docker network, pre-existing OpenWA checkout or socket proxy is required.
 
-OpenWA builds the latest verified stable release (`v0.29.1`) directly from its Git repository. To use the sibling checkout during development, put `OPENWA_SOURCE=../OpenWa` in `.go.env`; this explicitly builds that checkout, including its local changes. OpenWA's upstream release still requires SQLite for boot/auth configuration even when message storage uses PostgreSQL; its entire `/app/data` directory remains persistent. Bifrost runtime state uses PostgreSQL only.
+OpenWA builds the latest verified stable release (`v0.30.0`) directly from its Git repository. To use the sibling checkout during development, put `OPENWA_SOURCE=../OpenWa` in `.go.env`; this explicitly builds that checkout, including its local changes. OpenWA's upstream release still requires SQLite for boot/auth configuration even when message storage uses PostgreSQL; its entire `/app/data` directory remains persistent. Bifrost runtime state uses PostgreSQL only.
 
 Default host endpoints bind loopback and avoid the legacy bridge/OpenWA ports:
 
@@ -63,10 +63,10 @@ BIFROST_TEST_DATABASE_URL='postgres://bifrost:YOUR_TEST_PASSWORD@localhost:5433/
 
 Use a disposable test instance, never the live database. CI runs these tests against PostgreSQL. Without the variable, those integration tests are explicitly skipped. Go tests verify only the implemented slice; the historical 263 passing tests are reference evidence for remaining parity work.
 
-The CLI also supports `migrate`, `serve` and `healthcheck`. It reads environment variables directly; Compose supplies them from `.go.env`. It never automatically sources the legacy `.env` or `bridge.env`. HTTP currently implements `/healthz`, admin-protected `/v1/status` and reviewed `/v1/review`; provider webhook ingress is still pending.
+The CLI also supports `migrate`, `serve`, `healthcheck` and explicit read-only `check-openwa` / `check-telegram` diagnostics. See [provider checks](docs/PROVIDER-CHECKS.md) for authorized test sends and live evidence. It reads environment variables directly; Compose supplies them from `.go.env`. It never automatically sources the legacy `.env` or `bridge.env`. HTTP currently implements `/healthz`, admin-protected `/v1/status` and reviewed `/v1/review`; provider webhook ingress is still pending.
 
 ## Existing installations
 
-The original TypeScript implementation and tests remain at `checkpoint-typescript-baseline`; [historical deployment/recovery docs](docs/legacy/README.md) are retained. Existing private files, SQLite state, media, backups and Docker volumes are unchanged. Do not point this partial Go runtime at a legacy installation or mint replacement identity/keys for existing state. An explicit importer and validated cutover are required before migration.
+The original TypeScript implementation and tests remain at `checkpoint-typescript-baseline`; [historical deployment/recovery docs](docs/legacy/README.md) are retained. Existing private files, SQLite state, media, backups and Docker volumes are unchanged. Do not point this partial Go runtime at a legacy installation or mint replacement identity/keys for existing state. An explicit importer and validated cutover are required before migration. See [OpenWA migration requirements](docs/OPENWA-MIGRATION.md) before moving the existing gateway’s saved settings and paired profiles.
 
 Read [the implementation design](docs/GO-IMPLEMENTATION.md), [validation evidence](docs/VALIDATION.md) and [MCP setup](docs/MCP-SETUP.md). Python helpers under `scripts/` are retained for later codec/import work; they are not part of the Go runtime yet.

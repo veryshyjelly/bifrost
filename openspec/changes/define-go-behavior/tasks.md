@@ -37,3 +37,15 @@
 - [ ] Implement provider adapters and authenticated webhook admission before enabling any relaying.
 - [ ] Port conversation routing, controls and remaining capability scenarios.
 - [ ] Implement and test the explicit SQLite state importer and live cutover procedure.
+
+## 5. Provider SDK and live diagnostic progress
+
+- [x] Resolve and pin OpenWA Go SDK v0.11.0 and go-telegram/bot v1.28.0 independently from the gateway release.
+- [x] Add safe SDK transports, native text/quote/edit clients, session/stored-message reads and explicit Telegram getMe diagnostics.
+- [x] Verify no hidden mutation retries, no credential redirects, safe error redaction and retry/uncertainty classification through HTTP fixtures.
+- [x] Exercise the owner-authorized primary group/DM and second-session group reply; record private stable keys and receipts outside Git.
+- [x] Verify a completed same-key send replay returns the identical message ID.
+- [x] Update the integrated gateway build pin to stable OpenWA v0.30.0, build it from source and validate the disposable shared-PostgreSQL/Redis stack startup.
+- [x] Authenticate the Telegram SDK against the existing local API using read-only getMe.
+- [x] Assess the healthy live OpenWA layout and record the state-preserving migration contract; no move is needed for SDK validation.
+- [ ] Implement automatic webhook admission/dispatch and remaining provider operations before switching the live bridge.

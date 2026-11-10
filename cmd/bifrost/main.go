@@ -25,6 +25,10 @@ func run(ctx context.Context, args []string) error {
 		command = args[0]
 	}
 	switch command {
+	case "check-telegram":
+		return checkTelegram(ctx, args[1:], os.Stdout)
+	case "check-openwa":
+		return checkOpenWA(ctx, args[1:], os.Stdout)
 	case "configure":
 		if err := config.Configure(".go.env"); err != nil {
 			if errors.Is(err, os.ErrExist) {
@@ -63,7 +67,7 @@ func run(ctx context.Context, args []string) error {
 		return nil
 	case "serve":
 	default:
-		return errors.New("use serve, migrate, configure or healthcheck")
+		return errors.New("use serve, migrate, configure, healthcheck, check-openwa or check-telegram")
 	}
 	c, err := config.Load(os.Getenv)
 	if err != nil {

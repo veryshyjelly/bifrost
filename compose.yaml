@@ -87,9 +87,9 @@ services:
   openwa:
     build:
       # Latest stable gateway release, independently pinned from its Go SDK.
-      context: ${OPENWA_SOURCE:-https://github.com/rmyndharis/OpenWA.git#v0.29.1}
+      context: ${OPENWA_SOURCE:-https://github.com/rmyndharis/OpenWA.git#v0.30.0}
       dockerfile: Dockerfile
-    image: local/bifrost-openwa:v0.29.1
+    image: local/bifrost-openwa:v0.30.0
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -109,7 +109,7 @@ services:
       REDIS_PORT: '6379'
       CACHE_ENABLED: 'true'
       QUEUE_ENABLED: 'true'
-      SSRF_ALLOWED_HOSTS: bifrost
+      SSRF_ALLOWED_HOSTS: ${OPENWA_SSRF_ALLOWED_HOSTS:-bifrost}
       HOME: /tmp
       XDG_CONFIG_HOME: /tmp/.config
       XDG_CACHE_HOME: /tmp/.cache

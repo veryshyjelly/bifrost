@@ -3,8 +3,10 @@ module github.com/veryshyjelly/bifrost
 go 1.27.3
 
 require (
+	github.com/go-telegram/bot v1.28.0
 	github.com/jackc/pgx/v5 v5.12.0
 	github.com/pressly/goose/v3 v3.29.0
+	github.com/rmyndharis/OpenWA/sdk/go v0.11.0
 )
 
 require (

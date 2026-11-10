@@ -25,3 +25,7 @@ The [Telegram client documentation](https://github.com/go-telegram/bot/blob/v1.2
 No verified SDK gap has yet been established. If a required operation is absent from the latest release, record the gap and obtain a behavior/workaround decision; do not silently switch libraries, use unreleased main or remove the feature.
 
 PostgreSQL and Compose requirements are explicit owner decisions. Their implementation versions, database schema, driver and cutover procedure are deferred to port design; no existing SQLite deployment is converted by these docs.
+
+## Provider implementation verification
+
+The subsequent implementation resolved OpenWA Go SDK **v0.11.0** and go-telegram/bot **v1.28.0** through the module proxy and added them as direct dependencies. The gateway build pin is now **v0.30.0**, verified through the release API rather than cached latest-page HTML. See [provider checks](../docs/PROVIDER-CHECKS.md) for exercised operations and private-data boundaries. Existing live OpenWA remains 0.29.1 until a state-preserving cutover is implemented; successful SDK checks did not require migrating it.
