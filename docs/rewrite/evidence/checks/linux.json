@@ -2,7 +2,7 @@
   "baseline": "checkpoint-clojure-baseline",
   "candidate": {
     "status": "uncommitted",
-    "sourceFingerprint": "23572196e729916971b5d5e7a805c29cea6fc8a038bd2467fbcbd8d8d216013e",
+    "sourceFingerprint": "5d77343b68a75c0ff4934fe85bc6cd5540f4187d72c1a0e7b0a92add4600ef73",
     "files": {
       ".bun-version": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
       "bun.lock": "a9c5196f5b880e31efcd2e4d7e55e4ea50a8dcbeb20584d09924791e956ecc3c",
@@ -16,9 +16,11 @@
       "scripts/identify.ts": "417a0c33f95a5419c822382b396911eb7c48e8c5dcd07afc436a897a4eaa750f",
       "scripts/queue-sync.ts": "97ceaf0f21af3d8758abd890b55763debe75b34b0636c2c5397413f99961ac30",
       "scripts/review.ts": "b8c30de2604aa4c544f333d4781ebd064a9d111e1db3e78c14c9b5de28d75be5",
+      "scripts/rewrite/action-baseline.ts": "9562c807d4ab1e32b9f0a2f89c43c78ace4e5f7f96c8aa0904a628d380c1b6d2",
+      "scripts/rewrite/action-scenarios.ts": "fa33fd8c99987f40415a847c69923655af7617c0fcc2583d402a41a307586000",
       "scripts/rewrite/api.cljs": "9975ffe3fbf25b0344aa18d52ea114157faec4f48d67e30163a29bf3a49e2b76",
       "scripts/rewrite/check.ts": "c777e15789f7e46a749aa0ff565a4b2f52e98fc07edbf50e75ab93080c84b48b",
-      "scripts/rewrite/control-baseline.ts": "7f995a63e067681b7a4fc593ba4bba59bb17e3a122d83a9d1bd2ac1fb04da498",
+      "scripts/rewrite/control-baseline.ts": "9f1f9d775c702718fd7dbe7bdb481f9d1f8b3e26ac37db8e0dcc64fb6320ee54",
       "scripts/rewrite/control-scenarios.ts": "c9d65e7631726795761b1aab5955da0ea5da2c60164e3f35cfb5e5394cfe7b7d",
       "scripts/rewrite/effects.cljs": "fa68e0f32a49d8e4550e75c90f10f79aa642be42dddb85f135b328ade86409ca",
       "scripts/rewrite/ingress-driver.ts": "b328179f84dd28cf0a06b1fbacc68647ff202c18d66caf080a80d22120c9e092",
@@ -29,7 +31,7 @@
       "scripts/rewrite/media-scenarios.ts": "b7afd7098dff919170eb57a0dd291ea708223c233a01e8b032dda8e3244ab7a6",
       "scripts/rewrite/oracle.ts": "69aef6bbe77979a3f2c1c6b6dc4a863225bfdbde3f257ca1d757af6bf411e083",
       "scripts/rewrite/original-api.ts": "23a469f09645bdced8c6a1fc1ff77c21cf80813c848ebf47880b63a75505d689",
-      "scripts/rewrite/original-controls.ts": "89cd2cad308422cc26c8a447fb5265a4293a72821535363b1d185bca0238c3e8",
+      "scripts/rewrite/original-controls.ts": "632a8755977b10381a9d6ed91ab9563a57b28e7cfac81c0ae945cfb91809b13d",
       "scripts/rewrite/original-effects.ts": "6d589af0a885e0786bbd3ce6fae6eab68bbae41de4ce15b64b124a844550b276",
       "scripts/rewrite/original-ingress.ts": "d3c4b8cc20e49032026ff6064cafc2eb363d1bc7a2e8004a6d8bb94d53b0d132",
       "scripts/rewrite/original-media.ts": "d5b543ad85fcc091e0bd2d39fedc767c5c6c10c0877191af408cb5160bc93690",
@@ -42,6 +44,7 @@
       "scripts/rewrite/rules.cljs": "e4fda9d45f408299943259fe8cdc0c5e88fcea756436bf4b18f30cfe48a32abb",
       "scripts/rewrite/runtime.cljs": "2c4589fa1a069167233487a0b302cd6a8d4bd055496c794128ceaa650b6d0c1f",
       "scripts/rewrite/store.cljs": "b5c026b59b5662b503d571612133b718869a5ad21d87c95424eecf022f640686",
+      "scripts/rewrite/workflow-baseline.ts": "68e0e4373b5913788ccdec605108eb0b240a571e02b5874c9da438cadac4589d",
       "scripts/setup.ts": "eee1ae8af2270727341c389835f8f813e653663b65080505ca2fb50f1ac83fc4",
       "scripts/sticker-webp.py": "684879d97528aa13e1ab7a62919d27e29a6965e90ba0ae99b69a0065e8adf06b",
       "scripts/transfer-volume.py": "069e10e0b8304ddcd2798e54874fc471461637aeb5c8b044d96a6ae9061c9d17",
@@ -95,10 +98,12 @@
       "test/mentions.test.ts": "03e4c78f506ef047afe7e990a0c50a2a29e5e6980fe463be0fa393bb6df4edf6",
       "test/reactions.test.ts": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
       "test/revocations.test.ts": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "test/rewrite/action-baseline.test.ts": "8578f68d4a2cdba7cd51c8e40dec4f7115cfb5158e28a33f05b6fb56517fc13a",
       "test/rewrite/api.test.ts": "be0b935e23d2cde00fc5408441ac8cc599398812dedd9388daf38a641ee7a743",
       "test/rewrite/control-baseline.test.ts": "bce9624cabae1816bdb6ced8c3b07566dd6574dd665bbe6150e75ef00798aeef",
       "test/rewrite/crash.test.ts": "a03999d76faca06188b89877648d3f5286a912b95b691e8503d223b5f3804659",
       "test/rewrite/effects.test.ts": "084c0da4f1fe937d5c9d28a05ec0121610c02ff807d4e2e9f5d258c755e43b0b",
+      "test/rewrite/fixtures/action-baseline.json": "c6f963a1390395d40365d6475943ca5254998adef0d7ac13634d919b70da8e3d",
       "test/rewrite/fixtures/control-baseline.json": "88515a70209ca97a1d478f49be3530acf0c1ce9341de7b43d2adc7bac00d3332",
       "test/rewrite/fixtures/media-baseline.json": "ef3d723f4d03acc5798dae5727d3c69cd5d5ea1f1f58e5cb880a2cb07df73512",
       "test/rewrite/fixtures/rules.json": "67c1bfd0e576cf1589582e8a3c7c0f7e68dc4bbd74cdf68597263d045f5d70e5",
@@ -116,8 +121,8 @@
       "test/unmirror.test.ts": "f391a2f617e716cc9d6ac61ea881c93c26915f762124a00bc2f2ddb7d67abe54"
     }
   },
-  "startedAt": "2026-11-10T08:04:50.542Z",
-  "completedAt": "2026-11-10T08:05:09.232Z",
+  "startedAt": "2026-11-10T08:14:12.212Z",
+  "completedAt": "2026-11-10T08:14:31.306Z",
   "command": [
     "docker",
     "run",
@@ -133,12 +138,12 @@
     "/app",
     "--entrypoint",
     "bun",
-    "sha256:d0c2ed1390a444a122fc9be76b590789a0020ddb752868d463442386276029ce",
+    "sha256:24aef1a63820e4eca94677f09b51be380dfdcfd347584aeee28ca0dd78d40f9a",
     "test",
     "./test"
   ],
-  "image": "sha256:d0c2ed1390a444a122fc9be76b590789a0020ddb752868d463442386276029ce",
-  "imageInputs": "98c9f2a6c4ae6307f5a80434f645f31ffe057855b0d864a5bd33709d4d29c103",
+  "image": "sha256:24aef1a63820e4eca94677f09b51be380dfdcfd347584aeee28ca0dd78d40f9a",
+  "imageInputs": "d34df70b187581b96e1a6d1c3ca754c5817689805e663e5ff0612591b9498bf7",
   "environment": "Linux arm64, network none, read-only filesystem, tmpfs only; no production mounts or published ports",
   "bun": "1.4.2",
   "nbb": "1.6.214",
@@ -146,10 +151,10 @@
   "exitCode": 0,
   "signal": null,
   "summary": [
-    " 280 pass",
+    " 281 pass",
     " 11 skip",
     " 0 fail",
-    "Ran 291 tests across 27 files. [18.17s]"
+    "Ran 292 tests across 28 files. [18.56s]"
   ],
   "skips": [
     "9 opt-in sticker/codec cases",
@@ -157,7 +162,7 @@
   ],
   "artifact": {
     "path": "data/rewrite/evidence/linux.txt",
-    "sha256": "d4e2b5c978ace0fb63966fa45616f53fe710a3c5bc5c19c055cd56f056b20d98"
+    "sha256": "a01b9799760464b2bc0c6761ead28bae7238aaa0ef39eb2627fa2fe627a92b35"
   },
   "limitations": "This check does not complete an acceptance gate. See evidence-ledger.md."
 }

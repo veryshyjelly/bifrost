@@ -1,0 +1,4009 @@
+{
+  "baseline": "checkpoint-clojure-baseline",
+  "clock": 1794240000000,
+  "timezone": "UTC",
+  "cases": [
+    {
+      "file": "test/reactions.test.ts",
+      "name": "reactions to missing messages and notices targeting deleted topics do not block later deliveries",
+      "inventory": "baseline:test/reactions.test.ts:45",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "e20b46e98b5f3572e259f18b872c9cde033648b573045cadd294493d55574347",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "de662f88176914ac9d53aea3ae044e3fb9e39fcbfc16a0bcb26f724a24292745",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "116e0d98e9a4e461080f03246ff026ae5dd357b4739be8c5731aad19a220ceb8"
+        },
+        {
+          "operation": "sql",
+          "trace": "0925a92836138fd0698d5b26e8de0147c0004a909331cd5b6abb7ddc4c635a54"
+        },
+        {
+          "operation": "sql",
+          "trace": "bbb86d9259a1f02f3cc3e51c165ff3bd3362fb6492b1cb747f2ffd69906088af"
+        },
+        {
+          "operation": "sql",
+          "trace": "fc77fcb7e13a3f62bb1b9122cd2cada2f9610d2bdd698fb389913cb6a3556349"
+        },
+        {
+          "operation": "sql",
+          "trace": "91f1d0f5efbd78403a0b1acd601690732393317096fa43297b314c0802b9a4e0"
+        },
+        {
+          "operation": "sql",
+          "trace": "45b6ff14d5a7efb4a3a56a697f3ea4503a9f31ef377e9870d2abab92231ead45"
+        },
+        {
+          "operation": "sql",
+          "trace": "74575ec2fdadb114a836bdd01c4cdfcd3f7e0671a977d5d9d5729a1d516b0bd5"
+        },
+        {
+          "operation": "sql",
+          "trace": "1e5b69b3cb83b3a5c0f1fdb8de1ba0df1f3f1d23cb387c388da7df0cf3342cfa"
+        },
+        {
+          "operation": "sql",
+          "trace": "c473b0d58715bb03f8c39fddf6189581e36e497335e5fe37f4264cf85134675e"
+        },
+        {
+          "operation": "close",
+          "trace": "50fed07bb08c0fe94355261878b41ce5649216d50ee2c1f8f0c95b4231347594"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "WhatsApp reactions appear natively as the reactor’s available member bot without a reply notice",
+      "inventory": "baseline:test/reactions.test.ts:57",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "5d1afa590ab314eed759fe2c753267990eb0002070798bd759ea02a48bdeabae",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "dde41769108539058758e509c46bf8fa2dbb4e37c601479857155ab6a338c39a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "4634ea7ed81bca3dce7b70e2533bde89055d4a6718e9a402d10a2b09d67ff64d"
+        },
+        {
+          "operation": "sql",
+          "trace": "b972cc6c4308b0d46a0d36c3ad79c96f2d1f5988cc4d16bb424b3038f7a0f564"
+        },
+        {
+          "operation": "close",
+          "trace": "85484e258bdccc6531fb90ddb7cfe86ae5c8c0cdb36bbe9fc2bca53e75f4747c"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "removing one member’s reaction clears only that bot’s reaction",
+      "inventory": "baseline:test/reactions.test.ts:64",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "fbfe9de12034d2fb40f3cbffb4765d6acafa5c26798cf6643d643a5de85505e2",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "22327e3ec28d83bf57dd50ec202c47bc9eea958d329c382171401f49d6955462",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "0e95dda52ef59ab2791bc15f264ecd0a0e599e178e8dc2b5a334832ad105d680"
+        },
+        {
+          "operation": "sql",
+          "trace": "0905bc1d1390d23f37afed8fcb214cf05196f9efc0061a35ecd49789bee9db8e"
+        },
+        {
+          "operation": "sql",
+          "trace": "42f4648fdce3d4a6a37fe3fed00989cf8f29fc579d259a26519ff5fbc9419f86"
+        },
+        {
+          "operation": "sql",
+          "trace": "6c672d82dc3c3c863a13ca2d90145cf1d4534188f10d3b1408bac42215eca247"
+        },
+        {
+          "operation": "sql",
+          "trace": "88d986764aed11be8017cd4b40eea02b16c58828beb7f8bb9ec5360905a7c4a2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0c7cdd473a9223f4c289233e0daf7c06e356ae51e14a943ed975afbe9d96276b"
+        },
+        {
+          "operation": "close",
+          "trace": "a3bc9a484315ffcbf73e108e123bdc1e0d11f9da5bc86737475ff8324ea85e1b"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "Bifrost shows the latest unbound reaction and preserves remaining reactors when one removes theirs",
+      "inventory": "baseline:test/reactions.test.ts:70",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "28ed4079c71c67257227bc2cae79dbec3edf7be60ab4ebd9e1c0ea93981891c8",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "7739bfa9a5aa874aa35b98644cc3ae1b538a6e6aa00defb0400dcfb3527e3549",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "654dff6eefc1310b39b52f5547bfde91c7258ef1313fe7ceb5cc7b846eb20b9e"
+        },
+        {
+          "operation": "sql",
+          "trace": "e0cc049e86c1aaf483dcd10c04d57251f5658d959c44102e223aa9c6a19b887b"
+        },
+        {
+          "operation": "sql",
+          "trace": "df419f02bdccfca483b0a586c05ef5cbdcc62e883906039731cf40a7e332cc48"
+        },
+        {
+          "operation": "sql",
+          "trace": "28a62801afc67fdb45461bc0dc50f164e3bd03ef0e6230e249cbe6afd32c20bc"
+        },
+        {
+          "operation": "sql",
+          "trace": "d24d14eb1a13b20778afd6edee84f806bb8ae4813b9092f2b32511db9a12e214"
+        },
+        {
+          "operation": "sql",
+          "trace": "b1a470b60f1587dc7f103b28bc0be4c8d99b9e05da7b414b9ff840397428fd48"
+        },
+        {
+          "operation": "sql",
+          "trace": "3136bc2fc4891ce60e4a57d3f702871a531334730c78cc6260fd505b88d514dc"
+        },
+        {
+          "operation": "close",
+          "trace": "bc1d2eb2ac23c782aa345312e4c6b5f0d8e890f3fa1f530cd1a94a8e57778d83"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "full OpenWA reaction snapshots and LID aliases reconstruct every actor and remove missing reactions",
+      "inventory": "baseline:test/reactions.test.ts:78",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "efacbf6f89cf7db199abbbf1df7b96a54a3babe5b759a1a935877a8cc882deaa",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "f2aa5caf24b5f0d8d7b582ea60f21456d5a1b63deaf23868834ef9f45f916185",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "d4b88ddb800dfb1e120714959a7182ac4c1bf356459307a386869a223865a9c3"
+        },
+        {
+          "operation": "sql",
+          "trace": "dca2f29a01073d462da7d8e01e43acfbdae26b8d35ef1c1dd79ef0cb95547869"
+        },
+        {
+          "operation": "sql",
+          "trace": "f34ad92e0438caaa9c31a3134d80cc7d0cf4d5e111cb67d40a8aa6ccbf44f934"
+        },
+        {
+          "operation": "sql",
+          "trace": "fa775168ffa5edeb1acebe88f588fbf346c0848f7769baea2e367bfdb7ee872d"
+        },
+        {
+          "operation": "sql",
+          "trace": "5d93db5a4558dae13a763501e59f5821867b4ac0d4def00835622acd1c254560"
+        },
+        {
+          "operation": "sql",
+          "trace": "9895de1aef0e50bf23d4d0718a90afeef07663b6788aed35298ad73c61b04217"
+        },
+        {
+          "operation": "close",
+          "trace": "33c9b8628a34c875301d0c51a4d32a7120d4355e4af4363f08b2eb09086599cc"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "private message IDs remain scoped to their original bot, regardless of who reacted in WhatsApp",
+      "inventory": "baseline:test/reactions.test.ts:86",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "b5549a8698a3cd64f428f628375d1cebbaa783dcb3681a22172663a0dc42cd3c",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6fd1e0de93e779cf1e3c03e7b7c5acebdfd0ffa87d1e2f4915c08a36468d47c4",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "d328e7f27255ad8e852d2fd0ce4733be528510fdd03d4aacfa5258c174bcf2d3"
+        },
+        {
+          "operation": "sql",
+          "trace": "7468ee336c6737ffd428e41619205cfb4f4e9a608794904924a5a31b042a0eb1"
+        },
+        {
+          "operation": "sql",
+          "trace": "9b23bc1711e8d51049cf69a08f92fc9c997592ebdbe57f39ab40b119727ba2de"
+        },
+        {
+          "operation": "sql",
+          "trace": "d397403561ae050da9b4a336cca6562192645bee76351e6b03f9284a599b384c"
+        },
+        {
+          "operation": "sql",
+          "trace": "baa21b45d0019b5295edbb9953111093c9f226510fe7ebb90ed26a26b7cf5410"
+        },
+        {
+          "operation": "sql",
+          "trace": "9f2d95eec1fd71d2a45744ed15cc85890807c77efbc3beb74555682fdcd8b647"
+        },
+        {
+          "operation": "sql",
+          "trace": "68c81f41344b1a4bb1330bee4d62f8c1bb5254d62dea1a0c26c0b60357bd991c"
+        },
+        {
+          "operation": "close",
+          "trace": "027a246b3d1a697e1744dddab1b27a7ffc26f257d3cc64cd629e7db23f00625e"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "split messages react on the attachment once and skip Telegram copies already cleared",
+      "inventory": "baseline:test/reactions.test.ts:93",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "5d1afa590ab314eed759fe2c753267990eb0002070798bd759ea02a48bdeabae",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "a7183acbffc2beda2dddd745ac0ee083412a8a07842966d8bbbf3578f6f3c680",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "a8cb032df20b00148374ea6e088cffdbf1279deda68cfc852c7bd4758a690d8b"
+        },
+        {
+          "operation": "sql",
+          "trace": "146081c4b0237b040870024236769468ccebc83cfa490ca270aab3596cbaa125"
+        },
+        {
+          "operation": "sql",
+          "trace": "9d5ae50de430e31e134355d475b02c6ad35bd1310bdf0bc286d87b6929b2c567"
+        },
+        {
+          "operation": "sql",
+          "trace": "c382fc7d5674f410cdd1d1a7c350270cac1ff32e4886117448ad6951654e4106"
+        },
+        {
+          "operation": "sql",
+          "trace": "b047156d40de3359f5ed62c8d77cc90092cea4930fdced33f4832e03e3128adc"
+        },
+        {
+          "operation": "sql",
+          "trace": "2d4f0916e49bd34ddc7fa2c5aef7ce216a05b0292a66b10449a97b6a90017ee5"
+        },
+        {
+          "operation": "exec",
+          "trace": "727b90ac65fe267bfaf55dde402ef3b4ceed3e2956239e90c2c6c32f73d7c95f"
+        },
+        {
+          "operation": "sql",
+          "trace": "b879808d91abf029860e645e853a94a7bc8bf33189ab9f477db6107ae6e3f45e"
+        },
+        {
+          "operation": "close",
+          "trace": "2ffab353e5746a628413f48f0bab58b088a695120ecae7de02d5935c2fcbb176"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "a member bot absent from the group falls back to Bifrost",
+      "inventory": "baseline:test/reactions.test.ts:101",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "edf8d75ea0cfe01ae47f0c76e8e8a11b2d057d72c853e60c6e1d096fa0ad3577",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4a5915acb2196c7174acea973ac2ee09607acd128ef8a5d1461d9756f69bfeab",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "6607f6c8cd4e1479f5fce5a5f7bf6d9873231e48701ae72176c4c1915857689d"
+        },
+        {
+          "operation": "sql",
+          "trace": "9b22c70d902fcbd15ee1cb5b80a8717fdaff1e1702d9d9a7613a874547d3f011"
+        },
+        {
+          "operation": "close",
+          "trace": "38b1cb5cd55191e6bf5587dd8a1cb6953e986ce9d008766d7d9bf684910209d3"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "unavailable emoji clears a stale native reaction and uses one attributed fallback in the same topic",
+      "inventory": "baseline:test/reactions.test.ts:106",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "4a846256a816153dee57f680dc271f17763fc6c520b78b6bb5c31269f6889510",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "68bc72e7182dd17103c476c026b6ead7e9b06b97c0a57cb7633153dcfbf2c625",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "a4bb5482ea148014934790c17210a12b61f5388162c320b0720b91f211c8e295"
+        },
+        {
+          "operation": "sql",
+          "trace": "9d37a21cb49f1d4b802c282bbae06229b3370f975319f12ac7e67a476c77a46c"
+        },
+        {
+          "operation": "sql",
+          "trace": "5e4aceb8c1296ab34b2414ce1bdc906b427681c61b5f70ba0169f29243175588"
+        },
+        {
+          "operation": "sql",
+          "trace": "5c6bf5b352fa538b9f1707a8c740ad86f5f007d50e213a69911352456ba1fa1e"
+        },
+        {
+          "operation": "sql",
+          "trace": "1c1523fbc2f923fe8703f3182f4e75593a11f1ffdf94e74abbd2eb6d59e6d792"
+        },
+        {
+          "operation": "sql",
+          "trace": "afa0d5bafdd620592d3a544e7a784270f23099821f3eb728deed8e6dd3977dfc"
+        },
+        {
+          "operation": "sql",
+          "trace": "7af87083f6c5d5b62d72510e5453af896b961ad4661248b89ea29fcb23437f44"
+        },
+        {
+          "operation": "sql",
+          "trace": "a901256fae7f034914bf6a5ed7d0a6e5827533586b54c6ccfe14bfdc77dc4c95"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7dad6f1d74a4f44500038241fcec3209f607781bb7967b53ee675a01c3d02a3"
+        },
+        {
+          "operation": "sql",
+          "trace": "e3f8a326ca49ecef3006e77bfb62f04f6100b2310a1ec0eb4fb949dae35e8dee"
+        },
+        {
+          "operation": "sql",
+          "trace": "ebdf516dfe88b1743e0c769976272ef7390e243b816ed8d2d93a66f32e674760"
+        },
+        {
+          "operation": "sql",
+          "trace": "24d8084252bf6346e08d9614ede8a589af7a07d94e613652aedcac1a5211e9b5"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd97efd64fea9fe3979cf905e6f908db78c1d1360805eb80c6f51f19bdb8cf3f"
+        },
+        {
+          "operation": "sql",
+          "trace": "6d5cd78d790ae0705d61d946f318850eac2d6003b427d2b611e25dbb8c3e5978"
+        },
+        {
+          "operation": "sql",
+          "trace": "1e5bb622e6064721f69fc610241dc1e527b7175fc9494b60d5fb1646c334d679"
+        },
+        {
+          "operation": "sql",
+          "trace": "d4cf2549763631befd321ecb627d20d82a51328672fa853c642511c92dd1ebe3"
+        },
+        {
+          "operation": "close",
+          "trace": "b550d47738c6176c8ffb7187ed216f08838d7668d78af3a2d8c7baa3f8527a7f"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "a rate-limited fallback notice is not lost when the original reaction event retries",
+      "inventory": "baseline:test/reactions.test.ts:118",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "45357f20375db1ab9a39f1778a201020986a410b09a97944342606224aebf9a5",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "482ace906374e4c708840f9d5d9f4b7f6125b505bd3a47f682ed24a192e18e40",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "8353f8878320a4a981211ef36e182aa9691c49a2cae85c6b06a47407d8a82e65"
+        },
+        {
+          "operation": "sql",
+          "trace": "693971743b1470d05a2cc6268e209046b65d7d10d4a6411563f9894fed456077"
+        },
+        {
+          "operation": "sql",
+          "trace": "6e33d1fe02cb58a88be296c4f1bd57c44950d07f778529568be71b8e34d49ff1"
+        },
+        {
+          "operation": "sql",
+          "trace": "3553ba864fb7d1d3c0c406094dd571fd9767a4a10546b1a1ba24af329d78beb4"
+        },
+        {
+          "operation": "sql",
+          "trace": "6e33d1fe02cb58a88be296c4f1bd57c44950d07f778529568be71b8e34d49ff1"
+        },
+        {
+          "operation": "sql",
+          "trace": "05377f4f5f368c9ba0909241d081a4cc881145054a1ae7f7f74ccaab788e1b34"
+        },
+        {
+          "operation": "sql",
+          "trace": "adbd58fdbdd1bd50a849fd631dd26bebc7b8fff182d902f98fbf6f815dc8346a"
+        },
+        {
+          "operation": "sql",
+          "trace": "f4f95bded158a875b9a627f67d3e90aa8096844e966138455686df0a20388584"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b03ad9fb932f9a5651f945d9a33e681c28739b1b79260d3c2adea4a73ee30f1"
+        },
+        {
+          "operation": "close",
+          "trace": "13f12375cb7061a98cd4bd9233af32a7e241ef361947a525e57092a3293e5f57"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "ambiguous native updates safely retry without uncertain outgoing-send effects",
+      "inventory": "baseline:test/reactions.test.ts:125",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "58c27dad7b59d6cf3651ca9984e8a57bf3794eae7d16a419f74303ea5326a8a9",
+      "logs": "b0aee57c6b9a8c39ac9069f5bdec5a81d8e927bab067368efa0f0642fe091c5f",
+      "state": "7ed36a2508e8a4042196b8e2672f5b07643929754102c97b043acecb2323a2e9",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "0d5545b1f93c1ad7f79d5584e5d5851bc3f84b4b194285dc83d243e47d2fc338"
+        },
+        {
+          "operation": "tick",
+          "trace": "a9f1c920ec23884722db9607b78ee50e406369ab3f556585a21878b1519225db"
+        },
+        {
+          "operation": "exec",
+          "trace": "0a5bcb4d4826aa2b74c29050752ca624d4e82a688d98b35fc0c65faa8304301a"
+        },
+        {
+          "operation": "tick",
+          "trace": "dd7e11532b32a15b98eafcef67f3212264347022019b7855ebcb9f606df1ebc1"
+        },
+        {
+          "operation": "close",
+          "trace": "0de05bca762c54208fb301eab1b2708529ae2967f9441f657e797a1064eea790"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "Telegram-owner reactions echoing from WhatsApp do not add duplicate bot reactions or loop back",
+      "inventory": "baseline:test/reactions.test.ts:134",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "9a280997f13fee325159cdba30903bc391485eb80380ef9b17cfca80a4646c5f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "25049532f373775618c99aaef6a23bf9fda962187dcb07c55fa159ee9cf1a9f4",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "c6c875fd476468a18b76f23deb0da3ee44a7ce7e394c7408bbf0e6d9fa6273bf"
+        },
+        {
+          "operation": "tick",
+          "trace": "809fd8fd6e565b1a23ae1d241c95e847390d771fea5d8dc29dea79e990888f22"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f931b7506f35948636f00caef64c74ce2d01e82af46d3a5abd7d4ca89d88458"
+        },
+        {
+          "operation": "sql",
+          "trace": "106228257595929d7f6239ce1bc79860d6b64bc11dbd0e17b37eb1e685c0de7f"
+        },
+        {
+          "operation": "sql",
+          "trace": "ba77f82c9324e7a6891a68cae66f792a9362b10681c7005391c343a44e74d2ad"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "a3df8829388b64fcddbc5590e22f7f36df82be9d40d5014d3187161c6849dff5"
+        },
+        {
+          "operation": "close",
+          "trace": "24ec0e5895669541b2c63ec453ce2bcfcb40c8ca0072a53948feb706792f27dd"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "later repeats of a reaction already represented by the Telegram owner remain suppressed",
+      "inventory": "baseline:test/reactions.test.ts:144",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "f6e6b57c733d0fee74be20285d79bfc766732c97abd51c4c02a73ba079724cc1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0b3538c73358f663b1f04a4a3dda979a31a3a95330a3ee4528ec4803f13a7673",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "9fb5ccad5bcc200c40aabbf8ffb45c5d7c154840ecc0e5313e2c406545f09f7d"
+        },
+        {
+          "operation": "sql",
+          "trace": "0d942b184c36b028be365ef50f363428d2d4dff2408501b5002ff4ecf75bde35"
+        },
+        {
+          "operation": "sql",
+          "trace": "017ae6aa79bb881ac8ae1b846df7dd038f38b9f842d7f86144984db802fdd804"
+        },
+        {
+          "operation": "sql",
+          "trace": "d777c0349935cfab2d503eee096ecd4860b80209bdec2a8c4e1b7e507b7c2b17"
+        },
+        {
+          "operation": "sql",
+          "trace": "f8749172ddacd0a1b75990c75a12e8aaca711799d605a9ef317a38b73c8f9a2c"
+        },
+        {
+          "operation": "sql",
+          "trace": "19d8cf0f19458f6a8eda8293e72d3f3509ce715e84929845725a02d10f3b2833"
+        },
+        {
+          "operation": "sql",
+          "trace": "85df62adc6cf12450e0c6a91555a48ec312f32c42477aca7ae1c14bcdb76a809"
+        },
+        {
+          "operation": "close",
+          "trace": "d74240b9e30363bd26a09f005e3127f178d910b0ad08d0a754158225a6cd608d"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "WhatsApp heart variations normalize to Telegram emoji and do not create a second reaction",
+      "inventory": "baseline:test/reactions.test.ts:155",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "ceac8a0032634d1b9e7c8333caa8d61aaac2b72ae6e7ea023f730a18abc55678",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "3498914dcd97053b4eb24ae0c37d046bfcf7b28b291be7367f4af8e3ea397aff",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "0c4e977b1e19e17cd728b0ca33c809e6f9eec90fe419a33ef2f35a847f62fa3c"
+        },
+        {
+          "operation": "sql",
+          "trace": "b8b29e6bfd0d5b9807788125c4cc44c88576aaf2dd8d02b7d8be69cbf06abda2"
+        },
+        {
+          "operation": "sql",
+          "trace": "bf509117e6373ea41404c8270d03cae324f81c224af41550950b3664fbd27f83"
+        },
+        {
+          "operation": "close",
+          "trace": "2b192a56aa5727fcfbadd1cbbae19aec9fed6904e6e7f36e481d9a232383a04b"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "unsupported Telegram custom reactions do not clear an existing WhatsApp reaction",
+      "inventory": "baseline:test/reactions.test.ts:162",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "89129c92ab58ef9428de27d41831fd25ab1d7f1f52454ef7c9564437d5ef771a",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "a08b194262e3f2eab806665a9b5195f297c04489b86edebb74627ee733d8eecc",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "f1b445c4962c323c68da5bb7d8629d6ddaef7c5e4cc292664633333725690087"
+        },
+        {
+          "operation": "close",
+          "trace": "713a98a8bd6027fa512ed1a0597d2dfbf4081aea639235e8428472ebb651c3d0"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "Bifrost maps laughing reactions on owner messages, deduplicates equivalent changes and clears on removal",
+      "inventory": "baseline:test/reactions.test.ts:168",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "97a3136aa560080c897155af2fe67e892d454dae69f08af828fccac8216eb6fd",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "7fbdaa4a01feb4adb7e15694f3c6e36a69c43a1fbdb3ea6578383ce187e88a56",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "exec",
+          "trace": "6ee6806c3ffd79f75c54ae496fb8dba8954f61849439b22a99973b6d7709b9b3"
+        },
+        {
+          "operation": "sql",
+          "trace": "89f832edddf1918def3c7731de6b13ff6df4faa5c057b813efd025cb180cf91c"
+        },
+        {
+          "operation": "sql",
+          "trace": "4ad49c43132b3ebe2581bf74ec04c215cbe30c0dd2d4f04b0e62a5982e145a84"
+        },
+        {
+          "operation": "sql",
+          "trace": "f482e40d971260315a20010eb3ce8bac348236a07e4efd07699e2951462a3b3c"
+        },
+        {
+          "operation": "sql",
+          "trace": "73ce86d607e7e46ecd342c6f24072c783f355a9597dd8a94a8213f46318ef917"
+        },
+        {
+          "operation": "sql",
+          "trace": "d47381bd22fa2cc1b52eb937b8545774c573c0ead3b31332268285665dc4be53"
+        },
+        {
+          "operation": "close",
+          "trace": "86d73d24946d709d35fa78cb268f0a0638b924eba940c0965f9e4ff3632023c7"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "equivalent reactions work through member bots and private copies without altering supported emoji",
+      "inventory": "baseline:test/reactions.test.ts:178",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "8f129faa45ff35f58006506de7937b67b5f17505c32ce68ce421d9183ab1fd7f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "b2b9e2df7e71c635d62fdba83a0a773c4c69485d4f468b0950b6f0dd15d49e44",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "04cab7106694157b462527019ed07dc51e6d7562e7b023b92f6c0b78051b4b49"
+        },
+        {
+          "operation": "sql",
+          "trace": "7e96054702c435904732a2972aa51c092aabefa0dcf70787c8e4a93f4bdd08b9"
+        },
+        {
+          "operation": "sql",
+          "trace": "ecf11ee1ba6543b22ea27dd1e93022edb2576f3c533f3f6de93d8995030b9d49"
+        },
+        {
+          "operation": "sql",
+          "trace": "b1d29568be36fcc68e9009860034f0d3ed12408a21904967accb4359acf559b4"
+        },
+        {
+          "operation": "sql",
+          "trace": "3473513534a910522800a51c09b52ddae43c30de7061018f2f2c12fc5528c2c6"
+        },
+        {
+          "operation": "sql",
+          "trace": "2a13ff7896e32e1642fab9f2fa596babda693fec589d87020373e0304479d75f"
+        },
+        {
+          "operation": "sql",
+          "trace": "29619df8694d2e7e02d646ab0bff920277ace22fd0a7fff16758b47920a1546b"
+        },
+        {
+          "operation": "sql",
+          "trace": "ef340d9fe28743ef31545c3a0e3f7ab5165bb163263fdf6eb50804c2589185cb"
+        },
+        {
+          "operation": "sql",
+          "trace": "0241a4e39833a14fa9d11bdc8b1d0d5bc55bcc9f14086e9b5ab5847e57de4f19"
+        },
+        {
+          "operation": "sql",
+          "trace": "5f3ea35f52987a3649f5bc2ff6ffcd899fabcb2eeb672585c447d070150544ed"
+        },
+        {
+          "operation": "sql",
+          "trace": "70ec16eeb0bd1878eeb7efff205a2094ab00b77f9664a5abf2337388c1f8b947"
+        },
+        {
+          "operation": "sql",
+          "trace": "dda49f445eb32eacfc972972f53abb093874b4bc98d2fbb03f9142eec5c23255"
+        },
+        {
+          "operation": "sql",
+          "trace": "ee8311685189d6bb4e0a258f817c510f67dbb350542555d66ab2d251c0539c12"
+        },
+        {
+          "operation": "sql",
+          "trace": "544a716c871bd36fba83310c1431050bf2f722ffa68621d8abac0d558b7a66a2"
+        },
+        {
+          "operation": "sql",
+          "trace": "9a509566fadd8a3673118fd1880fd01fcec87396ab6589b5937323cd918b7743"
+        },
+        {
+          "operation": "sql",
+          "trace": "11350c427d700971626d5de88454c652e46af8fb24d6e3c3a217702a9140bab7"
+        },
+        {
+          "operation": "sql",
+          "trace": "f66ab307328863c97d96654a6a448887257eabd22e546bf1e62fb8513d895b74"
+        },
+        {
+          "operation": "sql",
+          "trace": "632b51b9e91c23f98699559ed3dca26aa0b0b651da1b3be75b36173a598c70a1"
+        },
+        {
+          "operation": "sql",
+          "trace": "19a7457cfad9b04dd206339c733d3e3738c53dc164c1bc3c482fef0d9f4b345e"
+        },
+        {
+          "operation": "sql",
+          "trace": "fd7f522283e9cc86689882f86ebd67c1de32d52dd9a9d79d2bacd4155feb56ae"
+        },
+        {
+          "operation": "close",
+          "trace": "538b443f89f1670bdfb449a4f7f7c92bed3edae2f2d6833358e8912f47e6b55e"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "a refused equivalent and an unsupported unmapped emoji both keep the original in text fallbacks",
+      "inventory": "baseline:test/reactions.test.ts:186",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "bff816c100efc5c2b00a66c5f80543f6511b434e8fbc23bde9a3390ab46bcc7b",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0f75af364f50a461d96b68e3afb903a06d99e3847a18333f01f8adad975ec27d",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "e9c9398f6e49db90b039c42047e6d33013f41ff615dc9b93760e211c6a0f482f"
+        },
+        {
+          "operation": "sql",
+          "trace": "8582b42debcdf58b81ace4b5c0b3c2d314406aa067df101a9f5aef8a15e0a50b"
+        },
+        {
+          "operation": "sql",
+          "trace": "c77fd89737bb5c2ae0e07800566d5315fd7d40f1742cbcad11f2ec317840b8bd"
+        },
+        {
+          "operation": "sql",
+          "trace": "1648ba97bd25c53aedfcdcc0bc99a8341f3d05b79859f4de667dc3c97e1dc0c4"
+        },
+        {
+          "operation": "sql",
+          "trace": "ac8cfe51da3b83c8213fd48730b31795c6946c8416d4e33c88afe85540f4e0d4"
+        },
+        {
+          "operation": "sql",
+          "trace": "4d78cdd60721eb4ae01d5e4c98871b98f704290c7170ab6d9fe1ae0f58be5721"
+        },
+        {
+          "operation": "sql",
+          "trace": "8378a2454af3b0c3a709d1256797697481cad38126a747168e5eddf1f6a176aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "f1ca6118b9e37f16ef8af3199880351547fa6ed9b452e9ee8fb546c4d6ee9789"
+        },
+        {
+          "operation": "sql",
+          "trace": "b2fdbf9cbd8bbdf642d91609ebb1dd9d141ba2729f24ac41fe9e59ff14bd5522"
+        },
+        {
+          "operation": "sql",
+          "trace": "44fe9ba996551dd6b34d29bcc1cac8a46899af5cff03c7f1e7961c700ee0246a"
+        },
+        {
+          "operation": "sql",
+          "trace": "9f0e54dd2f80e5b62816749caddb83340106e875750fb2708bfecd98ba83a739"
+        },
+        {
+          "operation": "sql",
+          "trace": "fd8f4e00d336463c8fc33adb1078206822d5d950e17b5d0c26c7d67561667a04"
+        },
+        {
+          "operation": "sql",
+          "trace": "adb739acf25afbeb21f28db0243570d25bfb2b683c261d9c760b0acd464f614e"
+        },
+        {
+          "operation": "sql",
+          "trace": "f2ea18322bd1873a64844ec808555d6cd07a38359ebf7d058b7b35c0d250feee"
+        },
+        {
+          "operation": "sql",
+          "trace": "6d00faf46327d08045e0fac12506e9a077b549620c5854481e024b7416445317"
+        },
+        {
+          "operation": "close",
+          "trace": "20a446e015dbd5a7bd4fbd4112f95c3f7041f004543ffda1bd2844aa6fc66513"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "Telegram-owner reaction echoes stay suppressed after adding equivalent rendering",
+      "inventory": "baseline:test/reactions.test.ts:195",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "453a1f77d89389d314a76138cb71c3518dba90b900ba7b6e87b4876ebb3fbbbc",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d5beec2d28ef1cff8364ca09a9b8743959ca0d2255c866d4a6639c5ae0ec1977",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "9fb5ccad5bcc200c40aabbf8ffb45c5d7c154840ecc0e5313e2c406545f09f7d"
+        },
+        {
+          "operation": "sql",
+          "trace": "d513b001d36a0f5725530b73562ee2df3d469bed964a3df4f54f40e4ad845c58"
+        },
+        {
+          "operation": "sql",
+          "trace": "a0c46a52f4a54c49a997599dde09c9364469b7b20f3c067d77ab588c72d21629"
+        },
+        {
+          "operation": "sql",
+          "trace": "a12962223c0560e15043e5ff2d02786853ec635ba98e4de6fad488983edca766"
+        },
+        {
+          "operation": "sql",
+          "trace": "5035563defd4a97acbb2b3a66ed27bd1c25f217300b88afc61cf75e56cb94647"
+        },
+        {
+          "operation": "close",
+          "trace": "7e581316f925f76c6e43782d152b5fd8c1d3c95aa93f93d29b1ecb208f475b90"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "Telegram custom reactions forward their Unicode equivalent and cache it without converting it to Telegram approximations",
+      "inventory": "baseline:test/reactions.test.ts:204",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "055240ddab4e2d5bbca1e4eecb8f473ee6feb3b43f3b6dad25a778ff75052efd",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "27c62ec57b071cfcb8af7d2e24a82e6988f555720b49812c81ae9a40779dda9f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "b8f053a1d72faafc6b33c2a7f862bb0d6d073102da357b1604ad55ee15c79aa9"
+        },
+        {
+          "operation": "tick",
+          "trace": "9c7bfcde83b6ca28c98d411b517955f067fe23c5aab7f0125f2ed692e0850100"
+        },
+        {
+          "operation": "telegram",
+          "trace": "78ce283dd0f33ee59060e923814dce3aae08cfa0b7c1ac99847c6dd64e5e5e80"
+        },
+        {
+          "operation": "sql",
+          "trace": "a6f53ca152f557d77913654012c148dbf760517379d4a235440009a591f779bf"
+        },
+        {
+          "operation": "close",
+          "trace": "ec7b31710c667e37be45b0a6de62cce6eae035850dc4c83073b0854fc2092ddb"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "member DM reactions are admitted with bot-scoped mappings while group duplicates are ignored",
+      "inventory": "baseline:test/reactions.test.ts:214",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "34c3ef61adcd12ab87d03e1e0e82007b9e29b1c2f7e56c5be29dcb7be41f12b5",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5e09531ef2899b49519e78f008cf11fc98fba2b3082cc5f518771f85d76e807d",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "d328e7f27255ad8e852d2fd0ce4733be528510fdd03d4aacfa5258c174bcf2d3"
+        },
+        {
+          "operation": "sql",
+          "trace": "7468ee336c6737ffd428e41619205cfb4f4e9a608794904924a5a31b042a0eb1"
+        },
+        {
+          "operation": "sql",
+          "trace": "99dab0f920f7e2dcd0ef814abe443a65765c7b5a9cf1fab170a8619942faeae3"
+        },
+        {
+          "operation": "sql",
+          "trace": "4b5ca7f0e55d2c381f889fdd593ba2a95d013a8bef24b5a2f5a3d688cd6bce79"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "d8559c560f057dbb237f07f6471ba33332359ba4cb419896ead59e30eb2a8ed1"
+        },
+        {
+          "operation": "tick",
+          "trace": "bb7118507761ca5494945aa8179ff960bfe65a5779e893ca850635ca32e72949"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "f45c1d216e9d8fdecc87477edd28687f9d8cc4e8ac528255c102b47b6540d31d"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "87396be9c26d8f82624b251d08e5f501ad39d7b0d625154b1d933c0eee24a690"
+        },
+        {
+          "operation": "close",
+          "trace": "edc2257ccd65510715b7e98d2dcf9c8918023c9b9c67b4aa0dd01ac5ec0a4eb2"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "adding a custom reaction beside an existing reaction forwards the new one; removal keeps the remaining one",
+      "inventory": "baseline:test/reactions.test.ts:223",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "93d524422398786ae84e521eed6a9b850d346883ad5ef15e87f5009ad2eb003f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "bc712ce019ea91b9e70c0992ea0fcb72f4062ef3d4aab9b3e13d4082fa81332e",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "2196eaeb2b4f442b1428647c5ba1f93d20a57fa99bc1141c0b6c1f1f91cea8cc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "647ba06e1baf701b45317eed50a4cb8e6bafc6831639f6dfadb389a46f102b88"
+        },
+        {
+          "operation": "telegram",
+          "trace": "414ded004c6213da14d16ba92a0d49ef4e336101e732f7976249a342fded7f4e"
+        },
+        {
+          "operation": "close",
+          "trace": "6683992213ee7ec61002abb59eb6a158127ce7d59bf38c50af0dbb86f84796d6"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "unresolvable custom reactions produce a temporary independent notice without clearing WhatsApp or blocking a chat",
+      "inventory": "baseline:test/reactions.test.ts:235",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "a424cd37d925433746fe01d1b19ca96f8d2cb894c2677e89fd796758da480c51",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "965ef9a9596472e08b9b9b55e55c563db54d58bf2285a20e343b2b551758ae09",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "a3bde3d036b90b96fd2935c89caafb88ec296292a5de51f220c46f588a54e19b"
+        },
+        {
+          "operation": "sql",
+          "trace": "b97318ecae14c211eabe27e014c177855f174c0b013c5e7880c7a9e67315ad0b"
+        },
+        {
+          "operation": "sql",
+          "trace": "ba384599fcd04a7bed33d7da32c5d319ad88537964cfbcf207ec20869ed07dae"
+        },
+        {
+          "operation": "sql",
+          "trace": "8118e7fc76cfd4016db9d2f803861748b498271664b30d90c2a610f261ac054f"
+        },
+        {
+          "operation": "sql",
+          "trace": "2c9cc4dcbecfaf8517fc2a12f9a75d548a827bfbdd22f80cfcc7a40a2a1f99e9"
+        },
+        {
+          "operation": "close",
+          "trace": "5e452874c6996162416d444464f6736e80bef50a41f69b8c8c0d9a0da3797e8c"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "a member unable to access another bot’s message falls back to Bifrost and cached refusals do not suppress that fallback",
+      "inventory": "baseline:test/reactions.test.ts:244",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "c697b44c2d7821b9eb58fea8bf04ed61a2b4014ae2d4665208faf3f62d2e0f83",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "1541e120155a486a77bfb73164c961c807474ab8c92d3cfe21f1615067ad88f1",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "864a4b7b3351403828a1f2c2e9e32492b0ada96746b9bdad13a201a1f4487dfc"
+        },
+        {
+          "operation": "sql",
+          "trace": "74f3cbff87b393a18acbaadd450d38ab00170859bf44603233cbc17371f577af"
+        },
+        {
+          "operation": "sql",
+          "trace": "b7671907e36565c46906c137ec1f3702a3a911acd190913893628e5f4f144733"
+        },
+        {
+          "operation": "sql",
+          "trace": "6c6e4ae8d95ad517968ced25d71690c4fba4bbc8653a9c90399cf8752f6c67e3"
+        },
+        {
+          "operation": "sql",
+          "trace": "fa9635ba5b804119cc3bae627997ff9dd6aca4c362992caa5bee799ba2b3c2e5"
+        },
+        {
+          "operation": "sql",
+          "trace": "d4f605502adb67966324d6c4e852c5b04f80f123d605c09c04ab91177e75b19d"
+        },
+        {
+          "operation": "sql",
+          "trace": "09fe8dd092d6026316aa4f6ec728b9e3b78f4d2ba2bed340480cf8a0d28947ac"
+        },
+        {
+          "operation": "close",
+          "trace": "087caba8856fdfa11ccdcd65a53982822de5f42442626afcb2f029a85f1e3bdf"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "old definitive reaction refusals expire so corrected permissions can recover",
+      "inventory": "baseline:test/reactions.test.ts:259",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "0b35ab9cc35123f45780c7016bd308abe7a9e307711048422baad94777b44418",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0394d6aa86ef5c6ef3f25a5f95c2d849f7c94f0de98102f9aea3a44dc6f13847",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "sql",
+          "trace": "eade5e17942593dd807382bb89888e8961b9b828591d782bc79823ee363f5023"
+        },
+        {
+          "operation": "sql",
+          "trace": "4dd72661dce1c8b3703f21036dd18fc128f213bb90612c80ba75395212e9d2df"
+        },
+        {
+          "operation": "sql",
+          "trace": "f58445e46a84229619f256f44418fc815adf6e72d3a760135a0888d465649a19"
+        },
+        {
+          "operation": "sql",
+          "trace": "d8c09ff79bbd4b68c96c9d8a02446813d6ed3e7564afaeab560bc5d6f52dd0fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "c54fc2a6d6835814100f4e4df52a5ee8b851b44b54e4c218f0474d99fc4ecbdb"
+        },
+        {
+          "operation": "sql",
+          "trace": "f29d625e048c93a34c1fcc2bd167917d1392f6ed49afcbeeb851e6548c54338d"
+        },
+        {
+          "operation": "sql",
+          "trace": "31ebb54c638c46e60a3b7a1f9cdf1a7cae64061b44c30781f5b24206bcc0cb78"
+        },
+        {
+          "operation": "sql",
+          "trace": "6249a62212e77d6af23299507687ccf3155848da11644bc698335d4c494253df"
+        },
+        {
+          "operation": "sql",
+          "trace": "8c59f5167f3b50095bf0a7403164f1a09312cb77635170cc94379682a8497780"
+        },
+        {
+          "operation": "sql",
+          "trace": "b13134d5a275244cb1733b1b117517df3621ed771055812aa9129ccfa0bc488e"
+        },
+        {
+          "operation": "sql",
+          "trace": "a076f7458c565639cfca8dcf604e3ad63c90d5a8b59999073a19c5ca26558498"
+        },
+        {
+          "operation": "close",
+          "trace": "87f63f5388dfb4ab7332e2e0d82b0e495df97c6d4f2fdc6956df39dbc6de3caa"
+        }
+      ]
+    },
+    {
+      "file": "test/reactions.test.ts",
+      "name": "custom-emoji resolution and outbound payload stay frozen across a known send retry",
+      "inventory": "baseline:test/reactions.test.ts:269",
+      "sourceSha256": "6a0ff0b0f7dd267b0124e213aa9e2e8b87191f7aaf7c415c51b41b4a61aa0f9a",
+      "calls": "b376b2682e55f5836e98a764df2a7cfb84d8a232d33df8f578469ec3155ea7fe",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "b80c35c8e600f04f15ae0d4a4f4872bdc77f26fecbc588e75906b10ccd7c2cca",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "215bdb2ce39aaf505743086e0eeb4a41248a0ea35fea5d37d50bde721471f620"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fd64716ce383effc111bfec928ad9f2f81bd83853d2125a59b76b0422d1ca4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "3f32ec0735cd550db4169ddd8c38f41c193780f78f3ad27605d565944380f088"
+        },
+        {
+          "operation": "sql",
+          "trace": "e7a2894f1f035a9dc73c79b634d2698f3222940107ce64fc754b3ed8124c2ac9"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b531801a2a6013495d5e591f3a795123e88bd68504a5ce71bfaf5895149c0a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b68f5f084a280c5617995cedb492a191d03619feb266fa37f0cce0b531d6ea5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "295c4039fa6236983efd06ab8419a136935d500bbe375b51ad18182d9af00c64"
+        },
+        {
+          "operation": "telegram",
+          "trace": "fb5748a9b0e935f255e9fecebc23f08efc9a04a00a70971fc3590746b44bb1a0"
+        },
+        {
+          "operation": "close",
+          "trace": "1863f2ea9b2d2dfc8396e345a8e33e09ecdaf92a0af35cb2b276e6025f889ade"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "a deleted owner message gets Delete/Keep without overwriting or deleting its Telegram content",
+      "inventory": "baseline:test/revocations.test.ts:62",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "a1087659984eaf10ceb2e1744015a53f7c6b6e4b31eb32497bd2d9760d741df3",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "7951a948560e09499fe3828bbdab8293e5aa991209106eb92665976c109a45ee",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "1eef46f980300d8f7ea2e25c79ba150a79df3d93829331107c0439f8549955f8"
+        },
+        {
+          "operation": "sql",
+          "trace": "5bae4b80274494293b0e3867abe1434513e620413f8382ef756521aba57d5477"
+        },
+        {
+          "operation": "sql",
+          "trace": "71c7c2d4093959b24de4846933930675df3e29f1827dd8a39a10d3a5ed7e08f3"
+        },
+        {
+          "operation": "sql",
+          "trace": "97b7de5dc7b2491208dd59f1d78ef1c818af2a2bf201aa9ccf28d8e05243a09d"
+        },
+        {
+          "operation": "sql",
+          "trace": "1ee7b08cd75add471be52a33570cf82bb5ba3ab4376408f5fec0be7b96b846ae"
+        },
+        {
+          "operation": "sql",
+          "trace": "16115bd8c654628160c473d275a3a83a52924b55650a0287dc4cae85b47c21fa"
+        },
+        {
+          "operation": "sql",
+          "trace": "6802966d1eafba0401251997289e73a79273078b1b18bc223e9aae6856e989ce"
+        },
+        {
+          "operation": "sql",
+          "trace": "76d961cc49f5786028b9d9b03a51ed74a57112a0910f3798a29b96bd76a2191a"
+        },
+        {
+          "operation": "sql",
+          "trace": "b7209c62e43bc58bfb35eebf733672c561d54511dfaeb9a37c4bc2474788cebc"
+        },
+        {
+          "operation": "exec",
+          "trace": "5bac24dccb07f641b44e901013c119702a7daea9014afabdfbf1c78eb44f9593"
+        },
+        {
+          "operation": "sql",
+          "trace": "16bebae172d1f03abd882db2d7623bdb4578672a8f3a9fffb76db93607622a6d"
+        },
+        {
+          "operation": "sql",
+          "trace": "1ef6d99baf7b0f9c6bbc0e9108a1e3ffdfb136618296ab4a220ebfe0603a1c0a"
+        },
+        {
+          "operation": "exec",
+          "trace": "a9ed244181d5ae095b18752236dc82a91bb4535ab88eb44578fb2f74ba2c0ebd"
+        },
+        {
+          "operation": "close",
+          "trace": "b4519260e178d3f885793cd9d7caf63dfa05e256625ef98211c9b1d6a8a2a559"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "Keep removes the fallback notice and preserves the original, including after late edits/history",
+      "inventory": "baseline:test/revocations.test.ts:73",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "b52abf1a6d91243fbf88b0376068ce13f85e1f2cadd0cb63e59c8bd3084bf273",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ae02681d09b4fe112ae9a77bb778878b19e774e1fed8e2761aedeacff2f44998",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "1eef46f980300d8f7ea2e25c79ba150a79df3d93829331107c0439f8549955f8"
+        },
+        {
+          "operation": "sql",
+          "trace": "5bae4b80274494293b0e3867abe1434513e620413f8382ef756521aba57d5477"
+        },
+        {
+          "operation": "sql",
+          "trace": "71c7c2d4093959b24de4846933930675df3e29f1827dd8a39a10d3a5ed7e08f3"
+        },
+        {
+          "operation": "sql",
+          "trace": "97b7de5dc7b2491208dd59f1d78ef1c818af2a2bf201aa9ccf28d8e05243a09d"
+        },
+        {
+          "operation": "sql",
+          "trace": "1ee7b08cd75add471be52a33570cf82bb5ba3ab4376408f5fec0be7b96b846ae"
+        },
+        {
+          "operation": "sql",
+          "trace": "16115bd8c654628160c473d275a3a83a52924b55650a0287dc4cae85b47c21fa"
+        },
+        {
+          "operation": "sql",
+          "trace": "6802966d1eafba0401251997289e73a79273078b1b18bc223e9aae6856e989ce"
+        },
+        {
+          "operation": "sql",
+          "trace": "76d961cc49f5786028b9d9b03a51ed74a57112a0910f3798a29b96bd76a2191a"
+        },
+        {
+          "operation": "sql",
+          "trace": "b7209c62e43bc58bfb35eebf733672c561d54511dfaeb9a37c4bc2474788cebc"
+        },
+        {
+          "operation": "exec",
+          "trace": "5bac24dccb07f641b44e901013c119702a7daea9014afabdfbf1c78eb44f9593"
+        },
+        {
+          "operation": "sql",
+          "trace": "16bebae172d1f03abd882db2d7623bdb4578672a8f3a9fffb76db93607622a6d"
+        },
+        {
+          "operation": "sql",
+          "trace": "1ef6d99baf7b0f9c6bbc0e9108a1e3ffdfb136618296ab4a220ebfe0603a1c0a"
+        },
+        {
+          "operation": "exec",
+          "trace": "a9ed244181d5ae095b18752236dc82a91bb4535ab88eb44578fb2f74ba2c0ebd"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "37152089b349c1ae90b0e402ba8f1dc47a268a89341ee0317136e289d11eea2a"
+        },
+        {
+          "operation": "tick",
+          "trace": "07909959ca46aa5d14b7cc39e25b70d344471f7702f69e8513d8f7d82504eee3"
+        },
+        {
+          "operation": "tick",
+          "trace": "96b88a41e406cc5e92cce60d31fe24facdcc4c2a9b17905ddbbd20bb01bf11a3"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "87f94e4681e35c897585808f143db8601da2b2347a2b3a213ba079451d60ab5a"
+        },
+        {
+          "operation": "close",
+          "trace": "413fb19733d7e49d35c7ec46b717e237dced080a1a54fec1c33e1c9e2f1ba985"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "own phone-originated messages get inline choices; Keep and expiration remove only the buttons",
+      "inventory": "baseline:test/revocations.test.ts:86",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "950fb326fbc2e25870e45c3196d7b43d3d283942819c14bed8ef993983cf95c3",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "93293ce3c5eadbc4ac872ceadbbd213ff25169c08f46a29743e97538e2018f8f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7607ad822e259fcb9ad809ceb385b2e8552405806901d6c0600a4ace8cdd6ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "190786b6e678e8215d0f5781386ac3f92401044927401daff3c399c1321e2a67"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd8340c5d4ed2da983522bf58afcb5fe3b46aca2bdbe232dd5ad222a449e7a19"
+        },
+        {
+          "operation": "exec",
+          "trace": "5b462bb5a4c7a0ab8a8454efaf9e5fc9f126438ea751b961dc25db21cbb08d80"
+        },
+        {
+          "operation": "sql",
+          "trace": "f689799cd8922ca6ecfe29dfaa69e0f9e38941883845119f0755140dad148cc2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0b5eb50508b0f421ac57d81c4cfb3d3cd7dc38e791fd76c79cfa140f6367a7b6"
+        },
+        {
+          "operation": "exec",
+          "trace": "460e876616f4bdd1e5a90f30739c249dcd01e1efb83420c253a89556de4f42f9"
+        },
+        {
+          "operation": "exec",
+          "trace": "87f5959ed71c9e899dbf75f2a92e6be4e2828136adf4026de1e96621149511a2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0262bea4f36cee4e9698a166f7d7d088bae256fc098b5c7d11384d430b2fbdae"
+        },
+        {
+          "operation": "sql",
+          "trace": "5975afccd61ccb59b20430f79f909dadf2062e6ab00873025b41ae123138b8d2"
+        },
+        {
+          "operation": "exec",
+          "trace": "d930021e277e466d639835d0480dc164c3c9a1feccf4df52a193801fad1bf516"
+        },
+        {
+          "operation": "tick",
+          "trace": "4900ed7d4414cf43783f0d38438918cdb49ffe3646bcf47429c16e0e85d4179d"
+        },
+        {
+          "operation": "close",
+          "trace": "d22c63310003a37c07343882d7e090c445a6b067d5b9e34af1df831294e8a449"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "Delete removes every text/media part in the chosen destination while preserving other copies and mappings",
+      "inventory": "baseline:test/revocations.test.ts:97",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "14274d5ac4e5abc26b933f95606fffdca9e08e8b8a25dcbf8b8ff371c67c008d",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "dbdce3727195e1504a31eb6e0ba48cbc12aab40ca399a4be8c00602b085b13b8",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "6e056c483803b49587e434a924f05feadbe8cca9be8b357961e2fb608929ddbb"
+        },
+        {
+          "operation": "sql",
+          "trace": "edd352c38975fe16bb465b419298448add3908e4cf6ce54afb44084857189116"
+        },
+        {
+          "operation": "sql",
+          "trace": "3b32f7ce7682b8a9ab3736f80e0fcf7d3c313a00df75da3ef0f024f7bd9817ae"
+        },
+        {
+          "operation": "sql",
+          "trace": "3a11e8eef15049956bde41cb908ab6ecd67d99eede5129bb033d18d831ff7a77"
+        },
+        {
+          "operation": "sql",
+          "trace": "e88146826804167c4fbf4ecaea2c5d7c303822513c94b3ac91e9699423c1dc33"
+        },
+        {
+          "operation": "sql",
+          "trace": "578ce151df7440c532c0709d64513f80e5eef281710e9a065953da340bd88c17"
+        },
+        {
+          "operation": "sql",
+          "trace": "6c958fa05d9a29e03a077796eef6e8a57cc02bc7498da79138b95b2ae52a51a0"
+        },
+        {
+          "operation": "exec",
+          "trace": "b7930f76968188ceca8f68912db958e2a656d68f1afb279a27357c8df13db4e6"
+        },
+        {
+          "operation": "sql",
+          "trace": "c12ed2d83167c9d07903ceb826664f19c2442daed1fc120eb81798537a90abe8"
+        },
+        {
+          "operation": "sql",
+          "trace": "09fdbf559cb38a63a71f3772ad3648ca6a8c2a6acd715f3282a43fbdc3302b3e"
+        },
+        {
+          "operation": "exec",
+          "trace": "3c68b759e8fb43a64a7767e66c668d498fecdc66fee5f929e4021d3b87ab045e"
+        },
+        {
+          "operation": "sql",
+          "trace": "28c31f809c5fdfb9805243c7482c08345f7c6b5f0a7fa774dd6de14469a4b939"
+        },
+        {
+          "operation": "exec",
+          "trace": "81f2f68f1b34c0a694ac5e063867760763751b4e213049aef51f38e4243524d0"
+        },
+        {
+          "operation": "sql",
+          "trace": "70a487eca8831785383363cc03228ebc0dbecc0aaff83369eeb41ccd4bc88709"
+        },
+        {
+          "operation": "sql",
+          "trace": "0e1f33a78023bd2e218811ca1b79a23e730149000a54609c71ee48ead8d50463"
+        },
+        {
+          "operation": "exec",
+          "trace": "b34996c7da0a89e6a2fffe47210fa2989f1b984c8f859aea88385bbcf713de24"
+        },
+        {
+          "operation": "exec",
+          "trace": "0241ccc4354212503653d40cdef19138358c5a37729e10f29640280b3961b8a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "0d8863bd7b06a2b7e46bf47cca03fa23cd831fc7d4b9ba8f1adb8c20d51589ea"
+        },
+        {
+          "operation": "sql",
+          "trace": "d3d55cc4155f4eae13544301dc3abe63977e901acba9c2deb09a3f0f6d530164"
+        },
+        {
+          "operation": "exec",
+          "trace": "900aa8c9b672fd647043ba109e4ee5b9bbd59adaa5646384080831e3567e948c"
+        },
+        {
+          "operation": "tick",
+          "trace": "825496b7395ac491ed0321bd645c85b18fb207850a73c8cfc783ba554887cb77"
+        },
+        {
+          "operation": "tick",
+          "trace": "a5ee1c12920e959120533d0090f6fade1275cfb76e415dd110dee931f958580b"
+        },
+        {
+          "operation": "tick",
+          "trace": "33ba2c3de62ca33c80277e49c4e4cdb34b7566df27ff447c6392c203c91b4a17"
+        },
+        {
+          "operation": "close",
+          "trace": "5c20a9e3fbe4f1d5eee9e67de5434b3d5e629ff54a45bf809fa34178c229bde9"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "other people’s deleted text/media copies are removed automatically without a replacement or choices",
+      "inventory": "baseline:test/revocations.test.ts:108",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "a28c9688e8ec9eae06f9d52da1e9128b76744dc8a8b99c249a3866cfe8290e86",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "09e77a17490d4464df6753942fac62fa009a9b8fede09d51bbad5a70a0b98182",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "6e056c483803b49587e434a924f05feadbe8cca9be8b357961e2fb608929ddbb"
+        },
+        {
+          "operation": "sql",
+          "trace": "edd352c38975fe16bb465b419298448add3908e4cf6ce54afb44084857189116"
+        },
+        {
+          "operation": "sql",
+          "trace": "de2124ed1aca3c55d1543fbe0de6d7cfb03781d412ee2aa1f06c47da88df1c94"
+        },
+        {
+          "operation": "sql",
+          "trace": "c28fcfaeaef30dedb3c9ce67f26d7d0fc66b7333f12b2ca062da4317afbe3094"
+        },
+        {
+          "operation": "sql",
+          "trace": "fe2f18813da201bfd8ee7f3ad379a19bbb88752e7e27723b27cb54fd1962f507"
+        },
+        {
+          "operation": "tick",
+          "trace": "9506241a30b5196e154c9a3cf68d1c9c5694f5d3162368d7c80e9f53aa3d7850"
+        },
+        {
+          "operation": "tick",
+          "trace": "9b46817f48f9c25ca4d805bb48016fa8732d97e4baeb39c65fc8e78f15ba6acf"
+        },
+        {
+          "operation": "tick",
+          "trace": "5204fa8a18d8984d810e466b7340563960eb196615c8800d9b4cf912e95bf0e3"
+        },
+        {
+          "operation": "close",
+          "trace": "6c6d96946c09c4c8737a127f9a5fdbe9a083b619e444c5f7db8fa28dd35cf2ae"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "duplicate events and conflicting clicks cannot reopen or reverse a completed choice",
+      "inventory": "baseline:test/revocations.test.ts:115",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "34e2f80ec0d2e37fed86ce74584a1832e055a75999022627cf3485b114be2232",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "93293ce3c5eadbc4ac872ceadbbd213ff25169c08f46a29743e97538e2018f8f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7607ad822e259fcb9ad809ceb385b2e8552405806901d6c0600a4ace8cdd6ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "190786b6e678e8215d0f5781386ac3f92401044927401daff3c399c1321e2a67"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd8340c5d4ed2da983522bf58afcb5fe3b46aca2bdbe232dd5ad222a449e7a19"
+        },
+        {
+          "operation": "exec",
+          "trace": "5b462bb5a4c7a0ab8a8454efaf9e5fc9f126438ea751b961dc25db21cbb08d80"
+        },
+        {
+          "operation": "sql",
+          "trace": "f689799cd8922ca6ecfe29dfaa69e0f9e38941883845119f0755140dad148cc2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0b5eb50508b0f421ac57d81c4cfb3d3cd7dc38e791fd76c79cfa140f6367a7b6"
+        },
+        {
+          "operation": "exec",
+          "trace": "460e876616f4bdd1e5a90f30739c249dcd01e1efb83420c253a89556de4f42f9"
+        },
+        {
+          "operation": "sql",
+          "trace": "e669608627df1b8134644d023c8aac4acf3ab395363d4a5a2466bbab3ccbb3a6"
+        },
+        {
+          "operation": "exec",
+          "trace": "87f5959ed71c9e899dbf75f2a92e6be4e2828136adf4026de1e96621149511a2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0262bea4f36cee4e9698a166f7d7d088bae256fc098b5c7d11384d430b2fbdae"
+        },
+        {
+          "operation": "sql",
+          "trace": "5975afccd61ccb59b20430f79f909dadf2062e6ab00873025b41ae123138b8d2"
+        },
+        {
+          "operation": "exec",
+          "trace": "d930021e277e466d639835d0480dc164c3c9a1feccf4df52a193801fad1bf516"
+        },
+        {
+          "operation": "tick",
+          "trace": "4900ed7d4414cf43783f0d38438918cdb49ffe3646bcf47429c16e0e85d4179d"
+        },
+        {
+          "operation": "sql",
+          "trace": "25659d21737f822c1547e7266faf44e443a5a279f4f739d196bd2ccba08e6465"
+        },
+        {
+          "operation": "close",
+          "trace": "d22c63310003a37c07343882d7e090c445a6b067d5b9e34af1df831294e8a449"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "choices validate owner, bot, destination, message, session and expiry before changing content",
+      "inventory": "baseline:test/revocations.test.ts:127",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "2e92f161a30e193dcf1bf97846866e8b2f439c333d7730916d1d031dd41c2339",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "e5199b0251256528120ad7b47dd9efb9995fc50468a2c69a8c66ee859da38faf",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7607ad822e259fcb9ad809ceb385b2e8552405806901d6c0600a4ace8cdd6ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "190786b6e678e8215d0f5781386ac3f92401044927401daff3c399c1321e2a67"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd8340c5d4ed2da983522bf58afcb5fe3b46aca2bdbe232dd5ad222a449e7a19"
+        },
+        {
+          "operation": "exec",
+          "trace": "5b462bb5a4c7a0ab8a8454efaf9e5fc9f126438ea751b961dc25db21cbb08d80"
+        },
+        {
+          "operation": "sql",
+          "trace": "f689799cd8922ca6ecfe29dfaa69e0f9e38941883845119f0755140dad148cc2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0b5eb50508b0f421ac57d81c4cfb3d3cd7dc38e791fd76c79cfa140f6367a7b6"
+        },
+        {
+          "operation": "exec",
+          "trace": "460e876616f4bdd1e5a90f30739c249dcd01e1efb83420c253a89556de4f42f9"
+        },
+        {
+          "operation": "sql",
+          "trace": "4694c912050648c4cb4e2665ec5af9c27e339f4d3c78491c2957412c9d86e204"
+        },
+        {
+          "operation": "sql",
+          "trace": "b9dc68fc5b6ce381d5b43ee8ebec0dac9c8046b528c3e1265a03e00ee405d443"
+        },
+        {
+          "operation": "close",
+          "trace": "3d0546fcdb246d27bae9d591736f09555f949e1305b6138fd4b0c2308590d7e1"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "expiration defaults to keeping the message and never deletes the original",
+      "inventory": "baseline:test/revocations.test.ts:140",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "3c5dfc7ab187897adead660ab3f0d68cff0aba081fdae630400687197fabec65",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4e4f29cab35f2579961d834bc630b27c29b70d6dc2d71d3d96eb87db1bc5512c",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7607ad822e259fcb9ad809ceb385b2e8552405806901d6c0600a4ace8cdd6ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "190786b6e678e8215d0f5781386ac3f92401044927401daff3c399c1321e2a67"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd8340c5d4ed2da983522bf58afcb5fe3b46aca2bdbe232dd5ad222a449e7a19"
+        },
+        {
+          "operation": "exec",
+          "trace": "5b462bb5a4c7a0ab8a8454efaf9e5fc9f126438ea751b961dc25db21cbb08d80"
+        },
+        {
+          "operation": "sql",
+          "trace": "f689799cd8922ca6ecfe29dfaa69e0f9e38941883845119f0755140dad148cc2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0b5eb50508b0f421ac57d81c4cfb3d3cd7dc38e791fd76c79cfa140f6367a7b6"
+        },
+        {
+          "operation": "exec",
+          "trace": "460e876616f4bdd1e5a90f30739c249dcd01e1efb83420c253a89556de4f42f9"
+        },
+        {
+          "operation": "sql",
+          "trace": "84e2886d0dc771c72c534c7e56d9f629b8cbbbbeb8061308a9918685198e549f"
+        },
+        {
+          "operation": "close",
+          "trace": "c463ca39c905ffe6544ed28003ce78511352d911d1ae7fbe173a5e4e2ccdb4b0"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "member-bot private copies keep their bot-scoped identity even when Telegram message IDs overlap",
+      "inventory": "baseline:test/revocations.test.ts:148",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "d1cae720abc96fb8a73c479b8074d6416af70bdd91ec85558fbc47fac627cfb1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "628d2cdeb571f7a5605cfc5586d13ec912f77574043a432748f7e13f9b2cd1a9",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "d0d0c1bd931e339a8065c0aedf457065276bf5eb3d09ef69e2ded5d2c3a2d23e"
+        },
+        {
+          "operation": "sql",
+          "trace": "7a1f0297da06cbff33208d548e4eeace0d15a0a9be02a1d4988ff0aca16bb09d"
+        },
+        {
+          "operation": "sql",
+          "trace": "f3518ad9b956d4dc829438332dada7677b9520ae901cc6b229c7132070118f26"
+        },
+        {
+          "operation": "sql",
+          "trace": "89029d7f317d5ed5903a0ee38a8b19a0aa6fb53cdfbd9357c8343ec6c6c00ad5"
+        },
+        {
+          "operation": "sql",
+          "trace": "89b952927504fca2087fb78b79a6e16d9be9f2904364de48a059b9033a72cb2b"
+        },
+        {
+          "operation": "sql",
+          "trace": "313a6cb7750ae152b3c2222dded9f8f48a3878ab9b422c8514fbc0f86e6a3472"
+        },
+        {
+          "operation": "sql",
+          "trace": "58ebbe66561b6cc16ebcd60e27967acc0118e066acbb195bf51ed4eff5339cf9"
+        },
+        {
+          "operation": "sql",
+          "trace": "e8a7280968d5d0b4ed2199a76daf12cd6560a4bbeaba1481b378b0b9d7a6bd1e"
+        },
+        {
+          "operation": "sql",
+          "trace": "8c02564ff13da8d0de376a496034c8e3fda885585b5452b005311723213e007b"
+        },
+        {
+          "operation": "sql",
+          "trace": "c4bfe1f28dd6fe762daa9387dbb010fe39324ec9a05b7199289a41a8aba2bbb2"
+        },
+        {
+          "operation": "sql",
+          "trace": "74f150c2c86b4263ae0eddbdd4dad1b24098701bb9e0b861a45f8be2cc14c1db"
+        },
+        {
+          "operation": "exec",
+          "trace": "5ae1c112d1cadc1fb62445fd8d868fe28b7624bee2b791e91852323cb0147edc"
+        },
+        {
+          "operation": "sql",
+          "trace": "1841b4f44263c9ed45417f2bbefefb2d2af4eef1ce1e566ee89c7fbbbd57bf07"
+        },
+        {
+          "operation": "sql",
+          "trace": "58fdf21268c45fd922b97ad040d9c9db70990edee6ae60b1cbb43facedcf10aa"
+        },
+        {
+          "operation": "exec",
+          "trace": "6a969af30ae421d4470dc88508255001023407ed0dbd708bb159a00573d2fb04"
+        },
+        {
+          "operation": "sql",
+          "trace": "57017572c07d1793873f4463bd9229839d3eeefec20721ece41be530a7134a2b"
+        },
+        {
+          "operation": "sql",
+          "trace": "c727b8fd313fcf862ffe7acd861a4845767f26d6f9e30e124660b1427f587767"
+        },
+        {
+          "operation": "sql",
+          "trace": "b7a2936d2724b8b97fa61a552e88dcec5bdc71b59fbd7e62ed04ff50f2fcc3c2"
+        },
+        {
+          "operation": "sql",
+          "trace": "b8b98299a0d63c069dcceeceda7023e45ec21a41535af812221a852891688cab"
+        },
+        {
+          "operation": "sql",
+          "trace": "8643ef067f70edc01dd598b37379d646ef7608d41d74b39e2d7a4c164fd11cae"
+        },
+        {
+          "operation": "sql",
+          "trace": "05ee37ec763cd2f8d3136709f2514cd882d030fb65cbc777af040a1757b114de"
+        },
+        {
+          "operation": "exec",
+          "trace": "337a8c6ed2e3449d736a5c7cebf8de6156a0a3675bf4c8c5d3d0dd7c7fad4f5c"
+        },
+        {
+          "operation": "sql",
+          "trace": "2f9baac58cb7df952928c204be72e8c16ef6c88164740bba5f0d4348821ce0c3"
+        },
+        {
+          "operation": "sql",
+          "trace": "fadddb27efc116003f711fe02928af49d0580108481251b19d49598e1e7f756a"
+        },
+        {
+          "operation": "exec",
+          "trace": "412cec845ff0456d763a88294a3e0b882b78eac874de68cb5c1458d76b538d3e"
+        },
+        {
+          "operation": "exec",
+          "trace": "e5f8e1701ca61e4afb2666bedc21fb412eb8a33eba2fa3c381bd684615463be2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0b1bf10b25122ba0269fd3cfb9262021f89be7eae9a82e5d00606e46756dd3b1"
+        },
+        {
+          "operation": "sql",
+          "trace": "4cbda89554a97bba59ed749dbbdfc6e7500a92bfafa5afa61efa2843dbd5b8ee"
+        },
+        {
+          "operation": "exec",
+          "trace": "f6abdd1237f45e3c152f64e4e267ca9193d41b86957ea665ae1477981f5b398f"
+        },
+        {
+          "operation": "tick",
+          "trace": "04162a4ef5b89d03f6b06a2f209adc9bab6c15c2d107fe3fe1f40ad2b8606a12"
+        },
+        {
+          "operation": "tick",
+          "trace": "7fbbea16bfe3463bc97aa4f00998772616c925091ea0ad2ef6fe5a37f2a25de1"
+        },
+        {
+          "operation": "close",
+          "trace": "923b376e29b7af641d5ded108fbe6494af68d2948559c9fbcd22a9bff1a7d1fb"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "a Telegram deletion refusal preserves the remaining copy and produces no destructive content replacement",
+      "inventory": "baseline:test/revocations.test.ts:158",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "37c8a42f688eb012c6177d7005e8ec930f82c3ab46f1093e473cfec02d7de7ce",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "3a8bd9c407d83c9a68e6d5dffc9f361774f4754a27dc869df98b19726450743a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "6e056c483803b49587e434a924f05feadbe8cca9be8b357961e2fb608929ddbb"
+        },
+        {
+          "operation": "sql",
+          "trace": "edd352c38975fe16bb465b419298448add3908e4cf6ce54afb44084857189116"
+        },
+        {
+          "operation": "sql",
+          "trace": "59615ef95c78cb491d0a5e598ea169af8bef5c650b25d5abc21371b2493c793d"
+        },
+        {
+          "operation": "sql",
+          "trace": "f5623b9ee74e9667057c29dac4fb6f5750f2b9a0e8e6e554cd5f94c26568ead2"
+        },
+        {
+          "operation": "sql",
+          "trace": "d7ed6c9c8b49ae4cd6e3d8d3f3bcd55e9197382e520cb19ef2ffdb7cd67140cf"
+        },
+        {
+          "operation": "exec",
+          "trace": "f670b92f197c72cb8ca04b295c9b8d879c6fc24286ac2f6536cc8a56ad538311"
+        },
+        {
+          "operation": "sql",
+          "trace": "0d8a7eb48b7eeb9a06d8f2c833dd7985d861b3d32f02c4b5de1bfe26a7d0a77f"
+        },
+        {
+          "operation": "sql",
+          "trace": "64deace1b76920441ffbbb83bb3e9fae71cad987d72a4a8c72c65c98c3907b76"
+        },
+        {
+          "operation": "exec",
+          "trace": "99c286744b0cd4056e63c1883efa509929b94fe44c2a3a2dae28c902f91c3d33"
+        },
+        {
+          "operation": "exec",
+          "trace": "847d77ad525f5fcb2a88d9650691d68e84510e8283d037404912612a3e93b1da"
+        },
+        {
+          "operation": "sql",
+          "trace": "70d87b9dc887c6d150db20e7acb54f8f3ec73d3e6bc8c6f27247201919c6d887"
+        },
+        {
+          "operation": "sql",
+          "trace": "c89e702cc56c5816e626da85c7145668be0ff66e73b33ff70f37a7201e5ff4cc"
+        },
+        {
+          "operation": "exec",
+          "trace": "b19a9fdc77fc8af1fae2e65d29e9606eee0f2f4fa8ca78edf24a6c048e3d79a6"
+        },
+        {
+          "operation": "tick",
+          "trace": "1f6d39f0269e3a79d5ad534bf39ff216c9b08eb64d994ff2a988049ea2a2c80e"
+        },
+        {
+          "operation": "tick",
+          "trace": "198f6f3a7c7069a24f12ad62f456ec1cdf8d2ecd5fa9b286a5f2df1ab6cb664d"
+        },
+        {
+          "operation": "tick",
+          "trace": "e925458d6402b07ee4ee113aab89d45b3415d72ee310b79df894fea7b39f4868"
+        },
+        {
+          "operation": "close",
+          "trace": "a94bc6870c6ba40b51310db6a38b2e95be5e806d44da2f6c3df2f43d9cb34db9"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "an ambiguous keyboard update safely retries without pausing as an uncertain send",
+      "inventory": "baseline:test/revocations.test.ts:168",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "3c84601069350518adb32007251cf3910d3d5cfde401d8815e357365a8d4bf63",
+      "logs": "c7ab5c45f58e5b0730e3b76f8b1b1597ce832319b0255938b19ee50d3487c59f",
+      "state": "18c981a979694d44eafaf1850b635af6ed2a0f009c9eaa7272d44b3cb8821ed0",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7607ad822e259fcb9ad809ceb385b2e8552405806901d6c0600a4ace8cdd6ba"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "06b024269d1cd1852bb04cda7a070a2228920bae882d8e4b90d7eb48a857e684"
+        },
+        {
+          "operation": "tick",
+          "trace": "aa0e9f573593ec487000b16fe741bac33df095b0f48d3713f4012081c0f63dbf"
+        },
+        {
+          "operation": "exec",
+          "trace": "5040107116657dd62265d52211f462c6b8f59446ce14a54df7bcf61dd46efd35"
+        },
+        {
+          "operation": "tick",
+          "trace": "900da6b4cc11463b249dcf005d8e4402d41c2dafbb3cc8060e827863e9929c5d"
+        },
+        {
+          "operation": "close",
+          "trace": "162c5adaa49549f85eb63e4c40b6ef0ddcace8778274d2b331238ec81d31c71d"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "saved WhatsApp phone events identify the owner for messages predating the fromMe metadata",
+      "inventory": "baseline:test/revocations.test.ts:178",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "25f9536b2ace3535aa64b98ffa23376ea3b23f1b6b2f266efd6fdc7784ab5868",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "c3399e5acefc5d8b6aaf73c6d6662b4135980e179c2d0635280a71226d52427a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "b5ef6137c948e2aaf2a91e3e5931d75d8d8c8e7bd981f8101475ee67fbb628b3"
+        },
+        {
+          "operation": "exec",
+          "trace": "31c7790514fbe096ec992d8c7a291cd6ae4a614e1ff68171b058520f1bc05caa"
+        },
+        {
+          "operation": "sql",
+          "trace": "912ad1d92815f4fe62f94db81bd33c7f68659cb8f84f41a4b4198a131df7b48b"
+        },
+        {
+          "operation": "sql",
+          "trace": "79cc704f966162d81534d92eed032e0ab5e00017dfd24ea3bf565e59f010ae7e"
+        },
+        {
+          "operation": "exec",
+          "trace": "f04b3a0a3b9db6e20dcc1951da2f6922523d306d772e66625b121c59f38ae490"
+        },
+        {
+          "operation": "sql",
+          "trace": "24ab03296b8b73d186e91e409da7cc2cfd7c28c0f12db47bcc3a361d68a28df4"
+        },
+        {
+          "operation": "sql",
+          "trace": "a02ba3e75a6d0b1a999b1ba36f9b983a6c555ff378133a38c4026ef0aeb71f49"
+        },
+        {
+          "operation": "exec",
+          "trace": "3511d39a2f603942a990180cb115a28038e41189a5d724398c128d3ad049b07a"
+        },
+        {
+          "operation": "close",
+          "trace": "f6077fc74f80639c2d8a0d62944a657b301bcc06d3e93f0ecb955f4f647e5a90"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "fallback prompt expiration keeps the owner’s original message",
+      "inventory": "baseline:test/revocations.test.ts:186",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "d6fe5df2170b9f990b8299dfb90815d99e68d3f47b2ffd044f74eda897d9ee48",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "767ac3ffaeb7939835c69277f6dd30bd58f558ccf165909fcce740fa6b360f28",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "1eef46f980300d8f7ea2e25c79ba150a79df3d93829331107c0439f8549955f8"
+        },
+        {
+          "operation": "sql",
+          "trace": "5bae4b80274494293b0e3867abe1434513e620413f8382ef756521aba57d5477"
+        },
+        {
+          "operation": "sql",
+          "trace": "71c7c2d4093959b24de4846933930675df3e29f1827dd8a39a10d3a5ed7e08f3"
+        },
+        {
+          "operation": "sql",
+          "trace": "97b7de5dc7b2491208dd59f1d78ef1c818af2a2bf201aa9ccf28d8e05243a09d"
+        },
+        {
+          "operation": "sql",
+          "trace": "1ee7b08cd75add471be52a33570cf82bb5ba3ab4376408f5fec0be7b96b846ae"
+        },
+        {
+          "operation": "sql",
+          "trace": "16115bd8c654628160c473d275a3a83a52924b55650a0287dc4cae85b47c21fa"
+        },
+        {
+          "operation": "sql",
+          "trace": "6802966d1eafba0401251997289e73a79273078b1b18bc223e9aae6856e989ce"
+        },
+        {
+          "operation": "sql",
+          "trace": "76d961cc49f5786028b9d9b03a51ed74a57112a0910f3798a29b96bd76a2191a"
+        },
+        {
+          "operation": "sql",
+          "trace": "b7209c62e43bc58bfb35eebf733672c561d54511dfaeb9a37c4bc2474788cebc"
+        },
+        {
+          "operation": "exec",
+          "trace": "5bac24dccb07f641b44e901013c119702a7daea9014afabdfbf1c78eb44f9593"
+        },
+        {
+          "operation": "sql",
+          "trace": "16bebae172d1f03abd882db2d7623bdb4578672a8f3a9fffb76db93607622a6d"
+        },
+        {
+          "operation": "sql",
+          "trace": "1ef6d99baf7b0f9c6bbc0e9108a1e3ffdfb136618296ab4a220ebfe0603a1c0a"
+        },
+        {
+          "operation": "exec",
+          "trace": "a9ed244181d5ae095b18752236dc82a91bb4535ab88eb44578fb2f74ba2c0ebd"
+        },
+        {
+          "operation": "exec",
+          "trace": "2abf432b1239c705f0e1b25eb951b8de6a6fe0a9e6e92b5c703126996be24a90"
+        },
+        {
+          "operation": "tick",
+          "trace": "ee0380a9f0c6300f158fc4544917e68b1c7a1985e951f4d0879d0887689aa81d"
+        },
+        {
+          "operation": "tick",
+          "trace": "d882695e60a48f5debcef1dc62cc9021e1be9fa46524fb889718269b567a2459"
+        },
+        {
+          "operation": "close",
+          "trace": "9b0dcdf924e65c9ebe2ab859058782aa9e5a42bd9bd3b4306231469a90853321"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "a timed-out automatic deletion retries safely without an uncertain message send",
+      "inventory": "baseline:test/revocations.test.ts:193",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "dcc207d370541ed9052e860f32a393daa2686be03ef073931790fe23beffa8a5",
+      "logs": "c7ab5c45f58e5b0730e3b76f8b1b1597ce832319b0255938b19ee50d3487c59f",
+      "state": "0d04c97b70d5f440885b92be53ae7b9bc85b46aa6e8fbf794266b9ab5f608101",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "5fadf28e8303f5a444a0941221c79d2de01c4f59e300439d9e37a3cec75cebd5"
+        },
+        {
+          "operation": "sql",
+          "trace": "aff330814c501a5c5410e101fd1a2a3843bc16ebc490c00237de2259753f479b"
+        },
+        {
+          "operation": "sql",
+          "trace": "8c20b1720d89050e0e44aba9ba67fe886d5d09b2ab166e2b31e0aa6eec9d4c2b"
+        },
+        {
+          "operation": "tick",
+          "trace": "494b1c056f3a0ea61162251a2812110d58be0844b4c905e2e017ad965900d899"
+        },
+        {
+          "operation": "exec",
+          "trace": "09db8d78d450e7fb7ddc608952b2572c6d91b0e247fbefb25d4d7a61b2958531"
+        },
+        {
+          "operation": "tick",
+          "trace": "c724e01d40b6f8cb54ec678a3cd640afc3c77e9ee08abb5451bc05c5b062f2c7"
+        },
+        {
+          "operation": "tick",
+          "trace": "d5455eaad9f15e6aa819eaff0b815a2455b0ece409e818b6db34bf69ceb6003e"
+        },
+        {
+          "operation": "close",
+          "trace": "9266f97636082f47fa1eaee2c5e165b558bba51e8fff503fd0d8dc63bfe62e94"
+        }
+      ]
+    },
+    {
+      "file": "test/revocations.test.ts",
+      "name": "a timed-out callback acknowledgement retries without blocking the conversation as uncertain",
+      "inventory": "baseline:test/revocations.test.ts:202",
+      "sourceSha256": "237f88f586007a4887939025392ba38c0caf0ca9fcd85c2c9a2b4e8776634047",
+      "calls": "f2cd315679eb09b8918f8ccf8ecb498a240a79b9f4a00fe2c0d72fb1fc589aff",
+      "logs": "9894a0847551b01e8acbd037ea73fcee34e65b2f411b81fed6c900ca2b3a2ea1",
+      "state": "47ed36c6a47c560c7c3dbe59fcbf073512b9e730791e631cdebbb3cb521c9ff2",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "217be2dc143d642b97b6e3e36ba6eeb017bb3eac46c7cef49f85f4497162b941"
+        },
+        {
+          "operation": "sql",
+          "trace": "388507dd593545ff459f31a88da9c124b056414eb19605d8856eb95b32953dc7"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7cc54b3f9d3b9ab66a5952e4aeb1c294678196a42d0a0d02dc1e96e7e6210f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7607ad822e259fcb9ad809ceb385b2e8552405806901d6c0600a4ace8cdd6ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "190786b6e678e8215d0f5781386ac3f92401044927401daff3c399c1321e2a67"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd8340c5d4ed2da983522bf58afcb5fe3b46aca2bdbe232dd5ad222a449e7a19"
+        },
+        {
+          "operation": "exec",
+          "trace": "5b462bb5a4c7a0ab8a8454efaf9e5fc9f126438ea751b961dc25db21cbb08d80"
+        },
+        {
+          "operation": "sql",
+          "trace": "f689799cd8922ca6ecfe29dfaa69e0f9e38941883845119f0755140dad148cc2"
+        },
+        {
+          "operation": "sql",
+          "trace": "0b5eb50508b0f421ac57d81c4cfb3d3cd7dc38e791fd76c79cfa140f6367a7b6"
+        },
+        {
+          "operation": "exec",
+          "trace": "460e876616f4bdd1e5a90f30739c249dcd01e1efb83420c253a89556de4f42f9"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "172044db36a0e3659426fd2353f728e51b9a8ee80d30ff2f6e73066c97d1e269"
+        },
+        {
+          "operation": "tick",
+          "trace": "6954602483765f176b961eeee527281391a144174f2e55e54cdef412ea474ca6"
+        },
+        {
+          "operation": "exec",
+          "trace": "c194cb51b99e0304744b5ad2aca35174c0d6507dafa0548beff4574044cdbea5"
+        },
+        {
+          "operation": "tick",
+          "trace": "6523f54971aeadf1560ca10dcb14b0d2a5186c0f809389ad4eb71d41ca3bc9ff"
+        },
+        {
+          "operation": "tick",
+          "trace": "1fb7be805ceffb7dc3d0eeef2c7f94fb5b2b7f973f1f04320795e6f25fa8cdc8"
+        },
+        {
+          "operation": "tick",
+          "trace": "88883046b80a8c674592d7456a6c53640f52ac4211e6a26f70ee9a83a1aa5aa9"
+        },
+        {
+          "operation": "close",
+          "trace": "c712bbaf0019b450f5a5b07966abd4f9bdafa572911d1ae59222eb8290ea7c9b"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "edits of Telegram copies explicitly cleared from the archive do not recreate them",
+      "inventory": "baseline:test/bridge.test.ts:150",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "11a2b489541ea070baf09df216e7ed93d5a81890ac84d205427d3257603dbbee",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc2471df1e5400079f1196c1fea7c6f11fdb7181b41bb7a6b6413f15079af9d6"
+        },
+        {
+          "operation": "sql",
+          "trace": "ad0a8b9e97b714c2eda4ba576032d03534777a318565cf4bcef8d9fd4d040256"
+        },
+        {
+          "operation": "sql",
+          "trace": "308fa7a552b7e7cb9d93d3edc02085e2fb258a3be3eb8e6f6054adbc8a46bf0f"
+        },
+        {
+          "operation": "sql",
+          "trace": "43912603d6c17fbcfebfe164f855cf5d819cd6f1438b09b0e1f8d44c4a53fd57"
+        },
+        {
+          "operation": "close",
+          "trace": "93c13b0db96f9d0230e58a837ff20f39af0e6664cbe94b84b22f9ed1918ad8fd"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "member-bot edits do not restore a sender header; master edit fallback remains attributed",
+      "inventory": "baseline:test/bridge.test.ts:214",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "dad581272d82fefcdba5145252406b7773bf49bad262861627288d52da0de036",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ee6074d12431038d56eba193de013f3faf32a3275a9b07970f61e80357575952",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "6d730baaaff8761502a190153680df56987920ae4947602fcf874baaf82c412b"
+        },
+        {
+          "operation": "sql",
+          "trace": "3e656262d95e0624e111673746b8ea8a1539f46b34036fbe305842ad0389b9e6"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "e87fdba7406444cda4a5952218d8f71f854d276c83b3d1e8f9bee4bcbe989831"
+        },
+        {
+          "operation": "sql",
+          "trace": "ab7053b806f8d035c055f0587d13c3eba5c331ea86b2b1318fc4a79bcf5aad99"
+        },
+        {
+          "operation": "sql",
+          "trace": "4bad863b87cbf3ef7e1f8793cbc6fbaee6a4f5c398f0c0f003167ab190a11cfb"
+        },
+        {
+          "operation": "sql",
+          "trace": "c775d3dd0e01e5088127ade6a91b7e774d95d70e557b3f657c7eb9bb8089affa"
+        },
+        {
+          "operation": "sql",
+          "trace": "fbc80e4d73585a8ee0ffafc661b5638fa248b01e1d3dd1cad2cd18c4d1e79caf"
+        },
+        {
+          "operation": "sql",
+          "trace": "80f9fe88d69c492d0e435121469fd884c2cba253e16c773a12434c6257193a93"
+        },
+        {
+          "operation": "sql",
+          "trace": "109c26c4e341edb6f1bb710ee3e0424e9da2890aca17cf0667a7585b3cc3e1f5"
+        },
+        {
+          "operation": "sql",
+          "trace": "26c54a276d369ae9655f919ecf100401f2814ba6050c4ec0bd89d392ef596a79"
+        },
+        {
+          "operation": "sql",
+          "trace": "b3afba117c79584c3161ac01d5bfbb939da36f0a4784b8acbcee24d023ce231c"
+        },
+        {
+          "operation": "sql",
+          "trace": "fa24bd02ee541dfdd22e8c4ce239a6008e50d7418544e38da30c34f1b59a56b8"
+        },
+        {
+          "operation": "sql",
+          "trace": "6580db25ac7a5ef239435ce7ee3559b53c19ac11f2804b73e4a0ea2e29c22d71"
+        },
+        {
+          "operation": "sql",
+          "trace": "f21c72bfa2bdc12d2054374fb80e3ced83960d20f81b9f252416f1cf1304a705"
+        },
+        {
+          "operation": "sql",
+          "trace": "6308cb64f91171158159ef4b0aca25f0501c4b4037e4e5dc387ba58af0f74c15"
+        },
+        {
+          "operation": "sql",
+          "trace": "787453b1ee519c63666a8cb0dfbfd133d05f39171284e19bb013068a34e764c3"
+        },
+        {
+          "operation": "close",
+          "trace": "80eb564198f3b54fb0a13b0ead0cdd6c365438b577a7fdf7a73aa692a6ffad8c"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "private member-bot messages and edit fallbacks stay nameless in the correct bot DM",
+      "inventory": "baseline:test/bridge.test.ts:227",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "4a654ecae66f91ba42e792517b5508b3c9f0d520eb9b0b6a1c79d6cbf2f9206f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "03f052472c594f5db73a908e5f9d32568ea727d01d4fd5eadd1a4aab04de818f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "38ab54039c0db21c5aff2c666805a4974683cf1c9e22606d70430bf4ce0515c1"
+        },
+        {
+          "operation": "sql",
+          "trace": "66685f957f8517d52ee242f3ab42026ec13126735708a50c3506821dda90aacb"
+        },
+        {
+          "operation": "sql",
+          "trace": "abe2dfe0c0b4ba3456b5c58ffd2cead6b7df3fee89753d776944684bec6b10a5"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "aeb502ca027651674037413c845fec976416ad9e59c6370037d6ca78e5a29b68"
+        },
+        {
+          "operation": "sql",
+          "trace": "db309cd069b7a7f7b97ad516098683796b25f28c22e3214996da7ece7e9450f7"
+        },
+        {
+          "operation": "sql",
+          "trace": "f6fb2d7d8646c341ba2432c1981be1e3dc344b2e9f809a5c0aa3bfe7102de415"
+        },
+        {
+          "operation": "sql",
+          "trace": "1e7bc73d6dfa9af0ff1dbc53336bd70c4c905f47768ab3e665cc7e4b6ae5f138"
+        },
+        {
+          "operation": "sql",
+          "trace": "66ed95e9beb8a906e78c7943165bcf7ed13fe25782d1ff648a455395c2a6d4e8"
+        },
+        {
+          "operation": "sql",
+          "trace": "9df9a39602141fb3354861f8a917d107ef8b6692d286229136a2f98ca33d6d08"
+        },
+        {
+          "operation": "sql",
+          "trace": "f8ce7dae5b28076ff5a29d9fdae6d239244812a779778e43c99ce3838b146c54"
+        },
+        {
+          "operation": "sql",
+          "trace": "d1c9ed9d17b981c2f3d89dcee4d5ff98300f8c475b3996160ea5b6708ab6a905"
+        },
+        {
+          "operation": "sql",
+          "trace": "cdf4a3c28bf4c3b1659f5faa7d6efeb3082a80a859006cf2bb13389f6a90decc"
+        },
+        {
+          "operation": "sql",
+          "trace": "e713158e2af8be9094e2f92a92c1adb47427767b761a6f1987e083394315c930"
+        },
+        {
+          "operation": "close",
+          "trace": "84c4a49241bb76155a2cdf7973abfbf6baca099a5cd26ea37a1ea177ae94ca15"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "out-of-order WhatsApp revocation uses revokedId and prevents history resurrection",
+      "inventory": "baseline:test/bridge.test.ts:343",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d5d6fe820fbaf0dd876ed8be9b3256a59ccddda61d1757838760c97bf3b3cd1d",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "d12b95bcadc3c7e6e90f92f673161bf3a49d157828e2380c6c35d87509792bc8"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "8fdbf09e9f921eb7ab64a1f659d0891bd862ae83cf9131d080c0400d5929bf9e"
+        },
+        {
+          "operation": "close",
+          "trace": "d245b505fbebb16b467dd6295f35b8b098217e26bd89664b5218290b19b22504"
+        }
+      ]
+    },
+    {
+      "file": "test/bridge.test.ts",
+      "name": "child-bot group callbacks remain actionable while its ordinary group updates are ignored",
+      "inventory": "baseline:test/bridge.test.ts:503",
+      "sourceSha256": "e83106c52c49ea2409b4c4c73900bed7b0c15f24610b5202c66a6ee30d5ec5d7",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "f977a3811cd2a9d68c94b939e6157b25b6d607c0b9b10a1734854ce70aff2b1a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "34d000403342c7e795415771d8442574aaf30ffc2ba8ab05097d3d292ceb55c1"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "dc81eabd1a1b203a56235e7fa2571e1fe567a2a99d63d011b9883fb2ac6a8bc1"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "0848e3d13bb5e85851f65f6bd608824a6a67e3f1f8fd913361be73f3ea12427d"
+        },
+        {
+          "operation": "close",
+          "trace": "79a7522abd2e978e69474bf672280cb40785d25e9e58bea7fead52824e0af173"
+        }
+      ]
+    },
+    {
+      "file": "test/format.test.ts",
+      "name": "phone-originated private messages and edits never link You to the conversation partner",
+      "inventory": "baseline:test/format.test.ts:141",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "calls": "f767171fc6a635206405ce5c292f66f72994e272e884e2625f1083959d0900c6",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ff83ee96bef84e1d6de8d73f4bdd8fb9d9de7d3899c6f7b750c575ee8b3bda18",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "10d1e8f4fc14481f31cdd8b331a8ae26865a15ad6f144ff8f52e70c548abb2e3"
+        },
+        {
+          "operation": "sql",
+          "trace": "1c67c14c37ad7c364ad200b4fdca95eb57530752f6886fcea6252324231411eb"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "84308be798b94f9100d63e48045c22205be660f557b6611e33f9382323fe45a7"
+        },
+        {
+          "operation": "sql",
+          "trace": "53e02dcd627e0718285caeded6e8ce0e86edd39f27a9208226ca50dd6fbc6ef8"
+        },
+        {
+          "operation": "sql",
+          "trace": "11e2ec3dfbef4dd74c6ed7682008ba407e4e547f4a15a80ace756e5da53da43e"
+        },
+        {
+          "operation": "sql",
+          "trace": "8d9b38dccf2e34e0fa567ed121f32c7d2cd4e255c3a1fbc295f8109027580b32"
+        },
+        {
+          "operation": "sql",
+          "trace": "56e262f73820e7d9490a889c94d764259ef344e2bbc617abcbbc52e91cdbacc1"
+        },
+        {
+          "operation": "close",
+          "trace": "0780bec3a090a032b4636576fb0a1f2f77da5535a1b0daf239f84570a74ef5c9"
+        }
+      ]
+    },
+    {
+      "file": "test/format.test.ts",
+      "name": "history metadata survives formatted message edits and captions do not contain raw HTML",
+      "inventory": "baseline:test/format.test.ts:173",
+      "sourceSha256": "144a86e1fee0ae2e79a7b400bc9fceac1273c820e9b34146bc1d16e72d153ca5",
+      "calls": "c4f0d31134b65ceb442738cff2369f863232091437984988c4da8bb4afc211e6",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "f406b65e24c1da89b655d6af7642cdafb3065dac0b1be5176abcb79695eed7b5",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc3740682da54b59260c9aa8f0f98c59165c25161858263f73b5865c2037b9ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "10d1e8f4fc14481f31cdd8b331a8ae26865a15ad6f144ff8f52e70c548abb2e3"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "805151a9a530a77cb41e6419aafbc32222d9591f0550258a8332961579556156"
+        },
+        {
+          "operation": "sql",
+          "trace": "f8e4a6f6054f37be12a93cf0201ece6308349112a0cb3b31818fde798355550b"
+        },
+        {
+          "operation": "sql",
+          "trace": "62743f7af01a351f5e553eb155fa44e960b3a6b85d461d160efe63d3197521c6"
+        },
+        {
+          "operation": "sql",
+          "trace": "2937c3d53acd9b1c79e4752871ae3d93f9bb42055df70a6ef9ea5c57b9218c59"
+        },
+        {
+          "operation": "sql",
+          "trace": "b70a890b9180472f3a7362d2ecc762b40ce5fc1838b45b956ec60a6ae6389e95"
+        },
+        {
+          "operation": "close",
+          "trace": "476a1e38ae117ae57691a93b1b3279690735bcd80273057d949058c75495f728"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/action-scenarios.ts",
+      "name": "candidate KEEP-001 characterizes mute then keep routing in a mirror without choosing a correction",
+      "calls": "8730584218f2c3d7441ce080c6c67f8c1ccf3b1ace9e3afab745871369dbf59a",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "69df37d764819c64683586f6195f45e66f16b8300da5d299db40abbe592d6c4a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "40346553ff3a58c09b646f957dfbb154c25cfb7f67b6024474f22ddd6d928b82"
+        },
+        {
+          "operation": "manage",
+          "trace": "b93f8778fdd0189b34fd0e866a1309134e37cf4e5122568780b1010196b83d20"
+        },
+        {
+          "operation": "manage",
+          "trace": "0f958607472ea1c234f3634ce1f006f2b7cbd749416d3b5592a853cc907355f4"
+        },
+        {
+          "operation": "close",
+          "trace": "cca861e312f39efe145d92895d625eabca721dcd6f628cf763e8694c8b50f8b8"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/action-scenarios.ts",
+      "name": "candidate EDIT-001 characterizes the first edited text part applied to every split copy",
+      "calls": "99483e35193c70c25c8138e4554678c5b2530f84a401214ae201bc0650f25ce7",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "8730c183f67f4c31d504646e4b49d856544994e2213cc2866d7f02e64234c128",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "916b3bec582b65a6f2f99021eaa4371a506b9b6052d7f133851a18e43c171d9e"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "e751b1eb3bf8f3f6322aaaa7f4b7c7eec075173d4df4ae44d92bb0041150b7e5"
+        },
+        {
+          "operation": "sql",
+          "trace": "9f7d164c7d7b7e1688563749818fbb621c941ddd1d37e4ac25f1dcd39dbec0ad"
+        },
+        {
+          "operation": "sql",
+          "trace": "0ee5fe441c606546f49273d1ffedce16c0962c3bf136d06900ab0414b51ce53c"
+        },
+        {
+          "operation": "sql",
+          "trace": "c9c293d2a19ac0dc24905ef35a9de8c84b506a11433a20e5455e3a50fba53c85"
+        },
+        {
+          "operation": "sql",
+          "trace": "7373c38dbe73df8ac85e8a9f6cc00324b3d50159253a49e4250a55b61fa31524"
+        },
+        {
+          "operation": "sql",
+          "trace": "c93d0667ec270e0a3439141f0a98bc6d84a2af49097490db00ae762962e651a3"
+        },
+        {
+          "operation": "sql",
+          "trace": "429eac30585e1bbdee328b5c57c9e1926e67232df2ebc29c167938b4fe6ceb47"
+        },
+        {
+          "operation": "sql",
+          "trace": "59e217df30a7a1c21bf84d5d41f0c0b07eed5c2475cfbda1fc5cf9e19d541681"
+        },
+        {
+          "operation": "close",
+          "trace": "685b7030a486d415cb9f3c25142788cf5beca62351a885e4171ee5ffbd292c28"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/action-scenarios.ts",
+      "name": "candidate CALLBACK-001 characterizes retained generic actions in a stale different destination",
+      "calls": "65df1f3b83826f0fc19d19d2ca320407edd1c6e550ca05a00baeda335ac657db",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "2d91f441b7e640966a57ac4471a8053448d7e3a0f3672ceaf39897a379cf55e9",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "916b3bec582b65a6f2f99021eaa4371a506b9b6052d7f133851a18e43c171d9e"
+        },
+        {
+          "operation": "sql",
+          "trace": "33312a6288b0adc3fe926c353719179561a20fca1bb65a8e978e1f9652fddc00"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "047e3e5c06ed614517f3a1fe336ced0a19cc1aa441beabf48ce82688308598f8"
+        },
+        {
+          "operation": "tick",
+          "trace": "f7988d36d8dcfc88cb612ace5a8c7e817e12e664231f89b73d7d39b8de796c8f"
+        },
+        {
+          "operation": "tick",
+          "trace": "b9c8561460a11d90284915270e61aa52a4ab150d65599897a5e924c04a1d3451"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "3fee07ed7032e1cebc6f187289a6901009be17b4b41c1a92b00408e8417de29d"
+        },
+        {
+          "operation": "tick",
+          "trace": "dcd8dec8cfe46cb0a2b60551cbcc682f7437a9271f906a3f984a1c4fd00eed47"
+        },
+        {
+          "operation": "tick",
+          "trace": "ade3fc6e9a87d1a97b11d44bd80f4bfdf284cf78e9a1cb8770b052704592f0e9"
+        },
+        {
+          "operation": "close",
+          "trace": "63af3dd9fd8af443fc1aa0a8e25c1a5059513f199c33e1adb72c86f0f6a6a71f"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/action-scenarios.ts",
+      "name": "poll selections toggle single and multiple choices with independently keyed effects",
+      "calls": "c107faffcbde5c6b80a7bf3391b35ed830586870ba01ea0a89d08418ab2df43d",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6b166afc8ece541acb832bdc64855f959bb3492492cf68b5dbb5cd6c53315640",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "916b3bec582b65a6f2f99021eaa4371a506b9b6052d7f133851a18e43c171d9e"
+        },
+        {
+          "operation": "manage",
+          "trace": "0a5d563ee2a761a7e5f76216e05e5794c7ab3857eb4615883d795debf17d43f3"
+        },
+        {
+          "operation": "manage",
+          "trace": "9ea037c96b09db2c9b2ea79e278b3f35af79e9e9700b865e344ba72d9c74fffa"
+        },
+        {
+          "operation": "manage",
+          "trace": "a8a818f88c5e09db71c59a1c6e523997e7d04ad35cb01e1ffbe90a786e2ec5a8"
+        },
+        {
+          "operation": "manage",
+          "trace": "c96941190db7364dcdcaaf1868dc1fa8a20535faf9af02badea2d6897dc07926"
+        },
+        {
+          "operation": "close",
+          "trace": "8a5a7c1e2349d962e694b22072e9060be8e91dc19a53943ce4840e024562fb36"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/action-scenarios.ts",
+      "name": "an owner poll_answer is admitted and completed without inventing WhatsApp forwarding",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "06e5d75df8572c17cfdd4fbad8e66e459cd46697dab100e343ac46ae4bba65d5",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "916b3bec582b65a6f2f99021eaa4371a506b9b6052d7f133851a18e43c171d9e"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "7aa09539633bb0c19819f4ed831773857199561c36c48f8b9a4adcded6e66782"
+        },
+        {
+          "operation": "tick",
+          "trace": "2fd38f8156432bdf8fa29713efe8f8f58d2f8e48447d229736724aab3e02b1bc"
+        },
+        {
+          "operation": "close",
+          "trace": "589c72f8445d45397afbc597addefdcebf2ff8938826e7de8dfa614224f780d4"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/action-scenarios.ts",
+      "name": "late edits override original text while revoked copies and outbound edit echoes remain suppressed",
+      "calls": "709f61897cab3472cf0eae2cf1ee4b3f7b2104c57d0169df6a4edcad86074cd3",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "feef9f8939907bbebaa46340280630f817cbcb5eecbedba15c00266e8be7fe5b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "916b3bec582b65a6f2f99021eaa4371a506b9b6052d7f133851a18e43c171d9e"
+        },
+        {
+          "operation": "sql",
+          "trace": "e4ed99428babff83ce6ee6304d81179c8cbc3ff7371869bb4676404bae345977"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "58a453ff237f8de147d9c9dcbbc3821c3620651ca9ab9d7a050f0c5fa7734467"
+        },
+        {
+          "operation": "sql",
+          "trace": "269467577c5bec8209c375849268903403d390a0bc3bf78deec404f409816637"
+        },
+        {
+          "operation": "sql",
+          "trace": "e3972d650cad3d67f4170abf0173b0a50bfbb46a31cf24f650d02d620b172c04"
+        },
+        {
+          "operation": "sql",
+          "trace": "afd2cf65fe3ee8ac07a5e88eb38a60713dade3444c04f5d4afa514f4c595fa8a"
+        },
+        {
+          "operation": "close",
+          "trace": "89a0935fa589125fb824ed29687b56129e60befa93b8d5d9b7833e3596bdbceb"
+        }
+      ]
+    }
+  ]
+}

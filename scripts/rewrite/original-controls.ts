@@ -91,8 +91,10 @@ for (const file of input.files) {
   currentFile = file;
   await import(uri(file));
 }
-currentFile = 'scripts/rewrite/managed-bot-scenarios.ts';
-await import('./managed-bot-scenarios.ts');
+const supplement = input.supplement ?? 'managed-bot-scenarios.ts';
+if (!['managed-bot-scenarios.ts', 'action-scenarios.ts'].includes(supplement)) throw new Error('Unknown baseline supplement');
+currentFile = 'scripts/rewrite/' + supplement;
+await import('./' + supplement);
 const output: any[] = [];
 for (const entry of cases) {
   if (input.selection[entry.file] && !input.selection[entry.file].includes(entry.name)) continue;
