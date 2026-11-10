@@ -95,3 +95,9 @@ Latest full-suite verification: **280 pass, 11 skip, 0 fail** (291 cases across 
 [Task 1.7 evidence](action-baseline.md) adds 54 original-only cases with 855 observed transitions, including 48 unchanged original assertions. Independent replays retain exact API requests/results, state, copy scope, retries, ambiguity and retained controls. Three known correctness candidates now have explicit original characterizations in the [register](exception-register.md), with no selected correction or approved delta. Poll selections and the admitted `poll_answer` no-op are recorded without inventing forwarding. The shared replay helper reproduces the earlier control transcript unchanged. Candidate comparison and all eight acceptance gates remain pending.
 
 Latest full-suite verification: **281 pass, 11 skip, 0 fail** (292 cases across 28 files) on both macOS/Bun and isolated Linux/Bun. Original fixture source hashes, candidate input fingerprints and Linux image identity remain recorded and auditable.
+
+## History recordings
+
+[Task 1.8 evidence](history-baseline.md) adds 37 original-only cases with 571 observed transitions: all 35 original history assertions plus actual original processing of cyclic/self-referenced reply plans and a legacy job without a run ID. Raw legacy checkpoint fields, frozen batches, choices, fresh-copy scope, date markers and partial/worker recovery remain observable in exact transcripts. Empty drain ticks are omitted only with no errors/API calls and byte-identical state; earlier control/action transcripts remain unchanged. Candidate history comparison, exhaustive history crashes and all eight gates remain pending.
+
+Latest full-suite verification: **282 pass, 11 skip, 0 fail** (293 cases across 29 files) on macOS/Bun and isolated Linux/Bun, with matching exact original transcript manifests. Source/image fingerprints remain in the check reports.

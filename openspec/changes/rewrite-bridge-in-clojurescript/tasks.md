@@ -11,7 +11,7 @@ Checked items record narrowly verified work from implementation checkpoint `chec
 - [x] 1.5 Record remaining transport/media/structured-content baseline scenarios with frozen time, bytes and scripted failure responses; verify independently reproducible traces and state without provider access.
 - [x] 1.6 Record Managed Bots, picker/link/unmirror and command/control baseline transcripts; verify partial/stale/unauthorized cases and their inventory references before candidate comparison.
 - [x] 1.7 Record edit/reaction/revocation/poll baseline transcripts; verify message-copy scope, retries, retained controls and the known correctness candidates are characterized without preapproving fixes.
-- [ ] 1.8 Record history baseline transcripts and actual legacy checkpoint shapes; verify ordering/cycles, choices, fresh copies, day markers and partial recovery deterministically.
+- [x] 1.8 Record history baseline transcripts and actual legacy checkpoint shapes; verify ordering/cycles, choices, fresh copies, day markers and partial recovery deterministically.
 - [ ] 1.9 Record Status and metadata baseline transcripts; verify refresh races, mutes, roster validity, permissions and quiet scheduling without live collection.
 - [ ] 1.10 Record operational tooling, ignored updates and remaining legacy recovery inputs; verify the original can reproduce their observable outcomes from synthetic state.
 - [ ] 1.11 Reconcile all significant workflow/failure paths with fixtures and inventory references; verify the complete secret-free corpus and reproducibility before accepting Gate 1.

@@ -3,10 +3,10 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { manifest, root, sha256 } from './oracle.ts';
 
-export function recordWorkflowBaseline(files: string[], selection: Record<string, string[]>, supplement = 'managed-bot-scenarios.ts') {
+export function recordWorkflowBaseline(files: string[], selection: Record<string, string[]>, supplement = 'managed-bot-scenarios.ts', options: { omitIdleTicks?: boolean } = {}) {
   const result = Bun.spawnSync([process.execPath, 'scripts/rewrite/original-controls.ts'], {
     cwd: root, env: { PATH: process.env.PATH!, TZ: 'UTC' }, timeout: 20000, maxBuffer: 64 * 1024 * 1024,
-    stdin: Buffer.from(JSON.stringify({ files, selection, supplement })),
+    stdin: Buffer.from(JSON.stringify({ files, selection, supplement, ...options })),
   });
   assert.equal(result.exitCode, 0, result.stderr.toString());
   const transcripts = JSON.parse(result.stdout.toString());

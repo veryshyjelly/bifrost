@@ -17,6 +17,7 @@ await import('node:test');
 mock.module('node:test', () => ({ test: (name: string, run: any) => cases.push({ file: currentFile, name, run }) }));
 globalThis.fetch = async () => { throw new Error('Provider network forbidden in control baseline'); };
 const baseline = oracle(), uri = (file: string) => pathToFileURL(`${baseline}/${file}`).href;
+const input = await Bun.stdin.json();
 const { Store: OriginalStore } = await import(uri('src/store.ts'));
 const copy = (value: any) => JSON.parse(JSON.stringify(value));
 const tables = ['kv', 'jobs', 'effects', 'messages', 'aliases', 'telegram_messages'];
@@ -71,10 +72,18 @@ class RecordingBridge extends OriginalBridge {
       const invoke = (this as any)[method].bind(this);
       (this as any)[method] = (...args: any[]) => {
         const outer = depth++ === 0, start = active.calls.length;
+        const before = outer && method === 'tick' && input.omitIdleTicks ? JSON.stringify(allState()) : undefined;
         const finish = (error?: any) => {
           depth--;
-          if (outer) active.transitions.push(copy({ operation: method, args, calls: active.calls.slice(start),
-            ...(error ? { error: { message: error.message, status: error.status, retry: error.retry, uncertain: error.uncertain } } : {}), state: allState() }));
+          if (outer) {
+            const state = allState();
+            // A drain loop may deliberately probe an empty queue 100 times.
+            // Elide only an error-free tick with no API calls and byte-identical
+            // state. No timing, selected work or mutation is hidden.
+            if (before !== undefined && !error && active.calls.length === start && before === JSON.stringify(state)) return;
+            active.transitions.push(copy({ operation: method, args, calls: active.calls.slice(start),
+              ...(error ? { error: { message: error.message, status: error.status, retry: error.retry, uncertain: error.uncertain } } : {}), state }));
+          }
         };
         try {
           const result = invoke(...args);
@@ -86,13 +95,12 @@ class RecordingBridge extends OriginalBridge {
   }
 }
 mock.module(uri('src/bridge.ts'), () => ({ Bridge: RecordingBridge }));
-const input = await Bun.stdin.json();
 for (const file of input.files) {
   currentFile = file;
   await import(uri(file));
 }
 const supplement = input.supplement ?? 'managed-bot-scenarios.ts';
-if (!['managed-bot-scenarios.ts', 'action-scenarios.ts'].includes(supplement)) throw new Error('Unknown baseline supplement');
+if (!['managed-bot-scenarios.ts', 'action-scenarios.ts', 'history-scenarios.ts'].includes(supplement)) throw new Error('Unknown baseline supplement');
 currentFile = 'scripts/rewrite/' + supplement;
 await import('./' + supplement);
 const output: any[] = [];

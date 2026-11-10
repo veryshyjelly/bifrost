@@ -1,0 +1,2694 @@
+{
+  "baseline": "checkpoint-clojure-baseline",
+  "clock": 1794240000000,
+  "timezone": "UTC",
+  "cases": [
+    {
+      "file": "test/history.test.ts",
+      "name": "queued history resumes under its original checkpoint after OpenWA credentials change",
+      "inventory": "baseline:test/history.test.ts:53",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "67d55f077795aaa403076a922b6f5a42537ac8f3403f28e04e33c81362c4f546",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ee8db34f684341b822cdbe84fd03aaee3b5c883b774a9512c420ad20084be02f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "31b2c9cba750742cf9dade2fb00c8d596a02f26227ff84362fdd55fe797a9156"
+        },
+        {
+          "operation": "telegram",
+          "trace": "289e7daf88563bc02992ed7b867edcc0e93b1be2f641da0cafe9ab91660f37e5"
+        },
+        {
+          "operation": "tick",
+          "trace": "a0b732f5f305fe47148fa36d6510ffb721c6bb125718c34de93b264e12913f59"
+        },
+        {
+          "operation": "tick",
+          "trace": "9c89ebd368fee4fccd666d12decb28b67926712175ad03c60c7326d6ae758ac9"
+        },
+        {
+          "operation": "tick",
+          "trace": "949e09e33d14e3107d1f6a7dc119fc6d19a0558a89ae7d1dabd1050201bdf02d"
+        },
+        {
+          "operation": "tick",
+          "trace": "04daffdfb9906aa6deed23a0879c60166352dafb2ac81a5f3e794e6d3e4358fb"
+        },
+        {
+          "operation": "close",
+          "trace": "8e836222b136433a11a750d1f40b86fbb1f9554e1e9ff011a6424456050087e0"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "an unexpired history choice remains usable after an OpenWA session rotation",
+      "inventory": "baseline:test/history.test.ts:68",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "42b9133f66ab003e61e4595e604a17bd743015a7cf9ba6e08f32e974e87a3bc9",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "eb89346c24813de3e7f79c17ced27a5763ce2aea0c65115da5f95c9e26f1b67a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "1b3589125ca959aa268d76894cf563345271148290e9b2a88518941b079377d2"
+        },
+        {
+          "operation": "telegram",
+          "trace": "890e2d7c98344f66f036f23e5d605b978fe6d8692bfba7052c41be11335445f9"
+        },
+        {
+          "operation": "tick",
+          "trace": "d484583d15375d7acf077ea5f3e4f38b097778c5ca602cf5d4d757871c9fd471"
+        },
+        {
+          "operation": "tick",
+          "trace": "1f19ec9f209f82286b842830629bf05a0256a494cbde40f738ed39d7ff90349e"
+        },
+        {
+          "operation": "tick",
+          "trace": "c5042c9a1eb778b9c5c1766b292b30d1923dd5a450cdee6e852e7661f47ca3bd"
+        },
+        {
+          "operation": "tick",
+          "trace": "ca621b63d3b2bfa149eda5a7b5ff01e4180f5ed74dda540316b6b5fdd1d9f8b6"
+        },
+        {
+          "operation": "close",
+          "trace": "716941baedbad65144e525a9c31326d49d12071210d612b0b6c029837ef06af1"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "/history n fetches the complete batch first, posts oldest first, and recreates native reply chains",
+      "inventory": "baseline:test/history.test.ts:80",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "c84f7284174760cd7af630b89676a455681944cbbe06ebabef1c667b7d093d20",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "746f27a6a5a333ad8b3949a1634a3f73436f6bad369f714b34b0c898653f49ea",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "7eac605d527f0adc2aa2589793e9f8cf8ba1e3854f0879832b8043e19de60938"
+        },
+        {
+          "operation": "telegram",
+          "trace": "bb24a684f88aa59c5afd2894dcfd0e021461e78f43951ea7960bbbbdc7fbde34"
+        },
+        {
+          "operation": "tick",
+          "trace": "92d3c5f98c0477079c9f3e1586326aba015c872ecc01af7cef136ba5a7bc8ab4"
+        },
+        {
+          "operation": "tick",
+          "trace": "d4ea222cdf4b068f914285e4802c847d3bb8d3acc52966bf12ac21199e5dcb86"
+        },
+        {
+          "operation": "tick",
+          "trace": "67ef17c1d370f70a310ae5d989d40a6a5cb4ceaa9847a5495f394d115d99a239"
+        },
+        {
+          "operation": "tick",
+          "trace": "28cf685bed25d22d1ae8e72018ba1961ca29dc4e82eadf3d1653b9f813a96d44"
+        },
+        {
+          "operation": "tick",
+          "trace": "c69a9ab56a7990dbb17c8a768bdd306b388ee0b0f5338f9d136b2630fb602466"
+        },
+        {
+          "operation": "tick",
+          "trace": "0732cd88bed5384dde53a1fe485d345fbd28dc97a1a6d05902311d78c6940091"
+        },
+        {
+          "operation": "close",
+          "trace": "cc1fb8049bc919ac553b4ce5426235e137a31457ee6ece4ad432f87441475f68"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history delivered to management can be imported into a mirror and repeated requests do not duplicate it",
+      "inventory": "baseline:test/history.test.ts:94",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "c45afa3483e11c29ae5bce97aa388e9cae2123977bf9129a113bec1b68160cbf",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "56d7233b1c66734bfe083677eeb3a34d9e4830f2d2ac3dc0f449d4d09d050426",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "f0f644a627b7b7dd027e4d8a1dacb4a1ec6fa8035bad15f6d84fdf8ac86187db"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "078935c3c7c39c6ebf0de5153b0e73db26a00655501a925e5e6b4aa4ac28fffa"
+        },
+        {
+          "operation": "sql",
+          "trace": "3953ab11eae60622ea5efa330b7a59f943d1ad58f98d7cd145f4300ca396c856"
+        },
+        {
+          "operation": "command",
+          "trace": "715de92342149178456c015e597aca362149e9d27df419d9c89591e09923f9ab"
+        },
+        {
+          "operation": "telegram",
+          "trace": "46fc4f6b5f2428e97e74aae711e201d0d6c386a62c152736f2c6aad3b73ceef0"
+        },
+        {
+          "operation": "tick",
+          "trace": "3e3ab8a2a29cbc09adbf66af4e4637fe369fa39f25827bfffc11a47392e02f0f"
+        },
+        {
+          "operation": "tick",
+          "trace": "f233f99bd30dd438241acda10937b0312509aff699c85721b18e145e110d6154"
+        },
+        {
+          "operation": "tick",
+          "trace": "c20d89c90fc982d36f9924cc8790251f90aa7cdfc6b8d0248701b011b76fe255"
+        },
+        {
+          "operation": "tick",
+          "trace": "300207c9c3de5fbc974d5ee1fd82f245589882538e39afd715deb1815577598b"
+        },
+        {
+          "operation": "command",
+          "trace": "e7656121e9998659770233a92c15fba79b28c39ca5f0daf999b2e36e5b067929"
+        },
+        {
+          "operation": "telegram",
+          "trace": "d136d451eef2702a8ee75eff4bc825f0d4af57a3e37266e444ecca74c77b45b0"
+        },
+        {
+          "operation": "tick",
+          "trace": "3ee975664796dd2764059becfb6b89edb5a97a5123dda5609f1253432a32fe26"
+        },
+        {
+          "operation": "tick",
+          "trace": "eeced5e2dfdfaf54deafa478f1be732773d104265771c32c079f8b8a001f447a"
+        },
+        {
+          "operation": "tick",
+          "trace": "fb60fa270eba73025f3729e75af81acba8d3dbbd73be60855e7c5fef74ca3bf5"
+        },
+        {
+          "operation": "tick",
+          "trace": "e63b7e254ac3834eecac4a3d011dde391a4608831310e58022299e09b4dbf4e5"
+        },
+        {
+          "operation": "sql",
+          "trace": "72d0d747a03c6a9aed1db4634d7598d256d1a8133ca905160fa96440ba50a39a"
+        },
+        {
+          "operation": "sql",
+          "trace": "dd5ae424fab8d778d6c36dafa97eb246ca2a321c4ed07e412334d92a986b19aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "5414bf67ae196e31e448fb64a6f306430d1a05e7cda43debf871308e872f8365"
+        },
+        {
+          "operation": "sql",
+          "trace": "8b862d2660fa2fed8f8f6e41b95b370fce296f2f6b1f239de560a9366e054b8f"
+        },
+        {
+          "operation": "sql",
+          "trace": "1fc21b99c053c2c0f97f65d8c765c7073dc7b5af6857b0d39b503517ee7afa29"
+        },
+        {
+          "operation": "sql",
+          "trace": "e2667faf5221590560ee86511876af6dc6bcafb05fbbec0189ce8f855a23da46"
+        },
+        {
+          "operation": "sql",
+          "trace": "b3a0dac4a196d3e7f25765e8c67b9bc731ca45f9de21a2d23b9ca5241d84e60a"
+        },
+        {
+          "operation": "close",
+          "trace": "584d686564359e36e236379dc702dcebb17e5f0706d22e7416441336e43ac3ed"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history in a new member DM includes own messages and preserves bot-scoped reply targets",
+      "inventory": "baseline:test/history.test.ts:108",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "aebd5f07e37026262b9da22abf54fa11010b5e07e41afdf094d73351a9d5e4f6",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "77f6264495e3e6bc437a7d69e9f0ea269f04d80c0835f65b89b8cc0bab28adce",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "4999eb44076e319f063a07a1f499e55662b7c047ea2f8793f50d985024307f2a"
+        },
+        {
+          "operation": "command",
+          "trace": "f2f63e749c12df9bb81020678d4d66dce3ae671aa38b602854fbb8c45168bad9"
+        },
+        {
+          "operation": "telegram",
+          "trace": "440dfadda1b255794fec69a7d2e15d0bfb8d130b9c0c90aa9c433ec3ab53f9b1"
+        },
+        {
+          "operation": "tick",
+          "trace": "da1a56121a754bee82e862f6610fb80b763c4e1ef4f7a9256e95cabe0a7cda96"
+        },
+        {
+          "operation": "tick",
+          "trace": "6adab4fb0d106c341262d4de9ac54741efccfaf6109f29cc2541046704b84d0f"
+        },
+        {
+          "operation": "tick",
+          "trace": "198335a83ff68be1afdf45f3fd587f5376778856b8a97ff6d25234d2cd972a73"
+        },
+        {
+          "operation": "tick",
+          "trace": "1eeda94fe075fd8c1be5ae788f3b619dd1db446479a7811329c95a1008460a4e"
+        },
+        {
+          "operation": "tick",
+          "trace": "68ddf9fe8ff1812e131f7dcc13b644eeccfaba57043f6f57e6a7e48b0ea3c5aa"
+        },
+        {
+          "operation": "close",
+          "trace": "fc26a27828be3d3cd6573273bcdfcfd7073da47c949969d3b39c1bc40669b4a5"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history retries use the saved batch, preserve earlier parts and hold only live events for this conversation",
+      "inventory": "baseline:test/history.test.ts:119",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "12f96ca56801b0abac221bf5b92ea2773cf6820fd81b47fed3ecd6066cd2ddcd",
+      "logs": "1ab04f7da330f0df9420f601e20397a9381598f0b251ffb251bdf21867c237c4",
+      "state": "4b4208098007522f3e8fd2cc863a6c94d3536341722d326fbac971d9a3c73249",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "5ccddf7ad61baeff7f347554647f9b12d6e4aa082afedec586427b6dee68521c"
+        },
+        {
+          "operation": "telegram",
+          "trace": "a6a32e40f0f6eb6d9a006ce9ec6e78186d9008edbdb0d2023b3cced9d6531698"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "6adbfddd20b608ae98dabcaaf745e7608aa60f81d95bf1e2bfa1f006796cd10f"
+        },
+        {
+          "operation": "sql",
+          "trace": "1368e4364eb8bd168ed24c5680b475e8f1ad47b31bb21f9c14c8cee7d6f7b5af"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "b37b00a14e57bb8d79f5f2b2b08bdfed70087f06538a963ebde7fe3895777deb"
+        },
+        {
+          "operation": "tick",
+          "trace": "e81f0bd1f29551ee506656fd099b103c1ac1044a8985010b8b02d4a94b6600c1"
+        },
+        {
+          "operation": "tick",
+          "trace": "4df71a4f48cc2dfd01ebafdfe73181af89125d6d468d69910fae7e6559980980"
+        },
+        {
+          "operation": "tick",
+          "trace": "3421b53c62d8d782fc42c8cd00e97d30116195bf0796fc7afec7cabceaee41fe"
+        },
+        {
+          "operation": "tick",
+          "trace": "d06b9c43717a7208a23be98620cec8f046a967551e52cbfe57883826d6ed758c"
+        },
+        {
+          "operation": "tick",
+          "trace": "1504038cb4fd79f01537ba4cf86614f03fb2a4c232067967ed988bff1e32e334"
+        },
+        {
+          "operation": "tick",
+          "trace": "97508d440e00f0e18b642016824c8f53400608f4963d373b4bdae1629c41eb33"
+        },
+        {
+          "operation": "sql",
+          "trace": "56078d62c4e5c5a9ffca745ceeca3cb4e2ed68af0f6e63766c7a2a58cb42cfd4"
+        },
+        {
+          "operation": "tick",
+          "trace": "15df7bdfff6e5b8698b2e453eddc2b12c7517c539ab08301912af21e1debb25c"
+        },
+        {
+          "operation": "tick",
+          "trace": "3262fa8825c66edcef671edf4a6d078ca2e4b02889bdc28d46dd57a5504bc546"
+        },
+        {
+          "operation": "tick",
+          "trace": "ae958a48a76d6cf2f611eae3b4a56cc1c72cecdd12b8a426127ad6b4f0add35b"
+        },
+        {
+          "operation": "tick",
+          "trace": "e8be1305160426edb6648e48db63fa8adc75023cd53a176aee208fb6fd3dabc9"
+        },
+        {
+          "operation": "close",
+          "trace": "b613028cb6fe5a0b63e3407ca7cc894a9f908c939c247733ab36e3d8784a42a7"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history orders parents before children even with equal or inconsistent source timestamps and previews outside-window quotes",
+      "inventory": "baseline:test/history.test.ts:138",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "12a69a8c4cb06a041cc6f67a63f4861c0d09ba3ae1da4804a91911cfba0c48ed",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "a49d57634d5fe8215c72cd254a51cb5c46079a58abe97d5609f5e4673400dc6b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "9010f1c15eb3493a1ed492099d819a8bdb3935833f430032a0d688670334c5cc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "46a86a18dae1b253137e927b406ad44ee932647f3c09ab72e264bdc6e5ad24b8"
+        },
+        {
+          "operation": "tick",
+          "trace": "a0cd68383f1722216bf7a24d9f6e2c54b2d7a8af45fdf12df209b12f7586a772"
+        },
+        {
+          "operation": "tick",
+          "trace": "680aa83c4a4e22d18c537386376ce7c07d171885593ba116128b0ccf596e4fbe"
+        },
+        {
+          "operation": "tick",
+          "trace": "cd0038dec24bbc4df6f025ed3f993876c07d3368f2eee092160cdddad2d87149"
+        },
+        {
+          "operation": "tick",
+          "trace": "7d7348fa0f60c4c961909f9bf8c49e62eda77332ada6eccb65912ce1b464eb8b"
+        },
+        {
+          "operation": "tick",
+          "trace": "06c199635dffe00d62383065dd50d359ea0d567bd3673c82d03890370d1e305d"
+        },
+        {
+          "operation": "tick",
+          "trace": "5d88121ec4961329dc5491e2a09dc145a282f16f48cdf35b61275d396f1d0a44"
+        },
+        {
+          "operation": "close",
+          "trace": "9a14acd45b9cbfdaeebdc667f02e1059583a66dd759872d9ae05b332cd8ae7cd"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history reuses archived Telegram media even after its management topic has been removed",
+      "inventory": "baseline:test/history.test.ts:146",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "d3b4d737b546dfb19a55a85495877b0660e9091d745bf05868431196b1f279a5",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "1b82ce9eefa1ca844f4723036bf2e6c0861f900d3b734e24da2bc28b1ca4b533",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "f0f644a627b7b7dd027e4d8a1dacb4a1ec6fa8035bad15f6d84fdf8ac86187db"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "18cad98ae00e51cf6ae4c4db03d330a638857dbac1ad4f8121740d36262078fc"
+        },
+        {
+          "operation": "sql",
+          "trace": "f196bcfaa1ac21e019970be405d86d6261e5dfc9bb85e3c425ff313c07bcb66f"
+        },
+        {
+          "operation": "sql",
+          "trace": "a7dc04cacb3d0b000e23e977ded625619d444e36b232b3c37c9ceff73a2cae4d"
+        },
+        {
+          "operation": "sql",
+          "trace": "48473f838b7bc57d0c74f7d945b624843bcabe03b990a8f7c1f31ef55e1e6146"
+        },
+        {
+          "operation": "sql",
+          "trace": "80b899820c564e16156469a3b3853673f3ace7ba07fc8cb41248ce4c7e8473f1"
+        },
+        {
+          "operation": "sql",
+          "trace": "9c2545055f43c675e251bf5e0d479a0cb2a8cc0c17d03ec667c3a1ced54ece8b"
+        },
+        {
+          "operation": "sql",
+          "trace": "ff8177dedfcca3661c45f7301f8cc886118afd94eacc2ff8864ed12de405f178"
+        },
+        {
+          "operation": "command",
+          "trace": "526293450d55063aa8910497ba2dc5f27092aa69e8ee8e3d749086095dffc5dd"
+        },
+        {
+          "operation": "telegram",
+          "trace": "f6ae2ad79c9e55656908a4a8ac1fa85c6184cc338051c8648612e13d262a2a61"
+        },
+        {
+          "operation": "tick",
+          "trace": "f5d1bd8e0cbbd87206437082d320c08d93eb6b040ca100e2a27c4d63522fe66a"
+        },
+        {
+          "operation": "tick",
+          "trace": "c9614e04f38023281b1aa6ef72659d0391c0112fbaea896f024b4896f0f250dc"
+        },
+        {
+          "operation": "tick",
+          "trace": "d3db2146ee3f08add7552260e76352361b2909a47d3b5869298737ede9a13390"
+        },
+        {
+          "operation": "tick",
+          "trace": "a9065dad298a4a79d6cd1ac1cf87eb3148b55e9478f86e5bdb197755ca77d3bd"
+        },
+        {
+          "operation": "close",
+          "trace": "3d6feba7e27d062a3a10b647e13b607d1e813d8a210cc5108f79a66fcb9d8b72"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "manual history can restore a copy explicitly cleared from the current destination without reusing deleted receipts",
+      "inventory": "baseline:test/history.test.ts:161",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "3cfba95aa656485c305ee26eee50e1a21859e9f902968c2ce7a569ab5314b038",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "89e73b0f2db446980366bcdd59b709ec2f20e5d0c40e134de96bbe84c344c601",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "3c4610fe24c04f55a4e6f44feb2e915880afad9ea4ada11647df2a60186e1adc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "dea9f8cd65395e10fad6f51cb6e1b3d07522829de62adee3aa54b508bfc02e2b"
+        },
+        {
+          "operation": "tick",
+          "trace": "15a270243b73a305d229b7ee0917e3b74121a113b496913744a6e9b456b85a2f"
+        },
+        {
+          "operation": "tick",
+          "trace": "13ca813d68ed61026856537a0e109b256455cf0d45a6cb5bf1617bac82344cc6"
+        },
+        {
+          "operation": "tick",
+          "trace": "734a35fd233db21cfc1dbf92660a3dbafb10037e5024f3fcf20c5b409fc0c47e"
+        },
+        {
+          "operation": "tick",
+          "trace": "27849e8b118bab9283882e800c1f7764034bdcde391e833f45bdb3c6427d89e3"
+        },
+        {
+          "operation": "sql",
+          "trace": "e766fffdda8e98258db2bd543077bc5799352c78e4fe2399c14b89f5d9777c8b"
+        },
+        {
+          "operation": "command",
+          "trace": "ea93f2a1e53d943d856d582eb624a1492e6566e9db74620a724b6a90dd5bd8ef"
+        },
+        {
+          "operation": "telegram",
+          "trace": "80884b6acc7a89e66d44bdacf0257b16e4748c85db1ca5cd1ed4e8fd9ec64548"
+        },
+        {
+          "operation": "tick",
+          "trace": "f26dfbb28c74dba008acdb982ecf59a42d9f1ce3114e8587829b19b73b696efd"
+        },
+        {
+          "operation": "tick",
+          "trace": "5c31e05402caf7b85a4e2537c1b7f51360d5132a9ff8357c3242db1951eda4e5"
+        },
+        {
+          "operation": "tick",
+          "trace": "4c1078b2eef14c4749b3caf00bda2b4aa4739a4049deea07d76dec46ed485e71"
+        },
+        {
+          "operation": "tick",
+          "trace": "8ddf2133976e453f3425ad4772762707bbab829ada1d183bf6b50a33787996f3"
+        },
+        {
+          "operation": "close",
+          "trace": "fadcedbeefbcd2171088f8560e8349a3e8a1913528afd7a84e2718a2f1ac58da"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history sends retained WebM sticker media through the Telegram sticker preparation path",
+      "inventory": "baseline:test/history.test.ts:169",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "b88f955dd54bcb5c7c07fbef829591f0fb335e9b33adf982fffa4e73fdff3842",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "e4efdc48fa6bae28cbb4625dcec78334d3e71aeaf148436a87c8ca81c8cd7be5",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "f0f644a627b7b7dd027e4d8a1dacb4a1ec6fa8035bad15f6d84fdf8ac86187db"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "8427f5a7cbbcb1a4eb3c53ae5ecca15d6f234ef18cee7b19029f2ea67020047c"
+        },
+        {
+          "operation": "sql",
+          "trace": "45a38995ebdf9e9c9551d447226d4903a94ca2ce7aabcb0818dcfed7b2f51753"
+        },
+        {
+          "operation": "command",
+          "trace": "38226cb27aa98c26b52f13e87380e5f4d1fd7129a69f2508e81502e7fc2371b5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "d07fefd058874f41de405d9beeacc728f9166d14012e46b872c5b0ece417a74a"
+        },
+        {
+          "operation": "tick",
+          "trace": "f42f04440a586f7ae45a39f0471ea2533857cba82b620bff9add7b06973053b8"
+        },
+        {
+          "operation": "tick",
+          "trace": "8e580b041e3bc448c75ca197f0d0088e7268b9b43178f6c97410c9e7acbfcd45"
+        },
+        {
+          "operation": "tick",
+          "trace": "224e803f56889d829b22143e24609c9cabfd0b7337866172315e307b7f84b895"
+        },
+        {
+          "operation": "tick",
+          "trace": "c69e7256a21f99b674cf8585c09ddc9ed41ba421b807425e05689aa978938a46"
+        },
+        {
+          "operation": "close",
+          "trace": "b65bfaf6b0684f74bc3676b8423f2e8ac071f5c7b024b786dcf992cb58f3bf6b"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history validates counts and uses the gateway deep-history option above 100",
+      "inventory": "baseline:test/history.test.ts:187",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4d9b6d4431c301248bfdea4a4fdd6aaf4789c0d60eb46bced648948e9a866b20",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "7d8f714fdffbb87ddee5c3d6120c1698969a509ec7763a531593455eda760fb3",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "4834e80a03c99a5236950f3636f2d2c7db0684ae8633ce52a58b2af37e10ed62"
+        },
+        {
+          "operation": "command",
+          "trace": "4faf8937899b044213833746c56d3752286ff98ce19acb036b2140d2d11dc095"
+        },
+        {
+          "operation": "command",
+          "trace": "55ddd9c5bdd643dbddf69d276f748233bcdaba833b1e9e71866b93cb98ce8abd"
+        },
+        {
+          "operation": "command",
+          "trace": "0700228d5b1bfedd28e79d605a6222a34f337595e6de5aa1d93ff69170057021"
+        },
+        {
+          "operation": "command",
+          "trace": "628c310d0e12135d9ada1334602f3c5cba1ed69e2ef66a97cfe7b28e820177bb"
+        },
+        {
+          "operation": "command",
+          "trace": "19698538c1cbd14b7a1727a8989f26c2f21aa27729f95f202d89678f32f0848c"
+        },
+        {
+          "operation": "command",
+          "trace": "e786575be68fdf91b97d096fbcd048dc65e6c38d7c294d3d2b6b6604526b8e86"
+        },
+        {
+          "operation": "telegram",
+          "trace": "674d1a2700a3c0bf15c5f25414f6cf396abf8ba5e2186724a86c20881a62b02b"
+        },
+        {
+          "operation": "tick",
+          "trace": "937339fc9646314925337c0e2c7702077b10ecb2204f9a39c999693b41a976dc"
+        },
+        {
+          "operation": "tick",
+          "trace": "d6f76770377508028e31e0d2fd939854aad98044c0bb57b725e91f1a017d725c"
+        },
+        {
+          "operation": "tick",
+          "trace": "fb1791228ce68ad7ab00f03982f412ee904ba69fea22cdf11b90e5a5de885a14"
+        },
+        {
+          "operation": "close",
+          "trace": "0200b0a01e99376e3c1d1d2d04bd54157a9e16a8f583c2b53ac894e85111a7e0"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history fetch failure releases live delivery and never deletes a management topic",
+      "inventory": "baseline:test/history.test.ts:195",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "70060c783190db301dc3b8597c77bd42572794cebfcddb9b68154d833a764cd1",
+      "logs": "332598db1e51f33e078bbfbb0fc1d0f0f362b6f18bb16f815f87df11d66e7be4",
+      "state": "34d08b7f414dece899229245ea52a2a0fff7ecb35257481713289b6985675c0f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "ecad946de8a589e658a61b0e9becce26c3fcbf388e1459e700570ca7ed57f700"
+        },
+        {
+          "operation": "telegram",
+          "trace": "db6af5af08fbc40daf1e2dada04306cfc02440889f0bbc4eb2d9ae11b26b3293"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "06259d7eebb0285aecab644fdbbdf879cc6537911a6f7b4409bc0c19efbc4bd0"
+        },
+        {
+          "operation": "tick",
+          "trace": "be91826660438a6aa2806c6be2db957b8efcd32b7cf0af9f5a932fc29dffd697"
+        },
+        {
+          "operation": "tick",
+          "trace": "243477083c0f4d38ad3038720dc8ea632788f07fe04428e64bb7b75c75e14db8"
+        },
+        {
+          "operation": "tick",
+          "trace": "52d6ebc530ecde032fc3bc53772a71a262e6acb8ba641864b8aa7ba02f4a3068"
+        },
+        {
+          "operation": "tick",
+          "trace": "d8e605d9aa13f54a7ebcc194a8185c08699a483407a5e4ece162381965e8a48a"
+        },
+        {
+          "operation": "close",
+          "trace": "523a2256dda3b9b691891d2f6b12874e5b45d789559b1d609293127511861b5b"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "linking a mirror queues old-topic deletion but never imports history automatically",
+      "inventory": "baseline:test/history.test.ts:203",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "af1e2fdc68a15a252e471ea8729811dc03bd0223f17365264f94776cf2978299",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4e9c0f396d6b1f779c49033200b22f138022ba3cd2b5a39893598e5f0b652688",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "66fa54e1f18a6ec6a12848bf3c55208cefc0e16ea75c2bab368ca6232b6810ed"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "ccf4faa04bcf44dd17de942fa022d6fd9ea242ec4f19b0189288e00efd8c03ea"
+        },
+        {
+          "operation": "manage",
+          "trace": "0ecbdc83d833d8eaabf227edf6a4b7c4cb4cc4d497e69b2f012dc725a02f6998"
+        },
+        {
+          "operation": "sql",
+          "trace": "e6c6faf72cb0747a4af8c26be79283f7a800d1e85772564cc66a6190ae3a68ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "a9026f23f9d410dcf7f3de20adb13f483f3494ec5e20e43177523e4be0b539a4"
+        },
+        {
+          "operation": "sql",
+          "trace": "9bf921cae2dbe114f2a377316f498a8c4f8daf6c3901534286c1b58fa1c7da83"
+        },
+        {
+          "operation": "sql",
+          "trace": "812bed3c6c68338df29b2521223b4785e4a0810c07b9dfc20ad7e0bcde409379"
+        },
+        {
+          "operation": "sql",
+          "trace": "cc1d33bd674cf971f8b6a15ce6e3423bd5492e8e0f684d8dc97a000a9cfce822"
+        },
+        {
+          "operation": "close",
+          "trace": "82921f449cdcde5337107f6a3f8cb9c17caee4c92550b8d50ed40ccd1df65e7b"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "starting a bound DM retires its inbox separately and cleanup refusal does not block messaging",
+      "inventory": "baseline:test/history.test.ts:215",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "9be0ba0ded02b621fb4d0e14980192d2cd924051c242376a484c838fb77da618",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "68a61097ea71b29d7bc84f41d3b534e3202c7627700cca4a9babbcfd3f7632a0",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "348404e0ee1608cfa6674db9dcb4c61040cd4a6cb2664b6178c55fbeecdf3b9e"
+        },
+        {
+          "operation": "sql",
+          "trace": "a5434d9bc7e28b027cc2ab4334bdee47b97a6cd6bbf396d610151931d6a770a5"
+        },
+        {
+          "operation": "command",
+          "trace": "37e29bf8823f11f1efa323613aabf8e7d6c0418a027f7b501c3098389b360e72"
+        },
+        {
+          "operation": "sql",
+          "trace": "573d2a7fac9318a1de84c04348611f16f961d5c5e4fa80db9c0332683953de57"
+        },
+        {
+          "operation": "sql",
+          "trace": "119bbb4290971e9e69914fe868fb5172657a93ead2fef91b23b2a38b711709ba"
+        },
+        {
+          "operation": "sql",
+          "trace": "f5499279c898ac81234c4a86d16811dac47f488192e46baf88d41ed11a764821"
+        },
+        {
+          "operation": "sql",
+          "trace": "03fd7f00505742cdf8e099264c1d9b3d4f8ae9b54be0fff094113e3884429e9d"
+        },
+        {
+          "operation": "sql",
+          "trace": "2340f08b2d17e225ec583888920c9ade4ce497ada306c0c649e9056c6c9fda82"
+        },
+        {
+          "operation": "sql",
+          "trace": "9e41006d0e525751e5c37c7c33ef0eb05de778e8bfc747c3d71db965faecfcde"
+        },
+        {
+          "operation": "telegram",
+          "trace": "8d57a0f7f04beabd17a14e9bfdec2da58926884e7df7c00aaca2cbc6da70fe76"
+        },
+        {
+          "operation": "close",
+          "trace": "2c63c685434051811db6b20d3cc9bab8da5f599c82b9407cce978a9b1d97c8a0"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "retiring a DM topic is durable and a blocked member recreates an inbox lazily",
+      "inventory": "baseline:test/history.test.ts:228",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "1e81aae0abe1a90e6f9fbb076e85f7248d61f3f89ea6b0f08859815b2dadab2f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "73ca103e0502bde7c847103296c51f6201d41d1fd96ae2756a5d1b44f62fcefd",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "4999eb44076e319f063a07a1f499e55662b7c047ea2f8793f50d985024307f2a"
+        },
+        {
+          "operation": "sql",
+          "trace": "e0591a06808363c07eb5a410c6d00f3ef328481743b9cc2973aee3f80d2f79de"
+        },
+        {
+          "operation": "sql",
+          "trace": "be2e56e318da4e269cb49f386a65a7504c649464e12deb40f89e40715ba83d89"
+        },
+        {
+          "operation": "sql",
+          "trace": "7a9a86f96abf892f16795880df46708b28cd24bf60dd2f3d701f4eac736e0a39"
+        },
+        {
+          "operation": "sql",
+          "trace": "e2a0460d22d5f4ecbc10a7ad1e7d1ec45af4bb14e31db84c7130da997a9e85ee"
+        },
+        {
+          "operation": "sql",
+          "trace": "fd2725fc1e76bd755026ff8b59389d91eae40f18c4e3118d04fa14b0ecec3feb"
+        },
+        {
+          "operation": "sql",
+          "trace": "674e3beb01f43a106a18906207394d61ef8f06111fd034244dc30b1b8d6792ec"
+        },
+        {
+          "operation": "sql",
+          "trace": "674e3beb01f43a106a18906207394d61ef8f06111fd034244dc30b1b8d6792ec"
+        },
+        {
+          "operation": "deliverWhatsApp",
+          "trace": "78011abd90e18f8a76d309a15f17d11bf72d95de716f12b2fd5bab58f626206d"
+        },
+        {
+          "operation": "close",
+          "trace": "0d6ff4ae726e8dbeb55e7daaa4fe30aea68843f88225568076aca3b055cd147d"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "General and management topics shared with another conversation cannot be deleted by retirement",
+      "inventory": "baseline:test/history.test.ts:240",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "2da2fcfdf763a0201790b8b4e5b772977dd00f23814b378f001151ba6d39c982",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cf855610be82cc4a27a0021b8eff1a0339f79dbee9a2ecc644359773394801a9"
+        },
+        {
+          "operation": "sql",
+          "trace": "91ba13f130b6f8d565c34974a4630e55b9990a101b96ad8807a688baf2849f10"
+        },
+        {
+          "operation": "sql",
+          "trace": "c965358e3d65de9f6763570f6088ae549dae173c1691ff7d43bfffc7a9050630"
+        },
+        {
+          "operation": "sql",
+          "trace": "cf453d01a9868a3045f20fca24b85660706526805e2737e9affb7bcc8210dc47"
+        },
+        {
+          "operation": "close",
+          "trace": "09fe2ed1f3cd2bf92c686bff9e2cde345e3c06c4c300b700066a17e123f35a53"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "a retired direct route cannot capture General or another management topic",
+      "inventory": "baseline:test/history.test.ts:249",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "3a7822ae0d5bc24ecf72f02b9722c6c5da4441ac8a530440fe66c3878d25a713",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "bfdeacb2d4e061a8409307eb0fbd36c462ef740486d04ca085d110228934f759"
+        },
+        {
+          "operation": "sql",
+          "trace": "cbeacefa537485fa0195d1985c413d5e090af96620c20dd741605317811f238a"
+        },
+        {
+          "operation": "close",
+          "trace": "d30852db5308ded315a1dca14d78155639cd393d6e3bc1f51108a443206a6a54"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history requests from a previous session cannot block the current session",
+      "inventory": "baseline:test/history.test.ts:258",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "9756ed0b8f3167f23546f37cd9d027cf49ff57c885aacb9ea0460b80e01196b9",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "bfd429dc867785465479efe3450801de6139e5ce8c287a4444c15e626e84428b"
+        },
+        {
+          "operation": "sql",
+          "trace": "539c5dd4bef866f75979da6ead063c1de10fd7b98943fca2844a853ca5bcba1e"
+        },
+        {
+          "operation": "sql",
+          "trace": "aab3668991b140fd8a64e89a420b9970e6421da9e5dcc48e0200ca50b29a08a1"
+        },
+        {
+          "operation": "close",
+          "trace": "263b4cab37710c7fac47bebf6f090c6ea388c9362cbe1f28383def338682036e"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "/history waits for a choice without fetching or holding live messages, and Cancel does not start an import",
+      "inventory": "baseline:test/history.test.ts:265",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "2ae8d4bf0d06cc1504aecdd431b7409600501b46b0585d58f31a7a7691e36046",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "73fd36e7c52d972cc47390df59fb999e5b0f79910fe4eb6138a57fcac5ed3a12",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "8a17c600d60dbbec91d0d968a54545f37fd7635af9f8331b8a77debdb00ca232"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "2145312f6f60f44b0893272dbabb10b13d9fa991ef08429ce86efc20ea162b4b"
+        },
+        {
+          "operation": "tick",
+          "trace": "d693eb0921e134cabae9c3def899bc811a48aba51c2520b27be3da2aa363ab6e"
+        },
+        {
+          "operation": "telegram",
+          "trace": "88d098ebcca2a528c8549abc8f025a3911de0034bf96fdb07a566d113c9d7a1f"
+        },
+        {
+          "operation": "telegram",
+          "trace": "20ed4a61bcc16aaa2c7df1a24fa99718b601293127d968cf76041757c092b070"
+        },
+        {
+          "operation": "close",
+          "trace": "12758923356f8e0b78711055d62e2cb4c8aa76c6f7fb113ec5602c74166a47d3"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "Import all restores manually cleared messages despite old delivery records and links replies to the new copies",
+      "inventory": "baseline:test/history.test.ts:279",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "f55bfa4cbfa69870fe8351d2d26321e4fea2c1d15575673ebd726d57b4a36f6c",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0acb89a8c50f8d45965d32447ca06aa68ab41607f614340d73da54e918b49b22",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "fe039161d1e5b767476a26f5611d3159a8dd25e0a58794a20c1f2478c6025826"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "2d44c831993ea2fac0791b940a7eb79ea8c2e9dce76332d52cfbe4832b7ab65a"
+        },
+        {
+          "operation": "command",
+          "trace": "5064517937098a98a9c22bc7568daeab49d693a765bbd947fe399e54fa66a633"
+        },
+        {
+          "operation": "telegram",
+          "trace": "2d1d3a72d624a32b0de681ff255a4d5544310dd2620313daabeee2d983bc7ab2"
+        },
+        {
+          "operation": "tick",
+          "trace": "106df0aae902d9e603fe1d01fd57286da540a0b86d4a1ffc510fa79d9f5c428d"
+        },
+        {
+          "operation": "tick",
+          "trace": "4bb296eaf424ebc806a7fd9999be1c31efa843f0a9e1c626504d50a9e6ef86b4"
+        },
+        {
+          "operation": "tick",
+          "trace": "033e7dbf8352e91ad1e73d56d05b20e7ee9a92d4636c13b3e4e9c868f706b3e6"
+        },
+        {
+          "operation": "tick",
+          "trace": "2d2b50f31aaa175669a7dae67588449fee07bacb2ea8a66d607561606c9bd1e3"
+        },
+        {
+          "operation": "tick",
+          "trace": "b7a100a7f1b65aeba0176952ff92d368f5963a63db6c62a510eab43d7b1b01ad"
+        },
+        {
+          "operation": "command",
+          "trace": "fb03c881a8a6cb22564ca8cf81e1326ac7f7102c494eee1832aca03aa48d6085"
+        },
+        {
+          "operation": "telegram",
+          "trace": "ac4ffb4158e3ac0bdf60b5a177db5d88a21e09b1c5239de2d7b42da22c6ed0b9"
+        },
+        {
+          "operation": "tick",
+          "trace": "f7f8d48597e7698f03629ce9adf18af4f74a4454a58c9d6dd9949f73bf426f59"
+        },
+        {
+          "operation": "tick",
+          "trace": "c98f58e831b215f9881bf17b333620fa813200f865f3f42f7815b151cb7dd2cb"
+        },
+        {
+          "operation": "tick",
+          "trace": "a7cc50f0902ac0848d7867e1c2c3556b90189e33093e090548a7125548994bbe"
+        },
+        {
+          "operation": "tick",
+          "trace": "338860fe425aa0ca71c6555a590b7cd6c417eab02f60ed2aa74c7c823e60968f"
+        },
+        {
+          "operation": "tick",
+          "trace": "bbe60dc563731eab2ff215a3c47bbe0a5a1b7a35829bd93dc05e79f91885e37e"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "91b479692497ba0c9842280865a739b80c004380e00e3d7d0cd7f7ac11c5e547"
+        },
+        {
+          "operation": "sql",
+          "trace": "4eb103fbd8f51edf2cf2abdb01c69ef4ef19c48c094b062d5c7fe4403c2ab077"
+        },
+        {
+          "operation": "sql",
+          "trace": "6311790fda4e2c6acf7b6d44ca88f15a5bac8843cfd1ada77a50285355e3a992"
+        },
+        {
+          "operation": "close",
+          "trace": "f031cda7a320f2f4ce1b17cc0c77dcf48bde857c8e3ac480468af518f3436db7"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "Import all previews out-of-window quotes instead of replying to stale copies from a cleared chat",
+      "inventory": "baseline:test/history.test.ts:299",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "46bf996cee9995c14069f8876d4b1c06ea7ce3a27249d915930238a1e74f3bcb",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6869b4208649bd79cfde27689516abf8f315fd5f6ecc4087b26a54548d9eab3e",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "8fb2cbba509fade6293f267c48f9764b023bbea04f53b82bb529d8c6359cfccf"
+        },
+        {
+          "operation": "command",
+          "trace": "ce51eac958a01a37ff54a0b6c177c814ada6c09885863811d0aaf27f623ceef6"
+        },
+        {
+          "operation": "telegram",
+          "trace": "49bcecab45f66af4801d6160dafd93a636d9eeacd962c1b3ce8eb00c63e1b2ff"
+        },
+        {
+          "operation": "tick",
+          "trace": "3e52db9f8d2f025567a346e74cb24ca7da94ed3536ec8520308969237f96992a"
+        },
+        {
+          "operation": "tick",
+          "trace": "e9923f66da7cfd8ba1fa9874aabb3255ee352b9eac4dd233a598e2795a81ca3d"
+        },
+        {
+          "operation": "tick",
+          "trace": "c78320d9c26473d84b3b3c5276ea25f789624f862e4384093606862307e530ac"
+        },
+        {
+          "operation": "tick",
+          "trace": "a7f7caf14ee7b4aa9499b76484453134d7aa473c20cfc344149049cf2a81e05a"
+        },
+        {
+          "operation": "close",
+          "trace": "6e61c2426dcc2f7649f3c0ebaa0a85ac9db693d5fe2ab4682f8e21dc267ff308"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "Import all retries a frozen batch without duplicating parts and repeated clicks cannot start another run or switch mode",
+      "inventory": "baseline:test/history.test.ts:308",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "04a77c193becc8e3423bedbaba6784bb6f57c26e7731c036696477a863deb38c",
+      "logs": "f3a785910a032ac14de3745e091dd3b3565d292badf66314a9c7dc65c144d957",
+      "state": "77db90ad0e3b07a12aa1524fa49c2261b01fb7639974922d22c04f5c1cc289f9",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "15df50ade4f2314c89078f894c4928395e7e8a8170919f6ea128ba7002f28f85"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "ac9f66f77f1ba7ef43cbec92359f658e61b00bdebac7eb6c30d24398082719ec"
+        },
+        {
+          "operation": "command",
+          "trace": "46662e3d21e59fabfd71016301028a381eac071aaad280cdc501789a3fc94f36"
+        },
+        {
+          "operation": "telegram",
+          "trace": "96e98b1321e91d2c53453ea111683d26150f52cdab9e82a1d7da48be75bc203a"
+        },
+        {
+          "operation": "tick",
+          "trace": "93e1cb21b464fdbf2448822e0957d04ec51d6bbd3f9e34671cba313a515392c4"
+        },
+        {
+          "operation": "tick",
+          "trace": "e0bc9987180351d8fc6cf8835fe33e18c0c64f6029235b684e6a9c9f98659462"
+        },
+        {
+          "operation": "tick",
+          "trace": "fdccc2f4cffa05a841dc10da0de367cbeb2fc00e6d7a062f1cb6d893a34a3930"
+        },
+        {
+          "operation": "tick",
+          "trace": "4a755d90022e13ba5133b56ad4a0c67f005bc2b01612bfa0c7b992ba4c73e12f"
+        },
+        {
+          "operation": "tick",
+          "trace": "64b3bbc24948ebd1beb85ddbc28cc2e3becba7e9ca5826295c339e9796e6a444"
+        },
+        {
+          "operation": "telegram",
+          "trace": "24669ba61a5e08160a62d56b6df4522738855e3781ee41c87b578e03703bb5e2"
+        },
+        {
+          "operation": "telegram",
+          "trace": "1f007182a9eedce307ca78f54e3216c16943dc8c731634376364d8e2b98e8c7d"
+        },
+        {
+          "operation": "sql",
+          "trace": "e92c2ab9455ab857acf0ee557e97318e25dbe736b1e28bfee9a8fee02679df38"
+        },
+        {
+          "operation": "tick",
+          "trace": "f2c92ab0d78da4e4feefc3166a01d3176637b48f29da4b831575bbf33107bfff"
+        },
+        {
+          "operation": "tick",
+          "trace": "55e56620030e17c13b883b906b3440908b606151e87b3385da23269a2a4b4696"
+        },
+        {
+          "operation": "command",
+          "trace": "f581c5cfac9a2ba0ef0adba43c4f133f376996b5f22e8f12f841c3b11c8e6798"
+        },
+        {
+          "operation": "telegram",
+          "trace": "869300ef877e2f37e73588c9fd1ff98af07853c07dca150cded229f88c259918"
+        },
+        {
+          "operation": "tick",
+          "trace": "2ed31a3d98f87c1ba3ea0c8c221e134ce542b6a85c92b4e53b8fe75380063935"
+        },
+        {
+          "operation": "tick",
+          "trace": "2189cc5bb6126f42f3c5cfbf64d5764a03654dc84a570125c9038313be16cd9d"
+        },
+        {
+          "operation": "tick",
+          "trace": "f7286c90ad0da9ecfcc21a59ae435b22a4a1e6a011722f626a896d07ff2d6a0c"
+        },
+        {
+          "operation": "tick",
+          "trace": "01e6d5bf2b7d8242d1dbb23e6d1d9cd84756c3566f38759b455508a212380a3a"
+        },
+        {
+          "operation": "close",
+          "trace": "c9a6f8c505ad817d5b4e1e6b51dca6769f0d6cdc1082dbc621288629ee05dca0"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "Import all still excludes WhatsApp-revoked messages and preserves other destinations",
+      "inventory": "baseline:test/history.test.ts:325",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "3ebf5b95e0fd1dd9cfbcc909a6ad42adfbf1486e67de7dd7ff78d8420990e9a0",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "74ea47935f1e5bc98593ebc3cfdf641e71ee1295b0bd5a280c6116c8d6494be5",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "bf069a418ecf50bb53bbcc39266f9ead1a638c656713e94eeb5c75112a6ebac4"
+        },
+        {
+          "operation": "sql",
+          "trace": "99a2650372785bbb12135bf2bed80d238b0a64a460c91a2a4e84fd2ea6ae19a8"
+        },
+        {
+          "operation": "sql",
+          "trace": "20adb3f32601733de6ab22170b6279524b5393b0cf608405460ee9ad0c161e27"
+        },
+        {
+          "operation": "command",
+          "trace": "8316624e8ad6290ecae73241da411052763dd90d6c0c1c803125697b7a967efb"
+        },
+        {
+          "operation": "telegram",
+          "trace": "f6dfff4c421f5275c54f533e0c2962eb627a00752f6fb2c37e20301bd9d73d58"
+        },
+        {
+          "operation": "tick",
+          "trace": "d2b5fc36cbdc254d79fb017c5b9d2247b690ee274776839f4cc96fdcd2d1a48b"
+        },
+        {
+          "operation": "tick",
+          "trace": "e0ffad5e314c73271cedf4fd44a3d09346d25ee6523842dced3f7981467e7fa0"
+        },
+        {
+          "operation": "tick",
+          "trace": "dd56bb63d1818faa8c717cdf0a89a4d872e9da0b8dd800d33082be6fa33968ba"
+        },
+        {
+          "operation": "tick",
+          "trace": "6ed83acf8a2089c30e46fcb00d06fa2bb8ff35d5a71446c6e5b17892c2e1c033"
+        },
+        {
+          "operation": "tick",
+          "trace": "0094cf1ab8636a26d22fb89217ee76c280846bf90137dbb079b68d1b3e3cd653"
+        },
+        {
+          "operation": "close",
+          "trace": "5ebafe1788c06d37a6cb03cbb80f12d2fdc7e600d0f0a5dda26a95fe4a9cdaf7"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history choices validate owner, bot, session, destination, topic, binding and expiry",
+      "inventory": "baseline:test/history.test.ts:340",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "ae0b7f1b5398071e29f7801c56bfd4c7d594c055519e8e16cc6e5e9482cdc0fb",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d984bd57c9425f925e358feab28b98ec7ee78718790cb167b47cb1646cd95a58",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "f0f644a627b7b7dd027e4d8a1dacb4a1ec6fa8035bad15f6d84fdf8ac86187db"
+        },
+        {
+          "operation": "sql",
+          "trace": "d96cec9820f109011bd180a5a49e873f35e6201a69e07cc4e88a8b3fce9c2b15"
+        },
+        {
+          "operation": "command",
+          "trace": "be530e92b827f3d293b8615ad8c413a59e3d840389b311ff64e9b181ff185722"
+        },
+        {
+          "operation": "sql",
+          "trace": "459c9b835e10967a402b04142fa7be452facbf346487e88f42d2a6879a426870"
+        },
+        {
+          "operation": "sql",
+          "trace": "14957a1ccac9b6869f1047c67605369bc917012cda79065b6cd4233cc34d347b"
+        },
+        {
+          "operation": "sql",
+          "trace": "c9be7e9c7cc75d3585c98ea33ecc9c916a4362ba323d07e6d90501a2d865f42a"
+        },
+        {
+          "operation": "sql",
+          "trace": "6a5230a19090f0cdf4eee6e523b5e0a2bf3bac2836301adc79e0281fbfb79df3"
+        },
+        {
+          "operation": "close",
+          "trace": "9a18d3a0491f94ba1ed696f87b15ec4f2b6b4801acaeeebd0355d897ce502c79"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "member DM Import all remains bot scoped and legacy Recent history buttons now show the choice",
+      "inventory": "baseline:test/history.test.ts:358",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "6e0abfccb4c9f7370a2d08d0ba5ab12672b6effc97d9afbfbd4dd6dbfeff66d5",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "3505249603de7d5c35a4ebfb77974241b1afd322c55deacfb1d5b53daf057ea3",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "4999eb44076e319f063a07a1f499e55662b7c047ea2f8793f50d985024307f2a"
+        },
+        {
+          "operation": "sql",
+          "trace": "0171918eeab308953e3ca82d4a838739397f1fed65986a74b9762acdc115c7e7"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "caf9bf40ecd5a0e9cc38ff21b0458a78a116174769b26ef7e863cbf67d8f78d5"
+        },
+        {
+          "operation": "sql",
+          "trace": "18260f627941468a083274b34f56877b105d28241572bc993d434319eae7ab17"
+        },
+        {
+          "operation": "command",
+          "trace": "4743921f16b7a1c4fdbfd5a1663c26f1ae9103581bf60ab5825048b79fe587c6"
+        },
+        {
+          "operation": "telegram",
+          "trace": "0a8bfce0087f740c41ecb6001845307b84f3504c3e97030a445396141dc77bf3"
+        },
+        {
+          "operation": "tick",
+          "trace": "3ca72c22e733fed39a3e932b0898509d2c4eed37658b442b38db1acc2266fd8a"
+        },
+        {
+          "operation": "tick",
+          "trace": "27708c4c2ee1f8f359f247625516a4355ac8655fe2f56a8d51dbe51f99b77a29"
+        },
+        {
+          "operation": "tick",
+          "trace": "c0f7ea463d0c7254bc0979754daac259b03ca66c111b19e038e993d10184e507"
+        },
+        {
+          "operation": "tick",
+          "trace": "df92182f07ec02496240fb2b8491ac5685df7547d2d7d18bfc65d518b116c85e"
+        },
+        {
+          "operation": "sql",
+          "trace": "558aac15ce3248083bb7b540c1659579637149238f89488ad3ae3991dc49e2a6"
+        },
+        {
+          "operation": "telegram",
+          "trace": "95c38e3c16f8110b53f06a56c58b11dab7692e986d7409807b88a724db367d44"
+        },
+        {
+          "operation": "manage",
+          "trace": "2838201fca50399538eb0cca31f1b48a63d24ef0156d357e21b8484cc5b605e5"
+        },
+        {
+          "operation": "close",
+          "trace": "e4804ab8acf40dd46ccf747e0589ac8d44a7ea6fdcd8eec9321c351f2700a5fd"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "two pending choices cannot start concurrent imports or change an active import mode",
+      "inventory": "baseline:test/history.test.ts:375",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "d84c331ab1a735949471c73d1c815e43d23461263282ad898094b08bc79f92cf",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "25e2533d10329efa6c1b90c3ecf5cca10366451e9f682a6fdc5eae74a5f8d34f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "201a2ba1f03bd8de80a9f0a3e5cb4fcbba9605bf0a41494115ce340ae5bacaae"
+        },
+        {
+          "operation": "command",
+          "trace": "73518adbfe5a38aa3c8170c1c746574480f3f1dd2041c6360f908dcdec43a42a"
+        },
+        {
+          "operation": "telegram",
+          "trace": "d40979010d90fdb096561f49fc905fcced1da3561a6384e8f6138e27e16b57fc"
+        },
+        {
+          "operation": "telegram",
+          "trace": "ed215ebe9fdb296fabcc8c3433fbdfd6b55226b63cafc4f8316eca069ba46d92"
+        },
+        {
+          "operation": "close",
+          "trace": "ded2bc2b306e00fa5e042aad0cf7a021d9c8430ae0a70c91570b5d4f700994f7"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "reactions prefer a fresh unavailable-media placeholder over a stale attachment from before clearing",
+      "inventory": "baseline:test/history.test.ts:383",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "191124f5c95b265372a421ecf49ac1ee7970ba7e83267f4100feb872f989b5a1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "a1a43a181631eb0f2151a7f9e54376476434c024052164e9aa8a3e252e5fa79a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "24da27ca9a327b949867c8d35ec2abb62a832084fbd7d0ab3b1b2aede3c2a66d"
+        },
+        {
+          "operation": "sql",
+          "trace": "4b013a42fcba1d76056b95a1cba56fe078f2c8fb8eaac9882b1c438d26f58e2e"
+        },
+        {
+          "operation": "command",
+          "trace": "4f5767a6e4bc0c29a92dde8a489f5a1f90171fd03d076c35b1821826111a4b4a"
+        },
+        {
+          "operation": "telegram",
+          "trace": "51127a2033b766ff0e12dc8fbb2247dbee171251f42c55603a608ad4d0932706"
+        },
+        {
+          "operation": "tick",
+          "trace": "fbbe00e433ee4e1c154bbbbd12c8f923f5111800747497fab5d36a6dea719721"
+        },
+        {
+          "operation": "tick",
+          "trace": "e08f4dd1c9f549869b40a7981bc61502632b7754891879e10a91c2b43fba2ae2"
+        },
+        {
+          "operation": "tick",
+          "trace": "ab78ffef0a7f5f2cb5aaa9572234e95c55cd1405145f77224333c4a5c6f26737"
+        },
+        {
+          "operation": "tick",
+          "trace": "c74950fff6ca8845069ee58f351dc4467685e5d783ccb6672c2a1aa220e972e0"
+        },
+        {
+          "operation": "sql",
+          "trace": "5b7e56ac4ee5fc40385934355acf580cce42a7742ded52af87014fea680503f8"
+        },
+        {
+          "operation": "sql",
+          "trace": "4a44ba37ec31fdff0e8130bf9adacdf1d95f2f0a7e7f9a10bc0f7842b5df4361"
+        },
+        {
+          "operation": "close",
+          "trace": "30bcd6212e9bc95a452a53e2a334fb21049bd2478c310628ea702912d9ca3715"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history posts one retained date marker per day with time-only messages and replies across midnight",
+      "inventory": "baseline:test/history.test.ts:397",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "3c272a018f1d79f24757c2f00d8282c74929c7db64b84d5a06ae57c93398383c",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "27d3902f2c4270b0b5e23858aac5bd20cc56b1e23b0cd5072ddc89bef382d16e",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "359425751626dfd31f5dd95018310ea9874b03dee8985ebee349be649db945cb"
+        },
+        {
+          "operation": "telegram",
+          "trace": "96146be775f62b3e7c5cabf315cf3d841a41dc97b6ccd4df1a7e11764dbf7c9a"
+        },
+        {
+          "operation": "tick",
+          "trace": "9a560608f6f587960d1d39e803c67607001ae5b5367e52925a73c83df8b704cc"
+        },
+        {
+          "operation": "tick",
+          "trace": "8ffdd7284a1b40ebe1517a07f398721caaad789a0184583dd1226a7973ffb498"
+        },
+        {
+          "operation": "tick",
+          "trace": "b03453a93bd37310aa75a61e2f026e84d2af1589ac1b172cd0000f96f3653b62"
+        },
+        {
+          "operation": "tick",
+          "trace": "d64b03c902fec3220c019ffc7c0c7fc686d47305e956585dcfeb69fcdc4ac555"
+        },
+        {
+          "operation": "tick",
+          "trace": "54e1e8943236ee821c2e35b32c626fab840e28e1abd66d27cb259a0f3c25cbb0"
+        },
+        {
+          "operation": "tick",
+          "trace": "0a335af0e060cda3ee686a1488c125a725076e1ec81bcededcff050e0892a2eb"
+        },
+        {
+          "operation": "tick",
+          "trace": "cc111983a48ad24c0090accd4d573ba737c3d3dc7e36ddcea47541b44be7d86c"
+        },
+        {
+          "operation": "close",
+          "trace": "c678be810bff9a9c59c77cec93f30de5dcca57481af5180c61115e878acb55c5"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "history date markers survive a retry and a fresh worker without duplicate date posts",
+      "inventory": "baseline:test/history.test.ts:410",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "b007afb8a914aa95bbb583858ccf6df02ee4d58a107a5a0e7b9e742e45f62cd5",
+      "logs": "5d5d81f035737884d28d304d3cf2349019f38b6f077dc326f15c4291155dbe3a",
+      "state": "377ab1282fe8d0d8cde16fe26f0575dfa9e510abf4c22c4bafe080e5ad4e6a00",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "a0578455f25fd5d11c12a3b012f75af8f7e1da72064267cf74df712f7bb6ede5"
+        },
+        {
+          "operation": "telegram",
+          "trace": "a971db08317c2dc09f77015080d0dd426a9914a32dd7927a990875022738ebf4"
+        },
+        {
+          "operation": "tick",
+          "trace": "0b79ff351bc8560d8cb526a1016c53c9d5c41fc2a8851f28e1c82252497f4394"
+        },
+        {
+          "operation": "tick",
+          "trace": "2b034fa9617867001dfddcc7233da8333ec37b6f6c96ec36e15b38f1365af1a5"
+        },
+        {
+          "operation": "tick",
+          "trace": "a191c9361a91310ce2a1240811732711ee3ea2cd7063807b80d40d550a6123b7"
+        },
+        {
+          "operation": "tick",
+          "trace": "e6b8e188818df1668d9e7747388aa16ea2377eadbfef83a86004de48393ad670"
+        },
+        {
+          "operation": "sql",
+          "trace": "6858b2b362594e27e61889adf4d3116261b7e258f09ad511d7c5f62c8f982e35"
+        },
+        {
+          "operation": "tick",
+          "trace": "27bcac9fd9b91f280e77aeb1609febe4e9e08f61fe6d41dc664346eedbc5fcf7"
+        },
+        {
+          "operation": "tick",
+          "trace": "07cc2465e39115c4c555dfaf96d7aa7cbefffe7a6e691b8f102dbc0e1e512ac3"
+        },
+        {
+          "operation": "tick",
+          "trace": "6663cfb40710b29faa55429b10bb86b9dc0953c3f76c94a37e7135d9a4d8268c"
+        },
+        {
+          "operation": "close",
+          "trace": "08f470ef3524505144337522a4033f940d388856a6cb085d70f0cdcdabffb2b1"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "skipped and revoked messages do not produce empty date sections",
+      "inventory": "baseline:test/history.test.ts:420",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4261842c101454ddd046ebefc800d7821218605585ddde2db04a8de7787611f6",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ca4c1839e182c0650c128d7f5db0ca53a2f6d1f76da0acaa124feb89cd94c47c",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "af8f47f248d8ae682cbd711f50c19679a0e2734a2e0aa95c5b85117848afe16b"
+        },
+        {
+          "operation": "sql",
+          "trace": "c98a06200b2747e78734d03f28bd973242d08aa1e4239c99e1e9fde4562ef29f"
+        },
+        {
+          "operation": "command",
+          "trace": "f2475a02b00c73b752380e3d4c5e7fd523bee5617f5c98f1f5bf82a495af514e"
+        },
+        {
+          "operation": "telegram",
+          "trace": "3f1e2c0b62353c5c55901343ca46eba7b1ca9e280bef706b58ae0eaba270de9f"
+        },
+        {
+          "operation": "tick",
+          "trace": "2edf486c32056c818f16b7af445f11b228ec169d6e405eda9785118c5359d8b1"
+        },
+        {
+          "operation": "tick",
+          "trace": "11758a71672d15019c66ebe062b172e0920218d56bcfe4b3fb25b547f1ec0b30"
+        },
+        {
+          "operation": "tick",
+          "trace": "c3a8b6845a7712c1bcb5b5aaef50ff6eb34be706798df22cf7cbf962d1ea9c78"
+        },
+        {
+          "operation": "tick",
+          "trace": "4e15d2ac2f1136bcaf9488a5e284f67ec4403551673ebc46340eb08f63c88908"
+        },
+        {
+          "operation": "tick",
+          "trace": "d0e02a808e25dcc2bfb4ed782ee711b34215a537e4fc810edd415e28d21bf3f9"
+        },
+        {
+          "operation": "command",
+          "trace": "efe9f14012c97203d5db11f6db63e4c5629add520fbdb2081e2fa64c76fc6e65"
+        },
+        {
+          "operation": "telegram",
+          "trace": "ff58078a0451c4d20f27b7a3e3ae47bfa5dbee7eba72572778b79530a50b637b"
+        },
+        {
+          "operation": "tick",
+          "trace": "358c20d5c89ca20be86fdf6858682fa305a67948992d75c72388b290a9287c32"
+        },
+        {
+          "operation": "tick",
+          "trace": "0d0c5bdea0be5b0f4117ef18365a7e48fc9db1b8d0e4fd24478ebb606ce0cf26"
+        },
+        {
+          "operation": "tick",
+          "trace": "40ce1163600d8e5f03f4086aa2f891c5f7199dde48d1e73613e715ecd8b812b7"
+        },
+        {
+          "operation": "tick",
+          "trace": "a78dfd149e4b436e470a4b1e475586af5d0422fd38d80e83270b168b6786f11c"
+        },
+        {
+          "operation": "tick",
+          "trace": "c2fdd20b7b3045ef8ac1a4ff21856a0e834ddcb987450a6e3237d3d4ffe14912"
+        },
+        {
+          "operation": "close",
+          "trace": "0e38d662ba0ed8f68a5035785e7bdc7bda5fe22d7420e2664ea7d307bc1a2bbb"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "member DM date markers use its bot and compact imported messages still identify the owner",
+      "inventory": "baseline:test/history.test.ts:431",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "3e09ab0a3f44bcfd77e62363a18dd5e6d73dffeaa9120bbf8556d17eebd4259d",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "fc633c7be32c244407e8654e2049abe2c8fee84f0502f47974a3bb3f51dbf214",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "4999eb44076e319f063a07a1f499e55662b7c047ea2f8793f50d985024307f2a"
+        },
+        {
+          "operation": "command",
+          "trace": "6733bde6158eb285a79a3ce047db2fe7186c9f65d6af645763a06f7c82c0beb6"
+        },
+        {
+          "operation": "telegram",
+          "trace": "e982beee5b32d85835afcb3f768bca8c3281699f0e503a9c0169bec24250ca71"
+        },
+        {
+          "operation": "tick",
+          "trace": "d44c1e59ebd7283c2f56be3d498042fc4ef2de142c3ed3619953ecf1b1b89362"
+        },
+        {
+          "operation": "tick",
+          "trace": "9bfdedfe9d70a3d583e1ce7380caa02c50c6c2e7cdba5e27c4873acbb106feb0"
+        },
+        {
+          "operation": "tick",
+          "trace": "f08542dd2456a1915b131c541fdeb2500d182232adc81b59cac77ba4471d28b9"
+        },
+        {
+          "operation": "tick",
+          "trace": "2c957056b57bdbb727f15d3e56036abc8ab02c97ef5951079a29c53ee606b2a5"
+        },
+        {
+          "operation": "tick",
+          "trace": "0dafa0b4ac77b2e7be4cf76df4e112d98d386cc4cb414fe50d9d39b38c109998"
+        },
+        {
+          "operation": "close",
+          "trace": "512ffa37be3d437d389adb1a3b5931c9fb0ccfab970aadc34de44717349bf500"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "older in-progress history runs keep their legacy presentation and do not gain date markers mid-import",
+      "inventory": "baseline:test/history.test.ts:441",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "4e122c097718d486e49094c6202bb0c95bef33667e623974e48f31def969f36d",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "14b0aacfb0de5fb05e0fceef081df083a1760ad605fb60073d239f7b0c9f6b48",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f0cbf0bd74d8025dca8aa813cb8eb4745e0474719e813f646898679d9fc6f39"
+        },
+        {
+          "operation": "sql",
+          "trace": "eb21c3c8c0ca86cbc82f0caf6100ce195acb14acf427fa1190d8242be20f00cf"
+        },
+        {
+          "operation": "sql",
+          "trace": "b6cb719d0b252c5e5499a3db60d8a755b6e580a7cd48c13909b6e2496b6b44f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "aa87d0412546474e51959e610a7d60d60ff4a3dac029b2d94660343c2c42053d"
+        },
+        {
+          "operation": "sql",
+          "trace": "649b8c7375abf0cd34a419898ea61edb2f154a814978b26036c54932a3fc1cb2"
+        },
+        {
+          "operation": "sql",
+          "trace": "f64f3d1aca2fe56b4f9d0525a4dfc1f17cb94d9fd96532e8b9066dd6ec9ad022"
+        },
+        {
+          "operation": "sql",
+          "trace": "51c42a43cd3a3ef18e249eb80b98545ead88c55e5c8c3722410e87d5140ed63c"
+        },
+        {
+          "operation": "tick",
+          "trace": "c3f9bdcc450cf60b5b554f26e0a4f161669cdba7195e42651c4fbfd2881f1313"
+        },
+        {
+          "operation": "tick",
+          "trace": "c7ab854508481f4edca0378ec03c686af934fa0adc01486395b1589f90b4f6dd"
+        },
+        {
+          "operation": "close",
+          "trace": "d5cf5f016ac75b50d990e802d9940e8d6d43f9291cf961a8b8a3e97f056004ba"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "every history choice deletes only its own prompt and duplicate clicks cannot schedule more deletion",
+      "inventory": "baseline:test/history.test.ts:450",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "a26af0756f324729b24aa84e727bdce6aa2b0c87ceb673c466de58e04b814525",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "133d6e04307cd1bd5a7ce52a6b66eb81eb0f34183fa1e26a9d9498b6063447ba",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "d2cb21d8078f073ccbbb7316efeaac4cc1db9790b5c44cba45404e60370ba583"
+        },
+        {
+          "operation": "telegram",
+          "trace": "7e0f412c0db425d436b730f9f814a2f9ba69325af9cd3aae2cd0aa8adaeaed5c"
+        },
+        {
+          "operation": "telegram",
+          "trace": "e6ee50d01a59a81b5f0a7251686967d96633be51b3e72122660e8ee0db505ac1"
+        },
+        {
+          "operation": "tick",
+          "trace": "3975708c86bf751e08de2c24612fd1777f79629d3ecf6550bd6cde1dfbe4e9a2"
+        },
+        {
+          "operation": "tick",
+          "trace": "bc055875cc215bba4f70db5da457a6608ceefc22e34559f53134adfcddde804b"
+        },
+        {
+          "operation": "tick",
+          "trace": "5e1ec11199151e9ce5e8754a86098b6e379350ca1dcb009793463e86ec696ec7"
+        },
+        {
+          "operation": "tick",
+          "trace": "95582baff6074e15b89e2f13e26bdfac3cedeb9ae79e46adc1b16ddc4f5ca3a7"
+        },
+        {
+          "operation": "open",
+          "trace": "1f388c87cfe1c49f36d2438671da14668b7d8e697201d4fe0ba54e12c020c6d0"
+        },
+        {
+          "operation": "sql",
+          "trace": "eb0b2dc91576af9c9a722557a05d3e3568c2fd272f9f14e575b2ef3c238b166a"
+        },
+        {
+          "operation": "sql",
+          "trace": "e44deb64f0e66205cbdd003b5a27adebb990cd69b4b7892acc4750c67e30b964"
+        },
+        {
+          "operation": "sql",
+          "trace": "967a07adfb49b933336a83910ba68aef179a3ed8305ac4aebdfda33adc4a1ce4"
+        },
+        {
+          "operation": "command",
+          "trace": "aee7176c069a3c665cd4ca692ef326165e00bed2fffc59dfdf2da5c2a39336a3"
+        },
+        {
+          "operation": "telegram",
+          "trace": "232610e8b3f39cdca4b7f887bc487ead8bf3d6921eabdc2004db5a6b2deb510f"
+        },
+        {
+          "operation": "telegram",
+          "trace": "6064a3a3b16b4cd291064d78a424d94fb3397176fed7aed5d6e09fb1f186d0ea"
+        },
+        {
+          "operation": "tick",
+          "trace": "50016a8aaf918b22e65791b7225e8c0d5991dc239329e46e710a172e2cbefbd4"
+        },
+        {
+          "operation": "tick",
+          "trace": "5a20badf105420200f3df3305599aefeacbb65bf816fb3bd2336fec2f3f66cab"
+        },
+        {
+          "operation": "tick",
+          "trace": "d886f6fa1bcee3f4bbc22230f493b294c5079e3745d303b5886a3e29e03ba24f"
+        },
+        {
+          "operation": "tick",
+          "trace": "0ae2f343895923313429eff15880e8b0c742a68f83b649373d0bb61536d98dfa"
+        },
+        {
+          "operation": "open",
+          "trace": "3090ad509ce3bf21cf4a3c22560899eb5098a1ba23ae15c3c3584b48979b1763"
+        },
+        {
+          "operation": "sql",
+          "trace": "14c56ba24af1ce4a7487efbd69f214bcafdf74ae8ba93fa5f0a120474b06feff"
+        },
+        {
+          "operation": "sql",
+          "trace": "0ea2604885a6dbc9ce0670070ce26c82d35322c31192e78fdc9554b08c917a87"
+        },
+        {
+          "operation": "sql",
+          "trace": "a0921e4731368602e69aa81e41dd38c95ddc0bd4dcff6d386f737f8a7d7f8262"
+        },
+        {
+          "operation": "command",
+          "trace": "26170f492e15d3e85b0c312d2e276c743c87b4deb4be24aa05fd2a9cdf3122c1"
+        },
+        {
+          "operation": "telegram",
+          "trace": "1fe6d3736d1166540465cbb4630a96956e03372c0eada38913a70e042acaee11"
+        },
+        {
+          "operation": "telegram",
+          "trace": "61294cf4a35f6b12084f9c8b7740d932fcbb77ce8c4fc9be46ddd92608384460"
+        },
+        {
+          "operation": "tick",
+          "trace": "fb5d3416b90b88bdae1a00c8e1bf26907656ba935bd89b2b252cb5b7f566a800"
+        },
+        {
+          "operation": "close",
+          "trace": "4bd0f84cda48badee5ad8b837f4f3144450c896ac7070b55a9da3225c9879a4e"
+        },
+        {
+          "operation": "close",
+          "trace": "4bd0f84cda48badee5ad8b837f4f3144450c896ac7070b55a9da3225c9879a4e"
+        },
+        {
+          "operation": "close",
+          "trace": "4bd0f84cda48badee5ad8b837f4f3144450c896ac7070b55a9da3225c9879a4e"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "prompt-deletion network failures retry independently without blocking an import",
+      "inventory": "baseline:test/history.test.ts:463",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "b238623bf8c104e76ff4a9d176f17296568b82d59717cc2e2a03d70d65842a4d",
+      "logs": "ddc55a76bf91caa9eaa9280d69c19a4dfa956e8e04027cd9dd178da45b154f66",
+      "state": "e6af6476b6ed9360503dcd86eb52b41d8076b4bb544e7b70fa62c2748bb29033",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "command",
+          "trace": "ff308b22665e9073b0e74ccf764b1ec8590e9d4cfb8d9abe11ce632cf6c00bf3"
+        },
+        {
+          "operation": "telegram",
+          "trace": "c0cd6096ce07da92f3910b320ae451d9daa360e103a5bbc9e0d05d299273ae8d"
+        },
+        {
+          "operation": "tick",
+          "trace": "11a4ee556b115e8d21a3f604d81430c33eae8c5f489c650915695b4198d92fb3"
+        },
+        {
+          "operation": "tick",
+          "trace": "1fd5d64fa259800651d92b706cd3babf16c423edcac51ced73d10bbdd7da1372"
+        },
+        {
+          "operation": "tick",
+          "trace": "553fc7211d179908794caaf1386bb9627878e10fb3a7a339cc49d97a9d177fe2"
+        },
+        {
+          "operation": "tick",
+          "trace": "3c94f75812adecca7bcf45bd33082290aa1ce4433e06261846d18a50f9012989"
+        },
+        {
+          "operation": "sql",
+          "trace": "8f201a7075a107d44cc27a53a5cbb8aae22674bbbb6dd0d62bc469188e3d3ec4"
+        },
+        {
+          "operation": "tick",
+          "trace": "cfabb31be7453861eb90a20942d854d1448c3d40df1e69f51710eba1cf9a4300"
+        },
+        {
+          "operation": "close",
+          "trace": "3e1d146d786988e55853d6d1fa12dd66de31e2d7cb7d66c8c1fb41fd6a11d315"
+        }
+      ]
+    },
+    {
+      "file": "test/history.test.ts",
+      "name": "group history uses each present member bot while Bifrost handles absent/unbound authors, own messages and dates",
+      "inventory": "baseline:test/history.test.ts:474",
+      "sourceSha256": "51384fb2cfc1797c523a6396b568612f4eca39dad4ea8386bedba14f1d638a98",
+      "calls": "a8ca97f60853ae26d5d884cb2e1bfb4640eed288bd7e9ff840b6f727a189a898",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "960576c5284f54890f8fbf3b39a1a7bd001903468fce8034dcc5127d2a37055d",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "53b5a7a324e0aed1bfd09427ff40257952fef461fbf2cdfc18d0ea5adcf88499"
+        },
+        {
+          "operation": "sql",
+          "trace": "a992b9f702c37fc9d17f92842744b3b7fbb828530d48abf398ef2c5d1f38198a"
+        },
+        {
+          "operation": "sql",
+          "trace": "cd08d796dcf57d9b474c319a1bc29fbbc9b70f59ffaafd2534d379b185998763"
+        },
+        {
+          "operation": "sql",
+          "trace": "5e99776d68a2b9126743d10e5964c2e1921a547529760de279dda7abfa78e798"
+        },
+        {
+          "operation": "sql",
+          "trace": "393d00da17aa7da763d54cfd6f29025e65afe5c62c2eb4f5fa0f3a366e84d03a"
+        },
+        {
+          "operation": "sql",
+          "trace": "40188fe5f5e321c396bf5210145f4e75ecb2171c26a37c93712565a958f822a1"
+        },
+        {
+          "operation": "sql",
+          "trace": "811f40e7692a52ebba5f4680b81443de23b0d211789d1bdfbeb174c86ea7f18f"
+        },
+        {
+          "operation": "sql",
+          "trace": "1a5bc08b952f03d6729caa48ca4c3f4ac22d1e68e501f97f22e84462d460285b"
+        },
+        {
+          "operation": "command",
+          "trace": "3587675dba04b0140c09b1ed59db48d58bb6a4122c377e2e0a32705ed10f3dce"
+        },
+        {
+          "operation": "telegram",
+          "trace": "a1aca13978dbc7dff0fedd6bb0aa224c8bb86b2a4d07a451356e9b122d813bd0"
+        },
+        {
+          "operation": "tick",
+          "trace": "c15ce05eaf48a46f9fa3077c55d76a3bed471897526ae6b8fab561a0e963fe21"
+        },
+        {
+          "operation": "tick",
+          "trace": "3f00e9fc0201a6cfaa90a0d16d201e256ffa70440bffa3d7d60bb176b58fa02b"
+        },
+        {
+          "operation": "tick",
+          "trace": "8f17146e2888b5c8e365937c21ce19beb47bcc8a43a7b6de76288d04ac7fdd24"
+        },
+        {
+          "operation": "tick",
+          "trace": "53f62129db9ec8261d98a42c71cee11a6467d9b67c907589d03c5b14ebc7ce68"
+        },
+        {
+          "operation": "tick",
+          "trace": "8be63f6d2f906f07f99f74e34dcf700e73a685621dbc28fecf20453c26b81929"
+        },
+        {
+          "operation": "tick",
+          "trace": "25a03644dc90767562adec9f1cddd249442c5daef91632baeb8be2a38ee8361b"
+        },
+        {
+          "operation": "tick",
+          "trace": "60d9a4d96af2b55919fa32cace5b57883ddccd18997597c0445d107e1374068a"
+        },
+        {
+          "operation": "tick",
+          "trace": "22b531963b1ceaccdeb7c741e61345b251bcc0a826d5239fce64c581e50f51ae"
+        },
+        {
+          "operation": "close",
+          "trace": "fdf7e6ba03941437401b3431e74571e74a0d36d151965e0b358cd18c61d22c1a"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/history-scenarios.ts",
+      "name": "cyclic and self-quoted history plans terminate and deliver each source once without losing the checkpoint",
+      "calls": "171c8b6192fb15765e59a432a943ecee93911f99081fff9497aadd612ae44128",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "81d4b09d1690c74690c815b31216b6252fd8269a3f78dfd77cae92701f44953f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "a0e5363fc0334e6fe4124eb46dcda0b179271105659c3bfd6a7c9ff494201164"
+        },
+        {
+          "operation": "sql",
+          "trace": "73c622351bb2ec8cc2dd57ba11b595954d48cf596df602685b549cda1c32fae5"
+        },
+        {
+          "operation": "sql",
+          "trace": "bee4842a6bdc08aba9405dfda0f0843f426a2905dadfaee31f81e61011f505a2"
+        },
+        {
+          "operation": "sql",
+          "trace": "bc474e02cfd59768877b4f84466dac45b1ae18c04c6f3892f8ec6c0bc03f29c5"
+        },
+        {
+          "operation": "sql",
+          "trace": "de393bfd9b0e2e1b2b8cfb1675a309597d4d021b6aded826828f7386741853c8"
+        },
+        {
+          "operation": "sql",
+          "trace": "ceafe29348ccf5831eb608e894acd1f659ac1ade511ddd5dd10f2a243b541942"
+        },
+        {
+          "operation": "sql",
+          "trace": "6b7a58b352317565239c709f01f97bbb23b0a6395ab74da93935bc1f6f8a77d4"
+        },
+        {
+          "operation": "sql",
+          "trace": "30dbd3a0da2e9834096b86c96715a6f181989596bd406ff908fa498c55096d02"
+        },
+        {
+          "operation": "sql",
+          "trace": "ec04fe7f36e1a3c074e8154dd19f2ce2975bfc2285314e30eb3f3c1de91caf23"
+        },
+        {
+          "operation": "sql",
+          "trace": "665471b650b320a4675cd9610183cdb5076bd92a41516d03808d03b3883360a4"
+        },
+        {
+          "operation": "tick",
+          "trace": "b290a6a53a7457e199d4a50af0725bc2c880092232f43b40b3a33bed21cfb060"
+        },
+        {
+          "operation": "tick",
+          "trace": "e9ab77e5b3119b0d1d1747acc5e7d96a5d4f0c8783cf7254123ea3fda48a2498"
+        },
+        {
+          "operation": "tick",
+          "trace": "57e6ae74dcfe78c9cb8336e32ee8ce21ca6301b502081fc3433c5cd348737ae1"
+        },
+        {
+          "operation": "tick",
+          "trace": "bf5a31b3e61303b03359563e7277f611f2f083f0ed232dbd21afeda6a4fb39e7"
+        },
+        {
+          "operation": "close",
+          "trace": "ff369e7045968162d63982ca73d9c3aba0d827a27d7b25e660e4be7bfd05b34e"
+        }
+      ]
+    },
+    {
+      "file": "scripts/rewrite/history-scenarios.ts",
+      "name": "a legacy history job without a run ID upgrades through original fetch and remains deduplicated",
+      "calls": "171c8b6192fb15765e59a432a943ecee93911f99081fff9497aadd612ae44128",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5f00cb1b56cd9f6e36bc0730bd23b0842dea40ff8a690ca65082170546d3d177",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "22803629c31927198e8c58e787012f55b94bc5206a87d0b21be06de09b333efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "a0e5363fc0334e6fe4124eb46dcda0b179271105659c3bfd6a7c9ff494201164"
+        },
+        {
+          "operation": "sql",
+          "trace": "73c622351bb2ec8cc2dd57ba11b595954d48cf596df602685b549cda1c32fae5"
+        },
+        {
+          "operation": "sql",
+          "trace": "46ab3ccc3cc605828f14fa3f80b5e537281fd414f9c655a9ed6bd69f49d39e20"
+        },
+        {
+          "operation": "tick",
+          "trace": "156b6e1331f6abe525de0c97c94a9006ac3c5e84728fa00444f7260b9567fe12"
+        },
+        {
+          "operation": "tick",
+          "trace": "2bcb30a282704e67c7045ab72ec2671addb239b37b13426761a14c9d52fbb59a"
+        },
+        {
+          "operation": "tick",
+          "trace": "465c00c71ea5ee92e4c65a56ea58a97803c68b8257e37ddd3839939d25440535"
+        },
+        {
+          "operation": "tick",
+          "trace": "2e10b12704e20027e48e7e8cf8ba4e1e86db7a84c28b1c00d48b3d6a2f0ea03b"
+        },
+        {
+          "operation": "tick",
+          "trace": "e508b93cf41433b70672845c16c5e5508e97e5eacf4c9ebe0fb7778a4f708e92"
+        },
+        {
+          "operation": "close",
+          "trace": "5b6601e59482dc7a61ef83507a5182250f4317773071114dc8a98b357cfabf2f"
+        }
+      ]
+    }
+  ]
+}
