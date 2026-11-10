@@ -1,31 +1,16 @@
-name: Bifrost checks
+name: Bifrost Go checks
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          bun-version-file: .bun-version
-      - run: bun install --frozen-lockfile
-      - run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg python3-venv
-          python3 -m venv /tmp/sticker-python
-          /tmp/sticker-python/bin/pip install Pillow==13.0.0
-      - run: bun run test
-      - run: bun run test:stickers
-        env:
-          STICKER_PYTHON: /tmp/sticker-python/bin/python
-          STICKER_CHROMIUM: /usr/bin/google-chrome
-          STICKER_CHROMIUM_NO_SANDBOX: '1'
-      - run: bun run check:repository
-      - run: docker build -t local/bifrost:0.1.0 .
-      - run: bun run test:transfer
-      - run: bun run configure
-      - run: docker compose config --quiet
+          go-version-file: go.mod
+          cache: false
+      - run: make check

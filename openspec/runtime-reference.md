@@ -1,6 +1,6 @@
 # Current storage and interface reference
 
-This describes the TypeScript baseline, not the future PostgreSQL schema. Source: [store](../src/store.ts), [config](../src/config.ts), [HTTP handler](../src/server.ts), [Compose setup](../compose.yaml).
+This describes the TypeScript baseline, not the future PostgreSQL schema. Source: [store](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/store.ts), [config](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/config.ts), [HTTP handler](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/server.ts), [Compose setup](../compose.yaml).
 
 ## SQLite state to preserve
 

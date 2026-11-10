@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
 cd "$(git rev-parse --show-toplevel)"
-exec bun scripts/check-repository.ts --staged
+exec go run ./cmd/repository-check --staged

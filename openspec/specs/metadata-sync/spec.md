@@ -55,6 +55,6 @@ Cron SHALL use the configured timezone, default hourly in Asia/Kolkata, persist 
 
 ## Evidence
 
-Source: [src/sync.ts](../../../src/sync.ts), [src/cron.ts](../../../src/cron.ts).
+Source: [src/sync.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/sync.ts), [src/cron.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/cron.ts).
 
-Regression fixtures: [sync.test.ts](../../../test/sync.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [sync.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/sync.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

@@ -1,6 +1,6 @@
 # Required libraries and feature review
 
-Checked 2026-11-10. Version observations are provisional: resolve and pin latest stable versions when implementation starts, then recheck before completion. No Go dependencies have been installed in this phase.
+Checked 2026-11-10. Version observations are provisional: resolve and pin latest stable versions when implementation starts, then recheck before completion. No Go runtime dependencies have been installed in this phase. A later direct Go module proxy check resolved OpenWA SDK v0.10.0, go-telegram/bot v1.28.0 and pgx/v5 v5.12.0. These module results supersede the earlier GitHub-page observations below; recheck again when implementing.
 
 | Component | Observed upstream evidence | Port requirement |
 | --- | --- | --- |

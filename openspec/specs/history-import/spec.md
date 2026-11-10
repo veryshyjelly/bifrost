@@ -82,6 +82,6 @@ Selecting a history choice SHALL delete only its prompt; cleanup failure SHALL r
 
 ## Evidence
 
-Source: [src/history.ts](../../../src/history.ts), [src/bridge.ts](../../../src/bridge.ts).
+Source: [src/history.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/history.ts), [src/bridge.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/bridge.ts).
 
-Regression fixtures: [history.test.ts](../../../test/history.test.ts), [identity.test.ts](../../../test/identity.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [history.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/history.test.ts), [identity.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/identity.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

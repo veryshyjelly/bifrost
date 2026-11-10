@@ -55,6 +55,6 @@ Resolved outgoing mention text and identities and incoming rendering SHALL remai
 
 ## Evidence
 
-Source: [src/mentions.ts](../../../src/mentions.ts), [src/identity.ts](../../../src/identity.ts), [src/format.ts](../../../src/format.ts).
+Source: [src/mentions.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/mentions.ts), [src/identity.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/identity.ts), [src/format.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/format.ts).
 
-Regression fixtures: [mentions.test.ts](../../../test/mentions.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [mentions.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/mentions.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

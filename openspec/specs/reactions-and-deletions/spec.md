@@ -82,6 +82,6 @@ Deletion choices SHALL validate owner, bot, message, destination, session and ex
 
 ## Evidence
 
-Source: [src/reactions.ts](../../../src/reactions.ts), [src/revocations.ts](../../../src/revocations.ts), [src/bridge.ts](../../../src/bridge.ts).
+Source: [src/reactions.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/reactions.ts), [src/revocations.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/revocations.ts), [src/bridge.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/bridge.ts).
 
-Regression fixtures: [reactions.test.ts](../../../test/reactions.test.ts), [revocations.test.ts](../../../test/revocations.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [reactions.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/reactions.test.ts), [revocations.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/revocations.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

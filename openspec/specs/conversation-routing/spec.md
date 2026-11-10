@@ -82,6 +82,6 @@ The bridge SHALL accept owner-created managed bot updates, retrieve and encrypt 
 
 ## Evidence
 
-Source: [src/bridge.ts](../../../src/bridge.ts), [src/identity.ts](../../../src/identity.ts).
+Source: [src/bridge.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/bridge.ts), [src/identity.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/identity.ts).
 
-Regression fixtures: [bridge.test.ts](../../../test/bridge.test.ts), [group-picker.test.ts](../../../test/group-picker.test.ts), [unmirror.test.ts](../../../test/unmirror.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [bridge.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/bridge.test.ts), [group-picker.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/group-picker.test.ts), [unmirror.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/unmirror.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

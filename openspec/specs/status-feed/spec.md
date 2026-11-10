@@ -55,6 +55,6 @@ Scoped mute controls SHALL enforce expiry and reject stale actions that would re
 
 ## Evidence
 
-Source: [src/statuses.ts](../../../src/statuses.ts), [src/openwa.ts](../../../src/openwa.ts).
+Source: [src/statuses.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/statuses.ts), [src/openwa.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/openwa.ts).
 
-Regression fixtures: [statuses.test.ts](../../../test/statuses.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [statuses.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/statuses.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

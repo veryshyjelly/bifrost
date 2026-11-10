@@ -100,6 +100,6 @@ Transport errors SHALL expose safe status/reason codes without tokens or provide
 
 ## Evidence
 
-Source: [src/server.ts](../../../src/server.ts), [src/api.ts](../../../src/api.ts), [src/store.ts](../../../src/store.ts), [src/bridge.ts](../../../src/bridge.ts).
+Source: [src/server.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/server.ts), [src/api.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/api.ts), [src/store.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/store.ts), [src/bridge.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/bridge.ts).
 
-Regression fixtures: [http.test.ts](../../../test/http.test.ts), [bridge.test.ts](../../../test/bridge.test.ts), [identity.test.ts](../../../test/identity.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [http.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/http.test.ts), [bridge.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/bridge.test.ts), [identity.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/identity.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

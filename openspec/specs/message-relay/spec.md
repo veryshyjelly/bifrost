@@ -91,6 +91,6 @@ Mapped poll controls SHALL forward owner choices to the source poll; multiple-ch
 
 ## Evidence
 
-Source: [src/bridge.ts](../../../src/bridge.ts), [src/format.ts](../../../src/format.ts).
+Source: [src/bridge.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/bridge.ts), [src/format.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/format.ts).
 
-Regression fixtures: [bridge.test.ts](../../../test/bridge.test.ts), [format.test.ts](../../../test/format.test.ts), [http.test.ts](../../../test/http.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [bridge.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/bridge.test.ts), [format.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/format.test.ts), [http.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/http.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.

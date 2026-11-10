@@ -73,6 +73,6 @@ Startup SHALL register commands for migrated master and member bots, and /status
 
 ## Evidence
 
-Source: [src/control.ts](../../../src/control.ts), [src/bridge.ts](../../../src/bridge.ts).
+Source: [src/control.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/control.ts), [src/bridge.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/src/bridge.ts).
 
-Regression fixtures: [control.test.ts](../../../test/control.test.ts), [group-picker.test.ts](../../../test/group-picker.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
+Regression fixtures: [control.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/control.test.ts), [group-picker.test.ts](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/group-picker.test.ts). See the [traceability index](../../traceability.md) for named cases and verification limits.
