@@ -101,3 +101,9 @@ Latest full-suite verification: **281 pass, 11 skip, 0 fail** (292 cases across 
 [Task 1.8 evidence](history-baseline.md) adds 37 original-only cases with 571 observed transitions: all 35 original history assertions plus actual original processing of cyclic/self-referenced reply plans and a legacy job without a run ID. Raw legacy checkpoint fields, frozen batches, choices, fresh-copy scope, date markers and partial/worker recovery remain observable in exact transcripts. Empty drain ticks are omitted only with no errors/API calls and byte-identical state; earlier control/action transcripts remain unchanged. Candidate history comparison, exhaustive history crashes and all eight gates remain pending.
 
 Latest full-suite verification: **282 pass, 11 skip, 0 fail** (293 cases across 29 files) on macOS/Bun and isolated Linux/Bun, with matching exact original transcript manifests. Source/image fingerprints remain in the check reports.
+
+## Status and metadata recordings
+
+[Task 1.9 evidence](status-metadata-baseline.md) adds 33 original-only cases with 414 observed transitions: all 32 original Status/metadata assertions plus a quiet populated-group scheduled run. Exact observations retain refresh races, persistent mutes and scopes, roster/permission safeguards, photo bytes/hashes, coalesced notifications and cron deduplication. Argument-free Date construction shares the fixed clock; only the photo fixture's random temporary parent is aliased. No live provider access or application behavior changes are involved. Candidate replay and all eight release gates remain pending.
+
+Latest full-suite verification: **283 pass, 11 skip, 0 fail** (294 cases across 30 files) on both macOS/Bun and network-disabled read-only Linux/Bun. Earlier baseline manifests remain unchanged; current source and image fingerprints are retained in the check reports.

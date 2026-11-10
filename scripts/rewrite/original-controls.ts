@@ -1,5 +1,8 @@
 import { mock } from 'bun:test';
 import { pathToFileURL } from 'node:url';
+import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { oracle } from './oracle.ts';
 
 // Replay original fixture assertions, with observation confined to this process.
@@ -13,11 +16,19 @@ mock.module('node:crypto', () => ({ ...crypto,
   randomInt: (low: number, high?: number) => high === undefined ? next() % low : low + next() % (high - low),
 }));
 const cases: any[] = [];
+const photoPaths = new Map<string, string>();
 await import('node:test');
 mock.module('node:test', () => ({ test: (name: string, run: any) => cases.push({ file: currentFile, name, run }) }));
 globalThis.fetch = async () => { throw new Error('Provider network forbidden in control baseline'); };
 const baseline = oracle(), uri = (file: string) => pathToFileURL(`${baseline}/${file}`).href;
 const input = await Bun.stdin.json();
+if (input.freezeDateConstructor) {
+  const RealDate = Date;
+  globalThis.Date = new Proxy(RealDate, {
+    construct: (target, args, newTarget) => Reflect.construct(target, args.length ? args : [Date.now()], newTarget),
+    apply: () => new RealDate(Date.now()).toString(),
+  });
+}
 const { Store: OriginalStore } = await import(uri('src/store.ts'));
 const copy = (value: any) => JSON.parse(JSON.stringify(value));
 const tables = ['kv', 'jobs', 'effects', 'messages', 'aliases', 'telegram_messages'];
@@ -60,6 +71,15 @@ function apiObserver(api: any) {
     if (!['tg', 'ow', 'upload', 'request'].includes(String(property)) || typeof value !== 'function') return value;
     return async (...args: any[]) => {
       const call: any = { method: property, args: copy(args) }; active.calls.push(call);
+      if (property === 'upload' && input.captureUploadBytes && existsSync(args[3])) {
+        const bytes = readFileSync(args[3]);
+        call.file = { bytes: bytes.toString('base64'), sha256: crypto.createHash('sha256').update(bytes).digest('hex'), mode: statSync(args[3]).mode & 0o777 };
+        const parent = dirname(args[3]);
+        if (input.aliasPhotoPaths && basename(parent).startsWith('hermes-sync-') && realpathSync(dirname(parent)) === realpathSync(tmpdir())) {
+          if (!photoPaths.has(parent)) photoPaths.set(parent, `$PHOTO-${photoPaths.size + 1}`);
+          call.args[3] = photoPaths.get(parent) + '/' + basename(args[3]);
+        }
+      }
       try { const result = await value.apply(target, args); call.result = copy({ value: result }); return result; }
       catch (e: any) { call.error = copy({ message: e.message, status: e.status, retry: e.retry, uncertain: e.uncertain, delay: e.delay, service: e.service, reason: e.reason }); throw e; }
     };
@@ -100,14 +120,16 @@ for (const file of input.files) {
   await import(uri(file));
 }
 const supplement = input.supplement ?? 'managed-bot-scenarios.ts';
-if (!['managed-bot-scenarios.ts', 'action-scenarios.ts', 'history-scenarios.ts'].includes(supplement)) throw new Error('Unknown baseline supplement');
-currentFile = 'scripts/rewrite/' + supplement;
-await import('./' + supplement);
+if (supplement !== false) {
+  if (!['managed-bot-scenarios.ts', 'action-scenarios.ts', 'history-scenarios.ts', 'metadata-scenarios.ts'].includes(supplement)) throw new Error('Unknown baseline supplement');
+  currentFile = 'scripts/rewrite/' + supplement;
+  await import('./' + supplement);
+}
 const output: any[] = [];
 for (const entry of cases) {
   if (input.selection[entry.file] && !input.selection[entry.file].includes(entry.name)) continue;
   const watchdog = setTimeout(() => { process.stderr.write(`Control baseline timed out: ${entry.name}\n`); process.exit(2); }, 5000);
-  entropy = 0; depth = 0; stores.length = 0;
+  entropy = 0; depth = 0; stores.length = 0; photoPaths.clear();
   Date.now = () => 1794240000000;
   active = { file: entry.file, name: entry.name, calls: [], transitions: [], logs: [] };
   const after: any[] = [], previousLog = console.error;

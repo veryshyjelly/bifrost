@@ -1,0 +1,2023 @@
+{
+  "baseline": "checkpoint-clojure-baseline",
+  "clock": 1794240000000,
+  "timezone": "UTC",
+  "cases": [
+    {
+      "file": "test/statuses.test.ts",
+      "name": "Status webhooks share one archive topic with linked authors and native times, without new conversations",
+      "inventory": "baseline:test/statuses.test.ts:60",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "54e6776829767ff3c0b5aaec526c90d8870f9b3fc5b129f2f57528ab2ddcee9e",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "8ca67c3b47f22b0b4bd55f9fea42f1017590d6c9fc9b27d17a223a3aa3caf3a0",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "e617e581b2318ca84a3e67338b85b0664bf8db6d1aa4a0e23b0ab724dd0f7a61"
+        },
+        {
+          "operation": "sql",
+          "trace": "a1141bfccf7ac56820b50c1487af51a9b61d966134f14f1dd859e829d0b6db8d"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "35d7c42474505ccdcf0466b8776f8653a18af19bab9dc74b1ccc055780e2406f"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "35d7c42474505ccdcf0466b8776f8653a18af19bab9dc74b1ccc055780e2406f"
+        },
+        {
+          "operation": "tick",
+          "trace": "9a71bfa2189ebb177354d732b162c439017a60fde5b427cc9215dca0ae09f535"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "4d7fd6ff9228e8333aea603915c9c429792f10bc7e3c4f98aecafd6f476d7c56"
+        },
+        {
+          "operation": "close",
+          "trace": "6030e31f1915f3b4ae8ecdbe0203fb7c72e3575644884cfa73495eb877cc6326"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "startup upgrades only bridge callback events, imports available stored Status posts and deduplicates webhook races",
+      "inventory": "baseline:test/statuses.test.ts:79",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "0a84d66137a739b19cbb341411d9a2f363120c733ab2ac0f354f6ee5f999f45b",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "9d0c257cf1575c8255e3d5fa13970e24fcb05d7564a68de6233ecfedaa867eea",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "604588b7cc1016fd9019e43f43016fd2aae5899f67670c7ce21575b4656f75c2"
+        },
+        {
+          "operation": "sql",
+          "trace": "a86bc0d89ca3fe0fa97388170cf31bd76db4dab1150b7928751c101aa246a7f7"
+        },
+        {
+          "operation": "tick",
+          "trace": "c5c42b30dbe30f1393710765df105262eca86ea405258d5b21e2bb426fa023c6"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "27e1ba381c86addb2da69238c815c5dce5dc8bcfd76833600a616cf3f7dd9b38"
+        },
+        {
+          "operation": "tick",
+          "trace": "936e66461f6b3e18ccd1540e3068fdd1aa389bbf9d30ffce01988102ec309921"
+        },
+        {
+          "operation": "tick",
+          "trace": "687b4ef0dd105d9601e670d321c4017640f1378bcbba2b23e5ac4b133a95a1ae"
+        },
+        {
+          "operation": "sql",
+          "trace": "3bbaa8d6fd13ef9833587bf2aeeafaa1bfffdd95e222daffd7399bc4536ba217"
+        },
+        {
+          "operation": "tick",
+          "trace": "adea6bc01b38d903d37f567212c4a62b4327718be4ab4cd7777ce057c2d4ab6e"
+        },
+        {
+          "operation": "close",
+          "trace": "a0713e4c1b9ddf6392dfc3d1b1beba4825691c9f2bdaacceebd6426f05d40eaa"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "a fresh or wildcard webhook installation remains idempotent",
+      "inventory": "baseline:test/statuses.test.ts:98",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ccc49e02f9fe411d5e51d88927c92275b89e31a905bf1323fcdadff415e55a31",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "close",
+          "trace": "323a6cc216e02ce39ad680b5aa4a47db4aba156664901b5ee7e3094618a388d0"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "image, video and voice Status posts use native media with attributed captions in the feed",
+      "inventory": "baseline:test/statuses.test.ts:108",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "e3bd21650c961e2b49aa801a9d264428e509ca7cbcd2e48b15819d4de077f305",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "38bbce2bee3e0228e5998c62919d56cbedea9d98ed51411e3bcbd5ac97655663",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "b1b018a4a3205118f6dfb0af9c040d539b3baeb2a98d0939b1cd3a0b16d260d3"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "152f5a9379749857615d423663b1fd27f9f401fa794b893e0c53ff75eb4d678c"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "72c568161f30909edbb416c3e25f360d1bc2aeed791b3e3d64cf00ad75705746"
+        },
+        {
+          "operation": "close",
+          "trace": "6efbed1d316cb8ffa0bdf66387bd027c60802b2336e5b28f6a567227bdfceae9"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "Status media uses the authenticated local status endpoint and never an advertised media URL",
+      "inventory": "baseline:test/statuses.test.ts:123",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "ccc49e02f9fe411d5e51d88927c92275b89e31a905bf1323fcdadff415e55a31",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "close",
+          "trace": "323a6cc216e02ce39ad680b5aa4a47db4aba156664901b5ee7e3094618a388d0"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "omitted or expired media keeps its caption and a readable unavailable notice",
+      "inventory": "baseline:test/statuses.test.ts:132",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "cf2a3f90ebb6c16d450a957132e1b067b62fec43f45d23e350a7bc2bfbf60548",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "86b4e4ed0f091845fe3426ab023f82b4d968dab104fb568cff782b2184eb9559",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "610d7a8f154482f2c0e5fa6bb5dc26f11b963304db6bb3186f5fcf11df9e9684"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "7780de1514d69c25c85d312917522cbcd61f55e0b8458807daf1fac75804b841"
+        },
+        {
+          "operation": "close",
+          "trace": "cedfebfbf1bba7976fed58af58e386cd7f07da9d16848f0d7ad11fa42047afd9"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "expired and malformed incoming stories are skipped while already archived posts remain",
+      "inventory": "baseline:test/statuses.test.ts:143",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "76689db68649c252701ab3efd51dbae82a8f06ef786bd6d398c8609494b181e1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0adb40bb2fdfe58aaf96a520a76e895c87916c8dc7452794f54e0c27c82bed60",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "5d3313c0979ac99d47593b8df36ee5cb534c5b5320100cededc19ea01f008d71"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "60c4e4fd6db1cdd0d15a40a953269e6192da47150e09e024181e9c1d279281db"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "8806bf103612c0f5ca876a41acfbe30dcca3e58ae1bfffcb928bb4a189f9a64b"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "b7e763f1c92cc4ff885c7ed2781aee222158f5cbf65944c520a0995789be90df"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "bd19d87532c579309a14b378ebbdffa1a1c258481d1e2f125447e5f29565d6ba"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "024d80a62a6de5d43ce348793f7b51b4637b4a151f7bbfa04f588546e20825b6"
+        },
+        {
+          "operation": "close",
+          "trace": "da21bf6786d02adb8e67e8a16457150485d30bf588f119344cea2b0ddfcb6dcc"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "typing, edits, message actions and reactions in the Status topic cannot publish or send WhatsApp messages",
+      "inventory": "baseline:test/statuses.test.ts:156",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "ea84fd689c948e01173b5badcdc9909f3628412aeecb5a0b3991265542bebf58",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6f30d789759205cabc56abd556a80257b055a59e711218d0cb637c1121f82791",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "a8ac75b9b321f9107455b3499f55dfed6ed89b7c8857d27c9f296ce0a1292285"
+        },
+        {
+          "operation": "telegram",
+          "trace": "d90a8e9113817b37536ce5398f576f5c241b1c99b6b9f74fe20e535d88cebd1e"
+        },
+        {
+          "operation": "telegram",
+          "trace": "062dbc8f0b7caf4d00c1b38d3f9cb9fbada7731ee2f7c98480a4e4dd98f8b241"
+        },
+        {
+          "operation": "command",
+          "trace": "889b62d9b598f1eab0714c759dec34776abd5a9666171eae814ff69dbacc45ce"
+        },
+        {
+          "operation": "command",
+          "trace": "b2d61b7e4d3eeace43619d5a0ed50afccb061ffd5e3833d4ec1b7ae21be7bb47"
+        },
+        {
+          "operation": "command",
+          "trace": "3af5b67fb63c4804d5976e4e2fd7cd0093142973a4ebaec8483198efd1f8a015"
+        },
+        {
+          "operation": "command",
+          "trace": "05094048da3170cad0d460f3866acd799c9cf55e3ba132d3e1f08f63d9049bec"
+        },
+        {
+          "operation": "command",
+          "trace": "e9b533e7bba0e918dc9ad9eb7341b2d39755399231add777420da38a700d3174"
+        },
+        {
+          "operation": "command",
+          "trace": "a3e1e8efa7068c59d701b60732e5bfb5c41a4db2b74bb9dc492036e89d93be7c"
+        },
+        {
+          "operation": "command",
+          "trace": "e2ebedc1eb495f9aaf2424005ba8af7bc94a9a2e6ea70a7e409bff2d6dc04945"
+        },
+        {
+          "operation": "command",
+          "trace": "22ca03d8f8fd06e2461fa111f1f3a8b62f4017568d9144857cff2df9f17d360c"
+        },
+        {
+          "operation": "telegram",
+          "trace": "3c9e911945d1f0bf6e6d5c670ee19fe6991be87540757b515e7e5245b0e9406b"
+        },
+        {
+          "operation": "close",
+          "trace": "43ebc347c0e8e225fa8f1db5ab97fb20f7a54b982d0baf29297500ed46d6feb1"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "/statuses opens and refreshes the feed from Bifrost DM; /status remains the health command",
+      "inventory": "baseline:test/statuses.test.ts:172",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "7deaef0c5a554742de1c8c52a0ee4d60887a5b13676e067cbecf48c65b75fbf6",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "fd58e3f4bff58d552493801c35dc7fc87ae97e9681bbf61623a31300e5cdda42",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "343209d5e76f2868593df66a676f8594b48254821e827c5091061b9e5436ebb2"
+        },
+        {
+          "operation": "command",
+          "trace": "2f27fac883f11b7017779b35e2ef218a02546eb44879a05f3c922587baa52715"
+        },
+        {
+          "operation": "command",
+          "trace": "4e65fd50b6b730014a86e679c489579cf77235d91fa994ab8ea6aaa33925cdb8"
+        },
+        {
+          "operation": "sql",
+          "trace": "896ef520bfd767a83a0250461e0c4cd6ce3ac85a43623f9bc93fec07726e0464"
+        },
+        {
+          "operation": "sql",
+          "trace": "09b26eb9e1cfcad627e70461d55c37a219dde2875eb77fdb24e0c8c3eeafe130"
+        },
+        {
+          "operation": "close",
+          "trace": "563cb5f2f11d0438232a7bf1c10d26ad83b397650ffab1c43f5fe60f940f9cb8"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "replying /mute in Status suppresses only that author before media download, preserving chats and archived posts",
+      "inventory": "baseline:test/statuses.test.ts:187",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "c8cbff10494af1a89fdca4c5039776cc2826ab0bb7dd9aeaf1a991ccf796376f",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "3915648e51b5aef61f8aed9c982efceb9e265034325ad390d86f9ea52b171971",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "11e2bfa1843aa8fbd1629f05ea18e88b9e4fab5dfe7df5b47b428e392af2d925"
+        },
+        {
+          "operation": "command",
+          "trace": "067385b9fa99f2102f574164a37d13ccf4d4c363c0acc6deea663608f74f9de0"
+        },
+        {
+          "operation": "acceptWhatsApp",
+          "trace": "f574f579003c280d3688ca26852f5ec5fc7c218ca8f6af4794ba4c6ad4d75a4a"
+        },
+        {
+          "operation": "tick",
+          "trace": "6d9426a70b250d99f272709289b2d3bf381a5701d29f468298607c332df23b69"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "eaec07779b5aeacb330d3f104f9e84ca23c1cdd048da118778a32f703810e856"
+        },
+        {
+          "operation": "sql",
+          "trace": "da9d4d456046a77027bd22587d9a78ffa50f3b83882d89f278cf55be99889ead"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "e7757a154146bd3cd611074f27f9945409625a736e59b790d378dcb9faef63b3"
+        },
+        {
+          "operation": "close",
+          "trace": "1dfa596fe6cfdff41a492609221eac0ed6eed2e66b608ad9473ea136acaee3d6"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "refresh honors mutes and unmuting resumes new posts without replaying stories skipped while muted",
+      "inventory": "baseline:test/statuses.test.ts:206",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "93095ee020b0733b575fb70441abc8c71f427b7f94f531b317d7f366129de39e",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "e6560f3eb8b4ff2f90dac9255c55f323ac7255693b9a0d6123d29d010c1bf593",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "11e2bfa1843aa8fbd1629f05ea18e88b9e4fab5dfe7df5b47b428e392af2d925"
+        },
+        {
+          "operation": "command",
+          "trace": "dd9753afb3cd369b989b3972dd124dfee0625d5027b6205faa88b998fe8787cd"
+        },
+        {
+          "operation": "sql",
+          "trace": "f4d12ca916439397368b7586dc7a67f7542ff883c28208c615e5e1c883693172"
+        },
+        {
+          "operation": "command",
+          "trace": "7d2078472374d795ecc3917c8a0c843cb3c42c355021eac8fcf825e2362ce5fc"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "32cdfc615046ca0862defe5094769190e80e6f7e671b2919411be84beb6cb61d"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "ecd0deb6a969c728f3d6ddc0096833a74adfd9ab6654f90b8ff81d56fdc5b839"
+        },
+        {
+          "operation": "close",
+          "trace": "f41d2df95a7bfa5e03cbd4bcb68b424c4abeda384d4a6e115f89fa6917bd1f12"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "muted-person preferences survive reopening SQLite and resolve aliases with the latest preference winning",
+      "inventory": "baseline:test/statuses.test.ts:222",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "77dc39c7237906455d392ff2a1a3f80aa5b38a91f073c1e3868ea6a4c1b0835b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "exec",
+          "trace": "e14ec6f98c32a85192dfd5cde1ecf914b1a587cc3d0c606881bf1dd61ba36416"
+        },
+        {
+          "operation": "sql",
+          "trace": "08d80c0c9279e8613fd7c10178505b8146503f3158c876cfc5148f893a5756a7"
+        },
+        {
+          "operation": "sql",
+          "trace": "255cb327147e864943f0abec18bca7a016779fa27ad127814fc63584ad942680"
+        },
+        {
+          "operation": "sql",
+          "trace": "0d235f8acfedef689b1c20e34e7107d352637d8a1f1983e62412b16eb2b5e0b8"
+        },
+        {
+          "operation": "exec",
+          "trace": "7bcbbc056d0454a141e8c44e536e1444c07f648e7497ea085eb697b438481a6d"
+        },
+        {
+          "operation": "exec",
+          "trace": "a2e110fb46cecb44d6855af614826b7e5e5b7848b86493858c98a999c31738aa"
+        },
+        {
+          "operation": "sql",
+          "trace": "598591519fd6f697db2ec0ec2e7ef3c9b1d95fd155ad4237b0752b1d4fbddeee"
+        },
+        {
+          "operation": "sql",
+          "trace": "5f0a9022d3a6d1f1f4246362de55c7d2c92fc0e685ef645985805a8e3dfdfc6a"
+        },
+        {
+          "operation": "sql",
+          "trace": "99791b8123ea8005f4568bb1938be037e3e6058b20e9ea16db17607dd5ffa34d"
+        },
+        {
+          "operation": "exec",
+          "trace": "250a09872a457187516ca9340668d2473f1dc2eaa8069204248427ea1d8df193"
+        },
+        {
+          "operation": "exec",
+          "trace": "d5d17d22bb6722b16b7b116d792fefcd3c1bf427e26c26c28fc2eaa6450c97b8"
+        },
+        {
+          "operation": "sql",
+          "trace": "2fe28e282a74bc3d04d5eda31c5050c9eaf1165e090aef5f4fbc037e970a34ac"
+        },
+        {
+          "operation": "sql",
+          "trace": "4475d54b7ec4f71f20e9bd2f960e9ca7c84773644482aad6e11d146d48ad49f7"
+        },
+        {
+          "operation": "sql",
+          "trace": "333dcd77693a4df3913504316c1ec8956b05a82cbd5765d177b23d6c8780d892"
+        },
+        {
+          "operation": "exec",
+          "trace": "5b1e70d0673a08a774b9ca6963281b501b64a4d4459e6ffefac3e315d661f0da"
+        },
+        {
+          "operation": "close",
+          "trace": "7bd4a3f194a6be99ddafdc3f67f2766830013c2da82f270c4fc143601b02336e"
+        },
+        {
+          "operation": "open",
+          "trace": "10750c2743cb069baba726e4b4625d5b5a8bf410dad4bb0db8308740e9e27df1"
+        },
+        {
+          "operation": "sql",
+          "trace": "bcb6ff1133d0455b54fe3ef7f6b4f312e8c76c2b878c7be10d55dadd5614e8df"
+        },
+        {
+          "operation": "exec",
+          "trace": "db05b14f81c7b1be3ebd006df83505dad833845447a11a771ec900ab2a0fff1b"
+        },
+        {
+          "operation": "sql",
+          "trace": "202a64350885bc7b5a73650e5466b3ddf79fd33efe8ad142828f143ebadac8dc"
+        },
+        {
+          "operation": "sql",
+          "trace": "26d23b68818071c26b83bd6cf37a6966c3b50ee1e635ecb288a902369d817de9"
+        },
+        {
+          "operation": "sql",
+          "trace": "5f310244cc7ccc33c77c957b11fc5ee8249b2065166cbd62b9781e39e3ba9bbf"
+        },
+        {
+          "operation": "exec",
+          "trace": "d2b83cafad5629407c11bc98903580e0f1b1d1968b71c46978de87a076b4147a"
+        },
+        {
+          "operation": "close",
+          "trace": "d874a9c4eb963d6f9589319663b067dc44ece3c998c0574cda00855dc02a833d"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "muted list supports one-tap unmute and pagination without changing other people’s preferences",
+      "inventory": "baseline:test/statuses.test.ts:239",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "c90844988416287d16b5e9cf148b446fc58d8d5fe166d9c1a5bce248a19df188",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "92f7e650bc2c9ac5260de9086fb286e1b9421d2a05532cc45e9d529a0b636468",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "6ee5338b62da9b46c437d27c8eb7857fc42bba085c4de0ce821dadfbb7e97326"
+        },
+        {
+          "operation": "exec",
+          "trace": "c5461268e4ada8e6d15c9bf20e7164f12fb61ef8d6a50ffe4a5c6a8ea7be0971"
+        },
+        {
+          "operation": "sql",
+          "trace": "de093206f3733d47910bd3f20cc925fae5a585d58b2e5c68775e5f577952881a"
+        },
+        {
+          "operation": "sql",
+          "trace": "44459d627f9eb33c68ff99e007a837011814767ae92c69638df18fcf2cb0834f"
+        },
+        {
+          "operation": "sql",
+          "trace": "6ea06ab1d7fadc0716ae7e589b936837d461a12354e9c80911274087aa425cf0"
+        },
+        {
+          "operation": "exec",
+          "trace": "9dc82584797413309979a88f68d5e58ed3d6a35ced4911267d5f1f71fd787536"
+        },
+        {
+          "operation": "sql",
+          "trace": "bd9a03064602a38ecd3cb25ca850fcb6fdd8bffdff316816784c5a8357622546"
+        },
+        {
+          "operation": "exec",
+          "trace": "35e28bb5660945368aea8a290689896b36474de2720de7e95760e72aff06ea4a"
+        },
+        {
+          "operation": "sql",
+          "trace": "27b7e78aa0ccff544395ef3a1a77246854f7db9551ca40d93c33e02d3c1fb0e9"
+        },
+        {
+          "operation": "sql",
+          "trace": "4e345287740e20611b21dd48ded45702a4f15fbb9e5170d8ee805c9e263b1c72"
+        },
+        {
+          "operation": "sql",
+          "trace": "ff551a0c1f3c2443db511c2c93ac2f00d6ac76e110b15ef1717d42b460d1a946"
+        },
+        {
+          "operation": "exec",
+          "trace": "21f8a07b26b1d748e3f90c904ebb2e33d8f688f20c849286da2519733675f675"
+        },
+        {
+          "operation": "sql",
+          "trace": "1aee9600c681d0f13fcf7667d5b0066524ea2e6c5bc8cac5086b59413a5c8d62"
+        },
+        {
+          "operation": "exec",
+          "trace": "f8ba1b02cb8a512bbe4b27f9db6e6ab06485c100eb074e570e7ce9ec86abb158"
+        },
+        {
+          "operation": "sql",
+          "trace": "67430f3d3d2fd68d1fe13b59a3b98d71df3f1ad4ca3b3d630c487f8d4298465e"
+        },
+        {
+          "operation": "sql",
+          "trace": "13c2c34733778003797e2c0ef7b0530c9cbebf3dee0777ee64516a892c9a1992"
+        },
+        {
+          "operation": "sql",
+          "trace": "55f3270371afc896915cc8f1fb1fdc38a288185825c7186d1d1f63d9823005c8"
+        },
+        {
+          "operation": "exec",
+          "trace": "517fbe703c9c1b877d5b40d61bbb3f6d5b6b5596befdd006e181930830d8287b"
+        },
+        {
+          "operation": "sql",
+          "trace": "6e6de34774ff7add54d9f93f41564986f45ce226aebcbbd0ed9b129b0162e297"
+        },
+        {
+          "operation": "exec",
+          "trace": "f17680bd35f8507cee01f3240fc9dd10fd96891b55e6434e4c93378746df5569"
+        },
+        {
+          "operation": "sql",
+          "trace": "6a09e5779cc7b48481265b333c848c1165bf5028c6cdfa9ffc65a92f68279f0c"
+        },
+        {
+          "operation": "sql",
+          "trace": "2b2c9389d099487b4089ee835ef81bad4657c123b526e388f1f432eca4dac4b4"
+        },
+        {
+          "operation": "sql",
+          "trace": "bd7656fc5d4cc5ea5a9944a792dd9174e0b03c02e266687cd655f39cf2e81205"
+        },
+        {
+          "operation": "exec",
+          "trace": "2731f34b1e27389dc666ac3ab8610ec4982c41c44e8ffbd50f2d0edd56543755"
+        },
+        {
+          "operation": "sql",
+          "trace": "acbb5f9260af2a536c609f8c1c5f4b0791b31ff29edd11952001e884d873332f"
+        },
+        {
+          "operation": "exec",
+          "trace": "27f62510866f870e92385eea5f60827eda923ea2f80e4c3c2b2e8ecc814c5c1d"
+        },
+        {
+          "operation": "sql",
+          "trace": "19615e7cce4096209b19a602c933c2621de9322c028f8a8247bbbd20d948252c"
+        },
+        {
+          "operation": "sql",
+          "trace": "2f75060aa702a4378db8370647b7ceda6cedafc0d2d60909a312056c6e5cb877"
+        },
+        {
+          "operation": "sql",
+          "trace": "35ac676d5394f9cbbb984e7f10ba7e93ab1781a2f30fa88c60c212060c4c5661"
+        },
+        {
+          "operation": "exec",
+          "trace": "77ef39d5cb5004111c388ce58f06a87d50270c441e6c62235ec6e020be4ab2a7"
+        },
+        {
+          "operation": "sql",
+          "trace": "d9de74e1426d1efa758e1e60736df9a0bd435df3c7b74dd17d76b5bd389a16e7"
+        },
+        {
+          "operation": "exec",
+          "trace": "65a5901b6389ca96319514c17b61b379347ad231cb621713416a00db3b6949de"
+        },
+        {
+          "operation": "sql",
+          "trace": "402f49be2d1c653706244ef331206fe64a967a36128fae4c52249f8c6adcfa77"
+        },
+        {
+          "operation": "sql",
+          "trace": "ddef31b40d0273cd5003b81f4fcefa46f281056a8b128726154a34aefaa64287"
+        },
+        {
+          "operation": "sql",
+          "trace": "f2b05562e071bce1f0406f75daafe4890bd074a83b576a2e735a341960d4b371"
+        },
+        {
+          "operation": "exec",
+          "trace": "005c77004f0f81a8ed9755e326ab14f0512de818687afcceadb2ffc8dfd56ef1"
+        },
+        {
+          "operation": "sql",
+          "trace": "3927cdb3e178615d10027cac788613df234804cca5bff7e5fa184a89f9dd2105"
+        },
+        {
+          "operation": "exec",
+          "trace": "b9d2d1944950ecff905de3f6cd27f2098e8bac5ba9720b2e1c9881f0e8d2a24f"
+        },
+        {
+          "operation": "sql",
+          "trace": "25892c875e5912e67befb00bf71eaaf461c834ec681bd05df437e8f5d04bc404"
+        },
+        {
+          "operation": "sql",
+          "trace": "9d0100f07b7c89e39b55475033a6c3aa752504453f2e7dfaa1e6908c9ebb4b36"
+        },
+        {
+          "operation": "sql",
+          "trace": "50643e609b9711ad9bab02e4de8aaa5f24032c43784cb5769f4cbe8c45613e76"
+        },
+        {
+          "operation": "exec",
+          "trace": "7a34c6495a800e6a9abc6af1067ee1c922d09e7c1fe44055f2aef10f09742ace"
+        },
+        {
+          "operation": "sql",
+          "trace": "491760e9dd98c24644dfb53983e09a6c3e666cc44e162a8de71f4e04d1707290"
+        },
+        {
+          "operation": "exec",
+          "trace": "e1612538583a9211df182482a8c34a5f35739cdf9f7d06e9fe3071d20d7c8e6a"
+        },
+        {
+          "operation": "sql",
+          "trace": "a266adae8b59783d9f729d0840f4ad4ae387964f90b166eb618a7311294e486d"
+        },
+        {
+          "operation": "sql",
+          "trace": "f91561eec03843cbef3960276db378cd10e7bdf90dfc39aed219caa22d75d67d"
+        },
+        {
+          "operation": "sql",
+          "trace": "94de21e8e63decba15821c63b086c29af7e2a40fdeb06cb7909dace18747b9be"
+        },
+        {
+          "operation": "exec",
+          "trace": "1ccb5f6f0279f46f444c963a0c088e3366233eb8286c4edc32b2f998bcd8379a"
+        },
+        {
+          "operation": "sql",
+          "trace": "4b7bcb0cfe424973f0cbc938b79f3f303f525f29e8dca438098062c979155aa2"
+        },
+        {
+          "operation": "exec",
+          "trace": "c22c6432c082979875eb672331663f831acc292a60930091c6281b9dba8b42cb"
+        },
+        {
+          "operation": "sql",
+          "trace": "45794f6c85c3b3d90f267f378ca566c24f215179071cb372278e980b4829c2c2"
+        },
+        {
+          "operation": "sql",
+          "trace": "1934db7d320381eb5471eb9306ede0d3ddbb1386b30b707bed4b5b5982b4897e"
+        },
+        {
+          "operation": "sql",
+          "trace": "f31c9bace3b9114aadaa7c4f19e6dd2ec53a88f7e09acb189003a92f2cdc7dd0"
+        },
+        {
+          "operation": "exec",
+          "trace": "2889de32237d3ff1418b9b97ff0bfc45a4db9461c60be52923ef72f7b4bf20f4"
+        },
+        {
+          "operation": "sql",
+          "trace": "0e738016e839ce3bb5a18cf5f5f95fd27fc4e77c70c652fc6b6ba89f2737e8b2"
+        },
+        {
+          "operation": "exec",
+          "trace": "cafb7642003627bdd93cdd4974e022c751ca8ece106ad9d2498c4384f144de6b"
+        },
+        {
+          "operation": "sql",
+          "trace": "98a6157199b3fb9993683836b121dfb2da1cef07a3b7c88b08f334b737cc66d2"
+        },
+        {
+          "operation": "sql",
+          "trace": "af2f8f766bc340e9900225db5ecc3b5fc1dc64b75fbafc4998d00cb7a785beb8"
+        },
+        {
+          "operation": "sql",
+          "trace": "e51e06f4b2c87240b2e874cbfb5138b9fc6c87e723d8c516f4a6a095bc838088"
+        },
+        {
+          "operation": "exec",
+          "trace": "0fc6d4f8c88a22ded0fc0191227ad03c4580950b7e9c92c39456cf3cf508d4ab"
+        },
+        {
+          "operation": "sql",
+          "trace": "e31e53bb58d47f2bba112b69230532d815a81a7d13c3b0bdf6111baa56eadfaf"
+        },
+        {
+          "operation": "exec",
+          "trace": "80a0d112f067ea664e03bd4ff516425c9373e0c940beb9e4a23d4c235220dedc"
+        },
+        {
+          "operation": "sql",
+          "trace": "7a2cde99ad7ee8674055cc15005cd5f5ca29c46474b312071830e89759a843e8"
+        },
+        {
+          "operation": "sql",
+          "trace": "64e49b3e1b9d68ba9009187bdbb7b8d68525624b34281ea6909eff5308dcd075"
+        },
+        {
+          "operation": "sql",
+          "trace": "846892a1d09a0b9d2d442554ad58e57bd175c20de247fb4f25c6c20c5b39a923"
+        },
+        {
+          "operation": "exec",
+          "trace": "48bb7c17e6ba942967aa8be0cd25a3da0e13cd0ccfc7aac8550e53046cbd5d82"
+        },
+        {
+          "operation": "command",
+          "trace": "d1f3a357f581f0781616c6596d56bbe3eccaed0be1fc1db507433ef910a353a2"
+        },
+        {
+          "operation": "telegram",
+          "trace": "961e38e916897189b354069f529cec00a45169500b75d93ef8940d4d9550447b"
+        },
+        {
+          "operation": "telegram",
+          "trace": "dd1d9d7a6afe2ce83c06622b64e6cce47512f3ffdebfb27fd8bb42536339e3cc"
+        },
+        {
+          "operation": "close",
+          "trace": "71990c947051049a6d71454fea1e2406c06f9e949e04f1c854a77fd4dbc7dd90"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "mute controls enforce owner, bot, session, chat, topic and expiry; stale buttons cannot undo a later mute",
+      "inventory": "baseline:test/statuses.test.ts:260",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "c26390e141acb2460a9b77db53c37462a67d4e33de74c47fa735caf4c46fe590",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "46d79d74ea232403b2e5de4cc346fb23977b385a1c9f1b78c4a6b383073fb4d7",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "11e2bfa1843aa8fbd1629f05ea18e88b9e4fab5dfe7df5b47b428e392af2d925"
+        },
+        {
+          "operation": "command",
+          "trace": "dd9753afb3cd369b989b3972dd124dfee0625d5027b6205faa88b998fe8787cd"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "320855563ba7ad19bc1a31146e4aebc027d166c22b667733fa3f680c02a85fec"
+        },
+        {
+          "operation": "sql",
+          "trace": "17e32438cd36b1612c25ed282ed09d96f4b032298ac85274de491da2837a5e1b"
+        },
+        {
+          "operation": "sql",
+          "trace": "bf3abc8d3fe52789846597dd394235ab1410db61ef26d16180cdb696453a15dd"
+        },
+        {
+          "operation": "sql",
+          "trace": "325a7ccaaff2153c8f24d81ee088db43346aa6cc236509a757f1ebbf5fe83752"
+        },
+        {
+          "operation": "sql",
+          "trace": "f75f3dee04c6e7598d77814336af3f1ad63ed23a26e945b87a004b8e81f12aca"
+        },
+        {
+          "operation": "exec",
+          "trace": "5c8215171d2f607463952998b215fbaa7c78fbb770a5cc6ec422142506d73496"
+        },
+        {
+          "operation": "sql",
+          "trace": "8ee834b875491f810ca76e52c4b1752a4b3728393e58e86a8c275e039d210e9d"
+        },
+        {
+          "operation": "sql",
+          "trace": "2de89c36794ad572a83bc161b9a4b2d557898def1cfee2ef3af32ad06b3d4449"
+        },
+        {
+          "operation": "sql",
+          "trace": "4bc86a4e76fe57bf2ca0e6e603a1cfb71d883bc82b2ec142489ac48a81b9f25b"
+        },
+        {
+          "operation": "exec",
+          "trace": "39bf4c687f22f04097ef8ddfc4111a3abe1a5338751336671f1b2f09fab4ed73"
+        },
+        {
+          "operation": "exec",
+          "trace": "af9393b9c7a79b1ffa87039de9f2a81abc687a8b0204b76622dfcee0f0d1a1a6"
+        },
+        {
+          "operation": "sql",
+          "trace": "bd5bd165964ce4af1146967f76fb28ba2df9cdb79b26cbf9b1d9c937173872a5"
+        },
+        {
+          "operation": "sql",
+          "trace": "0a5f56f785fdfc31db79f7a4791a72010350ccd230f9e0ddf7d31fe782a4c07d"
+        },
+        {
+          "operation": "sql",
+          "trace": "5600eb9b5cb0f2c4318ba8378845ac9f671c05c0dc356bbd37ff83698600b593"
+        },
+        {
+          "operation": "exec",
+          "trace": "2aed899070206b5d9b7b8eb0d7ea1a06e63bfa91efb428acc6db81048afe49d3"
+        },
+        {
+          "operation": "close",
+          "trace": "522c47a23a36e45ae23b04b253b207ace9bfb28b22ecf7bec9e77e2308d40d0b"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "retrying a mute confirmation or unmute callback cannot reverse a newer decision from another chat",
+      "inventory": "baseline:test/statuses.test.ts:284",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "68d42bcf8b3c7ed33a82835e2cf3e54d0d82f88fca1a4964bdbd808945418e33",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "80492b0bc738fa2ce1ffc74612d797945fe1ed660c3943b662ebedb2584c6d90",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "11e2bfa1843aa8fbd1629f05ea18e88b9e4fab5dfe7df5b47b428e392af2d925"
+        },
+        {
+          "operation": "command",
+          "trace": "ad8df168f2d57d41df0a69777e342b1ddaa4ee3f6e39cd7bc97f6171312e8c4a"
+        },
+        {
+          "operation": "exec",
+          "trace": "6abbb4d2a18ea288f8b36d94b53547e2299515534c3068f757530386d4ff724d"
+        },
+        {
+          "operation": "sql",
+          "trace": "cb7182bc3f66648ab9794ff72234f2b8afe8bd9e597b88ca1ca0fef30933f7ed"
+        },
+        {
+          "operation": "sql",
+          "trace": "bbdb2ad8b9cd9de3c39b4d03be9815a3cecf3513eee2e3024214c782c6169b73"
+        },
+        {
+          "operation": "sql",
+          "trace": "54d709cf417c599cd3f20844019b15a48e946df498cdc94de1625d791e020ff2"
+        },
+        {
+          "operation": "exec",
+          "trace": "e372bd4a903aa1fa69f4b4990a0e57327f452ab417d550e47f8d18b313380ba4"
+        },
+        {
+          "operation": "command",
+          "trace": "1f735793149659720086effb124d5deec39584a8536c65dc107317fc18867054"
+        },
+        {
+          "operation": "command",
+          "trace": "e6192e11158a543a09ebb18293998d0ca35bdcb4397ca19a1cab365055b9f291"
+        },
+        {
+          "operation": "exec",
+          "trace": "475ce14113e15c8db061bda5c87caa7608e05c93bf754115803fc70a7be7e101"
+        },
+        {
+          "operation": "sql",
+          "trace": "58853c284fcba495e72f6aea4a927091001e9618031aa9994d05c6b97c6ad0d6"
+        },
+        {
+          "operation": "sql",
+          "trace": "aa0b00d86270e9beb4841e7e9475debb29ec0f8297c242ed2b9f0053350eb57c"
+        },
+        {
+          "operation": "sql",
+          "trace": "7c486229330a1ce0edcc2d6c7be0f4f25ac00560308fcf07129f7eaac15da3ee"
+        },
+        {
+          "operation": "exec",
+          "trace": "ef19d83befa26efb5a8c8693e426bbe69c5f28376b4e850f2a83920f99374c89"
+        },
+        {
+          "operation": "exec",
+          "trace": "ca5e8ac3034b7bdcd96c54129dbcd5f42916836b457cba60237c4f3546e1d0e7"
+        },
+        {
+          "operation": "sql",
+          "trace": "fd76a5a323261d3b2d4dcd24016350ee197384c0434dca2c11619e44d4624dd5"
+        },
+        {
+          "operation": "sql",
+          "trace": "4dc85d2eda3be6f511c1daa2a2f030eb89fcf9e5a92111296e0b353d75a55efe"
+        },
+        {
+          "operation": "sql",
+          "trace": "bfaf37f4f2272020635b855a4de49abdc0e0d9e0ad481d89cfe173cc9f042169"
+        },
+        {
+          "operation": "exec",
+          "trace": "f3326a5d51db831c75ee4555cb61f39effc3e1c601f878812feea275dddd6d27"
+        },
+        {
+          "operation": "close",
+          "trace": "e8337488e40aae940e990781f95fb5804dd10ea4047829e58c6792a68b89ec3f"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "Status mute commands require a mapped Status reply and ordinary conversation mute keeps its existing behavior",
+      "inventory": "baseline:test/statuses.test.ts:299",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "aa42a21af4d581eec8032f08a662eb0e8c9a9dfc8f050f90b8b29fa05678bc78",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6e4798acfaea7a813dd4189f1e48bc834496e18bfba71cabad3ddc3fa4d3b4ea",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "command",
+          "trace": "1f0e2a68ea10c4fb3695853ee03b7d15e12d05d149742cab187e6310e66c0de2"
+        },
+        {
+          "operation": "sql",
+          "trace": "db7435d7f82c16a8032b80c52cc686a78092d0ae8088661a064178f84341fdb1"
+        },
+        {
+          "operation": "command",
+          "trace": "d0136258d8fdbe782bec5e44928d8d9f26f9c4795369dac64cc98cf921f17da2"
+        },
+        {
+          "operation": "close",
+          "trace": "e719359950676a647bcc8d368337441d9dbde1a61e5b5adf1bf7016041bb8436"
+        }
+      ]
+    },
+    {
+      "file": "test/statuses.test.ts",
+      "name": "Status topic clear log preserves posts, while clear all removes only this topic’s recorded posts",
+      "inventory": "baseline:test/statuses.test.ts:311",
+      "sourceSha256": "6ef9bc3bd4b1ce38922c561994f8705d71486cf7135a0a64bab644fe670aa8f9",
+      "calls": "2b1af8be178ad4788031f9474bd9b13bdb233221b8b85ee63fcd9e813ff125f0",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "15d4356e17f743002a10a6bebebe1d68c76f1a0c51dbd219a9f3d25f583cba86",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "whatsApp",
+          "trace": "a8ac75b9b321f9107455b3499f55dfed6ed89b7c8857d27c9f296ce0a1292285"
+        },
+        {
+          "operation": "sql",
+          "trace": "123f07947c1f031d7d690e3d978c59e76b5713012bf62226d968974121b76a29"
+        },
+        {
+          "operation": "command",
+          "trace": "c49305c61ad7a2687d8a8d129be19e15b00f0399e9724d42ec829620452c4c7d"
+        },
+        {
+          "operation": "tick",
+          "trace": "fd67d012fb1fd5130074b833adb8e57aa3e4c8200cc4116f301d1bf2f55cf9f3"
+        },
+        {
+          "operation": "tick",
+          "trace": "40955a18227ffb997faabae2f5e40f2d69c16dc4a990de743eb7f136b0ebd84e"
+        },
+        {
+          "operation": "command",
+          "trace": "e8823520a534adce261453cda47158832a9d33dc152a07c41b98fbbef24aaa41"
+        },
+        {
+          "operation": "tick",
+          "trace": "a18478272ef4ebe47c787309bfa7016a995d3d6f60b4b8ff9fe3ee5333f8eb41"
+        },
+        {
+          "operation": "tick",
+          "trace": "6c662b6cd1b387c77ca588f561df048fc76cd0ca622a6fe1d91833feb47c655d"
+        },
+        {
+          "operation": "close",
+          "trace": "5ce23be82ff4cc4e01294f93a352fc87917a7b43e89d1eccd91006cd1f4769d8"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "sync updates group metadata, existing member bots and missing-bot buttons without WhatsApp writes",
+      "inventory": "baseline:test/sync.test.ts:67",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "7c8efde5faf1cd19cee399d7b1d552e131fe17f22197f5dc9b6de8dbfe62446e",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "1dbac046c10c45eaedb795d64cc13fa1592302a3877f027af1c336120b6bfb60",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "18d25c0a4dc4672fac79bf319ce2f8452b023286700c2bf97a5f2517ada13bd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "53fd2fc42a98a6dbe9545930bd24588d2e6d4ecfbd8b70849d854cd16c3e054d"
+        },
+        {
+          "operation": "sql",
+          "trace": "4e6c77049fb992652588043ac84f41169993dccecc8f52bc1ecfdb450cd91dff"
+        },
+        {
+          "operation": "sql",
+          "trace": "444bed7e7aa5dcb6404c62f3849c1a248b0d8f279dfd924e8455db46b98e1f41"
+        },
+        {
+          "operation": "tick",
+          "trace": "f32496b84f5fc9fed5eccfd122b8fdb057e06d8b37835ff7c119c0555ab3187d"
+        },
+        {
+          "operation": "tick",
+          "trace": "4933b9285b6f8bc2efa9eab51319607011faf41359fb6ecfe0253a2182fc33bf"
+        },
+        {
+          "operation": "tick",
+          "trace": "100f69bc4ff64e862a2bad2648f5c30c520028095b24487e9d798fb6737cc90d"
+        },
+        {
+          "operation": "tick",
+          "trace": "350a5581ab2a7be5504efd202fd73f9f67dfa47233bb17b04d45f3ada89b1ed5"
+        },
+        {
+          "operation": "close",
+          "trace": "3228a9cea16b096e30df637b81efa241ed61a7ed148ed50d4b0ce1e3a207fe37"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "an inbox group only renames its topic and never overwrites the shared management group",
+      "inventory": "baseline:test/sync.test.ts:84",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "6f83c577df688b080aff2fccb28c53bc3787c673db69b6d1467e5966a754e169",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "9254c5c5a21dd0d8f0747a4a995da0b7ed6336e443224ccfe9ee7b523ff85e0a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "b5b45ff61635a55e99471bd2c8daf286b30f81af21d81b82d4ce407301fe2a9f"
+        },
+        {
+          "operation": "sql",
+          "trace": "542c43e20356b8004508579ece6fd33a257af6a4e6076b0575ab064e15fa3f68"
+        },
+        {
+          "operation": "sql",
+          "trace": "10420ff02df560272e51aa5b2ccee19e70ff79f12d4d3484f37f077b2fe0671c"
+        },
+        {
+          "operation": "tick",
+          "trace": "e51e605cb10a36912239b001d6f0cbe2813f12271fe14e030749b4075f2ced09"
+        },
+        {
+          "operation": "tick",
+          "trace": "dd0180ca425342734ec7d4fd4c218cd8476523912385ef05e124ca462d3796f6"
+        },
+        {
+          "operation": "tick",
+          "trace": "57dab68afbbd7d06d36e153c1a4b9b19aa8ac508648686ba5e3d2dd3e929410f"
+        },
+        {
+          "operation": "close",
+          "trace": "310dc1858200f8fdb7b1936e5e0429d4ce209943d5ba0ff6f026bf801d72674a"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "content-hash picture caching avoids repeated uploads even when signed source URLs rotate",
+      "inventory": "baseline:test/sync.test.ts:92",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "762983909fb3cad88261e4d4f4442eb6894b228cd36609f2cce88a7ac9644c56",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d3b0352139ed20fda2fc038ffa87ef501a9d0fd0bb50f360bea2059033df9e9b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "18d25c0a4dc4672fac79bf319ce2f8452b023286700c2bf97a5f2517ada13bd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "53fd2fc42a98a6dbe9545930bd24588d2e6d4ecfbd8b70849d854cd16c3e054d"
+        },
+        {
+          "operation": "sql",
+          "trace": "621b168a9bd2b6cf302b8958512f50be23d5f47d2b45f9bb805fbeb4a9ef325d"
+        },
+        {
+          "operation": "sql",
+          "trace": "bd9014bf741e489f3971d6aad73377496d9b2a841349b2db32e7d52d47b9269f"
+        },
+        {
+          "operation": "tick",
+          "trace": "fa081489120edde882860970c21d8e7608cd8e4506e4af140e8f2bdf4fd672b0"
+        },
+        {
+          "operation": "tick",
+          "trace": "ff950bd950d42e4195f466637da689899ef6a2dbbd86328cbbb88dae94ca1e39"
+        },
+        {
+          "operation": "tick",
+          "trace": "8c9abb943fb3b1f5964a435e06613a70543ad5d1a2ff810d229aa221c5825380"
+        },
+        {
+          "operation": "tick",
+          "trace": "b402990f5660b2e75f021d4680703a932d19214a9ae5dcc2afaab660c72bc0cd"
+        },
+        {
+          "operation": "sql",
+          "trace": "0482176fcbb33044f6f50b12b25f56658ac7d9b2780b2c993780d735754f7a51"
+        },
+        {
+          "operation": "sql",
+          "trace": "da3d89002bb78ff9a6c20b03da5e899e5faf60790a3bc880d660071fedf08789"
+        },
+        {
+          "operation": "tick",
+          "trace": "57a04854d2abd38062263b8b70575f80061fd7c30bf79b4e7c9a80195aa0f1fb"
+        },
+        {
+          "operation": "tick",
+          "trace": "fee28ce5e4fdf95e2acdde76e32c92166dd18a5620d51ad4c1ec8c9420c3d4d5"
+        },
+        {
+          "operation": "tick",
+          "trace": "07df0fe317151da4ebaa4afcc1f406e227c5ca68f7640b4c96876a297b11781c"
+        },
+        {
+          "operation": "tick",
+          "trace": "a4d132d72965e569621b00898559d73dcf711affa4556f3a898e51fcd8965dc9"
+        },
+        {
+          "operation": "close",
+          "trace": "b5c33304f397743dfd6c1cacbba0e2d39071684c18ef523306caddbb77fea96e"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "hidden pictures and unavailable descriptions preserve Telegram data",
+      "inventory": "baseline:test/sync.test.ts:108",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "a0b4a9a5fb7ec79587fef0ed585bc989e56b80885f323b5d1a42df415a8b9cb3",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "0ba7cdb97eb016eb09f85dea4eda16553d8a53db6d7c638b05d7c40c2f8c35b5",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "ea43b7ef03dfe1077ed7b7e6e8fd1d0f7ef74e72e5f6b93d9e887eaa2a082792"
+        },
+        {
+          "operation": "sql",
+          "trace": "b4e0e532407f27011440b8cef06fc09c0e9d5fbdd4b24854e3510c7cffee87ab"
+        },
+        {
+          "operation": "tick",
+          "trace": "bac62bd576ca78e40a54debafaaed45c0fb9fbbf5741e3578682b9131367aa69"
+        },
+        {
+          "operation": "tick",
+          "trace": "2726d5fb9974e283667d41536b0e66ac9b05e493c40f78d1b93543af784e4579"
+        },
+        {
+          "operation": "tick",
+          "trace": "62f6416403f332e3000bab89b7decc7c1318deb508ef8f48c14eb214bd8dca79"
+        },
+        {
+          "operation": "close",
+          "trace": "f4332c0b97a9114609d8f2b372a7c103c2f829a025d06e4c611502176c6a91f3"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "incomplete metadata and failed lookups cannot clear the old roster or group identity",
+      "inventory": "baseline:test/sync.test.ts:117",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "edb77f7fc03181411fb06f5d44956a3b4b1a78a1519a75b14d854af88594e079",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "1f6c2c4405fae2e9b10450ff014a15c0452baaa183dc754275bf8e0f2c3b7d7f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "20163d18e85309008a1a1c75b474c77b1d8aa372fcabe18451aa9d084bfe3c6f"
+        },
+        {
+          "operation": "sql",
+          "trace": "d2f958279a9803aee3e967fbbd020aa8e94569042c108a9cf0c853bc6d29d6c3"
+        },
+        {
+          "operation": "sql",
+          "trace": "29db528fdadc9869b9509e33f2abbc7ed8ddc8a82a6f768b21158a481e74df78"
+        },
+        {
+          "operation": "tick",
+          "trace": "c58f5dd27faaa02d707fca16c52aae0c6357d925ffc5c3cc7cdabec430d17d04"
+        },
+        {
+          "operation": "tick",
+          "trace": "d879f3e0855e44fddd40fa795cab54104dc071c14d9b6585199e94f8b16b5739"
+        },
+        {
+          "operation": "tick",
+          "trace": "a741c245ae6d0ef853a4acfff3c41281b9a339cb82efcdc23bc0614cb0a42406"
+        },
+        {
+          "operation": "close",
+          "trace": "3bf21e41a955094b0d0df2cce11d32fa55618723b513c48c050fa6425e9e8ebc"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "missing group permission yields a scoped grant button while contact metadata can still sync",
+      "inventory": "baseline:test/sync.test.ts:129",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "7f26952af9821fecff41959d80bbbbc545a1786071450f1bfa5229f2671f8591",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "5f436dda638627d8bc10e2f7b18c2361c93fc5caaa0b621bbf7c41868f21376a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "18d25c0a4dc4672fac79bf319ce2f8452b023286700c2bf97a5f2517ada13bd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "53fd2fc42a98a6dbe9545930bd24588d2e6d4ecfbd8b70849d854cd16c3e054d"
+        },
+        {
+          "operation": "sql",
+          "trace": "5e30fa1d18192b1dc1979c883fd452c1b039c9d78534faccffc7ae02a7fc503a"
+        },
+        {
+          "operation": "sql",
+          "trace": "56e0d2a27bdb99dc261aa585f9d09ebab5205b53627760393920f914eda6c575"
+        },
+        {
+          "operation": "tick",
+          "trace": "db500c22959fca83a54ff2247243b0371f4e4ad422d151a7ce5a9c86de0ad22e"
+        },
+        {
+          "operation": "tick",
+          "trace": "398a3ac4bc51feac8e94eee983012e237c6485c30a24df24beb4ded12b4b16fc"
+        },
+        {
+          "operation": "tick",
+          "trace": "00fa926e0f1be2fc0c9b8938e70fdbe99d7f06435ae8a3414f5107363242adfd"
+        },
+        {
+          "operation": "tick",
+          "trace": "e34ef2ac3b8173c4ef4c8df4bab135735e99521ffbae2260e2c2fabfab2ccbb7"
+        },
+        {
+          "operation": "command",
+          "trace": "d9b78e06dfc9cd8db4f9f1e72570264546c8ae96f14be933e5a497e515e206ae"
+        },
+        {
+          "operation": "command",
+          "trace": "f226eda8c1e5933c31b63fab0445ac810f674bd2dee5147ff858a4c3f845c756"
+        },
+        {
+          "operation": "close",
+          "trace": "4f342dc4115bc0d59af28acf94306ed20cc837b1636ff82ca04ce0f43e6f4cde"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "one contact bot shared across groups is fetched once and LID aliases retain its binding",
+      "inventory": "baseline:test/sync.test.ts:143",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "bd64cf917edb01bd9fff3c432eb51524bb0dd0a71e2e2fb2ea5aefa4c188fb0d",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "b0151fd209d5eac990771dd88862bdcf2e944524ef544a5be60c28d0cc994a91",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "18d25c0a4dc4672fac79bf319ce2f8452b023286700c2bf97a5f2517ada13bd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "53fd2fc42a98a6dbe9545930bd24588d2e6d4ecfbd8b70849d854cd16c3e054d"
+        },
+        {
+          "operation": "sql",
+          "trace": "3bd2f32779fa2f3b242f2da269a6c00a7cffa30b6562e40c9c3bbcad93550de3"
+        },
+        {
+          "operation": "sql",
+          "trace": "3957defb72f3a6b5a5e420e4a0bd783da83b1c8db3a7013084de9f2dbcddcfce"
+        },
+        {
+          "operation": "sql",
+          "trace": "39ad18a93b4043d8c29ee7150fb951c9f341822af953e96d20332c86a21e6e7d"
+        },
+        {
+          "operation": "sql",
+          "trace": "d853a163a8d8d7a72573c157a4767be83eb9da7660ab26c8e33b8713fcebf264"
+        },
+        {
+          "operation": "tick",
+          "trace": "8d53f8804fc1dfbee3b8811e6ad1732aad87e547936d34c22ca20bbcc2e4c139"
+        },
+        {
+          "operation": "tick",
+          "trace": "0bb3734d17a372819fcab394826f168eb2204b28f4f51625772eb1d85f295c05"
+        },
+        {
+          "operation": "tick",
+          "trace": "dfea5f9dc50a16d34116abc98d36ba9c9d25a504869ac11bc5d5c546844bd614"
+        },
+        {
+          "operation": "tick",
+          "trace": "3978de01c777c0b4c371199b1cc5972b746da87002ba73d6793619b1b5fb05db"
+        },
+        {
+          "operation": "tick",
+          "trace": "7ea0e02fab6183e8263c559420cf12e2e536263047c92325398aa50f51e451d9"
+        },
+        {
+          "operation": "close",
+          "trace": "50414369527e0b01762270632e9b5f3bfae5f02c6d737d69c907755c173a826d"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "/sync scopes to its conversation, and global sync uses the local management queue",
+      "inventory": "baseline:test/sync.test.ts:156",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "d8e1dc229ce1108dab6048602b8fa66a9a3cb450b077c447e07d46268d445dcc",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "9fd1d96460d793209438be1a9a85464acd909633848c8df3d69da583e7d77a43",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "command",
+          "trace": "be84b669779d6a780138a5c7095fe2cdf509edd6d4255914b73ae21a6a3cf0a2"
+        },
+        {
+          "operation": "command",
+          "trace": "83c5795eb3a02eb4b830b4bbf36f916cc3087beee611d21e4d7567309ea5c9eb"
+        },
+        {
+          "operation": "command",
+          "trace": "ffa0e404bf0a44328a3d43101235067c0fdb5df3756d049d7e980d6ed9ecb2aa"
+        },
+        {
+          "operation": "manage",
+          "trace": "293712e77a3e5eda881612a5cac1a78e522088a91e11b0718eafa84e2a8779a3"
+        },
+        {
+          "operation": "close",
+          "trace": "668014f7bca3e98dddc329614e233d62b5acd68105b86a3ca2d2749f8d649e5b"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "/sync in a bound member bot DM works without a one-to-one route and reports back through that bot",
+      "inventory": "baseline:test/sync.test.ts:172",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "2ee2a28036ac2cdabd5c428efebce72bb3379dc5a001f698ca90e62a0cb1b4b1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "c0b23d8c09f33cc774a795e36168adc5094b269dd55798a58254c97736439733",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "18d25c0a4dc4672fac79bf319ce2f8452b023286700c2bf97a5f2517ada13bd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "53fd2fc42a98a6dbe9545930bd24588d2e6d4ecfbd8b70849d854cd16c3e054d"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "60755ce1b718cd2bc404e97bf6168d5f784eef40b1f0647b8316d056fcb4c3c9"
+        },
+        {
+          "operation": "tick",
+          "trace": "ecfa66b9a9b5351c758ad2942f2f2db519163a8bb81e38dc165e4b6507e4e4be"
+        },
+        {
+          "operation": "tick",
+          "trace": "ac2da5cb04d9ffcef3820f609bd1064c3849bbf44ce358209de102741a245578"
+        },
+        {
+          "operation": "tick",
+          "trace": "bf1f9bbefdd3cea27e124130a4a5998ba91a20a68a440c2161ad9d95f235cff3"
+        },
+        {
+          "operation": "tick",
+          "trace": "59d1b082939baa38a829c6ae215b1fe21896ce1650be6f7f02a4e71ae2101d38"
+        },
+        {
+          "operation": "tick",
+          "trace": "d99e830cb6c58c2f8d3adb508d2234bb04404a6702a0d342851fc19191c97fad"
+        },
+        {
+          "operation": "close",
+          "trace": "4544a9fd7a4656b250c46f70470febaa4b52a1a1f9d9466cf7ea08e047afc3c8"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "an unbound member bot explains the missing binding for Start and /sync without accessing WhatsApp",
+      "inventory": "baseline:test/sync.test.ts:195",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "0d6804c2407e6a79b5cf9cfe184283075d9abb77e19c5ebbcfa08fbfb5fe988a",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "a2529c1f785ff0b63f0f57dfe23dc128dd3bc91ab0d7a0ea0c5ee826335817ed",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "0b6b0b78418e5a37d933105bde7ada8ac745959b0392beefd63835e839870073"
+        },
+        {
+          "operation": "telegram",
+          "trace": "284cb01a86cee20e692f949fe02d08cffe1b4608276b13dd39916971354b5697"
+        },
+        {
+          "operation": "telegram",
+          "trace": "3e3ab4c718104e429fcca66392eca0c735fafadfab024a9082cc7cbe46da16ab"
+        },
+        {
+          "operation": "close",
+          "trace": "a22795f22eb38480b53964efffaab50a2eed310dd6ebce93149ea1df42de777a"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "member-bot DM sync keeps the contact scope with an existing inbox topic and rejects global sync",
+      "inventory": "baseline:test/sync.test.ts:209",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "3479d77f5591bafadbeae324a8d9794cffff88b0ac6ec55cdedda3a4f14453c7",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "2230698f55aac9a526fbb3755a7b448f428dcdb0e23021a16d1f5af00b24a39e",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "18d25c0a4dc4672fac79bf319ce2f8452b023286700c2bf97a5f2517ada13bd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "53fd2fc42a98a6dbe9545930bd24588d2e6d4ecfbd8b70849d854cd16c3e054d"
+        },
+        {
+          "operation": "sql",
+          "trace": "0f021b6ff3dd972391bab1836d2be36d0e831ecc54a85f2ab988ab720d8b10c7"
+        },
+        {
+          "operation": "command",
+          "trace": "8fb7299af0f103129582f0e260ea9e2ca16a34336efb727aa66afc79ee249be5"
+        },
+        {
+          "operation": "command",
+          "trace": "f0f71080a72657c06b3044f422340e07fdd074f0d27d9e22736c9e36884ed2fc"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "0f5ec6793fd96353b5e52565e8479a8f6da1b8bc4257cc23d27372befc28d2a2"
+        },
+        {
+          "operation": "close",
+          "trace": "d55763f93776869c0e717cc5e7606eec45eea6535137fc76f8bd98729251bac4"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "a failed group lookup does not prevent existing contact bots from syncing",
+      "inventory": "baseline:test/sync.test.ts:225",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "9c037bb9b021ef1115f8c6d2f17a982b2ca4a4076749ea232a269de2da350be1",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6b083974c1da1aa75046472177523e6114ad1b1661230edd7afb4a0608166958",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "18d25c0a4dc4672fac79bf319ce2f8452b023286700c2bf97a5f2517ada13bd8"
+        },
+        {
+          "operation": "sql",
+          "trace": "53fd2fc42a98a6dbe9545930bd24588d2e6d4ecfbd8b70849d854cd16c3e054d"
+        },
+        {
+          "operation": "sql",
+          "trace": "05d613d7e5a8e77c5d8504012c608e077b697ccd91ad376d24625ebd792bbf1a"
+        },
+        {
+          "operation": "sql",
+          "trace": "b028c2bae2f6bb4840c4be55157e11e72ffbc05da8de5eff6b712b7c3f69665d"
+        },
+        {
+          "operation": "tick",
+          "trace": "9feda275df2898feaf565e8c14b647da5640b9e08fa4f098c8bbd4cc212be2ea"
+        },
+        {
+          "operation": "tick",
+          "trace": "c08d31d4043e54eaa9dc67db2c88646c253e60a3a9ce2991678ba4b79eb73f8e"
+        },
+        {
+          "operation": "tick",
+          "trace": "a67d9156c4da456decb72d9f6003f8b018ef09fdbb5f93f61c1ff831f34a2b16"
+        },
+        {
+          "operation": "tick",
+          "trace": "50b59195eb933bc01de1a32d9549cfe29c99eaa88fa7c4116336e681c4d728a4"
+        },
+        {
+          "operation": "close",
+          "trace": "9a4e670f5c7dd4c092187f477f7a18db11c7d6917a380fdf687ec131fd04b1c5"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "chat jobs take priority over metadata work, and coalesced manual requests receive a completion",
+      "inventory": "baseline:test/sync.test.ts:235",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "122f240ae024eb0a69a78547ee2df852c51d517d9c04c2605a8a05b6f9241bfd",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "d6097fbb121f95a5c43bc72b83d00a82394166c7036c0ca6818765f9c34bcb5a",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "2d4ac6eba6dffc734c4cd755e8dcb83baa6190f4310f514d68bf68d44880d322"
+        },
+        {
+          "operation": "sql",
+          "trace": "422c14eb5af44e06b18385f9decd85065109907efe2a2aa9695cbf1e3a5b35c3"
+        },
+        {
+          "operation": "sql",
+          "trace": "5a2701fadcc7bedce89383fced6d98c67da65b99d70fc27f13442902d161eedd"
+        },
+        {
+          "operation": "acceptTelegram",
+          "trace": "ca9398c4233d9ca37b238d0d939971163a6000b67440af3f3a920449d56f5a34"
+        },
+        {
+          "operation": "tick",
+          "trace": "2dcfc9b4421484c660bd6ded6e9950c08910e7f74c745cb242b82ef7144d3e86"
+        },
+        {
+          "operation": "tick",
+          "trace": "f6fed442acedd2c95622d3c4c4150ac16237d52dd8cfa55e773b0ce7d111fb3f"
+        },
+        {
+          "operation": "tick",
+          "trace": "fc6cd94d98a8ed694fd441673195a8505a1c4ac5f52b3e68744216038ece93f3"
+        },
+        {
+          "operation": "tick",
+          "trace": "2a68b44b4323910ef5f8663ebda75477531d30ae29878fa5684a23dbf911bb94"
+        },
+        {
+          "operation": "close",
+          "trace": "cf43ca396178ea7795931d0be999bf82e61bfc8d7520c96fcd941cad9a2546c6"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "cron is timezone-aware and persists one run per scheduled minute across restarts",
+      "inventory": "baseline:test/sync.test.ts:248",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "677bc03b1923af9bd982cf6ad62c248d110c19ba63b77b6a4f0a6f8c3c58f94f",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "002b5afcc9de76d4c9c789319fe228e9097d4fc30b4aed7b270f863b6124c7fd"
+        },
+        {
+          "operation": "sql",
+          "trace": "9aac0ae0cb9290e782cc9565431225973663ec6611d7f86c4c8a874bdca18c25"
+        },
+        {
+          "operation": "sql",
+          "trace": "f56fc9e572fbb497a2e27b4930efc8a640fdc34008eec49035923a34a25b4527"
+        },
+        {
+          "operation": "close",
+          "trace": "9de201eb6d91cab57d162a180ce35c0a4e027c42820f85bd8914b2ab13eee895"
+        }
+      ]
+    },
+    {
+      "file": "test/sync.test.ts",
+      "name": "cron supports quarter-hour, daily, weekday and disabled schedules and rejects malformed fields",
+      "inventory": "baseline:test/sync.test.ts:258",
+      "sourceSha256": "80fbe19885ef5a97fc9fbe0a7ae9f76c60bfe70654e06dfcef7c72e38d41ec9e",
+      "calls": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "transitions": []
+    },
+    {
+      "file": "scripts/rewrite/metadata-scenarios.ts",
+      "name": "an unchanged scheduled metadata run completes quietly after a populated group was synchronized",
+      "calls": "73df31104c51bdf86b4d2280f90ebdc03861ddbb054c94c5f8a26d5e53d2af1e",
+      "logs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "state": "6c3102f6c675638b2d8944c21fbe3a5facc80dd266a081b486523e1328c4558b",
+      "transitions": [
+        {
+          "operation": "open",
+          "trace": "475824157a4f1535f5e3715f22ec0107a7025eeca73c21c685d68f97fe579980"
+        },
+        {
+          "operation": "sql",
+          "trace": "db76a3bb09cc561e89b07996a02711bd0060cef93a6ff796e3eb0acdd43451ef"
+        },
+        {
+          "operation": "sql",
+          "trace": "72fca442391db2090b96e70ca5660a3ac32dc819b3ac72d6118c0b576b223866"
+        },
+        {
+          "operation": "sql",
+          "trace": "64372a0f9b3caddb9aceb990434a5171efff0c75e130e62bac761fcff28ea9f2"
+        },
+        {
+          "operation": "sql",
+          "trace": "6c3c2929561846d4d30c7fb081801c251826e4c073fd2c3d86e27174e601f610"
+        },
+        {
+          "operation": "tick",
+          "trace": "d5572512a5340389e338552a410c1395a23cf80d0260675d9cd649e26a5c4c57"
+        },
+        {
+          "operation": "tick",
+          "trace": "6738340c854df3bfdd13fd1753250fa92ba0f85c242cec67b78757674fd52ebc"
+        },
+        {
+          "operation": "tick",
+          "trace": "851e0398408f4378000d741c25e3b8c4b5d5264dae01c9dfd9d04ac0aabd8570"
+        },
+        {
+          "operation": "sql",
+          "trace": "08f0efd1adb10924ef422e0f1dc349fb35aaaf7d1892c29fd3279f19e2595dab"
+        },
+        {
+          "operation": "sql",
+          "trace": "93ec2d1cf2c0ae9c9be376b1a7789a0a25829bfb6d4a4bc6bda0cbcbd150adde"
+        },
+        {
+          "operation": "tick",
+          "trace": "9a7242d65b0e757875439d9dc661b400ffabef74a40cc469eb193ad1a560a5d3"
+        },
+        {
+          "operation": "tick",
+          "trace": "5613759a19e70aef7a58381deb9879221c52a41fc7716b5e4b64514e1bb94095"
+        },
+        {
+          "operation": "tick",
+          "trace": "a450a33e514116bf7ad02a1078ed7f323d0d8228a6c8e926a4dfd55de61c8d55"
+        },
+        {
+          "operation": "close",
+          "trace": "d345f813821dd00b9ba7b7fa00fabf3432bf0b2383e9a19e0b8d89c093f7c44f"
+        }
+      ]
+    }
+  ]
+}
