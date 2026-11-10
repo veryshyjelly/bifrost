@@ -14,6 +14,7 @@ var (
 	ErrInvalid     = errors.New("invalid delivery operation")
 	ErrDiscarded   = errors.New("effect was explicitly discarded after a definite refusal")
 	ErrUnsupported = errors.New("job kind is not implemented")
+	ErrDeferred    = errors.New("job returned to its canonical conversation stream")
 	ErrPersistence = errors.New("delivery persistence unavailable")
 )
 

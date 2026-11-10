@@ -176,23 +176,7 @@ func (s *Service) telegram(ctx context.Context, bot string, raw []byte, body map
 		}
 		observation = &Observation{AccountID: s.c.AccountID, Scope: scope, Bot: bot, Kind: kind, ChatID: observed.Chat.ID, MessageID: int64(observed.ID), ThreadID: thread, Date: date, Payload: observedRaw}
 	}
-	owner := actor(&update)
-	// encoding/json accepts case-insensitive field aliases; actor identity must
-	// agree with the exact lower-case keys in the authenticated Telegram schema.
-	var sourceActor map[string]json.RawMessage
-	for _, source := range []struct{ update, key string }{{"callback_query", "from"}, {"message", "from"}, {"edited_message", "from"}, {"message_reaction", "user"}, {"my_chat_member", "from"}, {"managed_bot", "user"}, {"poll_answer", "user"}} {
-		if event := object(body[source.update]); event != nil {
-			sourceActor = object(event[source.key])
-			break
-		}
-	}
-	sourceID, sourceOK := integer(sourceActor["id"])
-	var sourceBot bool
-	_ = json.Unmarshal(sourceActor["is_bot"], &sourceBot)
-	if owner != nil && (!sourceOK || sourceID != owner.ID || sourceBot) {
-		owner = nil
-	}
-	if owner == nil || owner.IsBot || owner.ID != s.c.OwnerID {
+	if !AuthorizedUpdate(raw, &update, s.c.OwnerID) {
 		return s.s.Admit(ctx, nil, observation)
 	}
 	if !validID {

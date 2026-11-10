@@ -2,6 +2,8 @@
 
 `internal/delivery` now provides a runnable worker over the PostgreSQL claim/effect protocol. `internal/conversation` implements the first inbox creation and delivery-target decisions. These are tested components; `serve` still exposes diagnostic/review/opt-in admission endpoints and does not start a worker, register callbacks or forward live messages. Full workflow handlers and the validated legacy importer must exist before cutover.
 
+The [native dispatcher](DISPATCH.md) now connects admitted text events and independent read jobs to this worker in integration tests. Complete source admission uses canonical conversation queues; fenced recovery can requeue older unsnapshotted jobs without changing their IDs, delivery keys or retry budget.
+
 ## Execution guarantees
 
 The worker defaults to one concurrent job, preserving the baseline's serialized execution. A bounded pool can execute independent streams; PostgreSQL's stream-head guard still prevents later same-stream jobs from overtaking pending, running, failed or uncertain work. Unregistered job kinds fail closed instead of being marked complete.

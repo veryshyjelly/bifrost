@@ -67,11 +67,18 @@ func (s *Store) Admit(ctx context.Context, event *delivery.Event, observation *i
 	}
 	accepted := false
 	if e := event; e != nil {
-		_, err := q.Enqueue(ctx, db.EnqueueParams{AccountID: e.AccountID, Dedup: e.Dedup, Stream: e.Stream, Kind: e.Kind, Payload: e.Payload})
-		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-			return false, err
+		if e.Kind == "wa" {
+			accepted, err = s.admitWhatsApp(ctx, tx, *e)
+			if err != nil {
+				return false, err
+			}
+		} else {
+			_, err := q.Enqueue(ctx, db.EnqueueParams{AccountID: e.AccountID, Dedup: e.Dedup, Stream: e.Stream, Kind: e.Kind, Payload: e.Payload})
+			if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+				return false, err
+			}
+			accepted = err == nil
 		}
-		accepted = err == nil
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return false, err

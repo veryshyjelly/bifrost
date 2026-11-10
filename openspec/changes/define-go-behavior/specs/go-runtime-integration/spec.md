@@ -138,3 +138,22 @@ The Go implementation SHALL permit a definitely undelivered effect to become ter
 
 - **WHEN** a route becomes muted or ignored after some parts completed and other parts are definitely unsent
 - **THEN** only the unsent parts close without delivery, completed copies remain mapped, and no sending or uncertain operation is discarded
+
+### Requirement: Canonical source snapshots and stream continuity
+
+The Go implementation SHALL admit complete native WhatsApp messages with an immutable source snapshot and a shared conversation stream in one transaction. Verified aliases SHALL retain an established conversation key without rewriting routes, mappings or stable delivery keys. Independently established conflicting conversations SHALL require review before merging. Recovery of older raw jobs SHALL preserve their IDs and fence stream changes against claims.
+
+#### Scenario: Phone identity learned after a LID conversation exists
+
+- **WHEN** verified phone evidence arrives for a LID with an established conversation
+- **THEN** later phone and LID events share that conversation queue while retaining the original route and receipts
+
+#### Scenario: Older raw job meets an active canonical job
+
+- **WHEN** recovery moves a raw job into a conversation with another active job
+- **THEN** it releases its old claim and waits without sending, changing delivery keys or consuming a retry attempt
+
+#### Scenario: Identity evidence conflicts during admission
+
+- **WHEN** source preparation cannot safely reconcile verified identities or independently established conversations
+- **THEN** the original event remains durable for review and partial alias/profile changes do not commit

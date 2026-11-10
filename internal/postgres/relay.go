@@ -106,6 +106,9 @@ func (s *Store) OutgoingRoute(ctx context.Context, job delivery.Job, bot string,
 			if row.Kind != "tg" {
 				return delivery.ErrInvalid
 			}
+			if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
+				return err
+			}
 			contact, err := q.ContactForBot(ctx, db.ContactForBotParams{AccountID: row.AccountID, BotID: bot})
 			if errors.Is(err, pgx.ErrNoRows) {
 				return delivery.ErrUnsupported
@@ -119,6 +122,14 @@ func (s *Store) OutgoingRoute(ctx context.Context, job delivery.Job, bot string,
 			}
 			if !binding.Started {
 				return delivery.ErrUnsupported
+			}
+			d, err := directory(ctx, q, row.AccountID)
+			if err != nil {
+				return err
+			}
+			contact, err = conversationKey(ctx, q, row.AccountID, contact, d)
+			if err != nil {
+				return err
 			}
 			r, err := q.ConversationRoute(ctx, db.ConversationRouteParams{AccountID: row.AccountID, WhatsappChat: contact})
 			if errors.Is(err, pgx.ErrNoRows) {

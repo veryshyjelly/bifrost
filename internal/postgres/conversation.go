@@ -98,7 +98,11 @@ func (s *Store) BindContactBot(ctx context.Context, job delivery.Job, contact, b
 		if _, err := directory(ctx, q, row.AccountID); err != nil {
 			return err
 		}
-		return q.BindDirectRouteMode(ctx, db.BindDirectRouteModeParams{AccountID: row.AccountID, WhatsappChat: contact})
+		chat, err := conversationKey(ctx, q, row.AccountID, contact, d)
+		if err != nil {
+			return err
+		}
+		return q.BindDirectRouteMode(ctx, db.BindDirectRouteModeParams{AccountID: row.AccountID, WhatsappChat: chat})
 	})
 }
 
@@ -106,6 +110,9 @@ func (s *Store) StartContactBot(ctx context.Context, job delivery.Job, botID str
 	return s.withClaim(ctx, job, func(q *db.Queries, row db.Job) error {
 		if row.Kind != "tg" && row.Kind != "management" {
 			return delivery.ErrInvalid
+		}
+		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
+			return err
 		}
 		contact, err := q.ContactForBot(ctx, db.ContactForBotParams{AccountID: row.AccountID, BotID: botID})
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -121,8 +128,16 @@ func (s *Store) StartContactBot(ctx context.Context, job delivery.Job, botID str
 		if n != 1 {
 			return delivery.ErrInvalid
 		}
-		payload, _ := json.Marshal(map[string]string{"chatId": contact})
-		_, err = q.Enqueue(ctx, db.EnqueueParams{AccountID: row.AccountID, Dedup: "retire-inbox:" + row.Dedup, Stream: "retire-inbox:" + contact, Kind: "control-retire-inbox", Payload: payload})
+		d, err := directory(ctx, q, row.AccountID)
+		if err != nil {
+			return err
+		}
+		chat, err := conversationKey(ctx, q, row.AccountID, contact, d)
+		if err != nil {
+			return err
+		}
+		payload, _ := json.Marshal(map[string]string{"chatId": chat})
+		_, err = q.Enqueue(ctx, db.EnqueueParams{AccountID: row.AccountID, Dedup: "retire-inbox:" + row.Dedup, Stream: "retire-inbox:" + chat, Kind: "control-retire-inbox", Payload: payload})
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil
 		}

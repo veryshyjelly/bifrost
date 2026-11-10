@@ -77,4 +77,15 @@
 - [x] Resolve outgoing native name entities, registered usernames and copied tokens, excluding code, URLs and email spans.
 - [x] Validate outgoing group membership against a roster younger than five minutes; allow labeled cached data only for picker display.
 - [x] Freeze resolved mentions inside text relay plans and send native WhatsApp mention IDs through the released SDK.
-- [ ] Implement webhook-to-canonical-message/self resolution, the mention picker commands/callbacks and owner-facing refusal notices; integrate captions, edits and history.
+- [x] Implement webhook-to-canonical-message resolution and independently verified self identity for owner links.
+- [ ] Implement the mention picker commands/callbacks and owner-facing refusal notices; integrate captions, edits and history.
+
+## Source normalization and dispatcher implementation
+
+- [x] Atomically admit native source snapshots, verified identity evidence and stable canonical conversation queues.
+- [x] Preserve established LID conversations when verified phone aliases arrive, without rewriting routes, receipts or stable delivery keys.
+- [x] Fence older unsnapshotted job recovery and stream transitions against claims, preserving IDs and retry budgets.
+- [x] Connect native WhatsApp text, Telegram owner text and independent management read events through the worker dispatcher registry.
+- [x] Resolve owner links from independently verified session identity; skip new identity/group lookups for prepared plans, echoes and suppressed routes.
+- [x] Exercise authenticated admission through PostgreSQL, the fenced worker and both native provider SDKs with isolated fixtures.
+- [ ] Install remaining workflow handlers, mention picker controls, managed-bot credentials and importer before final runtime worker composition.

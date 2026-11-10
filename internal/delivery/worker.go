@@ -220,6 +220,10 @@ func (w *Worker) execute(parent context.Context, job Job, start time.Time) {
 	effects.mu.Unlock()
 	stopHeartbeat()
 	<-heartbeatDone
+	if errors.Is(err, ErrDeferred) {
+		w.notice(Report{JobID: job.ID, State: Pending, Reason: "stream_requeued"})
+		return
+	}
 	if !fence.valid() || errors.Is(err, ErrClaimLost) {
 		w.notice(Report{JobID: job.ID, Reason: "claim_lost"})
 		return

@@ -127,11 +127,23 @@ func (s *Store) Claim(ctx context.Context, lease time.Duration) (delivery.Job, e
 	if err != nil {
 		return delivery.Job{}, err
 	}
-	row, err := s.queries.Claim(ctx, db.ClaimParams{Token: rand.Text(), LeaseSeconds: n})
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return delivery.Job{}, err
+	}
+	defer rollback(tx)
+	q := s.queries.WithTx(tx)
+	if err := q.LockQueueTopology(ctx); err != nil {
+		return delivery.Job{}, err
+	}
+	row, err := q.Claim(ctx, db.ClaimParams{Token: rand.Text(), LeaseSeconds: n})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return delivery.Job{}, delivery.ErrNoJob
 	}
-	return jobFrom(row), err
+	if err != nil {
+		return delivery.Job{}, err
+	}
+	return jobFrom(row), tx.Commit(ctx)
 }
 
 func (s *Store) Renew(ctx context.Context, job delivery.Job, lease time.Duration) error {

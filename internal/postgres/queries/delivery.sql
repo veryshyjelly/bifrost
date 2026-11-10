@@ -22,7 +22,7 @@ WITH candidate AS (
   WHERE j.state = 'pending' AND j.due <= clock_timestamp()
     AND NOT EXISTS (
       SELECT 1 FROM jobs p WHERE p.account_id = j.account_id AND p.stream = j.stream
-        AND p.id < j.id AND p.state <> 'done'
+        AND p.id <> j.id AND (p.id < j.id OR p.state = 'running') AND p.state <> 'done'
     )
   ORDER BY CASE
     WHEN j.kind = 'history' OR j.kind LIKE 'history-%' THEN 3

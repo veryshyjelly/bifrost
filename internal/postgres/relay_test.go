@@ -18,6 +18,7 @@ import (
 
 	"github.com/go-telegram/bot/models"
 	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
+	"github.com/veryshyjelly/bifrost/internal/bridge"
 	"github.com/veryshyjelly/bifrost/internal/conversation"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
@@ -38,6 +39,7 @@ type waTextCall struct {
 type relayFixture struct {
 	store                *Store
 	service              *relay.Service
+	dispatcher           *bridge.Dispatcher
 	mu                   sync.Mutex
 	tgCalls              []tgTextCall
 	waCalls              []waTextCall
@@ -47,6 +49,7 @@ type relayFixture struct {
 	botSeq               map[string]int
 	reads                atomic.Int32
 	topics               atomic.Int32
+	topicNames           []string
 	readFailure          atomic.Bool
 	waEntered, waRelease chan struct{}
 	groupRows            []sdk.GroupParticipant
@@ -55,17 +58,23 @@ type relayFixture struct {
 	memberLeft           atomic.Bool
 	memberCalls          atomic.Int32
 	failWA               int
+	sessionCalls         atomic.Int32
+	sessionFailure       atomic.Bool
+	selfPhone            string
 }
 
 func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions ...bool) *relayFixture {
 	t.Helper()
-	f := &relayFixture{store: testStore(t), botSeq: map[string]int{}}
+	f := &relayFixture{store: testStore(t), botSeq: map[string]int{}, selfPhone: "12025550999"}
 	tgServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseMultipartForm(1 << 20); err != nil {
 			t.Error(err)
 		}
 		if strings.HasSuffix(r.URL.Path, "createForumTopic") {
 			f.topics.Add(1)
+			f.mu.Lock()
+			f.topicNames = append(f.topicNames, r.FormValue("name"))
+			f.mu.Unlock()
 			fmt.Fprint(w, `{"ok":true,"result":{"message_thread_id":44,"name":"Fixture"}}`)
 			return
 		}
@@ -108,6 +117,21 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 	}))
 	t.Cleanup(tgServer.Close)
 	waServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" && r.URL.Path == "/api/sessions/fixture-session" {
+			f.sessionCalls.Add(1)
+			if f.sessionFailure.Load() {
+				w.WriteHeader(503)
+				return
+			}
+			f.mu.Lock()
+			defer f.mu.Unlock()
+			var phone any = f.selfPhone
+			if f.selfPhone == "" {
+				phone = nil
+			}
+			json.NewEncoder(w).Encode(map[string]any{"id": "fixture-session", "status": "ready", "phone": phone})
+			return
+		}
 		if strings.Contains(r.URL.Path, "/groups/") && r.Method == "GET" {
 			f.groupCalls.Add(1)
 			if f.groupFailure.Load() {
@@ -192,6 +216,10 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		}
 		return nil, delivery.ErrInvalid
 	}, whatsapp, options)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.dispatcher, err = bridge.New(f.store, f.service, whatsapp, bridge.Options{AccountID: "fixture-account", SessionID: "fixture-session", OwnerID: 123})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,6 +1,6 @@
 # Identity and mention components
 
-`internal/identity` keeps provider-verified aliases, contact names and bot bindings separate. `internal/mentions` resolves incoming native Telegram entities and outgoing WhatsApp tags before the text relay saves its complete delivery plan. These components are connected through `relay.Options.Mentions`; `serve` still needs the event dispatcher and remaining workflows before it can run the bridge.
+`internal/identity` keeps provider-verified aliases, contact names and bot bindings separate. `internal/mentions` resolves incoming native Telegram entities and outgoing WhatsApp tags before the text relay saves its complete delivery plan. These components connect through `relay.Options.Mentions` and the [native dispatcher](DISPATCH.md); `serve` still needs complete workflow composition and import before replacing the live bridge.
 
 ## Identity evidence
 
@@ -10,7 +10,7 @@ PostgreSQL stores aliases by permanent account. Writes require an active fenced 
 
 Directory reads use one consistent database snapshot. Device placeholders cannot hide a readable cached profile or a registered bot for the same canonical person. Explicitly synchronized profile names survive later webhook placeholders. Contact-bot lookup follows verified aliases; binding a known alias stores its canonical person.
 
-The webhook-to-canonical-message resolver and independent self-identity workflow are still pending. The text capability continues to require verified sender input. In particular, these components do not infer the owner identity from the peer in a private outgoing event.
+Complete native message admission now freezes source identities and the stable conversation queue in the same transaction as the job. The dispatcher supplies verified source input to the text capability and resolves unknown self identity independently from the configured session. An established LID conversation keeps its existing key when a verified phone alias appears. Neither path infers the owner identity from the peer in a private outgoing event. See DISPATCH.md for recovery and conflict handling.
 
 ## Incoming mentions
 

@@ -128,3 +128,15 @@ type TelegramObservation struct {
 	Payload     []byte
 	Deleted     bool
 }
+
+type WhatsappSelf struct {
+	AccountID string
+	PersonID  string
+}
+
+type WhatsappSource struct {
+	AccountID    string
+	JobID        int64
+	WhatsappChat string
+	Payload      []byte
+}

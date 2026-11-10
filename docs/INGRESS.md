@@ -2,6 +2,8 @@
 
 The Go runtime can authenticate and retain OpenWA, Telegram and management events in PostgreSQL. This implements admission, not automatic message routing or a ready live cutover. No provider callback is registered and no polling or outgoing provider operation starts with the HTTP service.
 
+Complete native WhatsApp messages now receive an immutable source snapshot and stable conversation stream in the same admission transaction. Verified phone/LID aliases preserve existing conversation state. See [normalization and dispatcher behavior](DISPATCH.md); the HTTP service still does not launch the worker.
+
 ## Enable explicitly
 
 `BRIDGE_INGRESS_ENABLED` defaults to `false`, preserving diagnostic startup for a fresh Compose setup. Enabling it requires a current `OPENWA_SESSION_ID`, a minimum 32-character `OPENWA_WEBHOOK_SECRET`, a positive safe-integer `TELEGRAM_OWNER_ID`, a negative safe-integer `TELEGRAM_MANAGEMENT_CHAT_ID`, and a `TELEGRAM_MASTER_TOKEN` identifying the master bot. Existing account, encryption and admin settings remain required. Errors identify setting names without disclosing values.

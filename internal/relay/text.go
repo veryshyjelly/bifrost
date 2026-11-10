@@ -16,6 +16,7 @@ import (
 	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
 	"github.com/veryshyjelly/bifrost/internal/conversation"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
+	"github.com/veryshyjelly/bifrost/internal/identity"
 	"github.com/veryshyjelly/bifrost/internal/presentation"
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
@@ -56,7 +57,7 @@ func local(err error) error {
 	if err == nil {
 		return nil
 	}
-	if errors.Is(err, delivery.ErrClaimLost) || errors.Is(err, delivery.ErrInvalid) || errors.Is(err, delivery.ErrUncertain) || errors.Is(err, delivery.ErrUnsupported) {
+	if errors.Is(err, delivery.ErrClaimLost) || errors.Is(err, delivery.ErrInvalid) || errors.Is(err, delivery.ErrUncertain) || errors.Is(err, delivery.ErrUnsupported) || errors.Is(err, identity.ErrConflict) {
 		return err
 	}
 	return delivery.ErrLocalRetry
