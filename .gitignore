@@ -19,3 +19,7 @@ package-lock.json
 *.pem
 *.key
 .DS_Store
+mcp.json
+.lsp/
+.serena/
+.clj-kondo/
