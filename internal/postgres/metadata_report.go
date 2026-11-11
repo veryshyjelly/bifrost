@@ -90,31 +90,55 @@ func metadataReportInput(ctx context.Context, q *db.Queries, row db.Job, in meta
 			delete(failures, id)
 			continue
 		}
+		runTarget, runErr := q.MetadataRunTarget(ctx, db.MetadataRunTargetParams{AccountID: row.AccountID, JobID: id})
+		if runErr != nil && !errors.Is(runErr, pgx.ErrNoRows) {
+			return out, runErr
+		}
+		partial := false
+		if runErr == nil {
+			if runTarget.RunID != in.RunID || runTarget.Outcome == "queued" {
+				return out, delivery.ErrIncomplete
+			}
+			partial = runTarget.Outcome == "warning"
+			if partial {
+				var outcome metadata.Outcome
+				if json.Unmarshal(runTarget.Details, &outcome) != nil || len(outcome.Warnings) == 0 {
+					return out, delivery.ErrInvalid
+				}
+				out.Warnings = append(out.Warnings, outcome.Warnings...)
+			}
+		}
 		if failures[id] != "" {
 			return out, delivery.ErrInvalid
 		}
-		text, found, err := metadataPlan(ctx, q, target)
+		text, hasText, err := metadataPlan(ctx, q, target)
 		if err != nil {
 			return out, err
 		}
-		if !found || !text.TextComplete || text.Target.Session != c.Session {
+		if !partial && (!hasText || !text.TextComplete) {
 			return out, delivery.ErrIncomplete
 		}
-		photo, found, err := metadataPicturePlan(ctx, q, target)
+		if hasText && text.Target.Session != c.Session {
+			return out, delivery.ErrInvalid
+		}
+		photo, hasPhoto, err := metadataPicturePlan(ctx, q, target)
 		if err != nil {
 			return out, err
 		}
-		if !found || !photo.Complete {
+		if !partial && (!hasPhoto || !photo.Complete) {
 			return out, delivery.ErrIncomplete
 		}
-		advice, found, err := metadataInspection(ctx, q, target)
+		advice, hasAdvice, err := metadataInspection(ctx, q, target)
 		if err != nil {
 			return out, err
 		}
-		if !found || advice.Session != c.Session || advice.OwnerID != c.OwnerID {
+		if !partial && !hasAdvice {
 			return out, delivery.ErrIncomplete
 		}
-		out.RosterChanged = out.RosterChanged || text.RosterChanged
+		if hasAdvice && (advice.Session != c.Session || advice.OwnerID != c.OwnerID) {
+			return out, delivery.ErrInvalid
+		}
+		out.RosterChanged = out.RosterChanged || hasText && text.RosterChanged
 		out.Missing = append(out.Missing, advice.Missing...)
 		if advice.PermissionNeeded {
 			out.Warnings = append(out.Warnings, metadata.ChangeInfoWarning)
@@ -122,7 +146,7 @@ func metadataReportInput(ctx context.Context, q *db.Queries, row db.Job, in meta
 		if advice.PermissionLink != "" {
 			out.Permissions = append(out.Permissions, metadata.PermissionAdvice{Name: text.Snapshot.Name, URL: advice.PermissionLink})
 		}
-		if photo.Skip == "unavailable" {
+		if hasPhoto && photo.Skip == "unavailable" {
 			out.Report.SkippedPhotos++
 		}
 	}

@@ -26,7 +26,7 @@ func metadataSource(row db.Job) (string, string, error) {
 			ID    string `json:"id"`
 		} `json:"data"`
 	}
-	if row.Kind != "management" || json.Unmarshal(row.Payload, &source) != nil || source.Type != "sync_metadata" {
+	if row.Kind != "management" && row.Kind != "sync-target" || json.Unmarshal(row.Payload, &source) != nil || source.Type != "sync_metadata" {
 		return "", "", delivery.ErrInvalid
 	}
 	switch source.Data.Scope {
@@ -400,6 +400,9 @@ func (s *Store) CompleteMetadataText(ctx context.Context, j delivery.Job) error 
 			if err != nil {
 				return err
 			}
+			if effect.State == "discarded" && p.TextRefusals[i] != "" {
+				continue
+			}
 			if effect.State != "done" || !bytes.Equal(bytes.TrimSpace(effect.Result), []byte("true")) {
 				return delivery.ErrIncomplete
 			}
@@ -428,6 +431,49 @@ func (s *Store) CompleteMetadataText(ctx context.Context, j delivery.Job) error 
 }
 
 var _ metadata.Store = (*Store)(nil)
+
+func (s *Store) RefuseMetadataText(ctx context.Context, j delivery.Job, part int, warning string) error {
+	if warning == "" {
+		return delivery.ErrInvalid
+	}
+	return s.withClaim(ctx, j, func(q *db.Queries, row db.Job) error {
+		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
+			return err
+		}
+		p, found, err := metadataPlan(ctx, q, row)
+		if err != nil {
+			return err
+		}
+		if !found || part < 0 || part >= len(p.Changes) {
+			return delivery.ErrInvalid
+		}
+		effect, err := q.GetEffect(ctx, db.GetEffectParams{AccountID: row.AccountID, EffectKey: p.ChangeKey(part)})
+		if err != nil {
+			return err
+		}
+		if effect.JobID != row.ID {
+			return delivery.ErrInvalid
+		}
+		if effect.State == "discarded" && p.TextRefusals[part] != "" {
+			return nil
+		}
+		if effect.State != "pending" {
+			return delivery.ErrUncertain
+		}
+		if _, err := q.DiscardEffect(ctx, db.DiscardEffectParams{AccountID: row.AccountID, JobID: row.ID, EffectKey: effect.EffectKey}); err != nil {
+			return err
+		}
+		if p.TextRefusals == nil {
+			p.TextRefusals = map[int]string{}
+		}
+		p.TextRefusals[part] = warning
+		raw, err := json.Marshal(p)
+		if err != nil {
+			return err
+		}
+		return q.SaveMetadataTextPlan(ctx, db.SaveMetadataTextPlanParams{AccountID: row.AccountID, JobID: row.ID, Payload: raw})
+	})
+}
 
 func metadataMemberKeys(d *identity.Directory, members []identity.Member) []string {
 	keys := make([]string, 0, len(members))

@@ -159,6 +159,20 @@ type MessageMapping struct {
 	Receipt           []byte
 }
 
+type MetadataAdmission struct {
+	AccountID  string
+	RequestKey string
+	RunID      string
+}
+
+type MetadataCronTick struct {
+	AccountID  string
+	SessionID  string
+	Expression string
+	Minute     int64
+	RunID      string
+}
+
 type MetadataInspection struct {
 	AccountID string
 	JobID     int64
@@ -196,6 +210,35 @@ type MetadataReport struct {
 	RunID     string
 	JobID     int64
 	Payload   []byte
+}
+
+type MetadataRun struct {
+	Ordinal   int64
+	AccountID string
+	RunID     string
+	SessionID string
+	Scope     string
+	SourceID  string
+	Source    string
+	State     string
+}
+
+type MetadataRunRequest struct {
+	Ordinal   int64
+	AccountID string
+	RunID     string
+	JobID     int64
+}
+
+type MetadataRunTarget struct {
+	AccountID string
+	RunID     string
+	Kind      string
+	SourceID  string
+	SourceKey string
+	JobID     int64
+	Outcome   string
+	Details   []byte
 }
 
 type MetadataSnapshot struct {

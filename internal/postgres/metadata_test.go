@@ -30,6 +30,8 @@ type metadataFixture struct {
 	clients                  metadata.Clients
 	mu                       sync.Mutex
 	group, contact           string
+	groupByID, contactByID   map[string]string
+	refuseMethod             string
 	groupReads, contactReads int
 	public, canChange        bool
 	failAt, dropAt           int
@@ -51,10 +53,18 @@ func newMetadataFixture(t *testing.T, withMentions ...bool) *metadataFixture {
 			switch {
 			case strings.Contains(r.URL.Path, "/groups/"):
 				m.groupReads++
-				fmt.Fprint(w, m.group)
+				body := m.group
+				if value := m.groupByID[r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]]; value != "" {
+					body = value
+				}
+				fmt.Fprint(w, body)
 			case strings.Contains(r.URL.Path, "/contacts/"):
 				m.contactReads++
-				fmt.Fprint(w, m.contact)
+				body := m.contact
+				if value := m.contactByID[r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]]; value != "" {
+					body = value
+				}
+				fmt.Fprint(w, body)
 			default:
 				t.Error("unexpected source API", r.URL.Path)
 				w.WriteHeader(500)
@@ -126,6 +136,10 @@ func newMetadataFixture(t *testing.T, withMentions ...bool) *metadataFixture {
 		}
 		if n == fail {
 			fmt.Fprint(w, `{"ok":false,"error_code":429,"parameters":{"retry_after":60}}`)
+			return
+		}
+		if method == m.refuseMethod {
+			fmt.Fprint(w, `{"ok":false,"error_code":403}`)
 			return
 		}
 		fmt.Fprint(w, `{"ok":true,"result":true}`)

@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/veryshyjelly/bifrost/internal/schedule"
 )
 
 // Config contains the settings needed by the persistence and diagnostic runtime.
@@ -22,6 +24,7 @@ type Config struct {
 	OpenWASession, WebhookSecret           string
 	OwnerID, ManagementChatID, MasterBotID int64
 	CommandTTL, ControlTTL                 time.Duration
+	SyncCron, SyncTimezone                 string
 }
 
 func Load(getenv func(string) string) (Config, error) {
@@ -35,6 +38,11 @@ func Load(getenv func(string) string) (Config, error) {
 		return Config{}, errors.New("BRIDGE_ENCRYPTION_KEY must contain 32 bytes in hex")
 	}
 	copy(c.EncryptionKey[:], key)
+	cron, err := schedule.New(getenv("SYNC_CRON"), getenv("SYNC_TIMEZONE"))
+	if err != nil {
+		return Config{}, errors.New("SYNC_CRON or SYNC_TIMEZONE is invalid")
+	}
+	c.SyncCron, c.SyncTimezone = cron.Expression(), cron.Timezone()
 	for _, setting := range []struct {
 		name string
 		def  int

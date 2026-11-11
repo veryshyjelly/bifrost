@@ -2,7 +2,7 @@
 
 The PostgreSQL delivery foundation and diagnostic runtime are now implemented; this is not a completed bridge. The approved contract is in OpenSpec. All existing behavior remains required, including linked names, intentional topic deletion and reviewed uncertain sends. Caption clearing is conditional on released provider support.
 
-The [metadata snapshot/text stages](METADATA.md), [picture caching/uploads](METADATA-PICTURES.md) and [sync commands, permission advice and sealed reports](METADATA-ADVICE.md) now preserve source metadata, freeze destination-scoped updates/notices and retain independent receipts. Run admission, outcome/retry collection, discovery, serialization/coalescing and scheduling remain pending; stage completion does not complete a refresh job or enable runtime dispatch.
+The [metadata snapshot/text stages](METADATA.md), [picture caching/uploads](METADATA-PICTURES.md) and [sync commands, permission advice and sealed reports](METADATA-ADVICE.md) now preserve source metadata, freeze destination-scoped updates/notices and retain independent receipts. [Durable run orchestration](METADATA-RUNS.md) now adds atomic admission, target discovery/fan-out, source serialization/coalescing, partial outcomes and persistent timezone cron. Native worker fixtures exercise full refresh/report delivery; final runtime composition and legacy import remain pending.
 
 ## Shape and dependency direction
 
@@ -50,9 +50,9 @@ The identity directory and mention resolver now connect to text-plan preparation
 
 ## Compose and cutover
 
-The [private group picker and topic controls](GROUP-PICKER.md) now persist scoped selection requests, consume them with link commits and restore original conversation headers. Reply packets support frozen per-packet destinations and native reply keyboards. A narrow SDK serializer preserves the explicit private-group constraint; provider calls still use the required SDK. Metadata/history/provisioning execution remains pending.
+The [private group picker and topic controls](GROUP-PICKER.md) now persist scoped selection requests, consume them with link commits and restore original conversation headers. Reply packets support frozen per-packet destinations and native reply keyboards. A narrow SDK serializer preserves the explicit private-group constraint; provider calls still use the required SDK. Metadata execution is covered by the isolated [run coordinator](METADATA-RUNS.md); history/provisioning and runtime composition remain pending.
 
-[Manual mirror transitions](MIRROR-TRANSITIONS.md) now commit route changes and confirmation plans together. Topic creation retains normal uncertain-send review and persistent move/import guards; known refusals leave the original mirror active. [Private group selection and topic headers](GROUP-PICKER.md) are implemented; full metadata/history/provisioning execution remains pending.
+[Manual mirror transitions](MIRROR-TRANSITIONS.md) now commit route changes and confirmation plans together. Topic creation retains normal uncertain-send review and persistent move/import guards; known refusals leave the original mirror active. [Private group selection and topic headers](GROUP-PICKER.md) are implemented; metadata execution now has its isolated coordinator; history/provisioning and final runtime composition remain pending.
 
 [Start help and command menus](STARTUP-CONTROLS.md) now include atomic member activation/direct-route admission and migration-gated menu jobs. Settings retain their original owner scope and completed steps across retry. Lifecycle persistence records completed migration/import evidence; native credential migration and callback setup remain pending.
 

@@ -188,6 +188,12 @@ func (p Plan) ChangeRequest(index int) json.RawMessage {
 // Setters retain frozen values and receipts. Every part checks the current
 // account route, return generation, binding and metadata snapshot before use.
 func (s *Service) ApplyText(ctx context.Context, j delivery.Job, e *delivery.Effects) error {
+	return s.applyText(ctx, j, e, false)
+}
+func (s *Service) ApplyTextManaged(ctx context.Context, j delivery.Job, e *delivery.Effects) error {
+	return s.applyText(ctx, j, e, true)
+}
+func (s *Service) applyText(ctx context.Context, j delivery.Job, e *delivery.Effects, managed bool) error {
 	p, found, err := s.store.MetadataPlan(ctx, j)
 	if err != nil {
 		return local(err)
@@ -199,6 +205,9 @@ func (s *Service) ApplyText(ctx context.Context, j delivery.Job, e *delivery.Eff
 		return nil
 	}
 	for i, change := range p.Changes {
+		if p.TextRefusals[i] != "" {
+			continue
+		}
 		current, err := s.store.MetadataTextCurrent(ctx, j)
 		if err != nil {
 			return local(err)
@@ -252,6 +261,12 @@ func (s *Service) ApplyText(ctx context.Context, j delivery.Job, e *delivery.Eff
 			return json.RawMessage(`true`), nil
 		})
 		if err != nil {
+			if managed && definiteMetadataRefusal(err) {
+				if saveErr := s.store.RefuseMetadataText(ctx, j, i, err.Error()); saveErr != nil {
+					return local(saveErr)
+				}
+				continue
+			}
 			return err
 		}
 	}

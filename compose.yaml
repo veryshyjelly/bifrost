@@ -23,6 +23,8 @@ x-bifrost: &bifrost
     TELEGRAM_MANAGEMENT_CHAT_ID: ${TELEGRAM_MANAGEMENT_CHAT_ID:-}
     COMMAND_TTL_SECONDS: ${COMMAND_TTL_SECONDS:-60}
     CONTROL_TTL_SECONDS: ${CONTROL_TTL_SECONDS:-600}
+    SYNC_CRON: ${SYNC_CRON:-0 * * * *}
+    SYNC_TIMEZONE: ${SYNC_TIMEZONE:-Asia/Kolkata}
   volumes:
     - bridge-media:/media
     - telegram-data:/telegram-data:ro

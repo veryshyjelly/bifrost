@@ -450,3 +450,9 @@ Each requirement maps to the source and regression files listed in its capabilit
 - [dense WhatsApp animations fit after extra compression while retaining motion, duration and alpha](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/stickers.test.ts#L136)
 - [malformed and excessive inputs fail safely; concurrent jobs leave no intermediates](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/stickers.test.ts#L167)
 - [high-detail animations either meet the video size ceiling or retain the original fallback](https://github.com/veryshyjelly/bifrost/blob/checkpoint-typescript-baseline/test/stickers.test.ts#L177)
+
+## Go metadata run verification
+
+The [native PostgreSQL/worker fixtures](../internal/postgres/metadata_runs_test.go) exercise owner `/sync` through durable run admission, scoped/global discovery, shared-contact deduplication, partial outcomes and sealed completion delivery. They cover concurrent admission, rollback, reopened outcome recovery without repeated mutations, uncertain-source barriers and independent chat progress. [Cron fixtures](../internal/schedule/cron_test.go) cover the preserved numeric grammar, timezone/DST behavior and disabled schedules; database fixtures cover configured gating and persistent minute deduplication across concurrent/reopened consumers.
+
+These checks use isolated PostgreSQL and native SDK loopback servers. They do not enable live runtime dispatch or validate the pending history, provisioning, media and import workflows. See [the coordinator boundary](../docs/METADATA-RUNS.md).

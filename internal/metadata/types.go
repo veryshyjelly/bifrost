@@ -55,7 +55,8 @@ type Plan struct {
 	Changes       []Change
 	Warning       string
 	TextComplete  bool
-	RosterChanged bool `json:",omitempty"`
+	RosterChanged bool           `json:",omitempty"`
+	TextRefusals  map[int]string `json:",omitempty"`
 }
 
 type Store interface {
@@ -64,6 +65,7 @@ type Store interface {
 	PrepareMetadata(context.Context, delivery.Job, Target, Snapshot, []Change, string) (Plan, error)
 	MetadataTextCurrent(context.Context, delivery.Job) (bool, error)
 	CompleteMetadataText(context.Context, delivery.Job) error
+	RefuseMetadataText(context.Context, delivery.Job, int, string) error
 }
 
 type WhatsApp interface {

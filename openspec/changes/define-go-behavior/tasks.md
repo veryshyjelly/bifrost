@@ -152,7 +152,7 @@
 - [x] Reconcile confirmed topic receipts and discarded refusals across failed local writes and new consumers.
 - [x] Preserve paused modes, old mirror archives/mappings and return generations; close only definitely unsent obsolete notices.
 - [x] Exercise native SDK dispatch, concurrency, rollback, privacy, uncertainty and stale/ABA recovery with isolated PostgreSQL.
-- [ ] Implement remaining metadata execution and header-initiated history/contact provisioning handlers.
+- [ ] Implement header-initiated history/contact provisioning handlers and final runtime composition.
 - [ ] Implement explicit transition reconciliation, full history/import and final runtime composition before live cutover.
 
 ## Private group picker and topic control implementation
@@ -163,7 +163,7 @@
 - [x] Restore original group/contact topic headers and scoped callback actions with durable metadata admission.
 - [x] Preserve per-packet receipts, keyboard removal, configured lifetimes and uncertain-send review across retries/restart.
 - [x] Verify source authorization, scope/expiry rejection, rollback, native wire serialization and obsolete-header recovery with isolated PostgreSQL/SDK fixtures.
-- [ ] Execute metadata sync, history and contact provisioning handlers; complete transition reconciliation/import and final runtime composition.
+- [ ] Execute history and contact provisioning handlers; complete transition reconciliation/import and final runtime composition.
 
 ## Metadata snapshot and text stages
 
@@ -172,7 +172,7 @@
 - [x] Freeze inbox/mirror text and existing contact-bot name/description updates, retaining independent receipts across retries and reopened consumers.
 - [x] Reject obsolete routes, generations, bindings, snapshots and public mirror targets; preserve retired topics and unapplied topic names.
 - [x] Verify unavailable/empty descriptions, LID identity, rollback, safe setter retries and receipt reconciliation with isolated PostgreSQL/SDK fixtures.
-- [ ] Complete run admission/outcome collection, shared-contact orchestration and persistent cron before registering a complete metadata handler.
+- [x] Complete run admission/outcome collection, shared-contact orchestration and persistent cron in isolated worker fixtures.
 
 ## Metadata picture stages
 
@@ -181,7 +181,7 @@
 - [x] Scope content-hash caches by account/session/identity/destination/generation and verify the current native photo ID before reuse.
 - [x] Persist independent upload and photo-ID observation receipts, reconcile failed cache writes and preserve uncertain outcomes for review.
 - [x] Verify URL rotation, manual changes, hidden sources, partial/uncertain delivery, rollback, obsolete scope, restart and account/claim fencing with isolated PostgreSQL/SDK fixtures.
-- [ ] Complete run orchestration/coalescing, target outcome collection and scheduling before full metadata dispatch.
+- [x] Compose picture stages with run orchestration/coalescing, target outcome collection and scheduling in isolated worker fixtures.
 
 ## Metadata commands, permission advice and sealed reports
 
@@ -191,4 +191,15 @@
 - [x] Require terminal account/run/session-bound targets and resolved effects before sealing report statistics, text, buttons, recipients and expiry evidence.
 - [x] Preserve quiet cron/manual waiters, receipt-based mutation counts, warning/button limits, independent recipient receipts and uncertain-send review.
 - [x] Verify native admission, scope/expiry rejection, rollback, new consumers, partial reports and coalesced recipient recovery with isolated PostgreSQL/SDK fixtures.
-- [ ] Implement run admission, terminal/partial target outcome collection and retry budgets, target/contact fan-out, source serialization/coalescing and persistent cron before full metadata dispatch.
+- [x] Implement run admission, terminal/partial target outcome collection and retry budgets, target/contact fan-out, source serialization/coalescing and persistent cron in isolated worker fixtures.
+
+## Durable metadata runs and timezone scheduling
+
+- [x] Commit run admission, original request membership and start jobs atomically; replay request IDs and coalesce account/session-scoped active runs.
+- [x] Discover active global groups and registered contact bots, fan out frozen group rosters and deduplicate canonical/shared contact destinations.
+- [x] Continue independent fields after known refusals, preserve partial target outcomes and apply the four-attempt provider retry budget without swallowing local persistence errors.
+- [x] Serialize metadata source streams and predecessor aliases/bindings; preserve uncertain effects as barriers while independent chat work continues.
+- [x] Seal complete target/request membership atomically with final report admission, retaining independent notification recovery.
+- [x] Preserve numeric five-field cron, timezone/DST and configured/off gates with persistent minute deduplication across concurrent/reopened consumers.
+- [x] Verify admission rollback/concurrency, full native owner-command execution, confirmed-mutation outcome recovery and partial advice/counts with isolated PostgreSQL/SDK fixtures.
+- [ ] Compose the scheduler and metadata handlers into the complete runtime after remaining workflows and legacy import are ready.

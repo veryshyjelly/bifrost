@@ -42,6 +42,7 @@ type relayFixture struct {
 	store                  *Store
 	service                *relay.Service
 	dispatcher             *bridge.Dispatcher
+	managementHandlers     map[string]delivery.Handler
 	cleaner                *control.Cleaner
 	operator               *control.Operator
 	starter                *control.Starter
@@ -522,6 +523,7 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			dispatchOptions.Extensions.ControlJobs[kind] = handler
 		}
 	}
+	f.managementHandlers = dispatchOptions.Extensions.Management
 	f.dispatcher, err = bridge.New(f.store, f.service, whatsapp, dispatchOptions)
 	if err != nil {
 		t.Fatal(err)

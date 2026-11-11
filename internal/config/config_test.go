@@ -18,6 +18,8 @@ func TestLoadRejectsInvalidSettingsWithoutLeakingValues(t *testing.T) {
 		{"COMMAND_TTL_SECONDS", "0004"},
 		{"CONTROL_TTL_SECONDS", "86401"},
 		{"CONTROL_TTL_SECONDS", "private-invalid-duration"},
+		{"SYNC_CRON", "private-invalid-expression"},
+		{"SYNC_TIMEZONE", "private-invalid-timezone"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
