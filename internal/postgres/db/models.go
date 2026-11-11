@@ -37,6 +37,12 @@ type BridgeRoute struct {
 	Mode           string
 }
 
+type CleanupStep struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
 type ContactAlias struct {
 	AccountID string
 	Alias     string
@@ -55,6 +61,18 @@ type ControlAction struct {
 	ActionID  string
 	PlanKey   string
 	Payload   []byte
+}
+
+type ControlClear struct {
+	AccountID string
+	ClearID   string
+	Payload   []byte
+}
+
+type ControlClearItem struct {
+	AccountID      string
+	ClearID        string
+	ObservationSeq int64
 }
 
 type ControlPlan struct {
@@ -131,18 +149,19 @@ type RelayPlan struct {
 }
 
 type TelegramObservation struct {
-	Seq         int64
-	AccountID   string
-	Scope       string
-	BotID       string
-	ChatID      int64
-	MessageID   int64
-	ThreadID    int64
-	Kind        string
-	MessageDate int64
-	Payload     []byte
-	Deleted     bool
-	ExpiresAt   int64
+	Seq          int64
+	AccountID    string
+	Scope        string
+	BotID        string
+	ChatID       int64
+	MessageID    int64
+	ThreadID     int64
+	Kind         string
+	MessageDate  int64
+	Payload      []byte
+	Deleted      bool
+	ExpiresAt    int64
+	CleanupError string
 }
 
 type WhatsappSelf struct {

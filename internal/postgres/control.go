@@ -77,13 +77,28 @@ func (s *Store) PrepareControl(ctx context.Context, job delivery.Job, p control.
 	}
 	var result control.Plan
 	err := s.withClaim(ctx, job, func(q *db.Queries, row db.Job) error {
-		if row.Kind != "tg" {
-			return delivery.ErrInvalid
-		}
-		var source struct {
-			Bot string `json:"bot"`
-		}
-		if json.Unmarshal(row.Payload, &source) != nil || source.Bot != p.Target.BotID {
+		if row.Kind == "tg" {
+			var source struct {
+				Bot string `json:"bot"`
+			}
+			if json.Unmarshal(row.Payload, &source) != nil || source.Bot != p.Target.BotID {
+				return delivery.ErrInvalid
+			}
+		} else if row.Kind == "control-clear" {
+			var source struct {
+				ID string `json:"id"`
+			}
+			if json.Unmarshal(row.Payload, &source) != nil || source.ID == "" || p.Clear != nil || p.Command != nil || p.Scope != nil || len(p.Actions) > 0 {
+				return delivery.ErrInvalid
+			}
+			run, err := loadClear(ctx, q, row.AccountID, source.ID)
+			if err != nil {
+				return err
+			}
+			if p.Target != run.Target {
+				return delivery.ErrInvalid
+			}
+		} else {
 			return delivery.ErrInvalid
 		}
 		old, err := q.ControlPlan(ctx, db.ControlPlanParams{AccountID: row.AccountID, PlanKey: p.Key})
@@ -139,6 +154,12 @@ func (s *Store) PrepareControl(ctx context.Context, job delivery.Job, p control.
 			if err := q.ObserveControl(ctx, db.ObserveControlParams{AccountID: row.AccountID, Scope: relayScope(p.Target.BotID, p.Target.ChatID), BotID: p.Target.BotID, ChatID: p.Target.ChatID, MessageID: c.MessageID, ThreadID: p.Target.ThreadID, Kind: "command", MessageDate: date, Payload: row.Payload, ExpiresAt: time.Now().Add(time.Duration(c.TTLSeconds) * time.Second).UnixMilli()}); err != nil {
 				return err
 			}
+			if err := q.ScheduleControlExpiry(ctx, db.ScheduleControlExpiryParams{AccountID: row.AccountID, Scope: relayScope(p.Target.BotID, p.Target.ChatID), ChatID: p.Target.ChatID, MessageID: c.MessageID}); err != nil {
+				return err
+			}
+		}
+		if err := queueClear(ctx, q, row.AccountID, p); err != nil {
+			return err
 		}
 		result = p
 		return nil
@@ -165,7 +186,10 @@ func recordControl(ctx context.Context, q *db.Queries, account string, p control
 	if date == 0 {
 		date = time.Now().UnixMilli()
 	}
-	return q.ObserveControl(ctx, db.ObserveControlParams{AccountID: account, Scope: relayScope(p.Target.BotID, p.Target.ChatID), BotID: p.Target.BotID, ChatID: p.Target.ChatID, MessageID: int64(m.ID), ThreadID: p.Target.ThreadID, Kind: "log", MessageDate: date, Payload: e.Result, ExpiresAt: time.Now().Add(time.Duration(p.ReplyTTLSeconds) * time.Second).UnixMilli()})
+	if err := q.ObserveControl(ctx, db.ObserveControlParams{AccountID: account, Scope: relayScope(p.Target.BotID, p.Target.ChatID), BotID: p.Target.BotID, ChatID: p.Target.ChatID, MessageID: int64(m.ID), ThreadID: p.Target.ThreadID, Kind: "log", MessageDate: date, Payload: e.Result, ExpiresAt: time.Now().Add(time.Duration(p.ReplyTTLSeconds) * time.Second).UnixMilli()}); err != nil {
+		return err
+	}
+	return q.ScheduleControlExpiry(ctx, db.ScheduleControlExpiryParams{AccountID: account, Scope: relayScope(p.Target.BotID, p.Target.ChatID), ChatID: p.Target.ChatID, MessageID: int64(m.ID)})
 }
 func (s *Store) RecordControl(ctx context.Context, job delivery.Job, key string, part int) error {
 	return s.withClaim(ctx, job, func(q *db.Queries, row db.Job) error {

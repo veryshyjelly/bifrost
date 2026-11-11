@@ -43,6 +43,7 @@ type Extensions struct {
 	MentionPicker  TelegramHandler
 	MentionRefusal MentionRefusalHandler
 	Management     map[string]delivery.Handler
+	ControlJobs    map[string]delivery.Handler
 }
 type Options struct {
 	AccountID, SessionID string
@@ -60,13 +61,22 @@ func New(store SourceStore, text TextRelay, wa WhatsApp, c Options) (*Dispatcher
 	if store == nil || text == nil || wa == nil || c.AccountID == "" || c.SessionID == "" || c.OwnerID <= 0 {
 		return nil, delivery.ErrInvalid
 	}
+	for kind, h := range c.Extensions.ControlJobs {
+		if !strings.HasPrefix(kind, "control-") || h == nil {
+			return nil, delivery.ErrInvalid
+		}
+	}
 	return &Dispatcher{store: store, text: text, wa: wa, c: c}, nil
 }
 
 // Handlers is explicitly supplied to the fenced worker by its composition root.
 // Constructing a dispatcher does not launch a consumer or register callbacks.
 func (d *Dispatcher) Handlers() map[string]delivery.Handler {
-	return map[string]delivery.Handler{"wa": d.whatsApp, "tg": d.telegram, "management": d.management}
+	handlers := map[string]delivery.Handler{"wa": d.whatsApp, "tg": d.telegram, "management": d.management}
+	for kind, h := range d.c.Extensions.ControlJobs {
+		handlers[kind] = h
+	}
+	return handlers
 }
 func local(err error) error {
 	if err == nil || errors.Is(err, delivery.ErrClaimLost) || errors.Is(err, delivery.ErrDeferred) || errors.Is(err, delivery.ErrInvalid) || errors.Is(err, delivery.ErrUnsupported) || errors.Is(err, identity.ErrConflict) {

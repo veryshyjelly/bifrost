@@ -99,4 +99,15 @@
 - [x] Preserve command addressing, captioned commands and ignored command/former-command edits.
 - [x] Send original mention refusal notices without WhatsApp sends/reads; prevent notice retry from reconsidering the rejected message.
 - [x] Persist command/reply expiry metadata and legacy 60/600-second defaults without expiring conversation/protected messages.
-- [ ] Implement automatic notice expiry/deletion, remaining owner controls and menus before full runtime composition.
+- [x] Implement automatic notice expiry/deletion and scoped clear commands.
+- [ ] Implement remaining owner controls and menus before full runtime composition.
+
+## Telegram cleanup implementation
+
+- [x] Schedule notice expiry atomically with command/reply recording and backfill existing timed notices without expiring archives.
+- [x] Freeze manual-clear membership and original bot/chat/topic, protecting later commits even below the cutoff sequence.
+- [x] Preserve the 100-item bulk path, individual fallback, age/protected skips and permission-refusal notices.
+- [x] Journal idempotent deletion targets/outcomes separately while retaining fencing and uncertain message-send review.
+- [x] Preserve mappings and deleted-copy markers, including relay receipt-before-mapping and unresolved-send guards.
+- [x] Exercise authenticated cleanup commands, restart persistence, native SDK calls and local/remote failure recovery with isolated PostgreSQL.
+- [ ] Integrate old-topic retirement, other controls, legacy-state import and full runtime startup.

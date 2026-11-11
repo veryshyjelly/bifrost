@@ -18,6 +18,10 @@ func local(err error) error {
 	if err == nil || errors.Is(err, delivery.ErrClaimLost) || errors.Is(err, delivery.ErrInvalid) || errors.Is(err, delivery.ErrUnsupported) || errors.Is(err, identity.ErrConflict) {
 		return err
 	}
+	var classified delivery.Outcome
+	if errors.As(err, &classified) {
+		return err
+	}
 	return delivery.ErrLocalRetry
 }
 func (s *Service) Context(ctx context.Context, job delivery.Job, bot string, m *models.Message) (Context, error) {

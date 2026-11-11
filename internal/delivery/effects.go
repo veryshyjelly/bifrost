@@ -27,6 +27,26 @@ type Effects struct {
 	refused map[string]bool
 }
 
+// Permit checks the live local lease before a separately journaled idempotent
+// operation. It does not authorize an unjournaled message send.
+func (e *Effects) Permit() error {
+	if e == nil || e.fence == nil {
+		return ErrInvalid
+	}
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	if e.stopped {
+		return ErrUncertain
+	}
+	if err := e.ctx.Err(); err != nil {
+		return err
+	}
+	if !e.fence.valid() {
+		return ErrClaimLost
+	}
+	return nil
+}
+
 func (e *Effects) persistedContext() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.WithoutCancel(e.ctx), e.timeout)
 }

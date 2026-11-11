@@ -176,3 +176,22 @@ The Go implementation SHALL persist complete control replies and scoped navigati
 
 - **WHEN** an outgoing mention was refused and its owner notice needs retrying
 - **THEN** the notice retains its original delivery key and the refused message is not reconsidered as a WhatsApp send
+
+### Requirement: Durable scoped Telegram cleanup
+
+The Go implementation SHALL persist expiry jobs with their recorded deadlines and freeze manual-clear membership before deleting. Snapshot membership SHALL exclude later committed observations, including rows with earlier sequence values. Idempotent Telegram deletions SHALL use a separate fenced cleanup journal so response loss can retry the same IDs without weakening uncertain-send review. Cleanup SHALL preserve mappings and explicit deletion markers.
+
+#### Scenario: Clear snapshot meets a late transaction
+
+- **WHEN** a transaction commits an observation after the clear snapshot, even with a sequence below its cutoff
+- **THEN** that observation is excluded from the clear run
+
+#### Scenario: Cleanup loses a deletion response
+
+- **WHEN** a frozen Telegram deletion has an ambiguous response or its local outcome cannot commit
+- **THEN** retry can repeat only the same idempotent deletion targets, while recorded outcomes and ordinary message sends keep their own recovery rules
+
+#### Scenario: Notice cleanup meets an unfinished relay receipt
+
+- **WHEN** an own-bot observation may be a conversation copy whose relay receipt or mapping is unresolved
+- **THEN** notice cleanup waits for resolution or excludes the confirmed relay copy rather than deleting it as a notice

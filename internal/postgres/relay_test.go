@@ -42,6 +42,7 @@ type relayFixture struct {
 	store                *Store
 	service              *relay.Service
 	dispatcher           *bridge.Dispatcher
+	cleaner              *control.Cleaner
 	mu                   sync.Mutex
 	tgCalls              []tgTextCall
 	waCalls              []waTextCall
@@ -66,6 +67,16 @@ type relayFixture struct {
 	callbacks            []callbackCall
 	answerStatus         int
 	meCalls              atomic.Int32
+	deleteCalls          []deleteCall
+	deleteStatus         int
+	deleteRefuse         map[int]int
+	deleteDropAt         int
+	deleteClients        control.DeleteClients
+}
+type deleteCall struct {
+	Bot  string
+	Chat int64
+	IDs  []int
 }
 type callbackCall struct{ Bot, ID, Text string }
 
@@ -83,6 +94,38 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			}
 		}
 		token := strings.Split(strings.TrimPrefix(r.URL.Path, "/bot"), "/")[0]
+		if strings.HasSuffix(r.URL.Path, "deleteMessages") {
+			var ids []int
+			if err := json.Unmarshal([]byte(r.FormValue("message_ids")), &ids); err != nil {
+				t.Error(err)
+			}
+			chat, _ := strconv.ParseInt(r.FormValue("chat_id"), 10, 64)
+			f.mu.Lock()
+			defer f.mu.Unlock()
+			f.deleteCalls = append(f.deleteCalls, deleteCall{Bot: token, Chat: chat, IDs: ids})
+			if f.deleteDropAt == len(f.deleteCalls) {
+				conn, _, err := w.(http.Hijacker).Hijack()
+				if err != nil {
+					t.Error(err)
+				} else {
+					conn.Close()
+				}
+				return
+			}
+			status := f.deleteStatus
+			for _, id := range ids {
+				if code := f.deleteRefuse[id]; code != 0 {
+					status = code
+					break
+				}
+			}
+			if status != 0 {
+				fmt.Fprintf(w, `{"ok":false,"error_code":%d,"description":"fixture delete refusal"}`, status)
+				return
+			}
+			fmt.Fprint(w, `{"ok":true,"result":true}`)
+			return
+		}
 		if strings.HasSuffix(r.URL.Path, "getMe") {
 			f.meCalls.Add(1)
 			id, username := int64(999), "bifrost_bot"
@@ -272,6 +315,18 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		}
 		dispatchOptions.Extensions.MentionPicker = picker.Handle
 		dispatchOptions.Extensions.MentionRefusal = picker.Refusal
+		f.deleteClients = func(_ context.Context, _ string, id string) (control.DeleteTelegram, error) {
+			if client := clients[id]; client != nil {
+				return client, nil
+			}
+			return nil, delivery.ErrInvalid
+		}
+		f.cleaner, err = control.NewCleaner(f.store, controls, f.deleteClients, control.CleanupOptions{OwnerID: 123})
+		if err != nil {
+			t.Fatal(err)
+		}
+		dispatchOptions.Extensions.Telegram = f.cleaner.Handle
+		dispatchOptions.Extensions.ControlJobs = f.cleaner.Handlers()
 	}
 	f.dispatcher, err = bridge.New(f.store, f.service, whatsapp, dispatchOptions)
 	if err != nil {

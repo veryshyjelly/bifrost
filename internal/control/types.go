@@ -1,5 +1,5 @@
-// Package control journals Telegram owner replies and scoped callback actions.
-// It records cleanup eligibility without running the future cleanup scheduler.
+// Package control journals Telegram owner replies, scoped callback actions and
+// idempotent cleanup while preserving conversation archives and delivery effects.
 package control
 
 import (
@@ -45,6 +45,7 @@ type Plan struct {
 	Actions         []Action
 	Scope           *Context
 	Command         *Command
+	Clear           *ClearRequest
 	ReplyTTLSeconds int
 	Complete        bool `json:"-"`
 }
