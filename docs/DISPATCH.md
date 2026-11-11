@@ -30,7 +30,7 @@ The mention-picker extension now handles `/mention`, its scoped pagination callb
 
 ## Validation and remaining work
 
-The [metadata snapshot and text stages](METADATA.md) are exercised independently through claimed worker jobs. They are not installed as a complete `sync_metadata` extension: photos, permission actions, orchestration and scheduling remain pending. Existing metadata admissions stay durable for that workflow.
+The [metadata snapshot/text stages](METADATA.md) and [picture stages](METADATA-PICTURES.md) are exercised independently through claimed worker jobs. They are not installed as a complete `sync_metadata` extension: permission actions, orchestration and scheduling remain pending. Existing metadata admissions stay durable for that workflow.
 
 Isolated PostgreSQL tests exercise authenticated HTTP admission, normalization, the worker, dispatcher and both real SDKs against loopback providers. They verify native mentions, quoted replies, stable mappings, independent read receipts, echo suppression, native group titles and independently verified owner links. Recovery tests cover phone/LID stream continuity, older moved jobs behind active jobs, stale claim rejection, unchanged retry budgets and atomic source/alias rollback. Source profiles and prepared requests remain stable across duplicate admission and retries.
 

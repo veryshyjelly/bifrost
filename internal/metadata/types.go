@@ -45,7 +45,7 @@ type Change struct {
 }
 
 // Plan covers text metadata only. TextComplete is not completion of a full
-// metadata run: photo caching, permissions, orchestration and scheduling have
+// metadata run: permission controls, orchestration and scheduling have
 // their own remaining workflows before sync_metadata can be enabled.
 type Plan struct {
 	Key          string

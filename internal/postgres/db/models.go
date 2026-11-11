@@ -159,6 +159,26 @@ type MessageMapping struct {
 	Receipt           []byte
 }
 
+type MetadataPictureAsset struct {
+	AccountID string
+	AssetHash string
+	Jpeg      []byte
+}
+
+type MetadataPictureCache struct {
+	AccountID  string
+	ScopeKey   string
+	SourceHash string
+	PhotoID    string
+	JobID      int64
+}
+
+type MetadataPicturePlan struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
 type MetadataSnapshot struct {
 	AccountID string
 	SessionID string

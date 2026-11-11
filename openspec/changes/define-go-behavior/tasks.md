@@ -152,7 +152,7 @@
 - [x] Reconcile confirmed topic receipts and discarded refusals across failed local writes and new consumers.
 - [x] Preserve paused modes, old mirror archives/mappings and return generations; close only definitely unsent obsolete notices.
 - [x] Exercise native SDK dispatch, concurrency, rollback, privacy, uncertainty and stale/ABA recovery with isolated PostgreSQL.
-- [ ] Implement private group selection/Start links, complete topic-header callbacks and metadata execution.
+- [ ] Implement remaining metadata execution and header-initiated history/contact provisioning handlers.
 - [ ] Implement explicit transition reconciliation, full history/import and final runtime composition before live cutover.
 
 ## Private group picker and topic control implementation
@@ -172,4 +172,13 @@
 - [x] Freeze inbox/mirror text and existing contact-bot name/description updates, retaining independent receipts across retries and reopened consumers.
 - [x] Reject obsolete routes, generations, bindings, snapshots and public mirror targets; preserve retired topics and unapplied topic names.
 - [x] Verify unavailable/empty descriptions, LID identity, rollback, safe setter retries and receipt reconciliation with isolated PostgreSQL/SDK fixtures.
-- [ ] Complete picture caching/uploads, permission controls, shared-contact run orchestration, completion reports, owner sync commands and persistent cron before registering a complete metadata handler.
+- [ ] Complete permission controls, shared-contact run orchestration, completion reports, owner sync commands and persistent cron before registering a complete metadata handler.
+
+## Metadata picture stages
+
+- [x] Use native SDK picture lookups and group/static bot-photo uploads while preserving hidden pictures and shared management identity.
+- [x] Bound CDN downloads, decode supported images, pin current image codecs and freeze JPEG bytes with complete photo plans before mutation.
+- [x] Scope content-hash caches by account/session/identity/destination/generation and verify the current native photo ID before reuse.
+- [x] Persist independent upload and photo-ID observation receipts, reconcile failed cache writes and preserve uncertain outcomes for review.
+- [x] Verify URL rotation, manual changes, hidden sources, partial/uncertain delivery, rollback, obsolete scope, restart and account/claim fencing with isolated PostgreSQL/SDK fixtures.
+- [ ] Complete permission actions, member-bot reporting, run orchestration/coalescing, owner commands, notices and scheduling before full metadata dispatch.

@@ -2,7 +2,7 @@
 
 A personal WhatsApp–Telegram bridge being ported to Go. The [approved OpenSpec contract](openspec/README.md) preserves existing routing, linked-name formatting, deletion choices and delivery safety, with conditional caption clearing when the released provider API permits it.
 
-[Metadata snapshots and resumable text updates](docs/METADATA.md) now cover preserved rosters/descriptions, inbox topic names, mirror titles and existing contact-bot text. Pictures and complete refresh orchestration remain pending.
+[Metadata snapshots and resumable text updates](docs/METADATA.md) now cover preserved rosters/descriptions, inbox topic names, mirror titles and existing contact-bot text, with [content-hash picture caching and resumable uploads](docs/METADATA-PICTURES.md). Complete refresh orchestration remains pending.
 
 The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients, authenticated durable event admission, a fenced delivery worker, initial inbox/target routing, scoped text-relay components and diagnostic HTTP/CLI checks. **Automatic forwarding integration and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist. The [worker and initial routing](docs/WORKER.md) are tested components; `serve` does not automatically dispatch provider work yet. [Text-relay capabilities and limits](docs/TEXT-RELAY.md) are tested through the real SDKs against isolated fixtures.
 

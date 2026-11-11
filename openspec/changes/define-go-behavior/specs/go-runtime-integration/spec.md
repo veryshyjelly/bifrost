@@ -362,3 +362,27 @@ The Go implementation SHALL atomically persist validated source snapshots and fr
 
 - **WHEN** a confirmed setter needs local reconciliation or the recorded route, binding, generation or source snapshot becomes obsolete
 - **THEN** recovery retains confirmed receipts without another setter and never retargets old work into the newer scope
+
+### Requirement: Durable metadata picture stages
+
+The Go implementation SHALL preserve unavailable pictures and shared management identity, cache by source content and current Telegram photo ID, and freeze bounded JPEG assets before uploads. Cache recovery SHALL require confirmed upload and scoped native photo-ID observation receipts. Retries SHALL retain original bytes/targets; uncertain uploads SHALL remain reviewable. Stage completion SHALL NOT imply completed refresh orchestration.
+
+#### Scenario: Source URL rotates or picture becomes hidden
+
+- **WHEN** a signed URL changes without changed bytes, or its picture becomes unavailable
+- **THEN** matching cached bytes/current photo ID avoid duplicate uploads and unavailable sources preserve pictures/cache evidence
+
+#### Scenario: Cache persistence fails before a manual replacement
+
+- **WHEN** an upload and photo-ID observation are confirmed but cache persistence fails before a later manual avatar change
+- **THEN** recovery retains the original observed ID without another upload or associating the old source hash with the later avatar
+
+#### Scenario: Frozen upload retries or becomes uncertain
+
+- **WHEN** a definite refusal retries after source/consumer changes, or the upload response is lost
+- **THEN** retries reuse persisted JPEG bytes and uncertain outcomes cannot become cache evidence or an automatic second upload
+
+#### Scenario: Photo plan or scope is invalid
+
+- **WHEN** plan persistence fails, source bytes exceed their budget or the account/claim/route/generation/binding/snapshot becomes obsolete
+- **THEN** assets and plans commit atomically before mutation, invalid images cannot replace avatars and old work cannot retarget a new scope

@@ -2,7 +2,7 @@
 
 The PostgreSQL delivery foundation and diagnostic runtime are now implemented; this is not a completed bridge. The approved contract is in OpenSpec. All existing behavior remains required, including linked names, intentional topic deletion and reviewed uncertain sends. Caption clearing is conditional on released provider support.
 
-The [metadata snapshot and text stages](METADATA.md) now preserve source rosters/descriptions and freeze destination-scoped topic, mirror and existing contact-bot updates. Full metadata orchestration, pictures, permission controls and scheduling remain pending; text completion does not complete a refresh job or enable runtime dispatch.
+The [metadata snapshot/text stages](METADATA.md) and [picture caching/uploads](METADATA-PICTURES.md) now preserve source rosters/descriptions, freeze destination-scoped text and JPEG assets, and retain independent upload/photo-ID receipts. Full metadata orchestration, permission controls and scheduling remain pending; stage completion does not complete a refresh job or enable runtime dispatch.
 
 ## Shape and dependency direction
 
@@ -52,7 +52,7 @@ The identity directory and mention resolver now connect to text-plan preparation
 
 The [private group picker and topic controls](GROUP-PICKER.md) now persist scoped selection requests, consume them with link commits and restore original conversation headers. Reply packets support frozen per-packet destinations and native reply keyboards. A narrow SDK serializer preserves the explicit private-group constraint; provider calls still use the required SDK. Metadata/history/provisioning execution remains pending.
 
-[Manual mirror transitions](MIRROR-TRANSITIONS.md) now commit route changes and confirmation plans together. Topic creation retains normal uncertain-send review and persistent move/import guards; known refusals leave the original mirror active. Private group selection, complete topic headers and metadata execution remain pending.
+[Manual mirror transitions](MIRROR-TRANSITIONS.md) now commit route changes and confirmation plans together. Topic creation retains normal uncertain-send review and persistent move/import guards; known refusals leave the original mirror active. [Private group selection and topic headers](GROUP-PICKER.md) are implemented; full metadata/history/provisioning execution remains pending.
 
 [Start help and command menus](STARTUP-CONTROLS.md) now include atomic member activation/direct-route admission and migration-gated menu jobs. Settings retain their original owner scope and completed steps across retry. Lifecycle persistence records completed migration/import evidence; native credential migration and callback setup remain pending.
 
