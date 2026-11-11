@@ -3,6 +3,8 @@ module github.com/veryshyjelly/bifrost
 go 1.27.3
 
 require (
+	github.com/chromedp/cdproto v0.159.3
+	github.com/chromedp/chromedp v0.23.0
 	github.com/go-telegram/bot v1.28.0
 	github.com/jackc/pgx/v5 v5.12.0
 	github.com/pressly/goose/v3 v3.29.0
@@ -20,6 +22,7 @@ require (
 	github.com/cubicdaiya/gonp v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
+	github.com/go-json-experiment/json v0.0.0-20260213210345-44df1a37e875 // indirect
 	github.com/go-sql-driver/mysql v1.10.1 // indirect
 	github.com/google/cel-go v0.28.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

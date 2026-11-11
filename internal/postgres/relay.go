@@ -198,6 +198,15 @@ func recordRelay(ctx context.Context, q *db.Queries, account string, p relay.Pla
 			return false, delivery.ErrUncertain
 		}
 		waID = receipt.MessageID
+		if p.SourceAsset != nil {
+			asset, err := json.Marshal(p.SourceAsset)
+			if err != nil {
+				return false, err
+			}
+			if err := q.SaveArchivedAsset(ctx, db.SaveArchivedAssetParams{AccountID: account, WhatsappChat: p.WhatsAppChat, MessageID: waID, Asset: asset}); err != nil {
+				return false, err
+			}
+		}
 	}
 	scope := relayScope(p.BotID, p.TelegramChat)
 	if err := q.InsertRelayMapping(ctx, db.InsertRelayMappingParams{AccountID: account, Scope: scope, TelegramChatID: p.TelegramChat, TelegramMessageID: tgID, ThreadID: p.ThreadID, BotID: p.BotID, WhatsappChat: p.WhatsAppChat, WhatsappMessageID: waID, Direction: p.Direction, PlanKey: pgtype.Text{String: p.Key, Valid: true}, Part: int32(part), Receipt: effect.Result}); err != nil {

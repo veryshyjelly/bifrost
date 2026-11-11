@@ -126,6 +126,32 @@ type HistoryActivity struct {
 	Status       string
 }
 
+type HistoryChoice struct {
+	AccountID string
+	ChoiceID  string
+	Payload   []byte
+}
+
+type HistoryItem struct {
+	AccountID string
+	RunID     string
+	ItemIndex int32
+	JobID     int64
+	SourceID  string
+	State     string
+	Payload   []byte
+	PlanKey   pgtype.Text
+}
+
+type HistoryRun struct {
+	AccountID    string
+	RunID        string
+	SessionID    string
+	WhatsappChat string
+	State        string
+	Payload      []byte
+}
+
 type InboxRetirement struct {
 	AccountID string
 	JobID     int64
@@ -162,6 +188,13 @@ type MentionToken struct {
 	PersonID  string
 }
 
+type MessageAsset struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	Asset        []byte
+}
+
 type MessageMapping struct {
 	Seq               int64
 	AccountID         string
@@ -177,6 +210,13 @@ type MessageMapping struct {
 	Part              int32
 	Deleted           bool
 	Receipt           []byte
+}
+
+type MessageTombstone struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	Revoked      bool
 }
 
 type MetadataAdmission struct {
@@ -309,6 +349,13 @@ type MirrorReturn struct {
 type MirrorTransition struct {
 	AccountID string
 	JobID     int64
+	Payload   []byte
+}
+
+type NativePollAction struct {
+	AccountID string
+	ActionID  string
+	PlanKey   string
 	Payload   []byte
 }
 

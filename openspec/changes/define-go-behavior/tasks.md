@@ -212,3 +212,12 @@
 - [x] Preserve contact creation at capacity, immutable group-participant selection, scoped single-use binding and conditional inbox retirement.
 - [x] Verify native SDK requests, PostgreSQL rollback, encryption, routing preservation and owner/destination/choice guards in isolated fixtures.
 - [ ] Compose credential/provisioning handlers and imported bot evidence into the complete runtime.
+
+## History and native attachment capabilities
+
+- [x] Implement scoped single-use history choices with independent prompt cleanup, complete frozen batches and conversation-specific live holds.
+- [x] Implement destination-scoped skipping, fresh import quotes, retained daily headings and known partial live-plan adoption without rekeying effects.
+- [x] Implement native incoming/outgoing attachment, location, contact and poll packets with bounded authenticated retrieval, frozen media references and separate read receipts.
+- [x] Implement validated WhatsApp/Telegram sticker conversion, transparent native Go TGS rendering and untouched original fallbacks.
+- [x] Exercise native SDK/PostgreSQL retry, mapping, partial/unknown delivery and codec/container fixtures in isolation.
+- [ ] Integrate these capabilities with the complete runtime, remaining change workflows and legacy import acceptance suite.

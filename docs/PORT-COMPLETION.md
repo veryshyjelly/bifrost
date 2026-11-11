@@ -4,8 +4,8 @@ The user requested completion of all remaining workflows, legacy import and runt
 
 - [x] Managed Telegram bot credentials, native registration, local API migration and callback setup in isolated fixtures.
 - [x] Contact provisioning, scoped binding choices and conditional inbox retirement in isolated fixtures.
-- [ ] History choices, frozen ordered imports, destination receipts and scoped live holds.
-- [ ] Attachment delivery, captions/mentions, durable media archives and sticker codecs/validation.
+- [x] History choices, frozen ordered imports, destination receipts and scoped live holds in isolated fixtures.
+- [x] Attachment delivery, captions/mentions, durable media archives and sticker codecs/validation in isolated fixtures.
 - [ ] Edits, repair, source deletion choices, reactions and polls.
 - [ ] Passive Status archive, refresh, author mutes and scoped controls.
 - [ ] Remaining status/operational owner commands and explicit transition reconciliation.

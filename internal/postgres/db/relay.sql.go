@@ -134,9 +134,9 @@ func (q *Queries) PrepareRelay(ctx context.Context, arg PrepareRelayParams) erro
 
 const relayEcho = `-- name: RelayEcho :one
 SELECT EXISTS(SELECT 1 FROM message_mappings WHERE account_id=$1::text AND whatsapp_chat=$2::text AND whatsapp_message_id=$3::text AND direction='out')
-OR EXISTS(SELECT 1 FROM relay_plans p JOIN effects e ON e.account_id=p.account_id AND e.effect_key=p.payload->>'Prefix'
+OR EXISTS(SELECT 1 FROM relay_plans p JOIN effects e ON e.account_id=p.account_id AND e.effect_key IN (p.payload->>'Prefix',(p.payload->>'Prefix')||':original')
 WHERE p.account_id=$1::text AND p.whatsapp_chat=$2::text AND p.direction='out' AND e.state='done' AND e.result->>'messageId'=$3::text) AS recognized,
-EXISTS(SELECT 1 FROM relay_plans p JOIN effects e ON e.account_id=p.account_id AND e.effect_key=p.payload->>'Prefix'
+EXISTS(SELECT 1 FROM relay_plans p JOIN effects e ON e.account_id=p.account_id AND e.effect_key IN (p.payload->>'Prefix',(p.payload->>'Prefix')||':original')
 JOIN jobs j ON j.id=e.job_id
 WHERE p.account_id=$1::text AND p.whatsapp_chat=$2::text AND p.direction='out' AND e.state IN ('sending','uncertain') AND j.state <> 'done') AS pending
 `

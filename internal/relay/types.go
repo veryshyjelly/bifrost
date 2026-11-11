@@ -9,6 +9,7 @@ import (
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
+	"github.com/veryshyjelly/bifrost/internal/attachments"
 	"github.com/veryshyjelly/bifrost/internal/conversation"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/mentions"
@@ -48,10 +49,16 @@ type TelegramRequest struct {
 	ReplyTo  int64                  `json:"reply_to"`
 }
 type WhatsAppRequest struct {
-	ChatID          string   `json:"chatId"`
-	Text            string   `json:"text"`
-	QuotedMessageID string   `json:"quotedMessageId,omitempty"`
-	Mentions        []string `json:"mentions,omitempty"`
+	ChatID          string                   `json:"chatId"`
+	Text            string                   `json:"text"`
+	QuotedMessageID string                   `json:"quotedMessageId,omitempty"`
+	Mentions        []string                 `json:"mentions,omitempty"`
+	Kind            string                   `json:"kind,omitempty"`
+	Asset           *attachments.Asset       `json:"asset,omitempty"`
+	PTT             bool                     `json:"ptt,omitempty"`
+	Location        *sdk.SendLocationRequest `json:"location,omitempty"`
+	Contact         *sdk.SendContactRequest  `json:"contact,omitempty"`
+	Poll            *sdk.SendPollRequest     `json:"poll,omitempty"`
 }
 type Plan struct {
 	Key                                     string `json:"key"`
@@ -63,7 +70,10 @@ type Plan struct {
 	Route                                   conversation.Route
 	Parts                                   []TelegramRequest
 	Outgoing                                *WhatsAppRequest
-	Complete                                bool `json:"-"`
+	OutgoingFallback                        *WhatsAppRequest   `json:"OutgoingFallback,omitempty"`
+	UseOutgoingFallback                     bool               `json:"UseOutgoingFallback,omitempty"`
+	SourceAsset                             *attachments.Asset `json:"SourceAsset,omitempty"`
+	Complete                                bool               `json:"-"`
 }
 type Mapping struct {
 	WhatsAppChat, WhatsAppMessage, BotID, Direction string
@@ -97,6 +107,13 @@ func (p Plan) FrozenRequest(part int) (string, json.RawMessage, error) {
 			return "", nil, delivery.ErrInvalid
 		}
 		b, e := json.Marshal(p.Outgoing)
+		if p.UseOutgoingFallback {
+			if p.OutgoingFallback == nil {
+				return "", nil, delivery.ErrInvalid
+			}
+			b, e = json.Marshal(p.OutgoingFallback)
+			return p.Prefix + ":original", b, e
+		}
 		return p.Prefix, b, e
 	}
 	if part < 0 || part >= len(p.Parts) {

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"mime"
 	"net"
 	"net/http"
 	"net/url"
@@ -43,14 +44,50 @@ type attemptKey struct{}
 
 // Attempt belongs to one synchronous SDK call; it is never shared between calls.
 type Attempt struct {
-	started      bool
-	streaming    bool
-	status       int
-	code         string
-	reason       string
-	retryAfter   time.Duration
-	declined     bool
-	networkError error
+	started                  bool
+	streaming                bool
+	status                   int
+	code                     string
+	reason                   string
+	retryAfter               time.Duration
+	declined                 bool
+	networkError             error
+	mediaLimit               int64
+	mediaExceeded            bool
+	mediaFilename, mediaMIME string
+}
+
+var ErrMediaLimit = errors.New("provider attachment exceeds configured limit")
+
+// ObserveMedia bounds raw SDK media reads, including stored-media APIs whose
+// native SDK surface returns a byte slice rather than a streaming reader.
+func ObserveMedia(ctx context.Context, max int64) (context.Context, *Attempt) {
+	ctx, a := ObserveStream(ctx)
+	a.mediaLimit = max
+	return ctx, a
+}
+func (a *Attempt) MediaMetadata() (string, string, bool) {
+	return a.mediaFilename, a.mediaMIME, a.mediaExceeded
+}
+
+type cappedMediaBody struct {
+	io.ReadCloser
+	attempt   *Attempt
+	remaining int64
+}
+
+func (b *cappedMediaBody) Read(p []byte) (int, error) {
+	if int64(len(p)) > b.remaining+1 {
+		p = p[:b.remaining+1]
+	}
+	n, err := b.ReadCloser.Read(p)
+	b.remaining -= int64(n)
+	if b.remaining < 0 {
+		b.attempt.mediaExceeded = true
+		b.ReadCloser.Close()
+		return 0, ErrMediaLimit
+	}
+	return n, err
 }
 
 func Observe(ctx context.Context) (context.Context, *Attempt) {
@@ -119,6 +156,21 @@ func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 		a.status = response.StatusCode
 	}
 	if a != nil && a.streaming && request.Method == http.MethodGet && response.StatusCode >= 200 && response.StatusCode < 300 {
+		if _, params, err := mime.ParseMediaType(response.Header.Get("Content-Disposition")); err == nil {
+			a.mediaFilename = params["filename"]
+		}
+		a.mediaMIME = strings.TrimSpace(strings.Split(response.Header.Get("X-Media-Mimetype"), ";")[0])
+		if a.mediaMIME == "" {
+			a.mediaMIME = strings.TrimSpace(strings.Split(response.Header.Get("Content-Type"), ";")[0])
+		}
+		if a.mediaLimit > 0 {
+			if response.ContentLength > a.mediaLimit {
+				a.mediaExceeded = true
+				response.Body.Close()
+				return nil, ErrMediaLimit
+			}
+			response.Body = &cappedMediaBody{ReadCloser: response.Body, attempt: a, remaining: a.mediaLimit}
+		}
 		return response, nil // The SDK enforces the explicit byte cap and stream lifetime.
 	}
 	// Text/control JSON only; source streams use the bounded SDK reader above.

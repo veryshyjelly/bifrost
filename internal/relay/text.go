@@ -166,6 +166,24 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 			return local(err)
 		}
 	}
+	return s.deliverIncoming(ctx, job, e, plan)
+}
+
+// ResumeIncoming continues an adopted immutable plan using its original effect keys.
+func (s *Service) ResumeIncoming(ctx context.Context, job delivery.Job, e *delivery.Effects, key string) error {
+	plan, found, err := s.store.RelayPlan(ctx, job.AccountID, key)
+	if err != nil {
+		return local(err)
+	}
+	if !found || plan.Direction != "in" {
+		return delivery.ErrInvalid
+	}
+	if plan.Complete {
+		return nil
+	}
+	return s.deliverIncoming(ctx, job, e, plan)
+}
+func (s *Service) deliverIncoming(ctx context.Context, job delivery.Job, e *delivery.Effects, plan Plan) error {
 	for i := range plan.Parts {
 		key, request, err := plan.FrozenRequest(i)
 		if err != nil {

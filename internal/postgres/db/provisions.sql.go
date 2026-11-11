@@ -109,7 +109,12 @@ func (q *Queries) CreateContactBindChoice(ctx context.Context, arg CreateContact
 }
 
 const provisionMessageSender = `-- name: ProvisionMessageSender :one
-SELECT payload FROM whatsapp_sources WHERE account_id=$1 AND whatsapp_chat=$2 AND payload->>'MessageID'=$3::text ORDER BY job_id LIMIT 1
+SELECT evidence.payload FROM (
+ SELECT w.payload,w.job_id FROM whatsapp_sources w WHERE w.account_id=$1 AND w.whatsapp_chat=$2 AND w.payload->>'MessageID'=$3::text
+ UNION ALL
+ SELECT i.payload->'Source' AS payload,i.job_id FROM history_items i JOIN history_runs r ON r.account_id=i.account_id AND r.run_id=i.run_id
+ WHERE i.account_id=$1 AND r.whatsapp_chat=$2 AND i.source_id=$3::text
+) evidence ORDER BY evidence.job_id LIMIT 1
 `
 
 type ProvisionMessageSenderParams struct {

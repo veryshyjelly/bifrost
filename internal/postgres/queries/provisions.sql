@@ -12,4 +12,9 @@ SELECT * FROM contact_bind_choices WHERE account_id=$1 AND choice_id=$2;
 -- name: UseContactBindChoice :exec
 UPDATE contact_bind_choices SET used=true WHERE account_id=$1 AND choice_id=$2;
 -- name: ProvisionMessageSender :one
-SELECT payload FROM whatsapp_sources WHERE account_id=$1 AND whatsapp_chat=$2 AND payload->>'MessageID'=sqlc.arg(message_id)::text ORDER BY job_id LIMIT 1;
+SELECT evidence.payload FROM (
+ SELECT w.payload,w.job_id FROM whatsapp_sources w WHERE w.account_id=sqlc.arg(account_id) AND w.whatsapp_chat=sqlc.arg(whatsapp_chat) AND w.payload->>'MessageID'=sqlc.arg(message_id)::text
+ UNION ALL
+ SELECT i.payload->'Source' AS payload,i.job_id FROM history_items i JOIN history_runs r ON r.account_id=i.account_id AND r.run_id=i.run_id
+ WHERE i.account_id=sqlc.arg(account_id) AND r.whatsapp_chat=sqlc.arg(whatsapp_chat) AND i.source_id=sqlc.arg(message_id)::text
+) evidence ORDER BY evidence.job_id LIMIT 1;

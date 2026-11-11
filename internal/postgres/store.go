@@ -289,7 +289,13 @@ func (s *Store) SetJobState(ctx context.Context, job delivery.Job, state deliver
 				return delivery.ErrIncomplete
 			}
 		}
-		return q.SetJobState(ctx, db.SetJobStateParams{ID: row.ID, State: string(state), DelaySeconds: n})
+		if err := q.SetJobState(ctx, db.SetJobStateParams{ID: row.ID, State: string(state), DelaySeconds: n}); err != nil {
+			return err
+		}
+		if state == delivery.Failed || state == delivery.Uncertain {
+			return failHistoryJob(ctx, q, row)
+		}
+		return nil
 	})
 }
 
@@ -320,6 +326,17 @@ func (s *Store) RecoverExpired(ctx context.Context) (int, error) {
 		if err := q.SetJobState(ctx, db.SetJobStateParams{ID: row.ID, State: string(state)}); err != nil {
 			return 0, err
 		}
+		if state == delivery.Uncertain {
+			if err := failHistoryJob(ctx, q, row); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if err := q.ReconcileHistoryFailures(ctx); err != nil {
+		return 0, err
+	}
+	if err := q.SyncHistoryActivity(ctx); err != nil {
+		return 0, err
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return 0, err
@@ -344,6 +361,9 @@ func (s *Store) Review(ctx context.Context, id int64, retry, confirmNoDelivery b
 	}
 	state := delivery.Done
 	if retry {
+		if err := resumeReviewedHistory(ctx, q, row); err != nil {
+			return err
+		}
 		unknown, err := q.HasUncertainEffect(ctx, id)
 		if err != nil {
 			return err

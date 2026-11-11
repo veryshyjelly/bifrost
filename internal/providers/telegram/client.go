@@ -9,19 +9,23 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
-type Client struct{ sdk *bot.Bot }
+type Client struct {
+	sdk  *bot.Bot
+	http *http.Client
+}
 
 // New performs no remote requests, polling, webhook registration or token migration.
 func New(baseURL, token string, transport http.RoundTripper) (*Client, error) {
 	if !providers.ValidURL(baseURL) || token == "" {
 		return nil, providers.ErrInvalidRequest
 	}
+	httpClient := providers.HTTPClient(transport)
 	client, err := bot.New(token, bot.WithSkipGetMe(), bot.WithServerURL(baseURL),
-		bot.WithHTTPClient(0, providers.HTTPClient(transport)), bot.WithErrorsHandler(func(error) {}))
+		bot.WithHTTPClient(0, httpClient), bot.WithErrorsHandler(func(error) {}))
 	if err != nil {
 		return nil, providers.ErrInvalidRequest
 	}
-	return &Client{sdk: client}, nil
+	return &Client{sdk: client, http: httpClient}, nil
 }
 
 func (c *Client) Me(ctx context.Context) (*models.User, error) {

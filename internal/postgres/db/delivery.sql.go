@@ -13,6 +13,11 @@ const claim = `-- name: Claim :one
 WITH candidate AS (
   SELECT j.id FROM jobs j
   WHERE j.state = 'pending' AND j.due <= clock_timestamp()
+    AND NOT (j.kind='wa' AND EXISTS (
+      SELECT 1 FROM history_runs h WHERE h.account_id=j.account_id AND h.state IN ('queued','fetching','delivering')
+      AND h.whatsapp_chat=COALESCE((SELECT s.whatsapp_chat FROM whatsapp_sources s WHERE s.account_id=j.account_id AND s.job_id=j.id),
+        CASE WHEN j.stream LIKE 'wa:%' THEN substring(j.stream FROM 4) ELSE '' END)
+    ))
     AND NOT EXISTS (
       SELECT 1 FROM jobs p WHERE p.account_id = j.account_id AND p.stream = j.stream
         AND p.id <> j.id AND (p.id < j.id OR p.state = 'running') AND p.state <> 'done'
