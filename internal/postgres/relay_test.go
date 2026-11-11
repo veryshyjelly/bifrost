@@ -43,6 +43,7 @@ type relayFixture struct {
 	service              *relay.Service
 	dispatcher           *bridge.Dispatcher
 	cleaner              *control.Cleaner
+	operator             *control.Operator
 	retirer              *conversation.Retirer
 	topicDeleter         conversation.TopicDeleter
 	mu                   sync.Mutex
@@ -50,9 +51,11 @@ type relayFixture struct {
 	waCalls              []waTextCall
 	tgCount              int
 	failTG               int
+	dropTGAt             int
 	perBotIDs            bool
 	botSeq               map[string]int
 	reads                atomic.Int32
+	readChats            []string
 	topics               atomic.Int32
 	topicNames           []string
 	readFailure          atomic.Bool
@@ -74,6 +77,7 @@ type relayFixture struct {
 	deleteRefuse         map[int]int
 	deleteDropAt         int
 	deleteClients        control.DeleteClients
+	replyClients         control.Clients
 	retireCalls          []retireCall
 	retireStatus         int
 	retireMissing        bool
@@ -220,6 +224,15 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			fmt.Fprint(w, `{"ok":false,"error_code":429,"parameters":{"retry_after":60},"description":"fixture rate refusal"}`)
 			return
 		}
+		if f.dropTGAt == f.tgCount {
+			conn, _, err := w.(http.Hijacker).Hijack()
+			if err != nil {
+				t.Error(err)
+			} else {
+				conn.Close()
+			}
+			return
+		}
 		id := 1000 + f.tgCount
 		if f.perBotIDs {
 			f.botSeq[token]++
@@ -261,6 +274,15 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			return
 		}
 		if strings.HasSuffix(r.URL.Path, "/chats/read") {
+			var body struct {
+				ChatID string `json:"chatId"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				t.Error(err)
+			}
+			f.mu.Lock()
+			f.readChats = append(f.readChats, body.ChatID)
+			f.mu.Unlock()
 			f.reads.Add(1)
 			if f.readFailure.Load() {
 				w.WriteHeader(503)
@@ -346,12 +368,13 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 	}
 	dispatchOptions.Extensions.ControlJobs = map[string]delivery.Handler{"control-retire-inbox": f.retirer.Retire}
 	if mentionService != nil {
-		controls, err := control.New(f.store, func(_ context.Context, _ string, id string) (control.Telegram, error) {
+		f.replyClients = func(_ context.Context, _ string, id string) (control.Telegram, error) {
 			if c := clients[id]; c != nil {
 				return c, nil
 			}
 			return nil, delivery.ErrInvalid
-		}, -100)
+		}
+		controls, err := control.New(f.store, f.replyClients, -100)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -361,6 +384,12 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		}
 		dispatchOptions.Extensions.MentionPicker = picker.Handle
 		dispatchOptions.Extensions.MentionRefusal = picker.Refusal
+		f.operator, err = control.NewOperator(f.store, controls, control.OperatorOptions{OwnerID: 123})
+		if err != nil {
+			t.Fatal(err)
+		}
+		dispatchOptions.Extensions.OwnerCommands = f.operator.Handle
+		dispatchOptions.Extensions.Management = map[string]delivery.Handler{"operator_action": f.operator.Manage}
 		f.deleteClients = func(_ context.Context, _ string, id string) (control.DeleteTelegram, error) {
 			if client := clients[id]; client != nil {
 				return client, nil

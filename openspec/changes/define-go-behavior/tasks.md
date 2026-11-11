@@ -121,3 +121,13 @@
 - [x] Use native idempotent topic deletion with durable outcomes, fenced writes and independent permission/refusal recovery.
 - [x] Verify activation, provider failures, database reopening, rollback, concurrent route admission and lease fencing with isolated PostgreSQL/SDK fixtures.
 - [ ] Compose remaining owner commands, mirror transitions, history/import and full runtime startup.
+
+## Conversation owner command implementation
+
+- [x] Preserve `/keep`, `/mute`, `/ignore` and `/read` command addressing, caption handling, ignored edits and original route/mode rules.
+- [x] Resolve member-bot private commands through verified bindings and stable conversation keys without creating missing routes.
+- [x] Admit independent management jobs atomically with source command plans and expiry scheduling, rejecting foreign mapped replies.
+- [x] Commit preference changes with their frozen master-bot confirmation plans; preserve later decisions during notice recovery.
+- [x] Reuse independent read jobs without automatic reads from preference commands or incoming relays.
+- [x] Exercise native SDK dispatch, rollback, notice uncertainty, database reopening, scoped authorization and fencing with isolated PostgreSQL.
+- [ ] Implement startup/help and menus, remaining controls, mirror transitions, managed credentials, history/import and final runtime composition.

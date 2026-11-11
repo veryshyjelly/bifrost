@@ -185,3 +185,18 @@ func (q *Queries) PrepareControl(ctx context.Context, arg PrepareControlParams) 
 	)
 	return err
 }
+
+const setConversationMode = `-- name: SetConversationMode :exec
+UPDATE bridge_routes SET mode=$3 WHERE account_id=$1 AND whatsapp_chat=$2
+`
+
+type SetConversationModeParams struct {
+	AccountID    string
+	WhatsappChat string
+	Mode         string
+}
+
+func (q *Queries) SetConversationMode(ctx context.Context, arg SetConversationModeParams) error {
+	_, err := q.db.Exec(ctx, setConversationMode, arg.AccountID, arg.WhatsappChat, arg.Mode)
+	return err
+}

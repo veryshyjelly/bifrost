@@ -41,6 +41,7 @@ type Extensions struct {
 	WhatsApp       map[sdk.WebhookEvent]delivery.Handler
 	Telegram       TelegramHandler
 	MentionPicker  TelegramHandler
+	OwnerCommands  TelegramHandler
 	MentionRefusal MentionRefusalHandler
 	Management     map[string]delivery.Handler
 	ControlJobs    map[string]delivery.Handler
@@ -205,6 +206,11 @@ func (d *Dispatcher) telegram(ctx context.Context, job delivery.Job, e *delivery
 		return err
 	}
 	if h := d.c.Extensions.MentionPicker; h != nil {
+		if err := h(ctx, job, e, envelope.Bot, &update); !errors.Is(err, delivery.ErrUnsupported) {
+			return err
+		}
+	}
+	if h := d.c.Extensions.OwnerCommands; h != nil {
 		if err := h(ctx, job, e, envelope.Bot, &update); !errors.Is(err, delivery.ErrUnsupported) {
 			return err
 		}

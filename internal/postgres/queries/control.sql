@@ -19,6 +19,9 @@ SELECT * FROM bridge_routes WHERE account_id=$1 AND whatsapp_chat=$2 FOR UPDATE;
 -- name: CompleteControl :exec
 UPDATE control_plans SET complete=true WHERE account_id=$1 AND plan_key=$2;
 
+-- name: SetConversationMode :exec
+UPDATE bridge_routes SET mode=$3 WHERE account_id=$1 AND whatsapp_chat=$2;
+
 -- name: ObserveControl :exec
 INSERT INTO telegram_observations(account_id,scope,bot_id,chat_id,message_id,thread_id,kind,message_date,payload,expires_at)
 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)

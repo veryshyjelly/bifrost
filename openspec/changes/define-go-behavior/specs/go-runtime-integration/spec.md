@@ -219,3 +219,22 @@ The Go implementation SHALL retire eligible former management topics independent
 
 - **WHEN** a prepared relay has unfinished or uncertain work at a former management topic
 - **THEN** retirement waits for that relay to resolve, retaining its frozen destination and receipts before deletion
+
+### Requirement: Durable conversation owner decisions
+
+The Go implementation SHALL admit preference and explicit read commands with durable command plans. Preference execution SHALL commit its mode and complete confirmation plan together. Notice recovery SHALL preserve the original reply without re-applying an older preference over later decisions. Read retries SHALL remain independent of message sends.
+
+#### Scenario: Action admission fails before acknowledgement
+
+- **WHEN** a source command cannot commit its prepared control plan
+- **THEN** the original ingress remains durable while partial management admission, expiry scheduling and preference changes do not commit
+
+#### Scenario: An old confirmation retries after a later decision
+
+- **WHEN** a preference confirmation retries after the owner has issued a newer decision or changed routes
+- **THEN** it reuses the original notice and receipts without re-applying the older mode or moving the confirmation
+
+#### Scenario: Explicit read is refused
+
+- **WHEN** the provider refuses an explicitly queued read receipt
+- **THEN** its independent retry uses the resolved WhatsApp chat without repeating a message send or changing conversation preferences

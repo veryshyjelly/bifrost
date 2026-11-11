@@ -44,7 +44,7 @@ Target selection preserves the existing distinctions:
 
 Migration `00004_conversations.sql` adds route names/modes, bot-start state and unique canonical-contact bindings. Native topic/member adapters preserve full-width Telegram IDs and optional SDK fields. None of these routing operations marks WhatsApp content read, copies history or changes the approved 1,000,000-byte outgoing sticker budget.
 
-Verified phone/LID aliases, formatting, scoped mappings, native text dispatch, notice cleanup and former-inbox retirement now have tested capabilities. Managed-bot token registration, remaining owner commands, full mirror/topic transitions, `/unmirror`, history coordination and final runtime composition are still pending. Canonical identity resolution precedes routing; raw aliases are not silently merged by the storage adapter.
+Verified phone/LID aliases, formatting, scoped mappings, native text dispatch, notice cleanup, former-inbox retirement and conversation preference/read commands now have tested capabilities. Managed-bot token registration, remaining owner commands, full mirror/topic transitions, `/unmirror`, history coordination and final runtime composition are still pending. Canonical identity resolution precedes routing; raw aliases are not silently merged by the storage adapter.
 
 ## Validation
 

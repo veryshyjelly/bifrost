@@ -88,7 +88,7 @@ func (s *Store) PrepareControl(ctx context.Context, job delivery.Job, p control.
 			var source struct {
 				ID string `json:"id"`
 			}
-			if json.Unmarshal(row.Payload, &source) != nil || source.ID == "" || p.Clear != nil || p.Command != nil || p.Scope != nil || len(p.Actions) > 0 {
+			if json.Unmarshal(row.Payload, &source) != nil || source.ID == "" || p.Clear != nil || p.Command != nil || p.Scope != nil || p.Operator != nil || len(p.Actions) > 0 {
 				return delivery.ErrInvalid
 			}
 			run, err := loadClear(ctx, q, row.AccountID, source.ID)
@@ -111,6 +111,14 @@ func (s *Store) PrepareControl(ctx context.Context, job delivery.Job, p control.
 		}
 		if !errors.Is(err, pgx.ErrNoRows) {
 			return err
+		}
+		if p.Operator != nil {
+			if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
+				return err
+			}
+			if err := queueOperator(ctx, q, row, p, p.Operator.ManagementChatID); err != nil {
+				return err
+			}
 		}
 		if p.Scope != nil {
 			if !p.Scope.Known || p.Scope.Target != p.Target {

@@ -46,6 +46,7 @@ type Plan struct {
 	Scope           *Context
 	Command         *Command
 	Clear           *ClearRequest
+	Operator        *OperatorRequest
 	ReplyTTLSeconds int
 	Complete        bool `json:"-"`
 }
