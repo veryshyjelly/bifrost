@@ -37,6 +37,8 @@ type pictureFixture struct {
 	pclients                  metadata.PictureClients
 	download                  *metadata.CDN
 	pmu                       sync.Mutex
+	memberRoles               map[string]string
+	memberErrors              map[string]int
 	source                    []byte
 	url                       *string
 	currentID                 string
@@ -62,9 +64,9 @@ func picturePNG(t *testing.T, c color.NRGBA) []byte {
 	return b.Bytes()
 }
 
-func newPictureFixture(t *testing.T) *pictureFixture {
+func newPictureFixture(t *testing.T, withMentions ...bool) *pictureFixture {
 	t.Helper()
-	p := &pictureFixture{metadataFixture: newMetadataFixture(t), source: picturePNG(t, color.NRGBA{R: 255, A: 255}), url: new("https://mmg.whatsapp.net/profile?token=one"), currentID: "old-photo"}
+	p := &pictureFixture{metadataFixture: newMetadataFixture(t, withMentions...), source: picturePNG(t, color.NRGBA{R: 255, A: 255}), url: new("https://mmg.whatsapp.net/profile?token=one"), currentID: "old-photo"}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/api/") {
 			p.pmu.Lock()
@@ -98,7 +100,7 @@ func newPictureFixture(t *testing.T) *pictureFixture {
 			if botID != "master" {
 				id = botID
 			}
-			fmt.Fprintf(w, `{"ok":true,"result":{"id":%s,"is_bot":true,"first_name":"Fixture"}}`, id)
+			fmt.Fprintf(w, `{"ok":true,"result":{"id":%s,"is_bot":true,"first_name":"Fixture","username":"fixture_bot"}}`, id)
 			return
 		case "getChat":
 			username := ""
@@ -113,7 +115,19 @@ func newPictureFixture(t *testing.T) *pictureFixture {
 			json.NewEncoder(w).Encode(map[string]any{"ok": true, "result": map[string]any{"id": chatID, "type": "supergroup", "username": username, "title": "Fixture", "photo": photo}})
 			return
 		case "getChatMember":
-			fmt.Fprintf(w, `{"ok":true,"result":{"status":"administrator","can_change_info":%t,"user":{"id":999,"is_bot":true,"first_name":"Fixture"}}}`, !p.forbid)
+			user := r.FormValue("user_id")
+			role := "administrator"
+			if user != "999" {
+				role = p.memberRoles[user]
+				if role == "" {
+					role = "left"
+				}
+			}
+			if code := p.memberErrors[user]; code != 0 {
+				fmt.Fprintf(w, `{"ok":false,"error_code":%d,"parameters":{"retry_after":60}}`, code)
+				return
+			}
+			fmt.Fprintf(w, `{"ok":true,"result":{"status":%q,"can_change_info":%t,"is_member":true,"user":{"id":%s,"is_bot":true,"first_name":"Fixture"}}}`, role, !p.forbid, user)
 			return
 		case "getUserProfilePhotos":
 			if p.missingID || p.currentID == "" {

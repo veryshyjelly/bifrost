@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -269,6 +271,25 @@ func (s *Store) PrepareMetadata(ctx context.Context, j delivery.Job, target meta
 		if err != nil {
 			return err
 		}
+		rosterChanged := false
+		if scope == "group" {
+			old, err := q.MetadataSnapshot(ctx, db.MetadataSnapshotParams{AccountID: row.AccountID, SessionID: target.Session, SourceID: target.Canonical})
+			if errors.Is(err, pgx.ErrNoRows) {
+				rosterChanged = true
+			} else if err != nil {
+				return err
+			} else {
+				var prior metadata.Snapshot
+				if json.Unmarshal(old.Payload, &prior) != nil {
+					return delivery.ErrInvalid
+				}
+				d, err := directory(ctx, q, row.AccountID)
+				if err != nil {
+					return err
+				}
+				rosterChanged = !reflect.DeepEqual(metadataMemberKeys(d, prior.Members), metadataMemberKeys(d, snapshot.Members))
+			}
+		}
 		n, err := q.SaveMetadataSnapshot(ctx, db.SaveMetadataSnapshotParams{AccountID: row.AccountID, SessionID: target.Session, SourceID: target.Canonical, JobID: row.ID, FetchedAt: snapshot.FetchedAt, Payload: b})
 		if err != nil {
 			return err
@@ -303,7 +324,7 @@ func (s *Store) PrepareMetadata(ctx context.Context, j delivery.Job, target meta
 				return err
 			}
 		}
-		result = metadata.Plan{Key: row.Dedup, JobID: row.ID, Target: target, Snapshot: snapshot, Changes: changes, Warning: warning}
+		result = metadata.Plan{Key: row.Dedup, JobID: row.ID, Target: target, Snapshot: snapshot, Changes: changes, Warning: warning, RosterChanged: rosterChanged}
 		b, err = json.Marshal(result)
 		if err != nil {
 			return err
@@ -407,3 +428,12 @@ func (s *Store) CompleteMetadataText(ctx context.Context, j delivery.Job) error 
 }
 
 var _ metadata.Store = (*Store)(nil)
+
+func metadataMemberKeys(d *identity.Directory, members []identity.Member) []string {
+	keys := make([]string, 0, len(members))
+	for _, m := range members {
+		keys = append(keys, d.Canonical(m.ID)+":"+strconv.FormatBool(m.IsAdmin)+":"+strconv.FormatBool(m.IsSuperAdmin))
+	}
+	sort.Strings(keys)
+	return keys
+}

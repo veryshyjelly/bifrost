@@ -1,6 +1,6 @@
 # Metadata picture stages
 
-`internal/metadata.Pictures` prepares and applies group/contact photo work after the text stages. The native OpenWA SDK reads group pictures and contact profile-picture URLs; native Telegram SDK models upload group photos and static bot profile photos. This is another independently resumable stage, not a complete `sync_metadata` handler. Permission actions, member-bot reporting, run fan-out/coalescing, owner commands, completion notices and scheduling still need implementation before runtime dispatch.
+`internal/metadata.Pictures` prepares and applies group/contact photo work after the text stages. The native OpenWA SDK reads group pictures and contact profile-picture URLs; native Telegram SDK models upload group photos and static bot profile photos. This is another independently resumable stage, followed by [permission advice and sealed reports](METADATA-ADVICE.md). Run admission, target outcome/retry collection, fan-out/coalescing and scheduling still need implementation before runtime dispatch.
 
 ## Preserve unavailable pictures and shared chats
 

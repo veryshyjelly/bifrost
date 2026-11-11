@@ -2,7 +2,7 @@
 
 The PostgreSQL delivery foundation and diagnostic runtime are now implemented; this is not a completed bridge. The approved contract is in OpenSpec. All existing behavior remains required, including linked names, intentional topic deletion and reviewed uncertain sends. Caption clearing is conditional on released provider support.
 
-The [metadata snapshot/text stages](METADATA.md) and [picture caching/uploads](METADATA-PICTURES.md) now preserve source rosters/descriptions, freeze destination-scoped text and JPEG assets, and retain independent upload/photo-ID receipts. Full metadata orchestration, permission controls and scheduling remain pending; stage completion does not complete a refresh job or enable runtime dispatch.
+The [metadata snapshot/text stages](METADATA.md), [picture caching/uploads](METADATA-PICTURES.md) and [sync commands, permission advice and sealed reports](METADATA-ADVICE.md) now preserve source metadata, freeze destination-scoped updates/notices and retain independent receipts. Run admission, outcome/retry collection, discovery, serialization/coalescing and scheduling remain pending; stage completion does not complete a refresh job or enable runtime dispatch.
 
 ## Shape and dependency direction
 

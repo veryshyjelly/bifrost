@@ -159,6 +159,18 @@ type MessageMapping struct {
 	Receipt           []byte
 }
 
+type MetadataInspection struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
+type MetadataPermission struct {
+	AccountID string
+	ActionID  string
+	Payload   []byte
+}
+
 type MetadataPictureAsset struct {
 	AccountID string
 	AssetHash string
@@ -175,6 +187,13 @@ type MetadataPictureCache struct {
 
 type MetadataPicturePlan struct {
 	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
+type MetadataReport struct {
+	AccountID string
+	RunID     string
 	JobID     int64
 	Payload   []byte
 }

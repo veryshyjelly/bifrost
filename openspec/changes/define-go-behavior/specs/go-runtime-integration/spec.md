@@ -386,3 +386,36 @@ The Go implementation SHALL preserve unavailable pictures and shared management 
 
 - **WHEN** plan persistence fails, source bytes exceed their budget or the account/claim/route/generation/binding/snapshot becomes obsolete
 - **THEN** assets and plans commit atomically before mutation, invalid images cannot replace avatars and old work cannot retarget a new scope
+
+### Requirement: Scoped metadata commands and permission advice
+
+The Go implementation SHALL preserve owner sync scope and atomically admit independent work with frozen acknowledgements. Permission grants SHALL bind account, session, owner, mirror, conversation, generation and the original 24-hour deadline. Native membership advice SHALL preserve legacy status/400 handling and frozen grant/button data. No metadata control SHALL mutate WhatsApp.
+
+#### Scenario: Bound contact bot has no direct route
+
+- **WHEN** its owner requests sync in the bound bot
+- **THEN** only that contact is queued without creating a direct route or admitting global work
+
+#### Scenario: Permission grant is expired or copied
+
+- **WHEN** its owner/account/session/group/generation/deadline no longer matches
+- **THEN** scoped guidance admits no sync; a saved acknowledgement retry cannot enqueue again or change targets
+
+### Requirement: Evidence-backed metadata completion notices
+
+The Go implementation SHALL seal reports only from terminal account/run/session-bound target jobs with resolved effects. Counts SHALL use confirmed mutation receipts. Complete notice plans SHALL retain original request destinations, content, buttons and expiry, deduplicate recipients and retry only unconfirmed packets. Quiet cron and manual-waiter semantics SHALL remain unchanged. Sealed notices SHALL NOT imply implemented run orchestration.
+
+#### Scenario: Target work remains uncertain
+
+- **WHEN** any target is unresolved or has sending/uncertain effects
+- **THEN** no completion report, summary record or notice plan commits
+
+#### Scenario: Coalesced private recipients overlap chat IDs
+
+- **WHEN** two bots notify the same private owner and only one packet has a receipt
+- **THEN** recovery keeps distinct bot scopes and sends only the unconfirmed packet
+
+#### Scenario: Unchanged cron run has a manual waiter
+
+- **WHEN** no fields, warnings or canonical roster/admin state changed
+- **THEN** cron stays quiet for its default notifier while manual waiters still receive their frozen report

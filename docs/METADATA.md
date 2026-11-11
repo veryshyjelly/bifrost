@@ -1,6 +1,6 @@
 # Metadata snapshots and text updates
 
-`internal/metadata` implements the source-snapshot and Telegram text stages of metadata refresh, followed by [resumable picture caching/uploads](METADATA-PICTURES.md). It accepts scoped group/contact `sync_metadata` work through a claimed job, preserves provider metadata in PostgreSQL and freezes each intended update. These stages are tested through the worker with native SDK loopback fixtures. They are not yet registered as a complete dispatcher handler: permission actions, member-bot reporting, run fan-out/coalescing, owner `/sync` commands, completion notices and cron scheduling remain pending. Existing metadata jobs stay durable for that complete workflow. `serve` still does not dispatch automatically.
+`internal/metadata` implements the source-snapshot and Telegram text stages of metadata refresh, followed by [resumable picture caching/uploads](METADATA-PICTURES.md) and [permission advice, owner commands and sealed completion notices](METADATA-ADVICE.md). It accepts scoped group/contact `sync_metadata` work through a claimed job, preserves provider metadata in PostgreSQL and freezes each intended update. These stages are tested through the worker with native SDK loopback fixtures. Run admission, retry/outcome collection, target discovery, serialization/fan-out/coalescing and cron remain pending before a complete dispatcher handler. Existing metadata jobs stay durable for that workflow. `serve` still does not dispatch automatically.
 
 ## Source preservation and identity
 

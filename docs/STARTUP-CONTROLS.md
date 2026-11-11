@@ -10,7 +10,7 @@ A member's private Start marks the registered bot started even before binding, m
 
 Activation, direct-route admission, cleanup admission, source command expiry and the entire help plan commit together under the account-directory lock and current job claim. A local plan failure rolls everything back while retaining the original ingress. Once prepared, retry reuses the original help and effects: binding an initially unbound bot later does not change the older reply or create routes from its retry. Uncertain message sends retain the normal review rules.
 
-Commands and ordinary help notices use the existing 60-second default expiry; a group member's private-chat button uses the existing 600-second interactive expiry. Master private `mirror_…` links are delegated to the group picker (GROUP-PICKER.md). Master group `sync_…` links remain delegated to their pending workflow, rather than consumed as ordinary help.
+Commands and ordinary help notices use the existing 60-second default expiry; a group member's private-chat button uses the existing 600-second interactive expiry. Master private `mirror_…` links are delegated to the group picker (GROUP-PICKER.md). Master group `sync_…` links use the scoped metadata permission workflow (METADATA-ADVICE.md); invalid links give the original guidance without activating a child bot.
 
 ## Migration eligibility and menu admission
 

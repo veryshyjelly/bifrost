@@ -48,13 +48,14 @@ type Change struct {
 // metadata run: permission controls, orchestration and scheduling have
 // their own remaining workflows before sync_metadata can be enabled.
 type Plan struct {
-	Key          string
-	JobID        int64
-	Target       Target
-	Snapshot     Snapshot
-	Changes      []Change
-	Warning      string
-	TextComplete bool
+	Key           string
+	JobID         int64
+	Target        Target
+	Snapshot      Snapshot
+	Changes       []Change
+	Warning       string
+	TextComplete  bool
+	RosterChanged bool `json:",omitempty"`
 }
 
 type Store interface {

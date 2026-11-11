@@ -38,9 +38,9 @@ type metadataFixture struct {
 	beforeWrite              func()
 }
 
-func newMetadataFixture(t *testing.T) *metadataFixture {
+func newMetadataFixture(t *testing.T, withMentions ...bool) *metadataFixture {
 	t.Helper()
-	m := &metadataFixture{f: newRelayFixture(t, nil), canChange: true, title: "Old", description: "Old description", group: `{"id":"123@g.us","name":"New group","participants":[{"id":"12345000000001@lid","number":"2025550123","name":"Friend"}],"description":"New description"}`, contact: `{"id":"12345000000001@lid","name":"Friend","number":"12345000000001"}`}
+	m := &metadataFixture{f: newRelayFixture(t, nil, withMentions...), canChange: true, title: "Old", description: "Old description", group: `{"id":"123@g.us","name":"New group","participants":[{"id":"12345000000001@lid","number":"2025550123","name":"Friend"}],"description":"New description"}`, contact: `{"id":"12345000000001@lid","name":"Friend","number":"12345000000001"}`}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/api/") {
 			m.mu.Lock()
@@ -156,9 +156,14 @@ func newMetadataFixture(t *testing.T) *metadataFixture {
 	return m
 }
 
-func (m *metadataFixture) enqueue(t *testing.T, key, scope, id string) int64 {
+func (m *metadataFixture) enqueue(t *testing.T, key, scope, id string, run ...string) int64 {
 	t.Helper()
-	payload, _ := json.Marshal(map[string]any{"type": "sync_metadata", "data": map[string]string{"scope": scope, "id": id, "source": "fixture", "requestId": key}})
+	data := map[string]string{"scope": scope, "id": id, "source": "fixture", "requestId": key}
+	if len(run) > 0 {
+		data["run"] = run[0]
+		data["session"] = "fixture-session"
+	}
+	payload, _ := json.Marshal(map[string]any{"type": "sync_metadata", "data": data})
 	if _, err := m.f.store.Enqueue(t.Context(), delivery.Event{AccountID: "fixture-account", Dedup: key, Stream: key, Kind: "management", Payload: payload}); err != nil {
 		t.Fatal(err)
 	}

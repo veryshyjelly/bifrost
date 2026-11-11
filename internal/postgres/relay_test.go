@@ -45,6 +45,7 @@ type relayFixture struct {
 	cleaner                *control.Cleaner
 	operator               *control.Operator
 	starter                *control.Starter
+	syncer                 *control.Sync
 	groups                 *control.Groups
 	mirrors                *control.Mirrors
 	mirrorTelegram         control.MirrorTelegram
@@ -466,6 +467,10 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		if err != nil {
 			t.Fatal(err)
 		}
+		f.syncer, err = control.NewSync(f.store, controls, control.SyncOptions{Session: "fixture-session", OwnerID: 123})
+		if err != nil {
+			t.Fatal(err)
+		}
 		f.mirrorTelegram = master
 		f.groups, err = control.NewGroups(f.store, controls, master, control.GroupOptions{OwnerID: 123})
 		if err != nil {
@@ -476,6 +481,9 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			t.Fatal(err)
 		}
 		dispatchOptions.Extensions.OwnerCommands = func(ctx context.Context, j delivery.Job, e *delivery.Effects, b string, u *models.Update) error {
+			if err := f.syncer.Handle(ctx, j, e, b, u); !errors.Is(err, delivery.ErrUnsupported) {
+				return err
+			}
 			if err := f.groups.Handle(ctx, j, e, b, u); !errors.Is(err, delivery.ErrUnsupported) {
 				return err
 			}

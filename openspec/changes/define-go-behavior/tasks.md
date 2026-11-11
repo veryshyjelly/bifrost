@@ -172,7 +172,7 @@
 - [x] Freeze inbox/mirror text and existing contact-bot name/description updates, retaining independent receipts across retries and reopened consumers.
 - [x] Reject obsolete routes, generations, bindings, snapshots and public mirror targets; preserve retired topics and unapplied topic names.
 - [x] Verify unavailable/empty descriptions, LID identity, rollback, safe setter retries and receipt reconciliation with isolated PostgreSQL/SDK fixtures.
-- [ ] Complete permission controls, shared-contact run orchestration, completion reports, owner sync commands and persistent cron before registering a complete metadata handler.
+- [ ] Complete run admission/outcome collection, shared-contact orchestration and persistent cron before registering a complete metadata handler.
 
 ## Metadata picture stages
 
@@ -181,4 +181,14 @@
 - [x] Scope content-hash caches by account/session/identity/destination/generation and verify the current native photo ID before reuse.
 - [x] Persist independent upload and photo-ID observation receipts, reconcile failed cache writes and preserve uncertain outcomes for review.
 - [x] Verify URL rotation, manual changes, hidden sources, partial/uncertain delivery, rollback, obsolete scope, restart and account/claim fencing with isolated PostgreSQL/SDK fixtures.
-- [ ] Complete permission actions, member-bot reporting, run orchestration/coalescing, owner commands, notices and scheduling before full metadata dispatch.
+- [ ] Complete run orchestration/coalescing, target outcome collection and scheduling before full metadata dispatch.
+
+## Metadata commands, permission advice and sealed reports
+
+- [x] Preserve owner `/sync` scope, bound contact-bot commands without direct routes, argument/addressing rules and independent durable management admission.
+- [x] Freeze 24-hour account/session/owner/group/generation permission grants and validate native group Start links before scoped sync admission.
+- [x] Persist native missing-bot advice with scoped grants; retain canonical roster/admin-change evidence without label/alias false positives.
+- [x] Require terminal account/run/session-bound targets and resolved effects before sealing report statistics, text, buttons, recipients and expiry evidence.
+- [x] Preserve quiet cron/manual waiters, receipt-based mutation counts, warning/button limits, independent recipient receipts and uncertain-send review.
+- [x] Verify native admission, scope/expiry rejection, rollback, new consumers, partial reports and coalesced recipient recovery with isolated PostgreSQL/SDK fixtures.
+- [ ] Implement run admission, terminal/partial target outcome collection and retry budgets, target/contact fan-out, source serialization/coalescing and persistent cron before full metadata dispatch.

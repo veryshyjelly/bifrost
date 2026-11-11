@@ -212,11 +212,7 @@ func TestStartDeepLinksEditsAndUnauthorizedActorsDoNotActivate(t *testing.T) {
 			}
 			if admitPicker(t, f, bot, u) {
 				r := f.dispatch(t, "tg:"+bot+":1150", "tg")
-				if kind == "sync" {
-					if r.State != delivery.Failed {
-						t.Fatal(r)
-					}
-				} else if r.State != delivery.Done {
+				if r.State != delivery.Done {
 					t.Fatal(r)
 				}
 			}
@@ -225,6 +221,12 @@ func TestStartDeepLinksEditsAndUnauthorizedActorsDoNotActivate(t *testing.T) {
 			if kind == "mirror" {
 				want = 1
 				if f.tgCalls[0].Text != control.GroupButtonExpired {
+					t.Fatal(f.tgCalls)
+				}
+			}
+			if kind == "sync" {
+				want = 1
+				if f.tgCalls[0].Text != control.SyncPermissionExpired {
 					t.Fatal(f.tgCalls)
 				}
 			}
