@@ -19,6 +19,7 @@ import (
 	"github.com/go-telegram/bot/models"
 	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
 	"github.com/veryshyjelly/bifrost/internal/bridge"
+	"github.com/veryshyjelly/bifrost/internal/control"
 	"github.com/veryshyjelly/bifrost/internal/conversation"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
@@ -30,6 +31,7 @@ import (
 
 type tgTextCall struct {
 	Bot, Text, Entities, Reply, Preview, ParseMode string
+	Markup                                         string
 	Chat, Thread                                   int64
 }
 type waTextCall struct {
@@ -61,14 +63,47 @@ type relayFixture struct {
 	sessionCalls         atomic.Int32
 	sessionFailure       atomic.Bool
 	selfPhone            string
+	callbacks            []callbackCall
+	answerStatus         int
+	meCalls              atomic.Int32
 }
+type callbackCall struct{ Bot, ID, Text string }
 
 func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions ...bool) *relayFixture {
 	t.Helper()
 	f := &relayFixture{store: testStore(t), botSeq: map[string]int{}, selfPhone: "12025550999"}
 	tgServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if err := r.ParseMultipartForm(1 << 20); err != nil {
-			t.Error(err)
+		if strings.Contains(r.Header.Get("Content-Type"), "multipart/") {
+			if err := r.ParseMultipartForm(1 << 20); err != nil {
+				t.Error(err)
+			}
+		} else {
+			if err := r.ParseForm(); err != nil {
+				t.Error(err)
+			}
+		}
+		token := strings.Split(strings.TrimPrefix(r.URL.Path, "/bot"), "/")[0]
+		if strings.HasSuffix(r.URL.Path, "getMe") {
+			f.meCalls.Add(1)
+			id, username := int64(999), "bifrost_bot"
+			if token == "child-200" {
+				id, username = 200, "alice_bot"
+			} else if token == "child-201" {
+				id, username = 201, "second_bot"
+			}
+			fmt.Fprintf(w, `{"ok":true,"result":{"id":%d,"is_bot":true,"first_name":"Fixture","username":%q}}`, id, username)
+			return
+		}
+		if strings.HasSuffix(r.URL.Path, "answerCallbackQuery") {
+			f.mu.Lock()
+			defer f.mu.Unlock()
+			f.callbacks = append(f.callbacks, callbackCall{Bot: token, ID: r.FormValue("callback_query_id"), Text: r.FormValue("text")})
+			if f.answerStatus != 0 {
+				fmt.Fprintf(w, `{"ok":false,"error_code":%d,"description":"fixture callback refusal"}`, f.answerStatus)
+				return
+			}
+			fmt.Fprint(w, `{"ok":true,"result":true}`)
+			return
 		}
 		if strings.HasSuffix(r.URL.Path, "createForumTopic") {
 			f.topics.Add(1)
@@ -94,11 +129,10 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		}
 		chat, _ := strconv.ParseInt(r.FormValue("chat_id"), 10, 64)
 		thread, _ := strconv.ParseInt(r.FormValue("message_thread_id"), 10, 64)
-		token := strings.Split(strings.TrimPrefix(r.URL.Path, "/bot"), "/")[0]
 		f.mu.Lock()
 		defer f.mu.Unlock()
 		f.tgCount++
-		f.tgCalls = append(f.tgCalls, tgTextCall{Bot: token, Text: r.FormValue("text"), Entities: r.FormValue("entities"), Reply: r.FormValue("reply_parameters"), Preview: r.FormValue("link_preview_options"), ParseMode: r.FormValue("parse_mode"), Chat: chat, Thread: thread})
+		f.tgCalls = append(f.tgCalls, tgTextCall{Bot: token, Text: r.FormValue("text"), Entities: r.FormValue("entities"), Reply: r.FormValue("reply_parameters"), Preview: r.FormValue("link_preview_options"), ParseMode: r.FormValue("parse_mode"), Chat: chat, Thread: thread, Markup: r.FormValue("reply_markup")})
 		if f.failTG == f.tgCount {
 			fmt.Fprint(w, `{"ok":false,"error_code":429,"parameters":{"retry_after":60},"description":"fixture rate refusal"}`)
 			return
@@ -204,8 +238,10 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		store = wrap(f.store)
 	}
 	options := relay.Options{SessionID: "fixture-session", OwnerID: 123, ManagementChatID: -100}
+	var mentionService *mentions.Service
 	if len(withMentions) > 0 && withMentions[0] {
-		options.Mentions, err = mentions.New(f.store, whatsapp, master, "fixture-session")
+		mentionService, err = mentions.New(f.store, whatsapp, master, "fixture-session")
+		options.Mentions = mentionService
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -219,7 +255,25 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 	if err != nil {
 		t.Fatal(err)
 	}
-	f.dispatcher, err = bridge.New(f.store, f.service, whatsapp, bridge.Options{AccountID: "fixture-account", SessionID: "fixture-session", OwnerID: 123})
+	dispatchOptions := bridge.Options{AccountID: "fixture-account", SessionID: "fixture-session", OwnerID: 123}
+	if mentionService != nil {
+		controls, err := control.New(f.store, func(_ context.Context, _ string, id string) (control.Telegram, error) {
+			if c := clients[id]; c != nil {
+				return c, nil
+			}
+			return nil, delivery.ErrInvalid
+		}, -100)
+		if err != nil {
+			t.Fatal(err)
+		}
+		picker, err := mentions.NewPicker(mentionService, controls, mentions.PickerOptions{OwnerID: 123})
+		if err != nil {
+			t.Fatal(err)
+		}
+		dispatchOptions.Extensions.MentionPicker = picker.Handle
+		dispatchOptions.Extensions.MentionRefusal = picker.Refusal
+	}
+	f.dispatcher, err = bridge.New(f.store, f.service, whatsapp, dispatchOptions)
 	if err != nil {
 		t.Fatal(err)
 	}

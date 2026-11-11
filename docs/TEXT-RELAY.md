@@ -33,3 +33,5 @@ If a route becomes muted/ignored during a partial retry, confirmed parts remain 
 Real isolated PostgreSQL tests combine the worker with both native SDKs and loopback provider fixtures. They cover multipart rate refusal/retry, changed routes/presentation, quoted replies, private bot ID overlap, foreign and cleared quotes, wrong-owner filtering, native whole-group reply threads, stable keys, receipt-before-mapping echo suppression, in-flight echo deferral, pause safety and independent read failures. No live provider operation, callback change or cutover is part of this slice.
 
 The existing 1,000,000-byte outgoing WhatsApp sticker budget remains unchanged. This text work does not enable media or history delivery.
+
+The dispatcher can now attach the [mention-refusal notice handler](MENTION-PICKER.md). Definite mention validation errors then produce a frozen temporary Telegram notice without sending or reading WhatsApp content. Provider failures and uncertain outcomes retain the text capability's existing delivery handling.

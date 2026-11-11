@@ -1,0 +1,858 @@
+{
+  "locale": "en-US",
+  "cases": [
+    {
+      "input": {
+        "members": [
+          {
+            "id": "12025551000@c.us",
+            "name": "Åke"
+          },
+          {
+            "id": "12025551001@c.us",
+            "name": "Zoë"
+          },
+          {
+            "id": "12025551002@c.us",
+            "name": "😀 Joy"
+          },
+          {
+            "id": "12025551003@c.us",
+            "name": "alice"
+          },
+          {
+            "id": "12025551004@c.us",
+            "name": "Alice"
+          },
+          {
+            "id": "12025551005@c.us",
+            "name": "Álvaro"
+          },
+          {
+            "id": "12025551006@c.us",
+            "name": "Bob"
+          },
+          {
+            "id": "12025551007@c.us",
+            "name": "bob"
+          },
+          {
+            "id": "12025551008@c.us",
+            "name": "Σίσυφος"
+          },
+          {
+            "id": "12025551009@c.us",
+            "name": "Özil"
+          },
+          {
+            "id": "12025551010@c.us",
+            "name": "İpek"
+          },
+          {
+            "id": "12025551011@c.us",
+            "name": "Émile"
+          },
+          {
+            "id": "12025551012@c.us",
+            "name": "ΟΣ"
+          },
+          {
+            "id": "987654321@lid",
+            "name": "Hidden"
+          }
+        ],
+        "aliases": {},
+        "profiles": [
+          {
+            "ID": "12025551003@c.us",
+            "Name": "alice"
+          }
+        ],
+        "bots": [
+          {
+            "ID": "42",
+            "username": "alice_bot"
+          }
+        ],
+        "bindings": [
+          {
+            "PersonID": "12025551003@c.us",
+            "BotID": "42"
+          }
+        ],
+        "cached": false,
+        "name": "first page",
+        "search": "",
+        "page": 1
+      },
+      "expected": {
+        "text": "WhatsApp mentions · page 1/2\nCopy a tag and paste it anywhere in your message. Tags are checked again when sending.\n😀 Joy · …551002\n@{😀 Joy|eb31ac15}\nÅke · …551000\n@{Åke|6748a419}\nalice · …551003\n@alice_bot\nAlice · …551004\n@{Alice|f1bb4bd9}\nÁlvaro · …551005\n@{Álvaro|09cd3d68}\nbob · …551007\n@{bob|31e361aa}\nBob · …551006\n@{Bob|1aabb9bc}\nÉmile · …551011\n@{Émile|73f5c804}\nHidden · ID …654321\n@{Hidden|ee8c9537}\nİpek · …551010\n@{İpek|eb2da4eb}",
+        "entities": [
+          {
+            "type": "code",
+            "offset": 133,
+            "length": 18
+          },
+          {
+            "type": "code",
+            "offset": 166,
+            "length": 15
+          },
+          {
+            "type": "code",
+            "offset": 198,
+            "length": 10
+          },
+          {
+            "type": "code",
+            "offset": 225,
+            "length": 17
+          },
+          {
+            "type": "code",
+            "offset": 260,
+            "length": 18
+          },
+          {
+            "type": "code",
+            "offset": 293,
+            "length": 15
+          },
+          {
+            "type": "code",
+            "offset": 323,
+            "length": 15
+          },
+          {
+            "type": "code",
+            "offset": 355,
+            "length": 17
+          },
+          {
+            "type": "code",
+            "offset": 393,
+            "length": 18
+          },
+          {
+            "type": "code",
+            "offset": 427,
+            "length": 16
+          }
+        ],
+        "markup": {
+          "inline_keyboard": [
+            [
+              {
+                "text": "Copy tag · 😀 Joy",
+                "copy_text": {
+                  "text": "@{😀 Joy|eb31ac15}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Åke",
+                "copy_text": {
+                  "text": "@{Åke|6748a419}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · alice",
+                "copy_text": {
+                  "text": "@alice_bot"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Alice",
+                "copy_text": {
+                  "text": "@{Alice|f1bb4bd9}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Álvaro",
+                "copy_text": {
+                  "text": "@{Álvaro|09cd3d68}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · bob",
+                "copy_text": {
+                  "text": "@{bob|31e361aa}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Bob",
+                "copy_text": {
+                  "text": "@{Bob|1aabb9bc}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Émile",
+                "copy_text": {
+                  "text": "@{Émile|73f5c804}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Hidden",
+                "copy_text": {
+                  "text": "@{Hidden|ee8c9537}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · İpek",
+                "copy_text": {
+                  "text": "@{İpek|eb2da4eb}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Next",
+                "callback_data": "mention:fixture-action-1"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "members": [
+          {
+            "id": "12025551000@c.us",
+            "name": "Åke"
+          },
+          {
+            "id": "12025551001@c.us",
+            "name": "Zoë"
+          },
+          {
+            "id": "12025551002@c.us",
+            "name": "😀 Joy"
+          },
+          {
+            "id": "12025551003@c.us",
+            "name": "alice"
+          },
+          {
+            "id": "12025551004@c.us",
+            "name": "Alice"
+          },
+          {
+            "id": "12025551005@c.us",
+            "name": "Álvaro"
+          },
+          {
+            "id": "12025551006@c.us",
+            "name": "Bob"
+          },
+          {
+            "id": "12025551007@c.us",
+            "name": "bob"
+          },
+          {
+            "id": "12025551008@c.us",
+            "name": "Σίσυφος"
+          },
+          {
+            "id": "12025551009@c.us",
+            "name": "Özil"
+          },
+          {
+            "id": "12025551010@c.us",
+            "name": "İpek"
+          },
+          {
+            "id": "12025551011@c.us",
+            "name": "Émile"
+          },
+          {
+            "id": "12025551012@c.us",
+            "name": "ΟΣ"
+          },
+          {
+            "id": "987654321@lid",
+            "name": "Hidden"
+          }
+        ],
+        "aliases": {},
+        "profiles": [
+          {
+            "ID": "12025551003@c.us",
+            "Name": "alice"
+          }
+        ],
+        "bots": [
+          {
+            "ID": "42",
+            "username": "alice_bot"
+          }
+        ],
+        "bindings": [
+          {
+            "PersonID": "12025551003@c.us",
+            "BotID": "42"
+          }
+        ],
+        "cached": false,
+        "name": "second page",
+        "search": "",
+        "page": 2
+      },
+      "expected": {
+        "text": "WhatsApp mentions · page 2/2\nCopy a tag and paste it anywhere in your message. Tags are checked again when sending.\nÖzil · …551009\n@{Özil|449b6c3a}\nZoë · …551001\n@{Zoë|719e2f1e}\nΟΣ · …551012\n@{ΟΣ|b37c6926}\nΣίσυφος · …551008\n@{Σίσυφος|0f73c10d}",
+        "entities": [
+          {
+            "type": "code",
+            "offset": 131,
+            "length": 16
+          },
+          {
+            "type": "code",
+            "offset": 162,
+            "length": 15
+          },
+          {
+            "type": "code",
+            "offset": 191,
+            "length": 14
+          },
+          {
+            "type": "code",
+            "offset": 224,
+            "length": 19
+          }
+        ],
+        "markup": {
+          "inline_keyboard": [
+            [
+              {
+                "text": "Copy tag · Özil",
+                "copy_text": {
+                  "text": "@{Özil|449b6c3a}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Zoë",
+                "copy_text": {
+                  "text": "@{Zoë|719e2f1e}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · ΟΣ",
+                "copy_text": {
+                  "text": "@{ΟΣ|b37c6926}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Σίσυφος",
+                "copy_text": {
+                  "text": "@{Σίσυφος|0f73c10d}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Previous",
+                "callback_data": "mention:fixture-action-1"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "members": [
+          {
+            "id": "12025551000@c.us",
+            "name": "Åke"
+          },
+          {
+            "id": "12025551001@c.us",
+            "name": "Zoë"
+          },
+          {
+            "id": "12025551002@c.us",
+            "name": "😀 Joy"
+          },
+          {
+            "id": "12025551003@c.us",
+            "name": "alice"
+          },
+          {
+            "id": "12025551004@c.us",
+            "name": "Alice"
+          },
+          {
+            "id": "12025551005@c.us",
+            "name": "Álvaro"
+          },
+          {
+            "id": "12025551006@c.us",
+            "name": "Bob"
+          },
+          {
+            "id": "12025551007@c.us",
+            "name": "bob"
+          },
+          {
+            "id": "12025551008@c.us",
+            "name": "Σίσυφος"
+          },
+          {
+            "id": "12025551009@c.us",
+            "name": "Özil"
+          },
+          {
+            "id": "12025551010@c.us",
+            "name": "İpek"
+          },
+          {
+            "id": "12025551011@c.us",
+            "name": "Émile"
+          },
+          {
+            "id": "12025551012@c.us",
+            "name": "ΟΣ"
+          },
+          {
+            "id": "987654321@lid",
+            "name": "Hidden"
+          }
+        ],
+        "aliases": {},
+        "profiles": [
+          {
+            "ID": "12025551003@c.us",
+            "Name": "alice"
+          }
+        ],
+        "bots": [
+          {
+            "ID": "42",
+            "username": "alice_bot"
+          }
+        ],
+        "bindings": [
+          {
+            "PersonID": "12025551003@c.us",
+            "BotID": "42"
+          }
+        ],
+        "cached": false,
+        "name": "unicode search",
+        "search": "ος",
+        "page": 1
+      },
+      "expected": {
+        "text": "WhatsApp mentions · page 1/1\nCopy a tag and paste it anywhere in your message. Tags are checked again when sending.\nΟΣ · …551012\n@{ΟΣ|b37c6926}\nΣίσυφος · …551008\n@{Σίσυφος|0f73c10d}",
+        "entities": [
+          {
+            "type": "code",
+            "offset": 129,
+            "length": 14
+          },
+          {
+            "type": "code",
+            "offset": 162,
+            "length": 19
+          }
+        ],
+        "markup": {
+          "inline_keyboard": [
+            [
+              {
+                "text": "Copy tag · ΟΣ",
+                "copy_text": {
+                  "text": "@{ΟΣ|b37c6926}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Σίσυφος",
+                "copy_text": {
+                  "text": "@{Σίσυφος|0f73c10d}"
+                }
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "members": [
+          {
+            "id": "12025551000@c.us",
+            "name": "Åke"
+          },
+          {
+            "id": "12025551001@c.us",
+            "name": "Zoë"
+          },
+          {
+            "id": "12025551002@c.us",
+            "name": "😀 Joy"
+          },
+          {
+            "id": "12025551003@c.us",
+            "name": "alice"
+          },
+          {
+            "id": "12025551004@c.us",
+            "name": "Alice"
+          },
+          {
+            "id": "12025551005@c.us",
+            "name": "Álvaro"
+          },
+          {
+            "id": "12025551006@c.us",
+            "name": "Bob"
+          },
+          {
+            "id": "12025551007@c.us",
+            "name": "bob"
+          },
+          {
+            "id": "12025551008@c.us",
+            "name": "Σίσυφος"
+          },
+          {
+            "id": "12025551009@c.us",
+            "name": "Özil"
+          },
+          {
+            "id": "12025551010@c.us",
+            "name": "İpek"
+          },
+          {
+            "id": "12025551011@c.us",
+            "name": "Émile"
+          },
+          {
+            "id": "12025551012@c.us",
+            "name": "ΟΣ"
+          },
+          {
+            "id": "987654321@lid",
+            "name": "Hidden"
+          }
+        ],
+        "aliases": {},
+        "profiles": [
+          {
+            "ID": "12025551003@c.us",
+            "Name": "alice"
+          }
+        ],
+        "bots": [
+          {
+            "ID": "42",
+            "username": "alice_bot"
+          }
+        ],
+        "bindings": [
+          {
+            "PersonID": "12025551003@c.us",
+            "BotID": "42"
+          }
+        ],
+        "cached": false,
+        "name": "username search",
+        "search": "ALICE_BOT",
+        "page": 1
+      },
+      "expected": {
+        "text": "WhatsApp mentions · page 1/1\nCopy a tag and paste it anywhere in your message. Tags are checked again when sending.\nalice · …551003\n@alice_bot",
+        "entities": [
+          {
+            "type": "code",
+            "offset": 132,
+            "length": 10
+          }
+        ],
+        "markup": {
+          "inline_keyboard": [
+            [
+              {
+                "text": "Copy tag · alice",
+                "copy_text": {
+                  "text": "@alice_bot"
+                }
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "members": [
+          {
+            "id": "12025551000@c.us",
+            "name": "Åke"
+          },
+          {
+            "id": "12025551001@c.us",
+            "name": "Zoë"
+          },
+          {
+            "id": "12025551002@c.us",
+            "name": "😀 Joy"
+          },
+          {
+            "id": "12025551003@c.us",
+            "name": "alice"
+          },
+          {
+            "id": "12025551004@c.us",
+            "name": "Alice"
+          },
+          {
+            "id": "12025551005@c.us",
+            "name": "Álvaro"
+          },
+          {
+            "id": "12025551006@c.us",
+            "name": "Bob"
+          },
+          {
+            "id": "12025551007@c.us",
+            "name": "bob"
+          },
+          {
+            "id": "12025551008@c.us",
+            "name": "Σίσυφος"
+          },
+          {
+            "id": "12025551009@c.us",
+            "name": "Özil"
+          },
+          {
+            "id": "12025551010@c.us",
+            "name": "İpek"
+          },
+          {
+            "id": "12025551011@c.us",
+            "name": "Émile"
+          },
+          {
+            "id": "12025551012@c.us",
+            "name": "ΟΣ"
+          },
+          {
+            "id": "987654321@lid",
+            "name": "Hidden"
+          }
+        ],
+        "aliases": {},
+        "profiles": [
+          {
+            "ID": "12025551003@c.us",
+            "Name": "alice"
+          }
+        ],
+        "bots": [
+          {
+            "ID": "42",
+            "username": "alice_bot"
+          }
+        ],
+        "bindings": [
+          {
+            "PersonID": "12025551003@c.us",
+            "BotID": "42"
+          }
+        ],
+        "cached": false,
+        "name": "no matches",
+        "search": "not-in-roster",
+        "page": 1
+      },
+      "expected": {
+        "text": "WhatsApp mentions · page 1/1\nCopy a tag and paste it anywhere in your message. Tags are checked again when sending.\nNo matching group members. Try /mention with a different name.",
+        "entities": [],
+        "markup": {
+          "inline_keyboard": []
+        }
+      }
+    },
+    {
+      "input": {
+        "members": [
+          {
+            "id": "12025551000@c.us",
+            "name": "Åke"
+          },
+          {
+            "id": "12025551001@c.us",
+            "name": "Zoë"
+          },
+          {
+            "id": "12025551002@c.us",
+            "name": "😀 Joy"
+          },
+          {
+            "id": "12025551003@c.us",
+            "name": "alice"
+          },
+          {
+            "id": "12025551004@c.us",
+            "name": "Alice"
+          },
+          {
+            "id": "12025551005@c.us",
+            "name": "Álvaro"
+          },
+          {
+            "id": "12025551006@c.us",
+            "name": "Bob"
+          },
+          {
+            "id": "12025551007@c.us",
+            "name": "bob"
+          },
+          {
+            "id": "12025551008@c.us",
+            "name": "Σίσυφος"
+          },
+          {
+            "id": "12025551009@c.us",
+            "name": "Özil"
+          },
+          {
+            "id": "12025551010@c.us",
+            "name": "İpek"
+          },
+          {
+            "id": "12025551011@c.us",
+            "name": "Émile"
+          },
+          {
+            "id": "12025551012@c.us",
+            "name": "ΟΣ"
+          },
+          {
+            "id": "987654321@lid",
+            "name": "Hidden"
+          }
+        ],
+        "aliases": {},
+        "profiles": [
+          {
+            "ID": "12025551003@c.us",
+            "Name": "alice"
+          }
+        ],
+        "bots": [
+          {
+            "ID": "42",
+            "username": "alice_bot"
+          }
+        ],
+        "bindings": [
+          {
+            "PersonID": "12025551003@c.us",
+            "BotID": "42"
+          }
+        ],
+        "cached": true,
+        "name": "cached members",
+        "search": "",
+        "page": 99
+      },
+      "expected": {
+        "text": "WhatsApp mentions · page 2/2\nUsing the cached member list; refresh failed.\nCopy a tag and paste it anywhere in your message. Tags are checked again when sending.\nÖzil · …551009\n@{Özil|449b6c3a}\nZoë · …551001\n@{Zoë|719e2f1e}\nΟΣ · …551012\n@{ΟΣ|b37c6926}\nΣίσυφος · …551008\n@{Σίσυφος|0f73c10d}",
+        "entities": [
+          {
+            "type": "code",
+            "offset": 177,
+            "length": 16
+          },
+          {
+            "type": "code",
+            "offset": 208,
+            "length": 15
+          },
+          {
+            "type": "code",
+            "offset": 237,
+            "length": 14
+          },
+          {
+            "type": "code",
+            "offset": 270,
+            "length": 19
+          }
+        ],
+        "markup": {
+          "inline_keyboard": [
+            [
+              {
+                "text": "Copy tag · Özil",
+                "copy_text": {
+                  "text": "@{Özil|449b6c3a}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Zoë",
+                "copy_text": {
+                  "text": "@{Zoë|719e2f1e}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · ΟΣ",
+                "copy_text": {
+                  "text": "@{ΟΣ|b37c6926}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Copy tag · Σίσυφος",
+                "copy_text": {
+                  "text": "@{Σίσυφος|0f73c10d}"
+                }
+              }
+            ],
+            [
+              {
+                "text": "Previous",
+                "callback_data": "mention:fixture-action-1"
+              }
+            ]
+          ]
+        }
+      }
+    }
+  ]
+}

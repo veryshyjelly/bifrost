@@ -26,8 +26,10 @@ Telegram dispatch parses the native update and rechecks the owner against both n
 
 If a dedicated handler is absent, the worker retains the unsupported job in its failed/review state. The dispatcher does not acknowledge it as completed or send only its caption. Remaining handlers must be installed before runtime startup; this is an implementation registry, not a partial live mode.
 
+The mention-picker extension now handles `/mention`, its scoped pagination callbacks and temporary mention-validation refusal notices. Refusal plans resume before reattempting outgoing validation, so an already refused message cannot become a send on notice retry. See MENTION-PICKER.md for callback guards and expiry metadata.
+
 ## Validation and remaining work
 
 Isolated PostgreSQL tests exercise authenticated HTTP admission, normalization, the worker, dispatcher and both real SDKs against loopback providers. They verify native mentions, quoted replies, stable mappings, independent read receipts, echo suppression, native group titles and independently verified owner links. Recovery tests cover phone/LID stream continuity, older moved jobs behind active jobs, stale claim rejection, unchanged retry budgets and atomic source/alias rollback. Source profiles and prepared requests remain stable across duplicate admission and retries.
 
-The mention picker and callback controls, command handlers, media/structured messages, edits, reactions, deletion/repair, lifecycle notifications and managed-bot credentials remain pending, together with the explicit legacy importer and final runtime composition. No live service, callback, paired session or provider message is changed by these fixture tests.
+General command handlers, media/structured messages, edits, reactions, deletion/repair, automatic notice cleanup, lifecycle notifications and managed-bot credentials remain pending, together with the explicit legacy importer and final runtime composition. No live service, callback, paired session or provider message is changed by these fixture tests.

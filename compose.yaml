@@ -21,6 +21,8 @@ x-bifrost: &bifrost
     TELEGRAM_MASTER_TOKEN: ${TELEGRAM_MASTER_TOKEN:-}
     TELEGRAM_OWNER_ID: ${TELEGRAM_OWNER_ID:-}
     TELEGRAM_MANAGEMENT_CHAT_ID: ${TELEGRAM_MANAGEMENT_CHAT_ID:-}
+    COMMAND_TTL_SECONDS: ${COMMAND_TTL_SECONDS:-60}
+    CONTROL_TTL_SECONDS: ${CONTROL_TTL_SECONDS:-600}
   volumes:
     - bridge-media:/media
     - telegram-data:/telegram-data:ro

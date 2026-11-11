@@ -50,6 +50,21 @@ type ContactProfile struct {
 	MetadataSynced bool
 }
 
+type ControlAction struct {
+	AccountID string
+	ActionID  string
+	PlanKey   string
+	Payload   []byte
+}
+
+type ControlPlan struct {
+	AccountID string
+	PlanKey   string
+	JobID     int64
+	Payload   []byte
+	Complete  bool
+}
+
 type Effect struct {
 	AccountID string
 	EffectKey string
@@ -127,6 +142,7 @@ type TelegramObservation struct {
 	MessageDate int64
 	Payload     []byte
 	Deleted     bool
+	ExpiresAt   int64
 }
 
 type WhatsappSelf struct {

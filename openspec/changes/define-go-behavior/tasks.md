@@ -78,7 +78,8 @@
 - [x] Validate outgoing group membership against a roster younger than five minutes; allow labeled cached data only for picker display.
 - [x] Freeze resolved mentions inside text relay plans and send native WhatsApp mention IDs through the released SDK.
 - [x] Implement webhook-to-canonical-message resolution and independently verified self identity for owner links.
-- [ ] Implement the mention picker commands/callbacks and owner-facing refusal notices; integrate captions, edits and history.
+- [x] Implement the mention picker commands/callbacks and owner-facing refusal notices.
+- [ ] Integrate mentions into attachment captions, edits and history delivery.
 
 ## Source normalization and dispatcher implementation
 
@@ -88,4 +89,14 @@
 - [x] Connect native WhatsApp text, Telegram owner text and independent management read events through the worker dispatcher registry.
 - [x] Resolve owner links from independently verified session identity; skip new identity/group lookups for prepared plans, echoes and suppressed routes.
 - [x] Exercise authenticated admission through PostgreSQL, the fenced worker and both native provider SDKs with isolated fixtures.
-- [ ] Install remaining workflow handlers, mention picker controls, managed-bot credentials and importer before final runtime worker composition.
+- [ ] Install remaining workflow handlers, automatic cleanup, managed-bot credentials and importer before final runtime worker composition.
+
+## Mention picker and control reply implementation
+
+- [x] Preserve native copy buttons, ten-member pagination, cached-roster labels, Unicode search and locale sorting against legacy Node golden fixtures.
+- [x] Validate callback owner, permanent account, bot, effective topic, conversation and expiry, including inaccessible messages and whole-group reply threads.
+- [x] Freeze reply packets, callback acknowledgements and scoped navigation actions before sending; repair local observation failures without duplicate sends.
+- [x] Preserve command addressing, captioned commands and ignored command/former-command edits.
+- [x] Send original mention refusal notices without WhatsApp sends/reads; prevent notice retry from reconsidering the rejected message.
+- [x] Persist command/reply expiry metadata and legacy 60/600-second defaults without expiring conversation/protected messages.
+- [ ] Implement automatic notice expiry/deletion, remaining owner controls and menus before full runtime composition.

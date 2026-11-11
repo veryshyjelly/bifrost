@@ -44,7 +44,7 @@ Record an effect as sending before its external mutation. Commit its receipt aft
 
 Distinguish known rate refusal and pre-connection failure from ambiguous mutations. Do not enable provider-wide automatic retries that resend timed-out mutations. HTTP acknowledgement, provider clients and workers all use the same delivery state model. History imports, live holds, notification cleanup and metadata priority must retain the baseline semantics.
 
-The identity directory and mention resolver now connect to text-plan preparation through a narrow optional interface. Provider-verified aliases and contact binding changes serialize in PostgreSQL; native mention text and IDs freeze with the send plan. See [identity and mention boundaries](IDENTITY-MENTIONS.md) for remaining event normalization, picker and caption/edit/history integration.
+The identity directory and mention resolver now connect to text-plan preparation through a narrow optional interface. Provider-verified aliases and contact binding changes serialize in PostgreSQL; native mention text and IDs freeze with the send plan. See [identity and mention boundaries](IDENTITY-MENTIONS.md) for source normalization and remaining caption/edit/history integration. The [mention picker and control replies](MENTION-PICKER.md) now include native copying, scoped callbacks, frozen refusal notices and expiry metadata.
 
 ## Compose and cutover
 

@@ -157,3 +157,22 @@ The Go implementation SHALL admit complete native WhatsApp messages with an immu
 
 - **WHEN** source preparation cannot safely reconcile verified identities or independently established conversations
 - **THEN** the original event remains durable for review and partial alias/profile changes do not commit
+
+### Requirement: Frozen owner control operations
+
+The Go implementation SHALL persist complete control replies and scoped navigation actions before sending. Known retries SHALL reuse their original text, entities, buttons and effect keys. Callback acknowledgements SHALL retain their own effect receipts; a definite expired-query refusal MAY close without claiming success. Cleanup deadlines SHALL persist without making conversation messages eligible for automatic expiry.
+
+#### Scenario: Picker send is rate limited
+
+- **WHEN** a prepared picker reply receives a known rate refusal and the roster or bot metadata changes
+- **THEN** its retry retains the original page, copied tags and callback actions
+
+#### Scenario: Callback acknowledgement already expired
+
+- **WHEN** Telegram definitively refuses the acknowledgement of an otherwise valid picker action with HTTP 400
+- **THEN** only that acknowledgement closes without success and the prepared page can complete without repeating completed effects
+
+#### Scenario: Refusal notice retries after validation data changes
+
+- **WHEN** an outgoing mention was refused and its owner notice needs retrying
+- **THEN** the notice retains its original delivery key and the refused message is not reconsidered as a WhatsApp send

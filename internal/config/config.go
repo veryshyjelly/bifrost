@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Config contains the settings needed by the persistence and diagnostic runtime.
@@ -20,6 +21,7 @@ type Config struct {
 	IngressEnabled                         bool
 	OpenWASession, WebhookSecret           string
 	OwnerID, ManagementChatID, MasterBotID int64
+	CommandTTL, ControlTTL                 time.Duration
 }
 
 func Load(getenv func(string) string) (Config, error) {
@@ -33,6 +35,21 @@ func Load(getenv func(string) string) (Config, error) {
 		return Config{}, errors.New("BRIDGE_ENCRYPTION_KEY must contain 32 bytes in hex")
 	}
 	copy(c.EncryptionKey[:], key)
+	for _, setting := range []struct {
+		name string
+		def  int
+		dest *time.Duration
+	}{{"COMMAND_TTL_SECONDS", 60, &c.CommandTTL}, {"CONTROL_TTL_SECONDS", 600, &c.ControlTTL}} {
+		seconds := setting.def
+		if value := getenv(setting.name); value != "" {
+			n, err := strconv.ParseInt(value, 10, 32)
+			if err != nil || n < 5 || n > 86400 {
+				return Config{}, errors.New(setting.name + " must be between 5 and 86400 seconds")
+			}
+			seconds = int(n)
+		}
+		*setting.dest = time.Duration(seconds) * time.Second
+	}
 	if len(c.AdminToken) < 32 {
 		return Config{}, errors.New("BRIDGE_ADMIN_TOKEN must contain at least 32 characters")
 	}

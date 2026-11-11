@@ -3,6 +3,7 @@ package config
 import (
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestLoadRejectsInvalidSettingsWithoutLeakingValues(t *testing.T) {
@@ -14,6 +15,9 @@ func TestLoadRejectsInvalidSettingsWithoutLeakingValues(t *testing.T) {
 		{"BRIDGE_ENCRYPTION_KEY", strings.Repeat("xz", 32)},
 		{"BRIDGE_PORT", "65536"},
 		{"BRIDGE_PORT", "NaN"},
+		{"COMMAND_TTL_SECONDS", "0004"},
+		{"CONTROL_TTL_SECONDS", "86401"},
+		{"CONTROL_TTL_SECONDS", "private-invalid-duration"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -33,7 +37,7 @@ func TestLoadRejectsInvalidSettingsWithoutLeakingValues(t *testing.T) {
 		})
 	}
 	c, err := Load(func(k string) string { return valid[k] })
-	if err != nil || c.Port != 3210 {
+	if err != nil || c.Port != 3210 || c.CommandTTL != 60*time.Second || c.ControlTTL != 600*time.Second {
 		t.Fatalf("valid settings: port=%d error=%v", c.Port, err)
 	}
 }

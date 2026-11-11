@@ -36,10 +36,13 @@ type WhatsApp interface {
 	Group(context.Context, string, string) (*sdk.GroupInfo, error)
 }
 type TelegramHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Update) error
+type MentionRefusalHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Message, error) (bool, error)
 type Extensions struct {
-	WhatsApp   map[sdk.WebhookEvent]delivery.Handler
-	Telegram   TelegramHandler
-	Management map[string]delivery.Handler
+	WhatsApp       map[sdk.WebhookEvent]delivery.Handler
+	Telegram       TelegramHandler
+	MentionPicker  TelegramHandler
+	MentionRefusal MentionRefusalHandler
+	Management     map[string]delivery.Handler
 }
 type Options struct {
 	AccountID, SessionID string
@@ -176,7 +179,25 @@ func (d *Dispatcher) telegram(ctx context.Context, job delivery.Job, e *delivery
 	}
 	m := update.Message
 	if m != nil && m.Text != "" && !hasOtherContent(envelope.Update) && !strings.HasPrefix(strings.TrimFunc(m.Text, func(r rune) bool { return r == 0xfeff || (r != 0x85 && unicode.IsSpace(r)) }), "/") {
-		return d.text.OutgoingText(ctx, job, e, relay.Outgoing{BotID: envelope.Bot, Message: m})
+		if h := d.c.Extensions.MentionRefusal; h != nil {
+			if handled, err := h(ctx, job, e, envelope.Bot, m, nil); handled || err != nil {
+				return err
+			}
+		}
+		err := d.text.OutgoingText(ctx, job, e, relay.Outgoing{BotID: envelope.Bot, Message: m})
+		if err != nil {
+			if h := d.c.Extensions.MentionRefusal; h != nil {
+				if handled, noticeErr := h(ctx, job, e, envelope.Bot, m, err); handled {
+					return noticeErr
+				}
+			}
+		}
+		return err
+	}
+	if h := d.c.Extensions.MentionPicker; h != nil {
+		if err := h(ctx, job, e, envelope.Bot, &update); !errors.Is(err, delivery.ErrUnsupported) {
+			return err
+		}
 	}
 	if h := d.c.Extensions.Telegram; h != nil {
 		return h(ctx, job, e, envelope.Bot, &update)
