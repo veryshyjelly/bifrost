@@ -87,6 +87,9 @@ func topicName(name, fallback string) string {
 	return name[:end]
 }
 
+// TopicName retains the initial-inbox UTF-16 budget for explicit restorations.
+func TopicName(name, fallback string) string { return topicName(name, fallback) }
+
 // EnsureInbox is only for the initial WhatsApp conversation stream. Other route
 // transitions must not create a competing first topic from a Telegram stream.
 func (s *Service) EnsureInbox(ctx context.Context, job delivery.Job, effects *delivery.Effects, chat, name string) (Route, error) {

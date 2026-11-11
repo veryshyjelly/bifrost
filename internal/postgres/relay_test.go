@@ -45,6 +45,15 @@ type relayFixture struct {
 	cleaner                *control.Cleaner
 	operator               *control.Operator
 	starter                *control.Starter
+	mirrors                *control.Mirrors
+	mirrorTelegram         control.MirrorTelegram
+	chatUsername           string
+	chatActiveUsernames    []string
+	chatType               string
+	masterRole             string
+	topicID                int64
+	topicStatus            int
+	dropTopicAt            int
 	menus                  *control.Menus
 	menuClients            control.MenuClients
 	menuCalls              []menuCall
@@ -191,11 +200,39 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			return
 		}
 		if strings.HasSuffix(r.URL.Path, "createForumTopic") {
-			f.topics.Add(1)
+			n := f.topics.Add(1)
 			f.mu.Lock()
 			f.topicNames = append(f.topicNames, r.FormValue("name"))
+			id, status, drop := f.topicID, f.topicStatus, int(n) == f.dropTopicAt
 			f.mu.Unlock()
-			fmt.Fprint(w, `{"ok":true,"result":{"message_thread_id":44,"name":"Fixture"}}`)
+			if drop {
+				conn, _, err := w.(http.Hijacker).Hijack()
+				if err != nil {
+					t.Error(err)
+				} else {
+					conn.Close()
+				}
+				return
+			}
+			if status != 0 {
+				fmt.Fprintf(w, `{"ok":false,"error_code":%d,"description":"fixture topic refusal"}`, status)
+				return
+			}
+			if id == 0 {
+				id = 44
+			}
+			fmt.Fprintf(w, `{"ok":true,"result":{"message_thread_id":%d,"name":"Fixture"}}`, id)
+			return
+		}
+		if strings.HasSuffix(r.URL.Path, "getChat") {
+			chat, _ := strconv.ParseInt(r.FormValue("chat_id"), 10, 64)
+			f.mu.Lock()
+			kind, username, names := f.chatType, f.chatUsername, f.chatActiveUsernames
+			f.mu.Unlock()
+			if kind == "" {
+				kind = "supergroup"
+			}
+			json.NewEncoder(w).Encode(map[string]any{"ok": true, "result": map[string]any{"id": chat, "type": kind, "title": "Fixture group", "username": username, "active_usernames": names}})
 			return
 		}
 		if strings.HasSuffix(r.URL.Path, "deleteForumTopic") {
@@ -230,10 +267,19 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		if strings.HasSuffix(r.URL.Path, "getChatMember") {
 			f.memberCalls.Add(1)
 			status := "member"
+			if r.FormValue("user_id") == "999" {
+				f.mu.Lock()
+				status = f.masterRole
+				f.mu.Unlock()
+				if status == "" {
+					status = "administrator"
+				}
+			}
 			if f.memberLeft.Load() {
 				status = "left"
 			}
-			fmt.Fprintf(w, `{"ok":true,"result":{"status":%q,"user":{"id":200,"is_bot":true,"first_name":"Alice"}}}`, status)
+			userID, _ := strconv.ParseInt(r.FormValue("user_id"), 10, 64)
+			fmt.Fprintf(w, `{"ok":true,"result":{"status":%q,"user":{"id":%d,"is_bot":true,"first_name":"Alice"}}}`, status, userID)
 			return
 		}
 		if !strings.HasSuffix(r.URL.Path, "sendMessage") {
@@ -419,8 +465,16 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		if err != nil {
 			t.Fatal(err)
 		}
+		f.mirrorTelegram = master
+		f.mirrors, err = control.NewMirrors(f.store, controls, master, control.MirrorOptions{OwnerID: 123})
+		if err != nil {
+			t.Fatal(err)
+		}
 		dispatchOptions.Extensions.OwnerCommands = func(ctx context.Context, j delivery.Job, e *delivery.Effects, b string, u *models.Update) error {
 			if err := f.starter.Handle(ctx, j, e, b, u); !errors.Is(err, delivery.ErrUnsupported) {
+				return err
+			}
+			if err := f.mirrors.Handle(ctx, j, e, b, u); !errors.Is(err, delivery.ErrUnsupported) {
 				return err
 			}
 			return f.operator.Handle(ctx, j, e, b, u)
@@ -436,7 +490,7 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			t.Fatal(err)
 		}
 		dispatchOptions.Extensions.ControlJobs["control-menu"] = f.menus.Install
-		dispatchOptions.Extensions.Management = map[string]delivery.Handler{"operator_action": f.operator.Manage}
+		dispatchOptions.Extensions.Management = map[string]delivery.Handler{"operator_action": f.operator.Manage, "link_group": f.mirrors.Manage, "return_to_inbox": f.mirrors.Manage}
 		f.deleteClients = func(_ context.Context, _ string, id string) (control.DeleteTelegram, error) {
 			if client := clients[id]; client != nil {
 				return client, nil

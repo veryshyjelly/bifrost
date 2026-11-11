@@ -271,3 +271,32 @@ The Go implementation SHALL admit startup menus only for explicitly migrated bot
 
 - **WHEN** a new consumer resumes a partially completed menu installation after configuration changes
 - **THEN** it retains the original command list, management chat and owner scope and records installation only after all settings complete
+
+### Requirement: Fenced mirror route transitions
+
+The Go implementation SHALL admit manual mirror commands durably and freeze route-transition plans. Route commits SHALL serialize destination ownership and persist complete confirmation plans. Unmirror SHALL reserve its conversation before topic creation, coordinate with active imports, preserve confirmed receipts and paused preferences, and retain ambiguity for review.
+
+#### Scenario: Confirmation plan cannot commit
+
+- **WHEN** a link cannot persist its full confirmation plan
+- **THEN** the route change, former-inbox retirement and metadata admission do not partially commit
+
+#### Scenario: Topic creation succeeded before local persistence failed
+
+- **WHEN** an unmirror topic receipt is confirmed but the route move cannot commit
+- **THEN** a new consumer reuses the original receipt and destination without creating another topic
+
+#### Scenario: A discarded refusal needs guidance recovery
+
+- **WHEN** a definite topic refusal was discarded and its owner-guidance write failed
+- **THEN** retry persists the original guidance without attempting topic creation again
+
+#### Scenario: A return notification meets a later link
+
+- **WHEN** a later link makes an earlier return confirmation obsolete
+- **THEN** only definitely unsent notification effects close, completed receipts remain retained and uncertain sends still require review
+
+#### Scenario: An unresolved move meets a new import
+
+- **WHEN** topic creation is pending or uncertain for a reserved conversation
+- **THEN** competing route moves and new active history imports wait without changing the original route or creation key

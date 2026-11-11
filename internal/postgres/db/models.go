@@ -99,6 +99,13 @@ type Effect struct {
 	Result    []byte
 }
 
+type HistoryActivity struct {
+	AccountID    string
+	WhatsappChat string
+	RunID        string
+	Status       string
+}
+
 type InboxRetirement struct {
 	AccountID string
 	JobID     int64
@@ -152,6 +159,18 @@ type MessageMapping struct {
 	Receipt           []byte
 }
 
+type MirrorReturn struct {
+	AccountID    string
+	WhatsappChat string
+	ReturnKey    string
+}
+
+type MirrorTransition struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
 type RelayPlan struct {
 	AccountID    string
 	PlanKey      string
@@ -168,6 +187,12 @@ type RetiredTopic struct {
 	ThreadID       int64
 	WhatsappChat   string
 	Deleted        bool
+}
+
+type RouteTransitionLock struct {
+	AccountID    string
+	WhatsappChat string
+	JobID        int64
 }
 
 type TelegramBotLifecycle struct {

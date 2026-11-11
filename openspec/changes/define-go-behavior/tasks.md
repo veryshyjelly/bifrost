@@ -142,3 +142,15 @@
 - [x] Freeze idempotent settings and journal confirmed progress without changing message-send uncertainty rules.
 - [x] Verify native settings, partial retries, lost responses, database reopening, rollback and fencing through isolated PostgreSQL/SDK fixtures.
 - [ ] Implement native credential migration/import and full runtime startup, status/remaining controls, mirror transitions and remaining delivery workflows.
+
+## Manual mirror transition implementation
+
+- [x] Preserve native manual `/link` and `/unmirror` command addressing, owner checks, guidance and independent management admission.
+- [x] Validate private destinations and master administrator identity through the current native Telegram SDK.
+- [x] Serialize destination ownership and commit link routing, confirmations, retirement and metadata admission together.
+- [x] Freeze unmirror topic creation, coordinate active history states and retain persistent guards through unresolved outcomes.
+- [x] Reconcile confirmed topic receipts and discarded refusals across failed local writes and new consumers.
+- [x] Preserve paused modes, old mirror archives/mappings and return generations; close only definitely unsent obsolete notices.
+- [x] Exercise native SDK dispatch, concurrency, rollback, privacy, uncertainty and stale/ABA recovery with isolated PostgreSQL.
+- [ ] Implement private group selection/Start links, complete topic-header callbacks and metadata execution.
+- [ ] Implement explicit transition reconciliation, full history/import and final runtime composition before live cutover.

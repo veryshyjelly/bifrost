@@ -48,6 +48,7 @@ type Plan struct {
 	Clear           *ClearRequest
 	Operator        *OperatorRequest
 	Start           *StartRequest
+	Mirror          *MirrorRequest
 	ReplyTTLSeconds int
 	Complete        bool `json:"-"`
 }

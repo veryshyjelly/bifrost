@@ -48,6 +48,13 @@ func (s *Store) PutIngressRoute(ctx context.Context, account string, route ingre
 	if err := q.LockContactDirectory(ctx, account); err != nil {
 		return err
 	}
+	busy, err := q.RouteTransitionBusy(ctx, db.RouteTransitionBusyParams{AccountID: account, WhatsappChat: route.WhatsAppChat, JobID: 0})
+	if err != nil {
+		return err
+	}
+	if busy {
+		return delivery.ErrLocalRetry
+	}
 	reserved, err := q.ReservedTopic(ctx, db.ReservedTopicParams{AccountID: account, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID})
 	if err != nil {
 		return err
