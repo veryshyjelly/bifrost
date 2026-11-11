@@ -14,6 +14,8 @@ Use standard context, errors, net/http, log/slog and testing where they suffice.
 
 The metadata coordinator now composes durable admission, snapshots, resumable text/picture stages, permission advice/reports, target fan-out, partial outcomes/retry budgets, source serialization/coalescing and persistent timezone cron in isolated native worker fixtures; see docs/METADATA-RUNS.md. Final runtime composition and legacy import remain pending; do not start the scheduler or worker from diagnostic serve yet. Preserve the distinction between completed stages and complete refresh work. Freeze photo bytes before upload; cache evidence requires confirmed upload and native photo-ID observation receipts. Preserve uncertain photo uploads for explicit review. Reports require terminal account/run/session-bound target jobs, resolved effects and original request-job destinations; never announce unresolved work as complete.
 
+Managed bot registration, encrypted credential lookup, explicit local API migration/webhooks and contact provisioning are implemented in isolated native fixtures (docs/MANAGED-BOTS.md). Registration and Start never establish migration eligibility. Preserve uncertain hosted logout for review, original encrypted tokens and scoped binding choices. The complete remaining-work checklist is docs/PORT-COMPLETION.md.
+
 ## Commands and tests
 
 - `make check`: formatting, go vet, race-enabled Go tests, repository audit and Compose validation.

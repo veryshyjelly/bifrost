@@ -203,3 +203,12 @@
 - [x] Preserve numeric five-field cron, timezone/DST and configured/off gates with persistent minute deduplication across concurrent/reopened consumers.
 - [x] Verify admission rollback/concurrency, full native owner-command execution, confirmed-mutation outcome recovery and partial advice/counts with isolated PostgreSQL/SDK fixtures.
 - [ ] Compose the scheduler and metadata handlers into the complete runtime after remaining workflows and legacy import are ready.
+
+## Managed credentials and contact provisioning
+
+- [x] Resolve current SDK releases and implement native managed-bot events/token retrieval with encrypted persistent credentials.
+- [x] Journal explicit hosted logout, local identity verification, authenticated webhook settings and menu admission without dropping pending updates.
+- [x] Preserve uncertain logout review, confirmed migration evidence and registration/settings recovery.
+- [x] Preserve contact creation at capacity, immutable group-participant selection, scoped single-use binding and conditional inbox retirement.
+- [x] Verify native SDK requests, PostgreSQL rollback, encryption, routing preservation and owner/destination/choice guards in isolated fixtures.
+- [ ] Compose credential/provisioning handlers and imported bot evidence into the complete runtime.

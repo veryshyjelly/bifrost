@@ -49,11 +49,31 @@ type ContactAlias struct {
 	Canonical string
 }
 
+type ContactBindChoice struct {
+	AccountID string
+	ChoiceID  string
+	PersonID  string
+	BotID     string
+	SessionID string
+	OwnerID   int64
+	PlanKey   string
+	ExpiresAt int64
+	Used      bool
+}
+
 type ContactProfile struct {
 	AccountID      string
 	PersonID       string
 	Name           string
 	MetadataSynced bool
+}
+
+type ContactProvision struct {
+	AccountID string
+	PersonID  string
+	SessionID string
+	ChatID    string
+	State     string
 }
 
 type ControlAction struct {
@@ -324,6 +344,15 @@ type TelegramBotLifecycle struct {
 	MenuInstalledAt int64
 }
 
+type TelegramCredential struct {
+	AccountID     string
+	BotID         string
+	Ciphertext    string
+	Revision      string
+	Identity      []byte
+	CreatedNotice bool
+}
+
 type TelegramMenuPlan struct {
 	AccountID string
 	JobID     int64
@@ -344,6 +373,19 @@ type TelegramObservation struct {
 	Deleted      bool
 	ExpiresAt    int64
 	CleanupError string
+}
+
+type TelegramRegistration struct {
+	AccountID string
+	JobID     int64
+	BotID     string
+	Revision  string
+}
+
+type TelegramSetupPlan struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
 }
 
 type WhatsappSelf struct {
