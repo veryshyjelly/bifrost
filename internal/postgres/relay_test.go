@@ -39,51 +39,57 @@ type waTextCall struct {
 	Mentions                           []string
 }
 type relayFixture struct {
-	store                *Store
-	service              *relay.Service
-	dispatcher           *bridge.Dispatcher
-	cleaner              *control.Cleaner
-	operator             *control.Operator
-	retirer              *conversation.Retirer
-	topicDeleter         conversation.TopicDeleter
-	mu                   sync.Mutex
-	tgCalls              []tgTextCall
-	waCalls              []waTextCall
-	tgCount              int
-	failTG               int
-	dropTGAt             int
-	perBotIDs            bool
-	botSeq               map[string]int
-	reads                atomic.Int32
-	readChats            []string
-	topics               atomic.Int32
-	topicNames           []string
-	readFailure          atomic.Bool
-	waEntered, waRelease chan struct{}
-	groupRows            []sdk.GroupParticipant
-	groupCalls           atomic.Int32
-	groupFailure         atomic.Bool
-	memberLeft           atomic.Bool
-	memberCalls          atomic.Int32
-	failWA               int
-	sessionCalls         atomic.Int32
-	sessionFailure       atomic.Bool
-	selfPhone            string
-	callbacks            []callbackCall
-	answerStatus         int
-	meCalls              atomic.Int32
-	deleteCalls          []deleteCall
-	deleteStatus         int
-	deleteRefuse         map[int]int
-	deleteDropAt         int
-	deleteClients        control.DeleteClients
-	replyClients         control.Clients
-	retireCalls          []retireCall
-	retireStatus         int
-	retireMissing        bool
-	retireDropAt         int
-	retireBefore         func()
+	store                  *Store
+	service                *relay.Service
+	dispatcher             *bridge.Dispatcher
+	cleaner                *control.Cleaner
+	operator               *control.Operator
+	starter                *control.Starter
+	menus                  *control.Menus
+	menuClients            control.MenuClients
+	menuCalls              []menuCall
+	menuFailAt, menuDropAt int
+	retirer                *conversation.Retirer
+	topicDeleter           conversation.TopicDeleter
+	mu                     sync.Mutex
+	tgCalls                []tgTextCall
+	waCalls                []waTextCall
+	tgCount                int
+	failTG                 int
+	dropTGAt               int
+	perBotIDs              bool
+	botSeq                 map[string]int
+	reads                  atomic.Int32
+	readChats              []string
+	topics                 atomic.Int32
+	topicNames             []string
+	readFailure            atomic.Bool
+	waEntered, waRelease   chan struct{}
+	groupRows              []sdk.GroupParticipant
+	groupCalls             atomic.Int32
+	groupFailure           atomic.Bool
+	memberLeft             atomic.Bool
+	memberCalls            atomic.Int32
+	failWA                 int
+	sessionCalls           atomic.Int32
+	sessionFailure         atomic.Bool
+	selfPhone              string
+	callbacks              []callbackCall
+	answerStatus           int
+	meCalls                atomic.Int32
+	deleteCalls            []deleteCall
+	deleteStatus           int
+	deleteRefuse           map[int]int
+	deleteDropAt           int
+	deleteClients          control.DeleteClients
+	replyClients           control.Clients
+	retireCalls            []retireCall
+	retireStatus           int
+	retireMissing          bool
+	retireDropAt           int
+	retireBefore           func()
 }
+type menuCall struct{ Bot, Method, Commands, Scope, Button string }
 type retireCall struct {
 	Bot          string
 	Chat, Thread int64
@@ -109,6 +115,27 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			}
 		}
 		token := strings.Split(strings.TrimPrefix(r.URL.Path, "/bot"), "/")[0]
+		if strings.HasSuffix(r.URL.Path, "setMyCommands") || strings.HasSuffix(r.URL.Path, "setChatMenuButton") {
+			f.mu.Lock()
+			defer f.mu.Unlock()
+			method := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
+			f.menuCalls = append(f.menuCalls, menuCall{Bot: token, Method: method, Commands: r.FormValue("commands"), Scope: r.FormValue("scope"), Button: r.FormValue("menu_button")})
+			if f.menuDropAt == len(f.menuCalls) {
+				conn, _, err := w.(http.Hijacker).Hijack()
+				if err != nil {
+					t.Error(err)
+				} else {
+					conn.Close()
+				}
+				return
+			}
+			if f.menuFailAt == len(f.menuCalls) {
+				fmt.Fprint(w, `{"ok":false,"error_code":429,"parameters":{"retry_after":60}}`)
+				return
+			}
+			fmt.Fprint(w, `{"ok":true,"result":true}`)
+			return
+		}
 		if strings.HasSuffix(r.URL.Path, "deleteMessages") {
 			var ids []int
 			if err := json.Unmarshal([]byte(r.FormValue("message_ids")), &ids); err != nil {
@@ -388,7 +415,27 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		if err != nil {
 			t.Fatal(err)
 		}
-		dispatchOptions.Extensions.OwnerCommands = f.operator.Handle
+		f.starter, err = control.NewStarter(controls, control.StartOptions{OwnerID: 123})
+		if err != nil {
+			t.Fatal(err)
+		}
+		dispatchOptions.Extensions.OwnerCommands = func(ctx context.Context, j delivery.Job, e *delivery.Effects, b string, u *models.Update) error {
+			if err := f.starter.Handle(ctx, j, e, b, u); !errors.Is(err, delivery.ErrUnsupported) {
+				return err
+			}
+			return f.operator.Handle(ctx, j, e, b, u)
+		}
+		f.menuClients = func(_ context.Context, _ string, id string) (control.MenuTelegram, error) {
+			if c := clients[id]; c != nil {
+				return c, nil
+			}
+			return nil, delivery.ErrInvalid
+		}
+		f.menus, err = control.NewMenus(f.store, f.menuClients, 123, -100)
+		if err != nil {
+			t.Fatal(err)
+		}
+		dispatchOptions.Extensions.ControlJobs["control-menu"] = f.menus.Install
 		dispatchOptions.Extensions.Management = map[string]delivery.Handler{"operator_action": f.operator.Manage}
 		f.deleteClients = func(_ context.Context, _ string, id string) (control.DeleteTelegram, error) {
 			if client := clients[id]; client != nil {

@@ -48,6 +48,8 @@ The identity directory and mention resolver now connect to text-plan preparation
 
 ## Compose and cutover
 
+[Start help and command menus](STARTUP-CONTROLS.md) now include atomic member activation/direct-route admission and migration-gated menu jobs. Settings retain their original owner scope and completed steps across retry. Lifecycle persistence records completed migration/import evidence; native credential migration and callback setup remain pending.
+
 The [owner preference and read commands](OWNER-COMMANDS.md) now admit management work atomically with command plans. Preference execution commits its mode and frozen confirmation together; notice retry does not overwrite later owner decisions. Read receipts reuse their existing independent workflow.
 
 The independent [former-inbox retirement handler](INBOX-RETIREMENT.md) reserves management topics before native deletion, refuses shared topics and waits for unfinished relays. Route and relay-plan admission serialize with these reservations; future importer and mirror-transition writes must preserve this invariant. General and fresh restorations remain protected.

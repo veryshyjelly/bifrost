@@ -1,6 +1,6 @@
 # Conversation owner commands
 
-`internal/control.Operator` implements `/keep`, `/mute`, `/ignore` and `/read` through authenticated admission, the native dispatcher and fenced worker in isolated fixtures. It uses the existing Go SDK clients and command/reply journal. Startup/help, bot creation, mirror transitions, other owner commands, Status author controls and final runtime composition remain pending.
+`internal/control.Operator` implements `/keep`, `/mute`, `/ignore` and `/read` through authenticated admission, the native dispatcher and fenced worker in isolated fixtures. It uses the existing Go SDK clients and command/reply journal. [Start help and command menus](STARTUP-CONTROLS.md) now have tested capabilities. Bot creation, mirror transitions, other owner commands, Status author controls and final runtime composition remain pending.
 
 Commands follow the existing addressing rules: unqualified group commands belong to the master; a member bot handles commands addressed to its own username. Other recipients and unauthorized actors cannot queue actions. Caption commands work; command and former-command edits never execute or relay. Arguments to these four commands are intentionally ignored, matching the legacy implementation.
 

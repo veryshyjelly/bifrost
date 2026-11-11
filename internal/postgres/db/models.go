@@ -170,6 +170,20 @@ type RetiredTopic struct {
 	Deleted        bool
 }
 
+type TelegramBotLifecycle struct {
+	AccountID       string
+	BotID           string
+	Identity        []byte
+	MigratedAt      int64
+	MenuInstalledAt int64
+}
+
+type TelegramMenuPlan struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
 type TelegramObservation struct {
 	Seq          int64
 	AccountID    string

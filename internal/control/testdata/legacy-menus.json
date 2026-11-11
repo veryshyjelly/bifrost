@@ -1,0 +1,208 @@
+{
+  "member": [
+    {
+      "command": "start",
+      "description": "Show bridge help"
+    },
+    {
+      "command": "sync",
+      "description": "Refresh WhatsApp metadata"
+    },
+    {
+      "command": "history",
+      "description": "Import messages here: /history <n>"
+    },
+    {
+      "command": "mention",
+      "description": "Find a WhatsApp group member and copy their tag"
+    },
+    {
+      "command": "status",
+      "description": "Show bridge and queue status"
+    },
+    {
+      "command": "clear",
+      "description": "Clear bot notices in this chat or topic"
+    },
+    {
+      "command": "clear_log",
+      "description": "Clear bot notices in this chat or topic"
+    }
+  ],
+  "master": [
+    {
+      "command": "start",
+      "description": "Show bridge help"
+    },
+    {
+      "command": "sync",
+      "description": "Refresh WhatsApp metadata"
+    },
+    {
+      "command": "history",
+      "description": "Import messages here: /history <n>"
+    },
+    {
+      "command": "mention",
+      "description": "Find a WhatsApp group member and copy their tag"
+    },
+    {
+      "command": "status",
+      "description": "Show bridge and queue status"
+    },
+    {
+      "command": "clear",
+      "description": "Clear bot notices in this chat or topic"
+    },
+    {
+      "command": "clear_log",
+      "description": "Clear bot notices in this chat or topic"
+    },
+    {
+      "command": "statuses",
+      "description": "Open and refresh WhatsApp Status posts"
+    },
+    {
+      "command": "mute_status",
+      "description": "Reply to a Status post to mute its author"
+    },
+    {
+      "command": "unmute_status",
+      "description": "Reply to a Status post to unmute its author"
+    },
+    {
+      "command": "muted_statuses",
+      "description": "List and unmute people in the Status feed"
+    },
+    {
+      "command": "create",
+      "description": "Reply to a participant to create their bot"
+    },
+    {
+      "command": "group",
+      "description": "Create or select a Telegram mirror group"
+    },
+    {
+      "command": "unmirror",
+      "description": "Move this mirror back to a management topic"
+    },
+    {
+      "command": "read",
+      "description": "Mark this WhatsApp conversation read"
+    },
+    {
+      "command": "keep",
+      "description": "Resume this conversation"
+    },
+    {
+      "command": "mute",
+      "description": "Mute this conversation; reply in Status to mute its author"
+    },
+    {
+      "command": "ignore",
+      "description": "Ignore this conversation"
+    },
+    {
+      "command": "delete",
+      "description": "Delete a replied-to WhatsApp message"
+    },
+    {
+      "command": "react",
+      "description": "React to a replied-to WhatsApp message"
+    }
+  ],
+  "management": [
+    {
+      "command": "start",
+      "description": "Show bridge help"
+    },
+    {
+      "command": "sync",
+      "description": "Refresh WhatsApp metadata"
+    },
+    {
+      "command": "history",
+      "description": "Import messages here: /history <n>"
+    },
+    {
+      "command": "mention",
+      "description": "Find a WhatsApp group member and copy their tag"
+    },
+    {
+      "command": "status",
+      "description": "Show bridge and queue status"
+    },
+    {
+      "command": "clear",
+      "description": "Clear bot notices in this chat or topic"
+    },
+    {
+      "command": "clear_log",
+      "description": "Clear bot notices in this chat or topic"
+    },
+    {
+      "command": "statuses",
+      "description": "Open and refresh WhatsApp Status posts"
+    },
+    {
+      "command": "mute_status",
+      "description": "Reply to a Status post to mute its author"
+    },
+    {
+      "command": "unmute_status",
+      "description": "Reply to a Status post to unmute its author"
+    },
+    {
+      "command": "muted_statuses",
+      "description": "List and unmute people in the Status feed"
+    },
+    {
+      "command": "create",
+      "description": "Reply to a participant to create their bot"
+    },
+    {
+      "command": "group",
+      "description": "Create or select a Telegram mirror group"
+    },
+    {
+      "command": "unmirror",
+      "description": "Move this mirror back to a management topic"
+    },
+    {
+      "command": "read",
+      "description": "Mark this WhatsApp conversation read"
+    },
+    {
+      "command": "keep",
+      "description": "Resume this conversation"
+    },
+    {
+      "command": "mute",
+      "description": "Mute this conversation; reply in Status to mute its author"
+    },
+    {
+      "command": "ignore",
+      "description": "Ignore this conversation"
+    },
+    {
+      "command": "delete",
+      "description": "Delete a replied-to WhatsApp message"
+    },
+    {
+      "command": "react",
+      "description": "React to a replied-to WhatsApp message"
+    },
+    {
+      "command": "inbox",
+      "description": "Check the management forum"
+    },
+    {
+      "command": "link",
+      "description": "Link a WhatsApp group manually"
+    },
+    {
+      "command": "clear_all",
+      "description": "Clear messages in the current management topic"
+    }
+  ]
+}

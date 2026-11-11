@@ -238,3 +238,36 @@ The Go implementation SHALL admit preference and explicit read commands with dur
 
 - **WHEN** the provider refuses an explicitly queued read receipt
 - **THEN** its independent retry uses the resolved WhatsApp chat without repeating a message send or changing conversation preferences
+
+### Requirement: Durable Start activation
+
+The Go implementation SHALL preserve ordinary Start help, activation and independent inbox retirement. Member activation, any missing direct route, cleanup admission and the frozen help plan SHALL commit together. Retries SHALL retain original guidance without reconsidering later bindings. Dedicated deep links SHALL remain delegated to their workflows.
+
+#### Scenario: Help plan cannot commit
+
+- **WHEN** private member activation cannot persist its complete help plan
+- **THEN** activation, direct-route creation and cleanup admission roll back while the original source event remains durable
+
+#### Scenario: Binding changes during a help retry
+
+- **WHEN** an unbound member's prepared help retries after that bot has been bound
+- **THEN** the older reply retains its original guidance and does not create a new route or cleanup job from that retry
+
+### Requirement: Migration-gated durable command menus
+
+The Go implementation SHALL admit startup menus only for explicitly migrated bots and preserve legacy command lists and owner scope. It SHALL freeze settings before native calls and journal idempotent setting outcomes independently of message sends. Completed settings SHALL survive restart; configuration changes SHALL NOT retarget an existing installation.
+
+#### Scenario: Registered bot has not migrated
+
+- **WHEN** a registered or started bot lacks a validated local API migration marker
+- **THEN** startup does not queue menu installation for it
+
+#### Scenario: Menu setting response is lost
+
+- **WHEN** a menu setting response or its local progress commit is lost
+- **THEN** retry repeats only the original idempotent settings while preserving completed steps and ordinary message-send uncertainty rules
+
+#### Scenario: Configuration changes before menu recovery
+
+- **WHEN** a new consumer resumes a partially completed menu installation after configuration changes
+- **THEN** it retains the original command list, management chat and owner scope and records installation only after all settings complete

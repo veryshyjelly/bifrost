@@ -47,6 +47,7 @@ type Plan struct {
 	Command         *Command
 	Clear           *ClearRequest
 	Operator        *OperatorRequest
+	Start           *StartRequest
 	ReplyTTLSeconds int
 	Complete        bool `json:"-"`
 }

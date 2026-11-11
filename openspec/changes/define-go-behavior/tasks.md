@@ -131,3 +131,14 @@
 - [x] Reuse independent read jobs without automatic reads from preference commands or incoming relays.
 - [x] Exercise native SDK dispatch, rollback, notice uncertainty, database reopening, scoped authorization and fencing with isolated PostgreSQL.
 - [ ] Implement startup/help and menus, remaining controls, mirror transitions, managed credentials, history/import and final runtime composition.
+
+## Start help and command menu implementation
+
+- [x] Preserve ordinary master/member Start guidance, command addressing, ignored edits and interactive-help lifetimes.
+- [x] Commit member activation, missing direct-route creation, cleanup admission and the original help plan together.
+- [x] Delegate mirror and sync Start links without consuming them as ordinary help.
+- [x] Record explicit validated migration eligibility and deduplicate startup menu jobs for migrated registered bots.
+- [x] Preserve legacy ordered command menus, owner-only management scope and the native commands menu button.
+- [x] Freeze idempotent settings and journal confirmed progress without changing message-send uncertainty rules.
+- [x] Verify native settings, partial retries, lost responses, database reopening, rollback and fencing through isolated PostgreSQL/SDK fixtures.
+- [ ] Implement native credential migration/import and full runtime startup, status/remaining controls, mirror transitions and remaining delivery workflows.
