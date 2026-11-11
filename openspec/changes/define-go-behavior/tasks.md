@@ -154,3 +154,13 @@
 - [x] Exercise native SDK dispatch, concurrency, rollback, privacy, uncertainty and stale/ABA recovery with isolated PostgreSQL.
 - [ ] Implement private group selection/Start links, complete topic-header callbacks and metadata execution.
 - [ ] Implement explicit transition reconciliation, full history/import and final runtime composition before live cutover.
+
+## Private group picker and topic control implementation
+
+- [x] Preserve `/group`, mirror Start links, native reply keyboards, administrator rights and explicit private-group selection constraints.
+- [x] Persist account/owner/route/generation/deadline-bound choices and numeric request IDs with frozen reply plans.
+- [x] Revalidate and consume selection requests atomically with route changes and both confirmation destinations.
+- [x] Restore original group/contact topic headers and scoped callback actions with durable metadata admission.
+- [x] Preserve per-packet receipts, keyboard removal, configured lifetimes and uncertain-send review across retries/restart.
+- [x] Verify source authorization, scope/expiry rejection, rollback, native wire serialization and obsolete-header recovery with isolated PostgreSQL/SDK fixtures.
+- [ ] Execute metadata sync, history and contact provisioning handlers; complete transition reconciliation/import and final runtime composition.

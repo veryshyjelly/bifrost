@@ -48,6 +48,8 @@ The identity directory and mention resolver now connect to text-plan preparation
 
 ## Compose and cutover
 
+The [private group picker and topic controls](GROUP-PICKER.md) now persist scoped selection requests, consume them with link commits and restore original conversation headers. Reply packets support frozen per-packet destinations and native reply keyboards. A narrow SDK serializer preserves the explicit private-group constraint; provider calls still use the required SDK. Metadata/history/provisioning execution remains pending.
+
 [Manual mirror transitions](MIRROR-TRANSITIONS.md) now commit route changes and confirmation plans together. Topic creation retains normal uncertain-send review and persistent move/import guards; known refusals leave the original mirror active. Private group selection, complete topic headers and metadata execution remain pending.
 
 [Start help and command menus](STARTUP-CONTROLS.md) now include atomic member activation/direct-route admission and migration-gated menu jobs. Settings retain their original owner scope and completed steps across retry. Lifecycle persistence records completed migration/import evidence; native credential migration and callback setup remain pending.

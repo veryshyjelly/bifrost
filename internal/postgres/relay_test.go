@@ -45,6 +45,7 @@ type relayFixture struct {
 	cleaner                *control.Cleaner
 	operator               *control.Operator
 	starter                *control.Starter
+	groups                 *control.Groups
 	mirrors                *control.Mirrors
 	mirrorTelegram         control.MirrorTelegram
 	chatUsername           string
@@ -466,11 +467,18 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			t.Fatal(err)
 		}
 		f.mirrorTelegram = master
+		f.groups, err = control.NewGroups(f.store, controls, master, control.GroupOptions{OwnerID: 123})
+		if err != nil {
+			t.Fatal(err)
+		}
 		f.mirrors, err = control.NewMirrors(f.store, controls, master, control.MirrorOptions{OwnerID: 123})
 		if err != nil {
 			t.Fatal(err)
 		}
 		dispatchOptions.Extensions.OwnerCommands = func(ctx context.Context, j delivery.Job, e *delivery.Effects, b string, u *models.Update) error {
+			if err := f.groups.Handle(ctx, j, e, b, u); !errors.Is(err, delivery.ErrUnsupported) {
+				return err
+			}
 			if err := f.starter.Handle(ctx, j, e, b, u); !errors.Is(err, delivery.ErrUnsupported) {
 				return err
 			}
@@ -490,7 +498,7 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			t.Fatal(err)
 		}
 		dispatchOptions.Extensions.ControlJobs["control-menu"] = f.menus.Install
-		dispatchOptions.Extensions.Management = map[string]delivery.Handler{"operator_action": f.operator.Manage, "link_group": f.mirrors.Manage, "return_to_inbox": f.mirrors.Manage}
+		dispatchOptions.Extensions.Management = map[string]delivery.Handler{"operator_action": f.operator.Manage, "link_group": f.mirrors.Manage, "return_to_inbox": f.mirrors.Manage, "new_conversation": f.groups.Header}
 		f.deleteClients = func(_ context.Context, _ string, id string) (control.DeleteTelegram, error) {
 			if client := clients[id]; client != nil {
 				return client, nil

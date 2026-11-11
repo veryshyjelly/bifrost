@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-telegram/bot/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/veryshyjelly/bifrost/internal/control"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
@@ -92,8 +93,9 @@ func saveTransition(ctx context.Context, q *db.Queries, row db.Job, p control.Tr
 	}
 	return q.SaveMirrorTransition(ctx, db.SaveMirrorTransitionParams{AccountID: row.AccountID, JobID: row.ID, Payload: b})
 }
-func mirrorNotice(ctx context.Context, q *db.Queries, row db.Job, p control.Transition, text, suffix string, markup *models.InlineKeyboardMarkup) error {
+func mirrorNotice(ctx context.Context, q *db.Queries, row db.Job, p control.Transition, text, suffix string, markup *models.InlineKeyboardMarkup, extra ...control.Packet) error {
 	plan := control.Plan{Key: row.Dedup, Prefix: row.Dedup + suffix, Target: control.Target{BotID: "master", ChatID: p.FromChat}, Packets: []control.Packet{{Text: text, Markup: markup}}, ReplyTTLSeconds: p.TTL}
+	plan.Packets = append(plan.Packets, extra...)
 	if markup != nil {
 		plan.ReplyTTLSeconds = p.ControlTTL
 	}
@@ -109,9 +111,6 @@ func (s *Store) PrepareTransition(ctx context.Context, j delivery.Job, managemen
 		var source control.MirrorEvent
 		if row.Kind != "management" || json.Unmarshal(row.Payload, &source) != nil || (source.Type != "link_group" && source.Type != "return_to_inbox") || !strings.HasSuffix(source.Data.ChatID, "@g.us") || source.Data.TelegramChat >= 0 {
 			return delivery.ErrInvalid
-		}
-		if source.Data.RequestID != "" {
-			return delivery.ErrUnsupported
 		}
 		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
 			return err
@@ -146,6 +145,19 @@ func (s *Store) PrepareTransition(ctx context.Context, j delivery.Job, managemen
 			return err
 		}
 		p.PreviousReturn = key
+		if source.Data.RequestID != "" {
+			if p.Kind != "link_group" {
+				return delivery.ErrInvalid
+			}
+			choice, id, valid, err := pickerRequest(ctx, q, row.AccountID, source.Data.RequestID, owner)
+			if err != nil {
+				return err
+			}
+			if !valid || choice.ChatID != p.ChatID {
+				return delivery.ErrInvalid
+			}
+			p.RequestID = id
+		}
 		if p.Kind == "return_to_inbox" {
 			text, suffix := "", ""
 			if !found || route.TelegramChatID != p.FromChat || key != source.Data.PreviousReturn {
@@ -236,6 +248,15 @@ func (s *Store) CommitMirrorLink(ctx context.Context, j delivery.Job) error {
 		if other {
 			return delivery.ErrInvalid
 		}
+		if p.RequestID != 0 {
+			choice, _, valid, err := pickerRequest(ctx, q, row.AccountID, strconv.FormatInt(int64(p.RequestID), 10), p.OwnerID)
+			if err != nil {
+				return err
+			}
+			if !valid || choice.ChatID != p.ChatID {
+				return delivery.ErrInvalid
+			}
+		}
 		if route.TelegramChatID == p.Management && route.ThreadID > 1 {
 			if err := q.RememberInbox(ctx, db.RememberInboxParams{AccountID: row.AccountID, WhatsappChat: p.ChatID, TelegramChatID: p.Management, ThreadID: route.ThreadID}); err != nil {
 				return err
@@ -245,7 +266,22 @@ func (s *Store) CommitMirrorLink(ctx context.Context, j delivery.Job) error {
 			return err
 		}
 		text := "Linked WhatsApp group " + p.ChatID + ". Your messages here will be sent to that group. Use /history 50 to import recent messages here, or /unmirror to move back to a management topic."
-		if err := mirrorNotice(ctx, q, row, p, text, "", nil); err != nil {
+		var extra []control.Packet
+		if p.RequestID != 0 {
+			n, err := q.ConsumeMirrorRequest(ctx, db.ConsumeMirrorRequestParams{AccountID: row.AccountID, RequestID: p.RequestID, UsedJobID: pgtype.Int8{Int64: row.ID, Valid: true}, SelectedChat: pgtype.Int8{Int64: p.FromChat, Valid: true}})
+			if err != nil {
+				return err
+			}
+			if n != 1 {
+				return delivery.ErrInvalid
+			}
+			name := p.Name
+			if name == "" {
+				name = p.ChatID
+			}
+			extra = []control.Packet{{Text: "Linked " + name + " to its Telegram group. You can now chat there.", RemoveKeyboard: true, Target: &control.Target{BotID: "master", ChatID: p.OwnerID}}}
+		}
+		if err := mirrorNotice(ctx, q, row, p, text, "", nil, extra...); err != nil {
 			return err
 		}
 		payload, _ := json.Marshal(map[string]string{"chatId": p.ChatID})

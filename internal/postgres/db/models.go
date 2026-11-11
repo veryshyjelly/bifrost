@@ -159,6 +159,20 @@ type MessageMapping struct {
 	Receipt           []byte
 }
 
+type MirrorChatRequest struct {
+	AccountID    string
+	RequestID    int32
+	Payload      []byte
+	UsedJobID    pgtype.Int8
+	SelectedChat pgtype.Int8
+}
+
+type MirrorChoice struct {
+	AccountID string
+	ChoiceID  string
+	Payload   []byte
+}
+
 type MirrorReturn struct {
 	AccountID    string
 	WhatsappChat string

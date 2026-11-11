@@ -1,0 +1,25 @@
+# Private mirror selection and topic controls
+
+`internal/control.Groups` implements `/group`, private `mirror_…` Start links, native `chat_shared` selection and conversation topic headers through the dispatcher in isolated fixtures. The existing mirror transition performs the final private-group/admin checks and commits the link. Metadata work, history execution, contact-bot creation, credential/import workflows and final runtime composition remain pending.
+
+## Native selection and durable requests
+
+The original group button, private-chat guidance, selector text and requested administrator rights are preserved. Buttons remember the permanent account, owner, WhatsApp group, source Telegram chat/topic, return generation and 24-hour deadline. Registration, a guessed request ID or an unrelated group never authorizes linking. Opening a valid private Start link creates a unique positive signed-32-bit request ID; its request and complete reply plan commit together. Retries and reopened consumers reuse the original keyboard/request instead of generating another.
+
+The native selector asks for an owner-created group without a username, the bot as a member and matching user/bot rights to manage the chat, delete messages, change information and invite users. Other rights remain false. It requests the title and retains the original one-time, resized reply keyboard. [Telegram documents](https://core.telegram.org/bots/api#keyboardbuttonrequestchat) `chat_has_username: false` as the constraint for a chat without a username; omitting it applies no restriction.
+
+The pinned [SDK field](https://github.com/go-telegram/bot/blob/v1.28.0/models/reply_markup.go#L101) is `bool,omitempty`, so its ordinary JSON encoding drops this false value. A narrow adapter serializer restores that single request-chat constraint while retaining native SDK models, `SendMessage` and its transport. It preserves the distinction from `chat_is_forum`, which remains omitted and unconstrained. Native wire fixtures verify the emitted false value and administrator-rights equality. Server-side native `getChat`/membership checks still reject public groups and invalid permissions.
+
+The owner must share the selected group in the master bot's private chat. Source admission records command expiry and an independent link job. Account/owner, deadline, route and return generation are revalidated before the route commits. Request consumption, selected destination, the route, both complete confirmation packets, cleanup and metadata admission commit in one transaction. A failed plan write leaves the request unused and the original route active. A second job cannot consume the same request or select another destination.
+
+The group receives the original link confirmation; the owner receives the original named-group confirmation and keyboard removal. Packets retain separate frozen destinations and receipts. A failed private confirmation retries only that packet, without repeating the group notice or re-applying routing. An uncertain prompt/send remains uncertain for explicit review; request persistence does not invent a delivery receipt.
+
+## Topic header and scoped callbacks
+
+`new_conversation` now builds the original named WhatsApp-ID header and button layout. Group headers include the mirror button and Keep/Mute/Ignore/Mark read/Recent history controls. Contact headers include Create bot and the original two rows of controls. Header plans, actions, mirror choices and metadata admission commit together. Initial inbox admission and unmirror notifications retain the target chat/topic/return generation before header execution.
+
+Header retry preserves its original text, buttons, actions, expiry and send key. A confirmed receipt reconciles after a local recording failure without another send. If the recorded route becomes obsolete, definitely unsent effects close without posting into a later destination; completed receipts remain retained and uncertain sends still require review. Missing/stale initial targets produce no header.
+
+Topic callbacks validate the native owner, bot, accessible message context, account, operation, conversation, effective topic, return generation and control deadline. Invalid or tampered callbacks acknowledge without queuing an action. Valid controls admit independent management work atomically with their acknowledgement plan. Keep/Mute/Ignore and explicit read use existing handlers, including Keep on a paused conversation. History and bot-creation requests stay durable for their pending handlers. Generic callback-query expiry handling retains the existing definitely-refused acknowledgement policy.
+
+Command/reply lifetimes remain configurable with 60/600-second defaults; mirror choices keep the original 24-hour deadline. Conversation archives and mappings are not made automatically expirable. Migration `00013_group_picker.sql` retains account-scoped choices, numeric requests and consumed-job evidence. The importer must preserve these, action scopes, frozen packets and receipts before runtime startup. No live callback, bot setting or provider message is changed by these tests.

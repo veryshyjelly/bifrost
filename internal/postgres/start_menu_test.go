@@ -212,7 +212,7 @@ func TestStartDeepLinksEditsAndUnauthorizedActorsDoNotActivate(t *testing.T) {
 			}
 			if admitPicker(t, f, bot, u) {
 				r := f.dispatch(t, "tg:"+bot+":1150", "tg")
-				if kind == "mirror" || kind == "sync" {
+				if kind == "sync" {
 					if r.State != delivery.Failed {
 						t.Fatal(r)
 					}
@@ -221,7 +221,14 @@ func TestStartDeepLinksEditsAndUnauthorizedActorsDoNotActivate(t *testing.T) {
 				}
 			}
 			var started bool
-			if err := f.store.pool.QueryRow(t.Context(), "SELECT started FROM bridge_bots WHERE bot_id='200'").Scan(&started); err != nil || started || len(f.tgCalls) != 0 {
+			want := 0
+			if kind == "mirror" {
+				want = 1
+				if f.tgCalls[0].Text != control.GroupButtonExpired {
+					t.Fatal(f.tgCalls)
+				}
+			}
+			if err := f.store.pool.QueryRow(t.Context(), "SELECT started FROM bridge_bots WHERE bot_id='200'").Scan(&started); err != nil || started || len(f.tgCalls) != want {
 				t.Fatal(started, f.tgCalls, err)
 			}
 		})

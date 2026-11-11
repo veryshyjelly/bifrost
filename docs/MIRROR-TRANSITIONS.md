@@ -1,6 +1,6 @@
 # Manual mirror linking and return to management
 
-`internal/control.Mirrors` implements manual `/link <WhatsApp group ID>` and `/unmirror` through authenticated native ingress, independent management jobs and the fenced worker in isolated fixtures. The private `/group` picker, its Start links, complete topic-header callbacks, metadata workers and final runtime composition remain pending. No live route, callback or provider message is changed by these tests.
+`internal/control.Mirrors` implements manual `/link <WhatsApp group ID>` and `/unmirror` through authenticated native ingress, independent management jobs and the fenced worker in isolated fixtures. The [private group picker and topic controls](GROUP-PICKER.md) now use these transitions. Metadata workers and final runtime composition remain pending. No live route, callback or provider message is changed by these tests.
 
 ## Command and permission checks
 
@@ -28,8 +28,8 @@ The management-topic URL button and exact legacy confirmation are retained. Conf
 
 ## Remaining integration
 
-The return admits a `new_conversation` job carrying the fresh chat/thread/return key. Full header/button restoration and its metadata workflow still need handlers; execution must respect that snapshot and any later route change. The private group picker must add its existing owner, account, expiry and selection checks before using these transitions; picker requests are explicitly unsupported by the manual path.
+The return admits a `new_conversation` job carrying the fresh chat/thread/return key. Its [header handler](GROUP-PICKER.md) now restores the original buttons while respecting that snapshot and later route changes. Picker requests validate owner, account, deadline and source generation before linking, and commit consumption with both confirmation packets. Metadata execution remains pending.
 
 Generic job skipping does not reconcile an unknown topic-creation receipt or release its route reservation. Explicit transition reconciliation, the validated legacy importer and complete runtime workflow composition remain prerequisites for live startup. Import must preserve pending transitions, return generations, guards, history activity, mappings and all effect keys/receipts.
 
-Tests exercise authenticated commands, native privacy/admin checks, whole-group targets, concurrent destination commits, independent deletion, archive preservation, paused/history guards, known/uncertain refusal, discarded-effect recovery, database reopening, obsolete notices and ABA return rejection. `/group` picker and full history/media delivery remain pending.
+Tests exercise authenticated commands, native privacy/admin checks, whole-group targets, concurrent destination commits, independent deletion, archive preservation, paused/history guards, known/uncertain refusal, discarded-effect recovery, database reopening, obsolete notices and ABA return rejection. Full history/media delivery remains pending.

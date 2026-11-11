@@ -76,6 +76,7 @@ type Transition struct {
 	FromChat, Management, OwnerID             int64
 	ExpectedChat, ExpectedThread, ThreadID    int64
 	TTL, ControlTTL                           int
+	RequestID                                 int32 `json:",omitempty"`
 }
 type MirrorStore interface {
 	PrepareTransition(context.Context, delivery.Job, int64, int64, int, int) (Transition, error)

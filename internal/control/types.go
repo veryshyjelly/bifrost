@@ -26,11 +26,15 @@ type Action struct {
 	ID, Kind, BotID, WhatsAppChat, Search string
 	OwnerID, ChatID, ThreadID, ExpiresAt  int64
 	Page                                  int
+	Operation, AccountID, ReturnKey       string `json:",omitempty"`
 }
 type Packet struct {
-	Text     string
-	Entities []models.MessageEntity
-	Markup   *models.InlineKeyboardMarkup
+	Text           string
+	Entities       []models.MessageEntity
+	Markup         *models.InlineKeyboardMarkup
+	Keyboard       *models.ReplyKeyboardMarkup `json:",omitempty"`
+	RemoveKeyboard bool                        `json:",omitempty"`
+	Target         *Target                     `json:",omitempty"`
 }
 type Command struct {
 	MessageID, Date int64
@@ -49,8 +53,16 @@ type Plan struct {
 	Operator        *OperatorRequest
 	Start           *StartRequest
 	Mirror          *MirrorRequest
+	Header          bool `json:",omitempty"`
 	ReplyTTLSeconds int
 	Complete        bool `json:"-"`
+}
+
+func (p Plan) PacketTarget(part int) Target {
+	if p.Packets[part].Target != nil {
+		return *p.Packets[part].Target
+	}
+	return p.Target
 }
 
 func (p Plan) PacketKey(part int) string {
@@ -69,7 +81,7 @@ func (p Plan) FrozenPacket(part int) (string, json.RawMessage, error) {
 	b, err := json.Marshal(struct {
 		Target Target
 		Packet Packet
-	}{p.Target, p.Packets[part]})
+	}{p.PacketTarget(part), p.Packets[part]})
 	return p.PacketKey(part), b, err
 }
 

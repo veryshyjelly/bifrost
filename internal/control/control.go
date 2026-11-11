@@ -136,6 +136,10 @@ func (s *Service) Send(ctx context.Context, job delivery.Job, e *delivery.Effect
 			params := &bot.SendMessageParams{ChatID: frozen.Target.ChatID, MessageThreadID: int(frozen.Target.ThreadID), Text: frozen.Packet.Text, Entities: frozen.Packet.Entities}
 			if frozen.Packet.Markup != nil {
 				params.ReplyMarkup = frozen.Packet.Markup
+			} else if frozen.Packet.Keyboard != nil {
+				params.ReplyMarkup = frozen.Packet.Keyboard
+			} else if frozen.Packet.RemoveKeyboard {
+				params.ReplyMarkup = &models.ReplyKeyboardRemove{RemoveKeyboard: true}
 			}
 			for _, entity := range params.Entities {
 				if entity.Type == models.MessageEntityTypeTextLink {

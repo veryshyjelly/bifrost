@@ -73,7 +73,7 @@ func (s *Store) CreateInbox(ctx context.Context, job delivery.Job, route convers
 			}
 		}
 		key := "new:" + route.ChatID
-		payload, _ := json.Marshal(map[string]any{"id": key, "type": "new_conversation", "data": map[string]string{"chatId": route.ChatID}, "at": time.Now().UnixMilli()})
+		payload, _ := json.Marshal(map[string]any{"id": key, "type": "new_conversation", "data": map[string]any{"chatId": route.ChatID, "tgChat": route.TelegramChatID, "thread": route.ThreadID, "returnKey": ""}, "at": time.Now().UnixMilli()})
 		_, err = q.Enqueue(ctx, db.EnqueueParams{AccountID: row.AccountID, Dedup: "management:" + key, Stream: "management:" + key, Kind: "management", Payload: payload})
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil

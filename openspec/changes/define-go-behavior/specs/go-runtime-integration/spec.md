@@ -300,3 +300,41 @@ The Go implementation SHALL admit manual mirror commands durably and freeze rout
 
 - **WHEN** topic creation is pending or uncertain for a reserved conversation
 - **THEN** competing route moves and new active history imports wait without changing the original route or creation key
+
+### Requirement: Durable native mirror selection
+
+The Go implementation SHALL preserve native private-group selection, explicit privacy constraints and requested administrator rights. Picker requests SHALL bind account, owner, source route, return generation and deadline. Their consumption SHALL commit with the selected route and complete group/private confirmation plans. Retries SHALL reuse original request IDs, targets and receipts.
+
+#### Scenario: SDK omits a false privacy constraint
+
+- **WHEN** the SDK model would omit the native private-group constraint during JSON encoding
+- **THEN** the adapter preserves the explicit false value while retaining the SDK transport and server-side destination validation
+
+#### Scenario: Selection expires before route commit
+
+- **WHEN** an admitted selection is no longer valid before its management job commits
+- **THEN** no route change or request consumption commits
+
+#### Scenario: Private confirmation retries after group success
+
+- **WHEN** the group confirmation has a receipt but the private completion is refused or needs local reconciliation
+- **THEN** retry retains the private destination and keyboard removal without repeating the group notice or route change
+
+### Requirement: Frozen conversation topic controls
+
+The Go implementation SHALL persist complete topic headers and scoped actions before sending. Header recovery SHALL respect the recorded route and retain receipts. Callbacks SHALL validate owner, bot, account, accessible topic, conversation, operation, generation and expiry before admitting independent management work. Closing obsolete headers SHALL NOT discard uncertain sends.
+
+#### Scenario: Header plan cannot commit
+
+- **WHEN** a new header cannot persist its full plan
+- **THEN** its choices, actions and metadata admission do not partially commit
+
+#### Scenario: Scoped action is copied or changed
+
+- **WHEN** a callback is replayed in another topic or its operation/account/generation/deadline no longer matches
+- **THEN** acknowledgement does not admit an owner action
+
+#### Scenario: A later route makes a header obsolete
+
+- **WHEN** a prepared header no longer matches its route before recovery
+- **THEN** definitely unsent parts close while completed receipts and uncertain-send review remain intact

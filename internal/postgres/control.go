@@ -77,6 +77,22 @@ func (s *Store) PrepareControl(ctx context.Context, job delivery.Job, p control.
 	}
 	var result control.Plan
 	err := s.withClaim(ctx, job, func(q *db.Queries, row db.Job) error {
+		for i, packet := range p.Packets {
+			target := p.PacketTarget(i)
+			kinds := 0
+			if packet.Markup != nil {
+				kinds++
+			}
+			if packet.Keyboard != nil {
+				kinds++
+			}
+			if packet.RemoveKeyboard {
+				kinds++
+			}
+			if kinds > 1 || target.BotID != p.Target.BotID || target.ChatID == 0 || target.ThreadID < 0 {
+				return delivery.ErrInvalid
+			}
+		}
 		if row.Kind == "tg" {
 			var source struct {
 				Bot string `json:"bot"`
@@ -195,6 +211,7 @@ func recordControl(ctx context.Context, q *db.Queries, account string, p control
 	if part < 0 || part >= len(p.Packets) {
 		return delivery.ErrInvalid
 	}
+	target := p.PacketTarget(part)
 	e, err := q.GetEffect(ctx, db.GetEffectParams{AccountID: account, EffectKey: p.PacketKey(part)})
 	if err != nil {
 		return err
@@ -203,17 +220,17 @@ func recordControl(ctx context.Context, q *db.Queries, account string, p control
 		return delivery.ErrIncomplete
 	}
 	var m models.Message
-	if json.Unmarshal(e.Result, &m) != nil || m.ID <= 0 || m.Chat.ID != p.Target.ChatID || (m.MessageThreadID != 0 && int64(m.MessageThreadID) != p.Target.ThreadID && (p.Target.ThreadID > 0 || m.IsTopicMessage)) {
+	if json.Unmarshal(e.Result, &m) != nil || m.ID <= 0 || m.Chat.ID != target.ChatID || (m.MessageThreadID != 0 && int64(m.MessageThreadID) != target.ThreadID && (target.ThreadID > 0 || m.IsTopicMessage)) {
 		return delivery.ErrInvalid
 	}
 	date := int64(m.Date) * 1000
 	if date == 0 {
 		date = time.Now().UnixMilli()
 	}
-	if err := q.ObserveControl(ctx, db.ObserveControlParams{AccountID: account, Scope: relayScope(p.Target.BotID, p.Target.ChatID), BotID: p.Target.BotID, ChatID: p.Target.ChatID, MessageID: int64(m.ID), ThreadID: p.Target.ThreadID, Kind: "log", MessageDate: date, Payload: e.Result, ExpiresAt: time.Now().Add(time.Duration(p.ReplyTTLSeconds) * time.Second).UnixMilli()}); err != nil {
+	if err := q.ObserveControl(ctx, db.ObserveControlParams{AccountID: account, Scope: relayScope(target.BotID, target.ChatID), BotID: target.BotID, ChatID: target.ChatID, MessageID: int64(m.ID), ThreadID: target.ThreadID, Kind: "log", MessageDate: date, Payload: e.Result, ExpiresAt: time.Now().Add(time.Duration(p.ReplyTTLSeconds) * time.Second).UnixMilli()}); err != nil {
 		return err
 	}
-	return q.ScheduleControlExpiry(ctx, db.ScheduleControlExpiryParams{AccountID: account, Scope: relayScope(p.Target.BotID, p.Target.ChatID), ChatID: p.Target.ChatID, MessageID: int64(m.ID)})
+	return q.ScheduleControlExpiry(ctx, db.ScheduleControlExpiryParams{AccountID: account, Scope: relayScope(target.BotID, target.ChatID), ChatID: target.ChatID, MessageID: int64(m.ID)})
 }
 func (s *Store) RecordControl(ctx context.Context, job delivery.Job, key string, part int) error {
 	return s.withClaim(ctx, job, func(q *db.Queries, row db.Job) error {

@@ -40,6 +40,11 @@ func (c *Client) SendText(ctx context.Context, request *bot.SendMessageParams) (
 	if request == nil {
 		return nil, providers.ErrInvalidRequest
 	}
+	if keyboard, ok := request.ReplyMarkup.(*models.ReplyKeyboardMarkup); ok && keyboard != nil {
+		copy := *request
+		copy.ReplyMarkup = privateKeyboard(*keyboard)
+		request = &copy
+	}
 	ctx, a := providers.Observe(ctx)
 	result, err := c.sdk.SendMessage(ctx, request)
 	if err := providers.Outcome("telegram", true, err, a); err != nil {

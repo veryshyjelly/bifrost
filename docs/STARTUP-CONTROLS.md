@@ -1,6 +1,6 @@
 # Start help and Telegram command menus
 
-`internal/control.Starter` handles ordinary `/start` commands through authenticated ingress, the dispatcher and fenced control-reply journal in isolated fixtures. `internal/control.Menus` installs the existing command menus through native SDK settings calls and a separate idempotent journal. Neither component starts the runtime worker or changes live callbacks. Mirror/sync deep links, other owner workflows, credential migration/import and final runtime composition remain pending.
+`internal/control.Starter` handles ordinary `/start` commands through authenticated ingress, the dispatcher and fenced control-reply journal in isolated fixtures. `internal/control.Menus` installs the existing command menus through native SDK settings calls and a separate idempotent journal. Neither component starts the runtime worker or changes live callbacks. Mirror Start links now use the private group picker (GROUP-PICKER.md). Sync deep links, other owner workflows, credential migration/import and final runtime composition remain pending.
 
 ## Start behavior
 
@@ -10,7 +10,7 @@ A member's private Start marks the registered bot started even before binding, m
 
 Activation, direct-route admission, cleanup admission, source command expiry and the entire help plan commit together under the account-directory lock and current job claim. A local plan failure rolls everything back while retaining the original ingress. Once prepared, retry reuses the original help and effects: binding an initially unbound bot later does not change the older reply or create routes from its retry. Uncertain message sends retain the normal review rules.
 
-Commands and ordinary help notices use the existing 60-second default expiry; a group member's private-chat button uses the existing 600-second interactive expiry. Master private `mirror_…` links and master group `sync_…` links are delegated to their dedicated future workflows. They are retained as unsupported work when no such handler is installed, rather than consumed as ordinary help.
+Commands and ordinary help notices use the existing 60-second default expiry; a group member's private-chat button uses the existing 600-second interactive expiry. Master private `mirror_…` links are delegated to the group picker (GROUP-PICKER.md). Master group `sync_…` links remain delegated to their pending workflow, rather than consumed as ordinary help.
 
 ## Migration eligibility and menu admission
 
@@ -28,4 +28,4 @@ The current [Go SDK](https://github.com/go-telegram/bot/blob/v1.28.0/methods_par
 
 These settings overwrite the same frozen values. Native adapters classify lost responses/transient failures as safe to retry, and settings use their own fenced journal instead of message-send effects. Each call checks the local worker lease. Failed local progress commits can repeat only the same settings; recorded steps skip the API. A new consumer over a reopened database resumes the original scope even if current configuration changes. Identity mismatch and missing migration eligibility fail before settings calls. Ordinary sends keep their existing uncertainty handling.
 
-Fixtures cover native serialization, ordered menu parity, migration selection, admission deduplication, Start rollback and cleanup, addressing, expiry, lost settings responses, partial completion, database reopening, final-timestamp rollback and stale/cross-account fencing. [Manual mirror transitions](MIRROR-TRANSITIONS.md) now have tested components. Complete runtime startup, `/status`, private group selection, other controls and legacy import remain pending.
+Fixtures cover native serialization, ordered menu parity, migration selection, admission deduplication, Start rollback and cleanup, addressing, expiry, lost settings responses, partial completion, database reopening, final-timestamp rollback and stale/cross-account fencing. [Manual mirror transitions](MIRROR-TRANSITIONS.md) now have tested components. Private group selection and scoped topic headers are now tested (GROUP-PICKER.md). Complete runtime startup, `/status`, other controls and legacy import remain pending.
