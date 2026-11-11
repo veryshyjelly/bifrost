@@ -164,3 +164,12 @@
 - [x] Preserve per-packet receipts, keyboard removal, configured lifetimes and uncertain-send review across retries/restart.
 - [x] Verify source authorization, scope/expiry rejection, rollback, native wire serialization and obsolete-header recovery with isolated PostgreSQL/SDK fixtures.
 - [ ] Execute metadata sync, history and contact provisioning handlers; complete transition reconciliation/import and final runtime composition.
+
+## Metadata snapshot and text stages
+
+- [x] Preserve optional group descriptions and validated participant lists through maintained SDK reads.
+- [x] Commit session-scoped snapshots, rosters/profiles, route names and complete text plans atomically under account/claim fencing.
+- [x] Freeze inbox/mirror text and existing contact-bot name/description updates, retaining independent receipts across retries and reopened consumers.
+- [x] Reject obsolete routes, generations, bindings, snapshots and public mirror targets; preserve retired topics and unapplied topic names.
+- [x] Verify unavailable/empty descriptions, LID identity, rollback, safe setter retries and receipt reconciliation with isolated PostgreSQL/SDK fixtures.
+- [ ] Complete picture caching/uploads, permission controls, shared-contact run orchestration, completion reports, owner sync commands and persistent cron before registering a complete metadata handler.

@@ -152,6 +152,8 @@ func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 		}
 		description := strings.ToLower(envelope.Description)
 		switch {
+		case strings.Contains(description, "not modified") || strings.Contains(description, "not_modified"):
+			a.reason = "not_modified"
 		case strings.Contains(description, "message thread not found"):
 			a.reason = "thread_missing"
 		case (strings.Contains(description, "reply") || strings.Contains(description, "replied")) && strings.Contains(description, "not found"):

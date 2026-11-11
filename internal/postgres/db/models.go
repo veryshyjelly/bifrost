@@ -159,6 +159,31 @@ type MessageMapping struct {
 	Receipt           []byte
 }
 
+type MetadataSnapshot struct {
+	AccountID string
+	SessionID string
+	SourceID  string
+	JobID     int64
+	FetchedAt int64
+	Payload   []byte
+}
+
+type MetadataTextPlan struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
+type MetadataTopicName struct {
+	AccountID string
+	SessionID string
+	SourceID  string
+	ChatID    int64
+	ThreadID  int64
+	ReturnKey string
+	Name      string
+}
+
 type MirrorChatRequest struct {
 	AccountID    string
 	RequestID    int32

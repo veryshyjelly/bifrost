@@ -2,6 +2,8 @@
 
 The PostgreSQL delivery foundation and diagnostic runtime are now implemented; this is not a completed bridge. The approved contract is in OpenSpec. All existing behavior remains required, including linked names, intentional topic deletion and reviewed uncertain sends. Caption clearing is conditional on released provider support.
 
+The [metadata snapshot and text stages](METADATA.md) now preserve source rosters/descriptions and freeze destination-scoped topic, mirror and existing contact-bot updates. Full metadata orchestration, pictures, permission controls and scheduling remain pending; text completion does not complete a refresh job or enable runtime dispatch.
+
 ## Shape and dependency direction
 
 Build one modular application and one PostgreSQL database. Use `cmd/bifrost` as the composition root. Keep workflow logic in `internal/bridge`, durable execution in `internal/delivery`, PostgreSQL access in `internal/postgres`, HTTP routing in `internal/httpserver`, authenticated admission in `internal/ingress` and provider calls behind `internal/providers/openwa` and `internal/providers/telegram`.

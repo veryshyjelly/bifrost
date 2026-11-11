@@ -338,3 +338,27 @@ The Go implementation SHALL persist complete topic headers and scoped actions be
 
 - **WHEN** a prepared header no longer matches its route before recovery
 - **THEN** definitely unsent parts close while completed receipts and uncertain-send review remain intact
+
+### Requirement: Fenced metadata text stages
+
+The Go implementation SHALL atomically persist validated source snapshots and frozen metadata text plans, preserving unavailable descriptions and incomplete rosters. Text recovery SHALL reuse original targets, values and receipts, check current identity/route/generation/snapshot scope, and retain unapplied topic names. Completing text stages SHALL NOT imply a completed refresh run or enable partial runtime dispatch.
+
+#### Scenario: Optional description or incomplete roster
+
+- **WHEN** the provider omits a description or returns an incomplete group roster
+- **THEN** unavailable descriptions cannot clear Telegram data and incomplete rosters cannot replace stored metadata
+
+#### Scenario: A topic rename has not succeeded
+
+- **WHEN** a source name refresh commits but its topic rename fails
+- **THEN** a later request still compares against the unapplied topic name and does not mistake source persistence for provider success
+
+#### Scenario: Metadata plan persistence fails
+
+- **WHEN** the full text plan cannot commit
+- **THEN** snapshots, rosters/profiles, route names and topic-name evidence roll back together before any provider mutation
+
+#### Scenario: Partial or obsolete text recovery
+
+- **WHEN** a confirmed setter needs local reconciliation or the recorded route, binding, generation or source snapshot becomes obsolete
+- **THEN** recovery retains confirmed receipts without another setter and never retargets old work into the newer scope

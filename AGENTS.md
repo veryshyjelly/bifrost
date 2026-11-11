@@ -12,6 +12,8 @@ For outgoing WhatsApp stickers in the Go port, use a 1,000,000-byte budget for t
 
 Use standard context, errors, net/http, log/slog and testing where they suffice. Run gofmt; prefer idiomatic Go naming and small packages over broad frameworks or generic repositories.
 
+Metadata source snapshots and resumable text updates are implemented as isolated capabilities; see docs/METADATA.md. Do not register them as the complete sync_metadata handler until photos, permission controls, run orchestration, owner commands and scheduling exist. Preserve the distinction between TextComplete and complete refresh work.
+
 ## Commands and tests
 
 - `make check`: formatting, go vet, race-enabled Go tests, repository audit and Compose validation.

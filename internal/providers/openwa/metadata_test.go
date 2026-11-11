@@ -1,0 +1,68 @@
+package openwa
+
+import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func TestMetadataGroupPreservesDescriptionPresenceAndRejectsIncompleteRosters(t *testing.T) {
+	for _, tc := range []struct {
+		name, extra, participants string
+		want                      *string
+		invalid                   bool
+	}{
+		{name: "absent", participants: `[]`},
+		{name: "null", extra: `,"description":null`, participants: `[]`},
+		{name: "empty", extra: `,"description":""`, participants: `[]`, want: new("")},
+		{name: "available", extra: `,"description":"About"`, participants: `[{"id":"12345000000001@lid","number":"2025550123"}]`, want: new("About")},
+		{name: "missing roster", participants: `null`, invalid: true},
+		{name: "bad member", participants: `[{"id":"not-a-person"}]`, invalid: true},
+		{name: "bad description", extra: `,"description":false`, participants: `[]`, invalid: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			calls := 0
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				calls++
+				if r.Method != "GET" || r.URL.Path != "/api/sessions/session/groups/123@g.us" {
+					t.Error("unexpected source mutation or path", r.Method, r.URL.Path)
+				}
+				fmt.Fprintf(w, `{"id":"123@g.us","name":"Group","participants":%s%s}`, tc.participants, tc.extra)
+			}))
+			defer server.Close()
+			c, err := New(server.URL, "fixture-key", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			group, err := c.GroupMetadata(t.Context(), "session", "123@g.us")
+			if (err != nil) != tc.invalid {
+				t.Fatal(group, err)
+			}
+			if !tc.invalid && ((group.Description == nil) != (tc.want == nil) || tc.want != nil && *group.Description != *tc.want) {
+				t.Fatal("description availability changed", group)
+			}
+			if calls != 1 {
+				t.Fatal("hidden retry", calls)
+			}
+		})
+	}
+}
+
+func TestMetadataContactReadsNativeRecordWithoutInferringLIDPhone(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" || r.URL.Path != "/api/sessions/session/contacts/12345000000001@lid" {
+			t.Error("unexpected source mutation", r.Method, r.URL.Path)
+		}
+		fmt.Fprint(w, `{"id":"12345000000001@lid","name":null,"pushName":"Friend","number":"12345000000001"}`)
+	}))
+	defer server.Close()
+	c, err := New(server.URL, "fixture-key", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	contact, err := c.Contact(t.Context(), "session", "12345000000001@lid")
+	if err != nil || contact.ID != "12345000000001@lid" || contact.Name != nil || contact.PushName == nil || *contact.PushName != "Friend" {
+		t.Fatal(contact, err)
+	}
+}
