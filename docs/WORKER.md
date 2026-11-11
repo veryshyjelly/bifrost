@@ -32,7 +32,7 @@ Migration `00003_discarded_effects.sql` adds that terminal state. A schema downg
 
 Initial inbox creation is restricted to the canonical conversation's WhatsApp stream. Unknown conversations create one Telegram forum topic through the native SDK method. A retry after topic success but before route persistence reuses that receipt. The route and its new-conversation management notification commit together, under the worker's claim, without overwriting an existing binding.
 
-A verified contact binding to an already started bot creates a dedicated direct route without creating an unnecessary management topic. A bot cannot bind to two different canonical people. Starting a bound bot persists activation and queues independent inbox-retirement work in one transaction; actual topic deletion remains part of the pending cleanup workflow, rather than blocking message delivery.
+A verified contact binding to an already started bot creates a dedicated direct route without creating an unnecessary management topic. A bot cannot bind to two different canonical people. Starting a bound bot persists activation and queues independent inbox-retirement work in one transaction. The [retirement handler](INBOX-RETIREMENT.md) now performs native topic deletion with frozen reservations and shared-topic guards, independently of message delivery.
 
 Target selection preserves the existing distinctions:
 
@@ -44,7 +44,7 @@ Target selection preserves the existing distinctions:
 
 Migration `00004_conversations.sql` adds route names/modes, bot-start state and unique canonical-contact bindings. Native topic/member adapters preserve full-width Telegram IDs and optional SDK fields. None of these routing operations marks WhatsApp content read, copies history or changes the approved 1,000,000-byte outgoing sticker budget.
 
-Verified phone/LID aliases, managed-bot token registration, full mirror/topic transitions, inbox deletion safeguards, `/unmirror`, history coordination, formatting, message mappings and relay handlers are still pending. Canonical identity resolution must precede these routing components; raw aliases are not silently merged by the storage adapter.
+Verified phone/LID aliases, formatting, scoped mappings, native text dispatch, notice cleanup and former-inbox retirement now have tested capabilities. Managed-bot token registration, remaining owner commands, full mirror/topic transitions, `/unmirror`, history coordination and final runtime composition are still pending. Canonical identity resolution precedes routing; raw aliases are not silently merged by the storage adapter.
 
 ## Validation
 

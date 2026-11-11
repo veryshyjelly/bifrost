@@ -83,6 +83,13 @@ type ControlPlan struct {
 	Complete  bool
 }
 
+type ConversationInbox struct {
+	AccountID      string
+	WhatsappChat   string
+	TelegramChatID int64
+	ThreadID       int64
+}
+
 type Effect struct {
 	AccountID string
 	EffectKey string
@@ -90,6 +97,13 @@ type Effect struct {
 	State     string
 	Request   []byte
 	Result    []byte
+}
+
+type InboxRetirement struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+	Complete  bool
 }
 
 type Job struct {
@@ -146,6 +160,14 @@ type RelayPlan struct {
 	WhatsappChat string
 	Payload      []byte
 	Complete     bool
+}
+
+type RetiredTopic struct {
+	AccountID      string
+	TelegramChatID int64
+	ThreadID       int64
+	WhatsappChat   string
+	Deleted        bool
 }
 
 type TelegramObservation struct {

@@ -47,6 +47,9 @@ func (s *Store) PrepareRelay(ctx context.Context, job delivery.Job, p relay.Plan
 	}
 	var result relay.Plan
 	err := s.withClaim(ctx, job, func(q *db.Queries, row db.Job) error {
+		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
+			return err
+		}
 		existing, err := loadRelay(ctx, q, row.AccountID, p.Key)
 		if err == nil {
 			result = existing
@@ -64,6 +67,13 @@ func (s *Store) PrepareRelay(ctx context.Context, job delivery.Job, p relay.Plan
 		}
 		if route.TelegramChatID != p.Route.TelegramChatID || route.ThreadID != p.Route.ThreadID || route.Mode != string(p.Route.Mode) || route.InboxRetired != p.Route.InboxRetired || route.Mode == "muted" || route.Mode == "ignored" {
 			return delivery.ErrLocalRetry
+		}
+		reserved, err := q.ReservedTopic(ctx, db.ReservedTopicParams{AccountID: row.AccountID, TelegramChatID: p.TelegramChat, ThreadID: p.ThreadID})
+		if err != nil {
+			return err
+		}
+		if reserved {
+			return conversation.ErrInboxRequired
 		}
 		payload, err := json.Marshal(p)
 		if err != nil {

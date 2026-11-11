@@ -195,3 +195,27 @@ The Go implementation SHALL persist expiry jobs with their recorded deadlines an
 
 - **WHEN** an own-bot observation may be a conversation copy whose relay receipt or mapping is unresolved
 - **THEN** notice cleanup waits for resolution or excludes the confirmed relay copy rather than deleting it as a notice
+
+### Requirement: Fenced former inbox retirement
+
+The Go implementation SHALL retire eligible former management topics independently of delivery, preserving intentional deletion while excluding General and shared topics. It SHALL freeze deletion targets, serialize reservations with routing and relay-plan admission, wait for incomplete relays and retain deletion outcomes separately from uncertain message sends.
+
+#### Scenario: Permission refusal during bot activation cleanup
+
+- **WHEN** a bound bot is started and Telegram refuses deletion of its former management topic
+- **THEN** private conversation delivery continues and the separate cleanup job retains its original topic for explicit retry
+
+#### Scenario: A competing route has not committed
+
+- **WHEN** a route transaction holding the shared admission lock assigns another conversation to a retirement candidate
+- **THEN** retirement waits, observes that committed route and refuses deletion without partial reservations
+
+#### Scenario: Topic deletion loses its response before a fresh restoration
+
+- **WHEN** a former-topic deletion response is lost and the conversation later returns to a fresh management topic
+- **THEN** retry deletes only the originally reserved topic, cannot rebind it as a live target and preserves the fresh inbox
+
+#### Scenario: Incomplete relay still targets the old inbox
+
+- **WHEN** a prepared relay has unfinished or uncertain work at a former management topic
+- **THEN** retirement waits for that relay to resolve, retaining its frozen destination and receipts before deletion

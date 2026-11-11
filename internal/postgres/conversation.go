@@ -41,6 +41,16 @@ func (s *Store) CreateInbox(ctx context.Context, job delivery.Job, route convers
 		if row.Kind != "wa" || row.Stream != "wa:"+route.ChatID {
 			return delivery.ErrInvalid
 		}
+		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
+			return err
+		}
+		reserved, err := q.ReservedTopic(ctx, db.ReservedTopicParams{AccountID: row.AccountID, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID})
+		if err != nil {
+			return err
+		}
+		if reserved {
+			return conversation.ErrInboxRequired
+		}
 		r, err := q.CreateInbox(ctx, db.CreateInboxParams{AccountID: row.AccountID, WhatsappChat: route.ChatID, Name: route.Name, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID, Mode: string(route.Mode), InboxRetired: route.InboxRetired})
 		if errors.Is(err, pgx.ErrNoRows) {
 			r, err := q.ConversationRoute(ctx, db.ConversationRouteParams{AccountID: row.AccountID, WhatsappChat: route.ChatID})
@@ -56,6 +66,11 @@ func (s *Store) CreateInbox(ctx context.Context, job delivery.Job, route convers
 		result = conversation.Route{ChatID: r.WhatsappChat, Name: r.Name, TelegramChatID: r.TelegramChatID, ThreadID: r.ThreadID, Mode: conversation.Mode(r.Mode), InboxRetired: r.InboxRetired}
 		if route.InboxRetired {
 			return nil
+		}
+		if route.ThreadID > 1 {
+			if err := q.RememberInbox(ctx, db.RememberInboxParams{AccountID: row.AccountID, WhatsappChat: route.ChatID, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID}); err != nil {
+				return err
+			}
 		}
 		key := "new:" + route.ChatID
 		payload, _ := json.Marshal(map[string]any{"id": key, "type": "new_conversation", "data": map[string]string{"chatId": route.ChatID}, "at": time.Now().UnixMilli()})

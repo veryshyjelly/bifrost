@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/veryshyjelly/bifrost/internal/conversation"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
 	"github.com/veryshyjelly/bifrost/internal/postgres/db"
@@ -38,7 +39,26 @@ func (s *Store) PutIngressRoute(ctx context.Context, account string, route ingre
 	if account == "" || route.WhatsAppChat == "" || route.TelegramChatID == 0 || route.ThreadID < 0 {
 		return delivery.ErrInvalid
 	}
-	return s.queries.PutIngressRoute(ctx, db.PutIngressRouteParams{AccountID: account, WhatsappChat: route.WhatsAppChat, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID, InboxRetired: route.InboxRetired})
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	q := s.queries.WithTx(tx)
+	if err := q.LockContactDirectory(ctx, account); err != nil {
+		return err
+	}
+	reserved, err := q.ReservedTopic(ctx, db.ReservedTopicParams{AccountID: account, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID})
+	if err != nil {
+		return err
+	}
+	if reserved {
+		return conversation.ErrInboxRequired
+	}
+	if err := q.PutIngressRoute(ctx, db.PutIngressRouteParams{AccountID: account, WhatsappChat: route.WhatsAppChat, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID, InboxRetired: route.InboxRetired}); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
 }
 
 func (s *Store) Admit(ctx context.Context, event *delivery.Event, observation *ingress.Observation) (bool, error) {

@@ -110,4 +110,14 @@
 - [x] Journal idempotent deletion targets/outcomes separately while retaining fencing and uncertain message-send review.
 - [x] Preserve mappings and deleted-copy markers, including relay receipt-before-mapping and unresolved-send guards.
 - [x] Exercise authenticated cleanup commands, restart persistence, native SDK calls and local/remote failure recovery with isolated PostgreSQL.
-- [ ] Integrate old-topic retirement, other controls, legacy-state import and full runtime startup.
+- [x] Implement independent former-inbox retirement with shared-topic safeguards and frozen deletion recovery.
+- [ ] Integrate other controls, legacy-state import and full runtime startup.
+
+## Former inbox retirement implementation
+
+- [x] Discover current, empty remembered and mapped former management topics without deleting General, mirror messages or private-bot copies.
+- [x] Refuse shared topics and serialize candidate admission with route writes and frozen relay preparation.
+- [x] Wait for incomplete relays, reserve original topic IDs and protect fresh restorations from deletion retries.
+- [x] Use native idempotent topic deletion with durable outcomes, fenced writes and independent permission/refusal recovery.
+- [x] Verify activation, provider failures, database reopening, rollback, concurrent route admission and lease fencing with isolated PostgreSQL/SDK fixtures.
+- [ ] Compose remaining owner commands, mirror transitions, history/import and full runtime startup.

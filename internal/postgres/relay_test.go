@@ -43,6 +43,8 @@ type relayFixture struct {
 	service              *relay.Service
 	dispatcher           *bridge.Dispatcher
 	cleaner              *control.Cleaner
+	retirer              *conversation.Retirer
+	topicDeleter         conversation.TopicDeleter
 	mu                   sync.Mutex
 	tgCalls              []tgTextCall
 	waCalls              []waTextCall
@@ -72,6 +74,15 @@ type relayFixture struct {
 	deleteRefuse         map[int]int
 	deleteDropAt         int
 	deleteClients        control.DeleteClients
+	retireCalls          []retireCall
+	retireStatus         int
+	retireMissing        bool
+	retireDropAt         int
+	retireBefore         func()
+}
+type retireCall struct {
+	Bot          string
+	Chat, Thread int64
 }
 type deleteCall struct {
 	Bot  string
@@ -154,6 +165,35 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			f.topicNames = append(f.topicNames, r.FormValue("name"))
 			f.mu.Unlock()
 			fmt.Fprint(w, `{"ok":true,"result":{"message_thread_id":44,"name":"Fixture"}}`)
+			return
+		}
+		if strings.HasSuffix(r.URL.Path, "deleteForumTopic") {
+			chat, _ := strconv.ParseInt(r.FormValue("chat_id"), 10, 64)
+			thread, _ := strconv.ParseInt(r.FormValue("message_thread_id"), 10, 64)
+			f.mu.Lock()
+			f.retireCalls = append(f.retireCalls, retireCall{Bot: token, Chat: chat, Thread: thread})
+			count, status, missing, before := len(f.retireCalls), f.retireStatus, f.retireMissing, f.retireBefore
+			drop := f.retireDropAt == count
+			f.mu.Unlock()
+			if before != nil {
+				before()
+			}
+			if drop {
+				conn, _, err := w.(http.Hijacker).Hijack()
+				if err != nil {
+					t.Error(err)
+				} else {
+					conn.Close()
+				}
+				return
+			}
+			if missing {
+				fmt.Fprint(w, `{"ok":false,"error_code":400,"description":"Bad Request: message thread not found"}`)
+			} else if status != 0 {
+				fmt.Fprintf(w, `{"ok":false,"error_code":%d,"description":"fixture topic deletion refusal"}`, status)
+			} else {
+				fmt.Fprint(w, `{"ok":true,"result":true}`)
+			}
 			return
 		}
 		if strings.HasSuffix(r.URL.Path, "getChatMember") {
@@ -299,6 +339,12 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 		t.Fatal(err)
 	}
 	dispatchOptions := bridge.Options{AccountID: "fixture-account", SessionID: "fixture-session", OwnerID: 123}
+	f.retirer, err = conversation.NewRetirer(f.store, master, -100)
+	f.topicDeleter = master
+	if err != nil {
+		t.Fatal(err)
+	}
+	dispatchOptions.Extensions.ControlJobs = map[string]delivery.Handler{"control-retire-inbox": f.retirer.Retire}
 	if mentionService != nil {
 		controls, err := control.New(f.store, func(_ context.Context, _ string, id string) (control.Telegram, error) {
 			if c := clients[id]; c != nil {
@@ -326,7 +372,9 @@ func newRelayFixture(t *testing.T, wrap func(*Store) relay.Store, withMentions .
 			t.Fatal(err)
 		}
 		dispatchOptions.Extensions.Telegram = f.cleaner.Handle
-		dispatchOptions.Extensions.ControlJobs = f.cleaner.Handlers()
+		for kind, handler := range f.cleaner.Handlers() {
+			dispatchOptions.Extensions.ControlJobs[kind] = handler
+		}
 	}
 	f.dispatcher, err = bridge.New(f.store, f.service, whatsapp, dispatchOptions)
 	if err != nil {
