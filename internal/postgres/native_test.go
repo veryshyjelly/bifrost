@@ -36,6 +36,7 @@ type nativeCall struct {
 	Reply             string
 	MessageID         int
 	Reaction          string
+	DeleteIDs         []int
 }
 type nativeSend struct {
 	Method, Key string
@@ -141,6 +142,11 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 		call := nativeCall{Method: method, Bot: botID, Chat: chat, Thread: thread, Text: r.FormValue("text"), Reply: r.FormValue("reply_parameters")}
 		call.MessageID, _ = strconv.Atoi(r.FormValue("message_id"))
 		call.Reaction = r.FormValue("reaction")
+		if value := r.FormValue("message_ids"); value != "" {
+			if err := json.Unmarshal([]byte(value), &call.DeleteIDs); err != nil {
+				t.Error(err)
+			}
+		}
 		if call.Text == "" {
 			call.Text = r.FormValue("caption")
 		}
@@ -179,7 +185,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			json.NewEncoder(w).Encode(map[string]any{"ok": false, "error_code": n.failCode, "description": description, "parameters": map[string]int{"retry_after": 1}})
 			return
 		}
-		if method == "setMessageReaction" {
+		if method == "setMessageReaction" || method == "deleteMessages" || method == "answerCallbackQuery" {
 			fmt.Fprint(w, `{"ok":true,"result":true}`)
 			return
 		}
@@ -203,7 +209,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			n.nativeSequences[botID]++
 			result["message_id"] = 2000 + n.nativeSequences[botID]
 		}
-		if method == "editMessageText" || method == "editMessageCaption" {
+		if method == "editMessageText" || method == "editMessageCaption" || method == "editMessageReplyMarkup" {
 			id, _ := strconv.Atoi(r.FormValue("message_id"))
 			result["message_id"] = id
 		}

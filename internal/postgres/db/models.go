@@ -459,6 +459,14 @@ type RetiredTopic struct {
 	Deleted        bool
 }
 
+type RevocationTask struct {
+	AccountID    string
+	TaskID       string
+	WhatsappChat string
+	MessageID    string
+	Payload      []byte
+}
+
 type RouteTransitionLock struct {
 	AccountID    string
 	WhatsappChat string

@@ -244,3 +244,11 @@
 - [x] Validate and freeze custom-emoji equivalents without clearing unresolved reactions; deduplicate confirmed equivalent changes.
 - [x] Exercise native adapter payloads, safe setter retries, crash recovery, missing targets and independent fallback notices in isolated fixtures.
 - [ ] Complete explicit /react and /delete commands, source revocation choices and runtime/import wiring.
+
+## Source revocation choices
+
+- [x] Persist source tombstones before destination work and prevent late live/history resurrection.
+- [x] Implement owner-scoped inline/reply Delete/Keep controls with exact destination/topic/private-bot scope and permanent-account identity.
+- [x] Preserve original content on Keep, expiry, stale conflicting clicks and deletion refusal; delete all parts only in the selected destination.
+- [x] Exercise native markup, prompt refusal/cleanup, passive expiry and fenced idempotent delete-cursor recovery in isolated fixtures.
+- [ ] Integrate revocation controls with complete runtime composition and legacy task import.

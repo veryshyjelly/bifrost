@@ -73,6 +73,11 @@ func (n *Native) Incoming(ctx context.Context, j delivery.Job, e *delivery.Effec
 	if err != nil {
 		return local(err)
 	}
+	if revoked, err := n.store.MessageRevoked(ctx, j.AccountID, source.ChatID, source.MessageID); err != nil {
+		return local(err)
+	} else if revoked {
+		return nil
+	}
 	echo, err := n.store.RelayEcho(ctx, j.AccountID, source.ChatID, source.MessageID)
 	if err != nil {
 		return local(err)

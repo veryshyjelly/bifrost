@@ -135,7 +135,7 @@ func (s *Service) Send(ctx context.Context, job delivery.Job, e *delivery.Effect
 			}
 			params := &bot.SendMessageParams{ChatID: frozen.Target.ChatID, MessageThreadID: int(frozen.Target.ThreadID), Text: frozen.Packet.Text, Entities: frozen.Packet.Entities}
 			if frozen.Packet.ReplyTo > 0 {
-				params.ReplyParameters = &models.ReplyParameters{MessageID: int(frozen.Packet.ReplyTo), AllowSendingWithoutReply: true}
+				params.ReplyParameters = &models.ReplyParameters{MessageID: int(frozen.Packet.ReplyTo), AllowSendingWithoutReply: !frozen.Packet.StrictReply}
 			}
 			if frozen.Packet.Markup != nil {
 				params.ReplyMarkup = frozen.Packet.Markup

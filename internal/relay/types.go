@@ -84,6 +84,7 @@ type Mapping struct {
 type Echo struct{ Recognized, Pending bool }
 
 type Store interface {
+	MessageRevoked(context.Context, string, string, string) (bool, error)
 	ConversationRoute(context.Context, string, string) (conversation.Route, bool, error)
 	RelayPlan(context.Context, string, string) (Plan, bool, error)
 	PrepareRelay(context.Context, delivery.Job, Plan) (Plan, error)

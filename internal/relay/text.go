@@ -67,6 +67,11 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 	if e == nil || job.Kind != "wa" || m.ChatID == "" || m.MessageID == "" || job.Stream != "wa:"+m.ChatID || !utf8.ValidString(m.Body) {
 		return delivery.ErrInvalid
 	}
+	if revoked, err := s.store.MessageRevoked(ctx, job.AccountID, m.ChatID, m.MessageID); err != nil {
+		return local(err)
+	} else if revoked {
+		return nil
+	}
 	echo, err := s.store.RelayEcho(ctx, job.AccountID, m.ChatID, m.MessageID)
 	if err != nil {
 		return local(err)
