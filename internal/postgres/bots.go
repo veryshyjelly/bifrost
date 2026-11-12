@@ -256,6 +256,15 @@ func (s *Store) PrepareBotSetup(ctx context.Context, j delivery.Job, c bots.Sett
 				p.Step = 1
 			}
 		}
+		if p.Step == 0 {
+			loggedOut, err := q.LegacyBotLogout(ctx, db.LegacyBotLogoutParams{AccountID: row.AccountID, BotID: p.BotID, CredentialRevision: p.Revision})
+			if err != nil {
+				return err
+			}
+			if loggedOut {
+				p.Step = 1
+			}
+		}
 		result = p
 		return saveSetup(ctx, q, row, p)
 	})

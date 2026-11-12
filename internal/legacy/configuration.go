@@ -47,7 +47,9 @@ func (c Configuration) clone() Configuration {
 	return c
 }
 
-func parseConfiguration(bridge, telegram []byte) (Configuration, error) {
+// ParseConfiguration verifies the original literal credential files. It never
+// evaluates or installs their values into the process environment.
+func ParseConfiguration(bridge, telegram []byte) (Configuration, error) {
 	c := Configuration{bridgeRaw: bytes.Clone(bridge), telegramRaw: bytes.Clone(telegram)}
 	var err error
 	c.bridge, err = literalEnvironment(bridge)

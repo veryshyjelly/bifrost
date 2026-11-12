@@ -146,7 +146,7 @@ func OpenBundle(ctx context.Context, filename string, options BundleOptions) (_ 
 	if err != nil {
 		return nil, ErrInvalid
 	}
-	b.config, err = parseConfiguration(bridge, telegram)
+	b.config, err = ParseConfiguration(bridge, telegram)
 	if err != nil {
 		return nil, err
 	}

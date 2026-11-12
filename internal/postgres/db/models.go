@@ -180,6 +180,17 @@ type Job struct {
 	Created    pgtype.Timestamptz
 }
 
+type LegacyBotLogout struct {
+	AccountID          string
+	BotID              string
+	CredentialRevision string
+}
+
+type LegacyBotProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyImport struct {
 	AccountID               string
 	ArchiveDigest           string

@@ -315,3 +315,9 @@
 - [x] Reject nonempty/conflicting destinations and concurrent writers, roll back late validation/COPY/projection failures, and make exact replay harmless.
 - [x] Protect source evidence and block runtime readiness/job claims until native journal and asset activation is complete.
 - [ ] Project and activate every legacy workflow, restore retained assets and complete the explicit import/cutover CLI.
+
+## Legacy Telegram credential projection
+
+- [x] Project original encrypted member credentials, master token, registration names and Start activation without local migration eligibility.
+- [x] Preserve scoped hosted-logout proof and require native local API verification before webhook/menu setup.
+- [x] Cover projection rollback/replay, changed credentials, cached identity/Start, refused local API checks and native setup recovery in isolated fixtures.

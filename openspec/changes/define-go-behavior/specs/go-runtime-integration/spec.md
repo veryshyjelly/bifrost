@@ -103,6 +103,17 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** source evidence has been prepared but native journals and retained assets have not been activated
 - **THEN** the account cannot pass runtime readiness or claim any job, and preparation does not fabricate effects or runnable imported work
 
+#### Scenario: Imported Telegram setup evidence
+
+- **WHEN** legacy bot credentials and a confirmed hosted-logout flag are projected
+- **THEN** original member ciphertexts, account/bot scope and Start activation remain intact, and only the matching credential revision can skip hosted logout
+- **AND** cached identity, registration, Start and the legacy flag do not establish local API migration eligibility; native local identity verification still precedes webhook/menu readiness
+
+#### Scenario: Credential projection retry
+
+- **WHEN** credential projection fails or its exact completed checkpoint is repeated after a subsequent credential change
+- **THEN** failure rolls back credentials and source proof together, while completed replay returns its first result without restoring old tokens over later state
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.
