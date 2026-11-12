@@ -110,7 +110,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 					fmt.Fprint(w, `{"message":"fixture send refusal"}`)
 					return
 				}
-				if n.sends[len(n.sends)-1].Method == "vote-poll" || n.sends[len(n.sends)-1].Method == "react" {
+				if n.sends[len(n.sends)-1].Method == "vote-poll" || n.sends[len(n.sends)-1].Method == "react" || n.sends[len(n.sends)-1].Method == "delete" {
 					fmt.Fprint(w, `{"success":true}`)
 					return
 				}

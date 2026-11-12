@@ -473,6 +473,13 @@ type RouteTransitionLock struct {
 	JobID        int64
 }
 
+type SourceActionJob struct {
+	AccountID   string
+	JobID       int64
+	SourceJobID int64
+	Payload     []byte
+}
+
 type TelegramBotLifecycle struct {
 	AccountID       string
 	BotID           string

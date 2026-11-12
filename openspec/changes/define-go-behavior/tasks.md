@@ -252,3 +252,11 @@
 - [x] Preserve original content on Keep, expiry, stale conflicting clicks and deletion refusal; delete all parts only in the selected destination.
 - [x] Exercise native markup, prompt refusal/cleanup, passive expiry and fenced idempotent delete-cursor recovery in isolated fixtures.
 - [ ] Integrate revocation controls with complete runtime composition and legacy task import.
+
+## Explicit source actions
+
+- [x] Admit owner /react and /delete only from a mapped reply in the current conversation/topic/private-bot scope; preserve edited-command and argument behavior.
+- [x] Preserve the authenticated direct management action surface with unique originating-job admission and frozen native requests.
+- [x] Use idempotent source mutation progress, independent refusal notices and authoritative revoke evidence before Telegram cleanup.
+- [x] Validate native payloads, replay, permission refusal and crash recovery through isolated SDK/PostgreSQL fixtures.
+- [ ] Complete route repair and runtime/import composition.
