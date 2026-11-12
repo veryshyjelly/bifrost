@@ -90,6 +90,13 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 	if found && plan.Complete {
 		return nil
 	}
+	if !found {
+		if complete, err := s.store.MessageComplete(ctx, job.AccountID, m.ChatID, m.MessageID); err != nil {
+			return local(err)
+		} else if complete {
+			return nil
+		}
+	}
 	route, known, err := s.store.ConversationRoute(ctx, job.AccountID, m.ChatID)
 	if err != nil {
 		return local(err)

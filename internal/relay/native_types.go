@@ -97,6 +97,7 @@ type NativeTelegram interface {
 type NativeClients func(context.Context, string, string) (NativeTelegram, error)
 type NativeStore interface {
 	MessageRevoked(context.Context, string, string, string) (bool, error)
+	MessageComplete(context.Context, string, string, string) (bool, error)
 	SelfIdentity(context.Context, string) (string, bool, error)
 	SaveSelfIdentity(context.Context, delivery.Job, string) error
 	NormalizeIncoming(context.Context, delivery.Job) (identity.Source, error)

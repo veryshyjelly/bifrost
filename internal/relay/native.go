@@ -105,6 +105,11 @@ func (n *Native) Incoming(ctx context.Context, j delivery.Job, e *delivery.Effec
 	} else if found {
 		return n.send(ctx, j, e, p)
 	}
+	if complete, err := n.store.MessageComplete(ctx, j.AccountID, source.ChatID, source.MessageID); err != nil {
+		return local(err)
+	} else if complete {
+		return nil
+	}
 	route, known, err := n.store.ConversationRoute(ctx, j.AccountID, source.ChatID)
 	if err != nil {
 		return local(err)

@@ -136,6 +136,17 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** topic ownership or aliases conflict, a retired hash lacks exact evidence, persistence fails, or a completed projection is repeated
 - **THEN** conflicts are refused and failed writes roll back together; exact replay preserves later native changes and cannot change the frozen planned provider connection
 
+#### Scenario: Imported completed live source
+
+- **WHEN** a legacy source has explicit completed-delivery evidence and a duplicate live event arrives after import
+- **THEN** live text/media relays avoid creating a replacement plan or sending again without inferring completion from partial mappings or uncertain effects
+- **AND** device/message-ID colons and account scope remain intact
+
+#### Scenario: Completion evidence meets frozen work or history-all
+
+- **WHEN** an existing frozen native/text plan requires recovery, or the owner explicitly requests history-all copies of a completed live source
+- **THEN** original frozen work retains precedence and history uses its separate run/copy scope; the live completion marker neither adopts unknown sends nor suppresses requested fresh history copies
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

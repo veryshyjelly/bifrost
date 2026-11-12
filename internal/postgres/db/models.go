@@ -192,6 +192,11 @@ type LegacyBotProjection struct {
 	Result    []byte
 }
 
+type LegacyCompletionProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyDirectoryProjection struct {
 	AccountID string
 	Result    []byte
@@ -530,6 +535,13 @@ type SourceActionJob struct {
 	JobID       int64
 	SourceJobID int64
 	Payload     []byte
+}
+
+type SourceCompletion struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	SourceKey    string
 }
 
 type StatusControl struct {

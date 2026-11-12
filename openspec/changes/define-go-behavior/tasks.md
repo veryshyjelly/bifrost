@@ -333,3 +333,9 @@
 - [x] Preserve all route modes/destinations, inbox references, retirement flags, return generations and topic-name caches after identity projection.
 - [x] Recover opaque retired-topic hashes only against retained coordinate evidence and preserve owned retirement crashes behind permanent reservations.
 - [x] Cover alias/topic conflicts, missing evidence, connection-scoped replay, native reservation reuse guards and whole-transaction rollback.
+
+## Legacy completed live-delivery evidence
+
+- [x] Preserve explicit source completion markers with canonical account/chat/message scope and exact compound-key parsing.
+- [x] Prevent duplicate live native/text plans without fabricating receipts or adopting partial/uncertain delivery.
+- [x] Preserve frozen-plan precedence and explicit history-all copies; cover projection rollback, scope and replay.
