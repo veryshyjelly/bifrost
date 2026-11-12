@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"reflect"
 	"time"
 
 	"github.com/go-telegram/bot/models"
@@ -98,6 +99,18 @@ func (s *Store) PrepareControl(ctx context.Context, job delivery.Job, p control.
 				Bot string `json:"bot"`
 			}
 			if json.Unmarshal(row.Payload, &source) != nil || source.Bot != p.Target.BotID {
+				return delivery.ErrInvalid
+			}
+		} else if row.Kind == "control-notice" {
+			var n control.Notice
+			if json.Unmarshal(row.Payload, &n) != nil {
+				return delivery.ErrInvalid
+			}
+			expected, err := n.Plan(row.Dedup)
+			if err != nil {
+				return err
+			}
+			if !reflect.DeepEqual(p, expected) {
 				return delivery.ErrInvalid
 			}
 		} else if row.Kind == "control-clear" {

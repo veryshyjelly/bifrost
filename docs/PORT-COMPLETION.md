@@ -6,7 +6,8 @@ The user requested completion of all remaining workflows, legacy import and runt
 - [x] Contact provisioning, scoped binding choices and conditional inbox retirement in isolated fixtures.
 - [x] History choices, frozen ordered imports, destination receipts and scoped live holds in isolated fixtures.
 - [x] Attachment delivery, captions/mentions, durable media archives and sticker codecs/validation in isolated fixtures.
-- [ ] Edits, repair, source deletion choices, reactions and polls.
+- [x] Mapped text/caption edits, edit echoes, out-of-order source edits and independent refusal notices in isolated fixtures.
+- [ ] Route repair, source deletion choices, native reactions and poll controls.
 - [ ] Passive Status archive, refresh, author mutes and scoped controls.
 - [ ] Remaining status/operational owner commands and explicit transition reconciliation.
 - [ ] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain sends.

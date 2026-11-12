@@ -221,3 +221,10 @@
 - [x] Implement validated WhatsApp/Telegram sticker conversion, transparent native Go TGS rendering and untouched original fallbacks.
 - [x] Exercise native SDK/PostgreSQL retry, mapping, partial/unknown delivery and codec/container fixtures in isolation.
 - [ ] Integrate these capabilities with the complete runtime, remaining change workflows and legacy import acceptance suite.
+
+## Mapped edits
+
+- [x] Implement owner mapped text/caption edits with conditional native empty-caption requests and independent refusal notices.
+- [x] Implement retained-copy source edits using frozen presentation/entities, canonical streams, out-of-order evidence and confirmed edit echo suppression.
+- [x] Validate known retry freezing, missing/cleared destination preservation and nonblocking refusal notices in native SDK/PostgreSQL fixtures.
+- [ ] Complete delivery repair, native reactions, poll controls, revocation choices and final runtime/import wiring.

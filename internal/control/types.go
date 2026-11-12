@@ -34,6 +34,7 @@ type Packet struct {
 	Markup         *models.InlineKeyboardMarkup
 	Keyboard       *models.ReplyKeyboardMarkup `json:",omitempty"`
 	RemoveKeyboard bool                        `json:",omitempty"`
+	ReplyTo        int64                       `json:",omitempty"`
 	Target         *Target                     `json:",omitempty"`
 }
 type Command struct {

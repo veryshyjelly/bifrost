@@ -40,22 +40,25 @@ type nativeSend struct {
 	Request     map[string]json.RawMessage
 }
 type nativeFixture struct {
-	f              *relayFixture
-	native         *relay.Native
-	assets         *attachments.Assets
-	mu             sync.Mutex
-	data           []byte
-	calls          []nativeCall
-	reads          int
-	failMethod     string
-	failCode       int
-	dropMethod     string
-	sends          []nativeSend
-	fileReads      int
-	sendFailure    int
-	dropSend       bool
-	sendFailMethod string
-	outbound       *relay.Outbound
+	f               *relayFixture
+	native          *relay.Native
+	assets          *attachments.Assets
+	mu              sync.Mutex
+	data            []byte
+	calls           []nativeCall
+	reads           int
+	failMethod      string
+	failCode        int
+	failDescription string
+	dropMethod      string
+	sends           []nativeSend
+	fileReads       int
+	sendFailure     int
+	dropSend        bool
+	sendFailMethod  string
+	outbound        *relay.Outbound
+	waClient        *wa.Client
+	tgClients       map[string]*tg.Client
 }
 
 func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
@@ -157,10 +160,18 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			return
 		}
 		if method == n.failMethod {
-			fmt.Fprintf(w, `{"ok":false,"error_code":%d,"description":"fixture native refusal","parameters":{"retry_after":1}}`, n.failCode)
+			description := n.failDescription
+			if description == "" {
+				description = "fixture native refusal"
+			}
+			json.NewEncoder(w).Encode(map[string]any{"ok": false, "error_code": n.failCode, "description": description, "parameters": map[string]int{"retry_after": 1}})
 			return
 		}
 		result := map[string]any{"message_id": 2000 + len(n.calls), "date": 1700000000, "message_thread_id": thread, "chat": map[string]any{"id": chat, "type": "supergroup"}}
+		if method == "editMessageText" || method == "editMessageCaption" {
+			id, _ := strconv.Atoi(r.FormValue("message_id"))
+			result["message_id"] = id
+		}
 		if method == "sendPhoto" {
 			result["photo"] = []map[string]any{{"file_id": "photo-file", "file_unique_id": "photo-unique", "width": 8, "height": 8}}
 		}
@@ -171,6 +182,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 	if err != nil {
 		t.Fatal(err)
 	}
+	n.waClient = client
 	n.assets, err = attachments.NewAssets(t.TempDir())
 	if err != nil {
 		t.Fatal(err)
@@ -183,6 +195,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 		}
 	}
 	sources, err := attachments.NewSources(n.assets, client, func(_ context.Context, _ string, id string) (attachments.Telegram, error) { return clients[id], nil }, "fixture-session", t.TempDir(), 8<<20)
+	n.tgClients = clients
 	if err != nil {
 		t.Fatal(err)
 	}

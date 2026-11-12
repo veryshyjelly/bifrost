@@ -195,6 +195,23 @@ type MessageAsset struct {
 	Asset        []byte
 }
 
+type MessageChangePlan struct {
+	AccountID string
+	PlanKey   string
+	JobID     int64
+	Payload   []byte
+	Complete  bool
+}
+
+type MessageLatestEdit struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	Body         string
+	MentionedIds []byte
+	JobID        int64
+}
+
 type MessageMapping struct {
 	Seq               int64
 	AccountID         string
@@ -210,6 +227,13 @@ type MessageMapping struct {
 	Part              int32
 	Deleted           bool
 	Receipt           []byte
+}
+
+type MessageOutboundEdit struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	BodyHash     string
 }
 
 type MessageTombstone struct {

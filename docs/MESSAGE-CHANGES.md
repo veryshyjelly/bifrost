@@ -1,0 +1,11 @@
+# Mapped message changes
+
+Mapped text/caption edits are implemented through the worker in isolated native SDK and PostgreSQL fixtures. Reactions, polls, source revocation choices and delivery repair remain separate work in [PORT-COMPLETION.md](PORT-COMPLETION.md). Diagnostic serve still does not dispatch.
+
+Owner Telegram edits apply only to outgoing mappings in the authorized bot, chat, topic and current conversation/binding. Edited commands and recorded command messages remain passive. Mentions are resolved before freezing the exact edit request. Empty captions are sent explicitly to the native OpenWA SDK: a provider acceptance is retained, while a definitive refusal preserves the WhatsApp caption and queues an independent temporary notice. The reviewed gateway currently documents a nonempty body requirement; this is conditional support rather than an assertion that every engine can clear captions.
+
+WhatsApp edits use retained mapped copies and the original presentation. Explicitly cleared or retired copies are not recreated. Native entities and literal text remain intact; text and caption budgets stay distinct. The latest body/mention evidence is recorded even when the original delivery has not arrived. Source changes normalize onto the canonical WhatsApp conversation stream before creating effects. Confirmed outgoing edits suppress matching source echoes.
+
+Each edit plan freezes its source, destination mappings, body, entities and refusal notice. Done receipts survive retries. Telegram's not-modified response completes an idempotent edit. Missing message/topic responses close the refused effect without replacement content; other known edit refusals queue the preserved attributed edited notice. Unknown mutations remain for review. Notice sends, expirations and later ordinary messages use independent jobs; a refused edit cannot become a new WhatsApp send.
+
+Migration 22 stores change plans, latest source edits and confirmed outbound edit hashes. The source and destination ledgers remain account scoped. Isolated acceptance tests cover caption clearing acceptance/refusal, independent notices, echo suppression, out-of-order edits, preserved sender formatting, cleared/missing copies and frozen known retries. Full runtime wiring and legacy import remain pending.

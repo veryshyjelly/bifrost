@@ -142,6 +142,15 @@ func prepareSource(ctx context.Context, q *db.Queries, account string, m sdk.Cha
 	if err != nil {
 		return identity.Source{}, err
 	}
+	latest, err := q.LatestMessageEdit(ctx, db.LatestMessageEditParams{AccountID: account, WhatsappChat: chat, MessageID: m.ID})
+	if err == nil {
+		m.Body = latest.Body
+		if latest.MentionedIds != nil && json.Unmarshal(latest.MentionedIds, &m.MentionedIDs) != nil {
+			return identity.Source{}, delivery.ErrInvalid
+		}
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return identity.Source{}, err
+	}
 	source := identity.Source{ChatID: chat, RawChatID: m.ChatID, MessageID: m.ID, SenderID: sender, Name: d.SenderName(sender), Body: m.Body, Own: m.FromMe, MentionedIDs: m.MentionedIDs}
 	if !m.FromMe {
 		source.LinkSenderID = sender

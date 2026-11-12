@@ -145,7 +145,8 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 				return err
 			}
 		}
-		body, err := presentation.Relay(presentation.Options{Bot: target.BotID, Sender: link, Name: displayName, Own: m.Own}, content)
+		format := presentation.Options{Bot: target.BotID, Sender: link, Name: displayName, Own: m.Own}
+		body, err := presentation.Relay(format, content)
 		if err != nil {
 			return delivery.ErrInvalid
 		}
@@ -154,6 +155,7 @@ func (s *Service) IncomingText(ctx context.Context, job delivery.Job, e *deliver
 			return delivery.ErrInvalid
 		}
 		plan = Plan{Key: key, Direction: "in", WhatsAppChat: m.ChatID, WhatsAppMessage: m.MessageID, BotID: target.BotID, TelegramChat: target.ChatID, ThreadID: target.ThreadID, Prefix: job.Dedup + ":to:" + target.BotID + ":" + strconv.FormatInt(target.ChatID, 10), Route: route}
+		plan.Presentation = &format
 		for _, p := range parts {
 			text := p.Text
 			if text == "" {

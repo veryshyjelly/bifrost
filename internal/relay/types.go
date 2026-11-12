@@ -69,6 +69,7 @@ type Plan struct {
 	Prefix                                  string
 	Route                                   conversation.Route
 	Parts                                   []TelegramRequest
+	Presentation                            *presentation.Options `json:"Presentation,omitempty"`
 	Outgoing                                *WhatsAppRequest
 	OutgoingFallback                        *WhatsAppRequest   `json:"OutgoingFallback,omitempty"`
 	UseOutgoingFallback                     bool               `json:"UseOutgoingFallback,omitempty"`
