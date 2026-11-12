@@ -228,3 +228,11 @@
 - [x] Implement retained-copy source edits using frozen presentation/entities, canonical streams, out-of-order evidence and confirmed edit echo suppression.
 - [x] Validate known retry freezing, missing/cleared destination preservation and nonblocking refusal notices in native SDK/PostgreSQL fixtures.
 - [ ] Complete delivery repair, native reactions, poll controls, revocation choices and final runtime/import wiring.
+
+## Native poll controls
+
+- [x] Validate scoped, expiring poll callbacks against retained native delivery receipts and current binding/route.
+- [x] Serialize per-poll toggles/replacements using exact option texts and confirmed selections.
+- [x] Preserve previous votes on definitive refusals and use a frozen idempotent journal for transport/crash recovery.
+- [x] Queue passive attributed source-vote notices without WhatsApp read receipts; validate native payload and worker fixtures.
+- [ ] Integrate poll controls with the complete runtime and legacy action import.

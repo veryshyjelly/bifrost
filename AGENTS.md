@@ -17,6 +17,7 @@ The metadata coordinator now composes durable admission, snapshots, resumable te
 Managed bot registration, encrypted credential lookup, explicit local API migration/webhooks and contact provisioning are implemented in isolated native fixtures (docs/MANAGED-BOTS.md). Registration and Start never establish migration eligibility. Preserve uncertain hosted logout for review, original encrypted tokens and scoped binding choices. The complete remaining-work checklist is docs/PORT-COMPLETION.md.
 History choices, frozen batches, scoped holds and native attachment delivery are implemented in isolated fixtures (docs/HISTORY-ATTACHMENTS.md). Keep hash-addressed frozen bytes and original effect keys across retries; unknown sends cannot be adopted by history. The codec image includes pinned Pillow and an embedded Lottie renderer.
 Mapped text/caption edits and independent refusal notices are tested in isolated native fixtures (docs/MESSAGE-CHANGES.md). Preserve saved presentation and cleared destinations; caption clearing depends on provider acceptance. Reactions, revocations, repair and final composition remain pending.
+Scoped poll controls and source vote notices are tested (docs/POLL-CONTROLS.md). Freeze exact option texts, serialize selections per poll and update selection only after acceptance. Votes use an idempotent settings journal, so a crash can repeat the frozen selection without uncertain message sends.
 
 
 ## Commands and tests

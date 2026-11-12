@@ -103,6 +103,10 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 					fmt.Fprint(w, `{"message":"fixture send refusal"}`)
 					return
 				}
+				if n.sends[len(n.sends)-1].Method == "vote-poll" {
+					fmt.Fprint(w, `{"success":true}`)
+					return
+				}
 				fmt.Fprint(w, `{"messageId":"out-native","timestamp":1700000000}`)
 				return
 			}

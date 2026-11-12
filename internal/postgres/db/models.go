@@ -383,6 +383,21 @@ type NativePollAction struct {
 	Payload   []byte
 }
 
+type PollSelection struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	Options      []byte
+}
+
+type PollVoteJob struct {
+	AccountID   string
+	JobID       int64
+	SourceJobID int64
+	Payload     []byte
+	Plan        []byte
+}
+
 type RelayPlan struct {
 	AccountID    string
 	PlanKey      string

@@ -281,7 +281,7 @@ func Outcome(service string, mutation bool, err error, a *Attempt) error {
 		e.Retry = !mutation
 		return e
 	}
-	e.Retry = !mutation && a.status >= 500
+	e.Retry = !mutation && a.status >= 500 && a.status != 501
 	return e
 }
 
