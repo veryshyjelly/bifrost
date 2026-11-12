@@ -352,3 +352,9 @@
 - [x] Preserve original sender/context snapshots without manufacturing absent message content, including scoped participant `/create` replies.
 - [x] Retain harmless unbound display caches while restricting contact-bot bindings to person identities.
 - [x] Match confirmed own-LID reaction echoes using group/Status sender evidence and exclude outgoing private recipients from self proof.
+
+## Legacy retained edit and revocation state
+
+- [x] Preserve latest edited content, mention presence, confirmed outbound edit hashes and explicit true revocation markers without synthetic jobs or receipts.
+- [x] Feed source/history normalization and native edit handling while preserving later native precedence and explicit mention clearing.
+- [x] Refuse unordered conflicting alias caches and cover whole-transaction rollback, scoped echo/tombstone behavior and non-resetting replay.

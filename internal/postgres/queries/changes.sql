@@ -7,7 +7,13 @@ UPDATE message_change_plans SET payload=$3 WHERE account_id=$1 AND plan_key=$2;
 -- name: CompleteChange :exec
 UPDATE message_change_plans SET complete=true WHERE account_id=$1 AND plan_key=$2;
 -- name: LatestMessageEdit :one
-SELECT * FROM message_latest_edits WHERE account_id=$1 AND whatsapp_chat=$2 AND message_id=$3;
+SELECT n.account_id,n.whatsapp_chat,n.message_id,n.body,COALESCE(n.mentioned_ids,r.mentioned_ids) AS mentioned_ids,n.job_id
+FROM message_latest_edits n LEFT JOIN retained_message_edits r USING(account_id,whatsapp_chat,message_id)
+WHERE n.account_id=$1 AND n.whatsapp_chat=$2 AND n.message_id=$3
+UNION ALL
+SELECT r.account_id,r.whatsapp_chat,r.message_id,r.body,r.mentioned_ids,0::bigint AS job_id
+FROM retained_message_edits r WHERE r.account_id=$1 AND r.whatsapp_chat=$2 AND r.message_id=$3
+AND NOT EXISTS(SELECT 1 FROM message_latest_edits n WHERE n.account_id=r.account_id AND n.whatsapp_chat=r.whatsapp_chat AND n.message_id=r.message_id);
 -- name: SaveLatestMessageEdit :exec
 INSERT INTO message_latest_edits(account_id,whatsapp_chat,message_id,body,mentioned_ids,job_id) VALUES($1,$2,$3,$4,$5,$6)
 ON CONFLICT(account_id,whatsapp_chat,message_id) DO UPDATE SET body=EXCLUDED.body,mentioned_ids=COALESCE(EXCLUDED.mentioned_ids,message_latest_edits.mentioned_ids),job_id=EXCLUDED.job_id WHERE message_latest_edits.job_id<=EXCLUDED.job_id;

@@ -192,6 +192,11 @@ type LegacyBotProjection struct {
 	Result    []byte
 }
 
+type LegacyChangeProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyCompletionProjection struct {
 	AccountID string
 	Result    []byte
@@ -521,6 +526,15 @@ type RelayPlan struct {
 	WhatsappChat string
 	Payload      []byte
 	Complete     bool
+}
+
+type RetainedMessageEdit struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	SourceKey    string
+	Body         string
+	MentionedIds []byte
 }
 
 type RetainedMessageSource struct {

@@ -176,6 +176,18 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **THEN** the actor can match that echo without guessing a phone alias, while ordinary target/emoji/age/account checks remain enforced
 - **AND** an outgoing private message does not prove its recipient is the own-account actor
 
+#### Scenario: Retained latest edit and native precedence
+
+- **WHEN** an imported source has a saved latest edit, including an empty body or explicit empty mentions
+- **THEN** source/history normalization uses that edit without creating a synthetic job or provider acknowledgement
+- **AND** later native edits supersede its body, inherit unspecified mentions and preserve explicit mention clearing; unordered conflicting alias caches are refused
+
+#### Scenario: Retained edit echoes and revocation markers
+
+- **WHEN** saved outbound edit hashes and revocation markers are projected
+- **THEN** only a matching account/chat/message/body edit is suppressed as an echo and explicit true markers suppress future source edits/copies
+- **AND** projection does not claim Telegram copies were deleted, schedule new operations or activate the account; failure rolls back all projected state and replay preserves later native edits
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.
