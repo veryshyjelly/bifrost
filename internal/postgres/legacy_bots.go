@@ -10,7 +10,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/veryshyjelly/bifrost/internal/legacy"
 	"github.com/veryshyjelly/bifrost/internal/postgres/db"
-	"github.com/veryshyjelly/bifrost/internal/secrets"
 )
 
 type LegacyBotProjection struct {
@@ -72,21 +71,9 @@ func (s *Store) ProjectLegacyBots(ctx context.Context, account string, key [32]b
 	if conflict {
 		return result, ErrLegacyDestination
 	}
-	cipher, err := secrets.New(key)
+	configuration, err := legacyConfiguration(checkpoint, key)
 	if err != nil {
 		return result, err
-	}
-	private, err := cipher.Open(checkpoint.ConfigurationCiphertext)
-	if err != nil {
-		return result, legacy.ErrInvalid
-	}
-	var files struct{ Bridge, Telegram []byte }
-	if json.Unmarshal([]byte(private), &files) != nil {
-		return result, legacy.ErrInvalid
-	}
-	configuration, err := legacy.ParseConfiguration(files.Bridge, files.Telegram)
-	if err != nil || configuration.EncryptionKey() != key || (configuration.Value("BIFROST_ACCOUNT_ID") != "" && configuration.Value("BIFROST_ACCOUNT_ID") != account) {
-		return result, legacy.ErrInvalid
 	}
 	values, err := q.LegacyBotValues(ctx, account)
 	if err != nil {

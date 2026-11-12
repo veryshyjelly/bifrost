@@ -327,3 +327,9 @@
 - [x] Preserve explicit aliases, original profiles, canonical bindings and selected bound-name sources without deriving phone evidence from LID displays.
 - [x] Preserve copied token keys/account/group scope and original roster members/timestamps after credential projection.
 - [x] Cover prerequisites, conflicts, foreign scopes, atomic rollback, replay and confirmed native metadata name refresh.
+
+## Legacy route and topic reservation projection
+
+- [x] Preserve all route modes/destinations, inbox references, retirement flags, return generations and topic-name caches after identity projection.
+- [x] Recover opaque retired-topic hashes only against retained coordinate evidence and preserve owned retirement crashes behind permanent reservations.
+- [x] Cover alias/topic conflicts, missing evidence, connection-scoped replay, native reservation reuse guards and whole-transaction rollback.

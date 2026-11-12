@@ -125,6 +125,17 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** a projection lacks its bot prerequisite, meets foreign scope/native conflicts, fails during roster persistence, or is repeated after later native updates
 - **THEN** invalid/failed projection leaves no partial identity/mention writes and completed replay does not reset later names or rosters; import dispatch remains blocked
 
+#### Scenario: Imported routes and retirement choices
+
+- **WHEN** inbox, dedicated, mirror, muted and ignored routes are projected after the scoped directory
+- **THEN** their destinations, saved inboxes, return generations, private-inbox retirement and topic-name caches remain intact without creating a topic or changing permanent account identity
+- **AND** retired-topic hashes require exact retained coordinate evidence and remain permanent native reservations; an owned retirement crash stays fenced until its continuation reconciles the original route
+
+#### Scenario: Route projection conflict, failure or replay
+
+- **WHEN** topic ownership or aliases conflict, a retired hash lacks exact evidence, persistence fails, or a completed projection is repeated
+- **THEN** conflicts are refused and failed writes roll back together; exact replay preserves later native changes and cannot change the frozen planned provider connection
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

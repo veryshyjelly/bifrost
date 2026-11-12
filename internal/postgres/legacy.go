@@ -194,3 +194,23 @@ func (s *Store) LegacyRuntimeReady(ctx context.Context, account string) error {
 	}
 	return nil
 }
+
+func legacyConfiguration(checkpoint db.LegacyImport, key [32]byte) (legacy.Configuration, error) {
+	cipher, err := secrets.New(key)
+	if err != nil {
+		return legacy.Configuration{}, err
+	}
+	private, err := cipher.Open(checkpoint.ConfigurationCiphertext)
+	if err != nil {
+		return legacy.Configuration{}, legacy.ErrInvalid
+	}
+	var files struct{ Bridge, Telegram []byte }
+	if json.Unmarshal([]byte(private), &files) != nil {
+		return legacy.Configuration{}, legacy.ErrInvalid
+	}
+	configuration, err := legacy.ParseConfiguration(files.Bridge, files.Telegram)
+	if err != nil || configuration.EncryptionKey() != key || (configuration.Value("BIFROST_ACCOUNT_ID") != "" && configuration.Value("BIFROST_ACCOUNT_ID") != checkpoint.AccountID) {
+		return legacy.Configuration{}, legacy.ErrInvalid
+	}
+	return configuration, nil
+}

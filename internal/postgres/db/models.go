@@ -208,6 +208,11 @@ type LegacyImport struct {
 	ActivatedAt             pgtype.Timestamptz
 }
 
+type LegacyRouteProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyRow struct {
 	AccountID   string
 	Ordinal     int64
