@@ -180,6 +180,31 @@ type Job struct {
 	Created    pgtype.Timestamptz
 }
 
+type LegacyImport struct {
+	AccountID               string
+	ArchiveDigest           string
+	SqliteDigest            string
+	Manifest                []byte
+	ConfigurationCiphertext string
+	Report                  []byte
+	PreparedAt              pgtype.Timestamptz
+	ActivatedAt             pgtype.Timestamptz
+}
+
+type LegacyRow struct {
+	AccountID   string
+	Ordinal     int64
+	SourceTable string
+	RawRow      []byte
+}
+
+type LegacyValue struct {
+	AccountID   string
+	Kind        string
+	SourceID    string
+	SourceValue string
+}
+
 type MentionRoster struct {
 	AccountID string
 	ChatID    string

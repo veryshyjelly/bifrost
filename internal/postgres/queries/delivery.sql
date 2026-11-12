@@ -20,6 +20,7 @@ RETURNING id;
 WITH candidate AS (
   SELECT j.id FROM jobs j
   WHERE j.state = 'pending' AND j.due <= clock_timestamp()
+    AND NOT EXISTS (SELECT 1 FROM legacy_imports li WHERE li.account_id=j.account_id AND li.activated_at IS NULL)
     AND NOT (j.kind='wa' AND EXISTS (
       SELECT 1 FROM history_runs h WHERE h.account_id=j.account_id AND h.state IN ('queued','fetching','delivering')
       AND h.whatsapp_chat=COALESCE((SELECT s.whatsapp_chat FROM whatsapp_sources s WHERE s.account_id=j.account_id AND s.job_id=j.id),

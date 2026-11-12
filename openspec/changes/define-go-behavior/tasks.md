@@ -308,3 +308,10 @@
 - [x] Verify original account/key/credentials and scoped aliases, bot bindings, mappings, jobs and controls; retain unknown-send evidence.
 - [x] Add standalone read-only `legacy-validate` CLI and malicious archive/semantic input tests.
 - [ ] Complete transactional PostgreSQL import, active journal compatibility and round-trip/recovery acceptance.
+
+## Transactional legacy preparation
+
+- [x] Preserve exact source rows/KV strings and encrypted original configuration in an atomic account/archive checkpoint.
+- [x] Reject nonempty/conflicting destinations and concurrent writers, roll back late validation/COPY/projection failures, and make exact replay harmless.
+- [x] Protect source evidence and block runtime readiness/job claims until native journal and asset activation is complete.
+- [ ] Project and activate every legacy workflow, restore retained assets and complete the explicit import/cutover CLI.

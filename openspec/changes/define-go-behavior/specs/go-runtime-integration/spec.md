@@ -92,6 +92,17 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** the export has unsafe paths, links, duplicate entries or JSON keys, damaged checksums, unknown durable domains, conflicting identity evidence or invalid private/group scopes
 - **THEN** validation refuses the input and removes only its owned temporary stage, leaving existing configurations, databases and volumes untouched
 
+#### Scenario: Transactional import preparation
+
+- **WHEN** a validated archive is prepared in an empty PostgreSQL destination
+- **THEN** its original identity, exact source rows and encrypted configuration checkpoint commit atomically after all validation, or roll back together on failure
+- **AND** concurrent writers and nonempty/conflicting destinations are refused; repeating the exact archive returns its original result without resetting later work
+
+#### Scenario: Preparation is incomplete
+
+- **WHEN** source evidence has been prepared but native journals and retained assets have not been activated
+- **THEN** the account cannot pass runtime readiness or claim any job, and preparation does not fabricate effects or runnable imported work
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.
