@@ -188,8 +188,12 @@ func provisionCommand(ctx context.Context, q *db.Queries, row db.Job, sourceBot 
 			return err
 		}
 		var source identity.Source
-		if json.Unmarshal(raw, &source) != nil || !identity.IsPerson(source.SenderID) {
+		if json.Unmarshal(raw, &source) != nil {
 			return delivery.ErrInvalid
+		}
+		if !identity.IsPerson(source.SenderID) {
+			p.Packets = []control.Packet{{Text: "Reply to a participant’s message with /create to create their bot."}}
+			return nil
 		}
 		person = source.SenderID
 	}

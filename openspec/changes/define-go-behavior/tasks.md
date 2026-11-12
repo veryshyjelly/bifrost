@@ -346,3 +346,9 @@
 - [x] Reject ambiguous group locations, retain absent/uncertain receipt distinctions and import only verified self phone evidence.
 - [x] Feed native caption edits, reaction ordering, revocation choices and scoped media reuse from imported copies.
 - [x] Cover whole-transaction/sequence rollback, non-rewinding counters, replay, private ID overlap and newest legacy copy behavior.
+
+## Legacy retained sender/context evidence
+
+- [x] Preserve original sender/context snapshots without manufacturing absent message content, including scoped participant `/create` replies.
+- [x] Retain harmless unbound display caches while restricting contact-bot bindings to person identities.
+- [x] Match confirmed own-LID reaction echoes using group/Status sender evidence and exclude outgoing private recipients from self proof.

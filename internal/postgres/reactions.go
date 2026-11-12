@@ -14,6 +14,7 @@ import (
 	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
 	"github.com/veryshyjelly/bifrost/internal/control"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
+	"github.com/veryshyjelly/bifrost/internal/identity"
 	"github.com/veryshyjelly/bifrost/internal/postgres/db"
 	"github.com/veryshyjelly/bifrost/internal/presentation"
 	"github.com/veryshyjelly/bifrost/internal/reactions"
@@ -162,6 +163,15 @@ func reactionInput(ctx context.Context, q *db.Queries, row db.Job, c reactions.S
 		value.ActorID = d.Canonical(value.ActorID)
 		if value.ActorID == "" {
 			value.ActorID = result.SelfID
+		}
+		if value.ActorID != sender && identity.IsPerson(sender) {
+			own, err := q.SourceActorIsOwn(ctx, db.SourceActorIsOwnParams{AccountID: row.AccountID, Identities: d.Aliases(sender)})
+			if err != nil {
+				return result, err
+			}
+			if own.Bool {
+				value.ActorID = sender
+			}
 		}
 		echo = &value
 	} else if !errors.Is(err, pgx.ErrNoRows) {

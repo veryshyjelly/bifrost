@@ -127,10 +127,13 @@ func ReadSnapshot(ctx context.Context, b *Bundle, options SQLiteOptions, accept 
 				var contact struct {
 					Bot string `json:"bot"`
 				}
-				if !identity.IsPerson(v.ID) || json.Unmarshal([]byte(v.Value), &contact) != nil {
+				if json.Unmarshal([]byte(v.Value), &contact) != nil {
 					return ErrInvalid
 				}
 				if contact.Bot != "" {
+					if !identity.IsPerson(v.ID) {
+						return ErrInvalid
+					}
 					botRefs[contact.Bot] = true
 					bindings = append(bindings, identity.Binding{PersonID: v.ID, BotID: contact.Bot})
 				}

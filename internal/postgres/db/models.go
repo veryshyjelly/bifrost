@@ -230,6 +230,11 @@ type LegacyRow struct {
 	RawRow      []byte
 }
 
+type LegacySourceProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyValue struct {
 	AccountID   string
 	Kind        string
@@ -516,6 +521,14 @@ type RelayPlan struct {
 	WhatsappChat string
 	Payload      []byte
 	Complete     bool
+}
+
+type RetainedMessageSource struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	SourceKey    string
+	Payload      []byte
 }
 
 type RetiredTopic struct {

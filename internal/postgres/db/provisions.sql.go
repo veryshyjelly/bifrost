@@ -114,6 +114,9 @@ SELECT evidence.payload FROM (
  UNION ALL
  SELECT i.payload->'Source' AS payload,i.job_id FROM history_items i JOIN history_runs r ON r.account_id=i.account_id AND r.run_id=i.run_id
  WHERE i.account_id=$1 AND r.whatsapp_chat=$2 AND i.source_id=$3::text
+ UNION ALL
+ SELECT s.payload,0::bigint AS job_id FROM retained_message_sources s
+ WHERE s.account_id=$1 AND s.whatsapp_chat=$2 AND s.message_id=$3::text
 ) evidence ORDER BY evidence.job_id LIMIT 1
 `
 

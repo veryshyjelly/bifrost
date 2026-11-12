@@ -164,6 +164,18 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** persistence fails after message/observation writes and sequence advancement, or a completed projection is repeated
 - **THEN** failure rolls back rows, self identity and sequence changes together; replay preserves later observations and counters never rewind
 
+#### Scenario: Retained participant identity
+
+- **WHEN** an owner replies `/create` to an imported copy whose original sender/context was retained without a native job snapshot
+- **THEN** the participant identity is available for the normal scoped provisioning flow without inventing absent body/quote content
+- **AND** unbound legacy display caches remain harmless names; non-person cache identifiers cannot bind contact bots or establish phone identities
+
+#### Scenario: Proven own-account reaction actor
+
+- **WHEN** a confirmed reaction echo returns with an own-account LID proved by group/Status source evidence
+- **THEN** the actor can match that echo without guessing a phone alias, while ordinary target/emoji/age/account checks remain enforced
+- **AND** an outgoing private message does not prove its recipient is the own-account actor
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

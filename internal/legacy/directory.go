@@ -83,11 +83,14 @@ func ProjectDirectory(account string, values []KV, aliases []Alias, bots []ident
 				Name, Bot        string
 				MetadataSyncedAt *int64 `json:"metadataSyncedAt"`
 			}
-			if !identity.IsPerson(v.ID) || json.Unmarshal([]byte(v.Value), &source) != nil || (source.MetadataSyncedAt != nil && !validMilliseconds(*source.MetadataSyncedAt)) {
+			if !validText(v.ID, 8192) || json.Unmarshal([]byte(v.Value), &source) != nil || (source.MetadataSyncedAt != nil && !validMilliseconds(*source.MetadataSyncedAt)) {
 				return result, ErrInvalid
 			}
 			result.Profiles = append(result.Profiles, identity.Profile{ID: v.ID, Name: source.Name, Synced: source.MetadataSyncedAt != nil && *source.MetadataSyncedAt > 0})
 			if source.Bot != "" {
+				if !identity.IsPerson(v.ID) {
+					return result, ErrInvalid
+				}
 				if !registered[source.Bot] {
 					return result, ErrInvalid
 				}
