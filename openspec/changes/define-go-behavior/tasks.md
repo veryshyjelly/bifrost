@@ -236,3 +236,11 @@
 - [x] Preserve previous votes on definitive refusals and use a frozen idempotent journal for transport/crash recovery.
 - [x] Queue passive attributed source-vote notices without WhatsApp read receipts; validate native payload and worker fixtures.
 - [ ] Integrate poll controls with the complete runtime and legacy action import.
+
+## Native reaction projection
+
+- [x] Preserve per-actor snapshots, removals, equivalent Unicode identities and confirmed owner echoes.
+- [x] Project onto retained fresh copies/attachments using member bots, scoped private IDs, refusal caching and attributed master fallbacks.
+- [x] Validate and freeze custom-emoji equivalents without clearing unresolved reactions; deduplicate confirmed equivalent changes.
+- [x] Exercise native adapter payloads, safe setter retries, crash recovery, missing targets and independent fallback notices in isolated fixtures.
+- [ ] Complete explicit /react and /delete commands, source revocation choices and runtime/import wiring.

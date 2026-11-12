@@ -110,6 +110,12 @@ type ConversationInbox struct {
 	ThreadID       int64
 }
 
+type CustomReactionEmoji struct {
+	AccountID string
+	CustomID  string
+	Emoji     string
+}
+
 type Effect struct {
 	AccountID string
 	EffectKey string
@@ -234,6 +240,13 @@ type MessageOutboundEdit struct {
 	WhatsappChat string
 	MessageID    string
 	BodyHash     string
+}
+
+type MessageReaction struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	Payload      []byte
 }
 
 type MessageTombstone struct {
@@ -383,6 +396,13 @@ type NativePollAction struct {
 	Payload   []byte
 }
 
+type OutgoingReactionPlan struct {
+	AccountID string
+	PlanKey   string
+	JobID     int64
+	Payload   []byte
+}
+
 type PollSelection struct {
 	AccountID    string
 	WhatsappChat string
@@ -396,6 +416,29 @@ type PollVoteJob struct {
 	SourceJobID int64
 	Payload     []byte
 	Plan        []byte
+}
+
+type ReactionDestination struct {
+	AccountID      string
+	WhatsappChat   string
+	MessageID      string
+	DestinationKey string
+	Payload        []byte
+}
+
+type ReactionEcho struct {
+	AccountID    string
+	WhatsappChat string
+	MessageID    string
+	Payload      []byte
+}
+
+type ReactionPlan struct {
+	AccountID string
+	PlanKey   string
+	JobID     int64
+	Payload   []byte
+	Complete  bool
 }
 
 type RelayPlan struct {

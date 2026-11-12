@@ -18,6 +18,7 @@ Managed bot registration, encrypted credential lookup, explicit local API migrat
 History choices, frozen batches, scoped holds and native attachment delivery are implemented in isolated fixtures (docs/HISTORY-ATTACHMENTS.md). Keep hash-addressed frozen bytes and original effect keys across retries; unknown sends cannot be adopted by history. The codec image includes pinned Pillow and an embedded Lottie renderer.
 Mapped text/caption edits and independent refusal notices are tested in isolated native fixtures (docs/MESSAGE-CHANGES.md). Preserve saved presentation and cleared destinations; caption clearing depends on provider acceptance. Reactions, revocations, repair and final composition remain pending.
 Scoped poll controls and source vote notices are tested (docs/POLL-CONTROLS.md). Freeze exact option texts, serialize selections per poll and update selection only after acceptance. Votes use an idempotent settings journal, so a crash can repeat the frozen selection without uncertain message sends.
+Actor-specific native reactions are tested (docs/NATIVE-REACTIONS.md). Keep per-actor state and private bot scope, freeze custom equivalents, preserve unresolved custom reactions, prefer fresh attachment copies and use fenced idempotent setters. Native setters must not become uncertain message sends; fallback notices use independent send jobs. Explicit source commands and revocation choices remain pending.
 
 
 ## Commands and tests

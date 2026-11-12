@@ -34,6 +34,8 @@ type nativeCall struct {
 	Chat, Thread      int64
 	Body              []byte
 	Reply             string
+	MessageID         int
+	Reaction          string
 }
 type nativeSend struct {
 	Method, Key string
@@ -50,6 +52,10 @@ type nativeFixture struct {
 	failMethod      string
 	failCode        int
 	failDescription string
+	failBot         string
+	customEmoji     string
+	perBotNativeIDs bool
+	nativeSequences map[string]int
 	dropMethod      string
 	sends           []nativeSend
 	fileReads       int
@@ -103,7 +109,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 					fmt.Fprint(w, `{"message":"fixture send refusal"}`)
 					return
 				}
-				if n.sends[len(n.sends)-1].Method == "vote-poll" {
+				if n.sends[len(n.sends)-1].Method == "vote-poll" || n.sends[len(n.sends)-1].Method == "react" {
 					fmt.Fprint(w, `{"success":true}`)
 					return
 				}
@@ -133,6 +139,8 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 		chat, _ := strconv.ParseInt(r.FormValue("chat_id"), 10, 64)
 		thread, _ := strconv.ParseInt(r.FormValue("message_thread_id"), 10, 64)
 		call := nativeCall{Method: method, Bot: botID, Chat: chat, Thread: thread, Text: r.FormValue("text"), Reply: r.FormValue("reply_parameters")}
+		call.MessageID, _ = strconv.Atoi(r.FormValue("message_id"))
+		call.Reaction = r.FormValue("reaction")
 		if call.Text == "" {
 			call.Text = r.FormValue("caption")
 		}
@@ -163,7 +171,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			}
 			return
 		}
-		if method == n.failMethod {
+		if method == n.failMethod && (n.failBot == "" || n.failBot == botID) {
 			description := n.failDescription
 			if description == "" {
 				description = "fixture native refusal"
@@ -171,7 +179,30 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			json.NewEncoder(w).Encode(map[string]any{"ok": false, "error_code": n.failCode, "description": description, "parameters": map[string]int{"retry_after": 1}})
 			return
 		}
+		if method == "setMessageReaction" {
+			fmt.Fprint(w, `{"ok":true,"result":true}`)
+			return
+		}
+		if method == "getCustomEmojiStickers" {
+			var ids []string
+			if err := json.Unmarshal([]byte(r.FormValue("custom_emoji_ids")), &ids); err != nil {
+				t.Error(err)
+			}
+			result := []map[string]any{}
+			for _, id := range ids {
+				result = append(result, map[string]any{"file_id": "fixture-custom", "file_unique_id": "fixture-custom-unique", "type": "custom_emoji", "width": 100, "height": 100, "is_animated": false, "is_video": false, "custom_emoji_id": id, "emoji": n.customEmoji})
+			}
+			json.NewEncoder(w).Encode(map[string]any{"ok": true, "result": result})
+			return
+		}
 		result := map[string]any{"message_id": 2000 + len(n.calls), "date": 1700000000, "message_thread_id": thread, "chat": map[string]any{"id": chat, "type": "supergroup"}}
+		if n.perBotNativeIDs {
+			if n.nativeSequences == nil {
+				n.nativeSequences = map[string]int{}
+			}
+			n.nativeSequences[botID]++
+			result["message_id"] = 2000 + n.nativeSequences[botID]
+		}
 		if method == "editMessageText" || method == "editMessageCaption" {
 			id, _ := strconv.Atoi(r.FormValue("message_id"))
 			result["message_id"] = id

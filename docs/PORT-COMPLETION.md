@@ -8,7 +8,8 @@ The user requested completion of all remaining workflows, legacy import and runt
 - [x] Attachment delivery, captions/mentions, durable media archives and sticker codecs/validation in isolated fixtures.
 - [x] Mapped text/caption edits, edit echoes, out-of-order source edits and independent refusal notices in isolated fixtures.
 - [x] Scoped native poll controls, serialized confirmed selections, source vote notices and crash-safe vote retries in isolated fixtures.
-- [ ] Route repair, source deletion choices and native reactions.
+- [x] Actor-specific native reactions, scoped custom emoji, retained-copy projection, fallback notices and crash-safe setters in isolated fixtures.
+- [ ] Route repair, source deletion choices and explicit /react and /delete source commands.
 - [ ] Passive Status archive, refresh, author mutes and scoped controls.
 - [ ] Remaining status/operational owner commands and explicit transition reconciliation.
 - [ ] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain sends.

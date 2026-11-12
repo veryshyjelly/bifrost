@@ -5,6 +5,7 @@ go 1.27.3
 require (
 	github.com/chromedp/cdproto v0.159.3
 	github.com/chromedp/chromedp v0.23.0
+	github.com/clipperhouse/uax29/v2 v2.7.0
 	github.com/go-telegram/bot v1.28.0
 	github.com/jackc/pgx/v5 v5.12.0
 	github.com/pressly/goose/v3 v3.29.0
