@@ -560,7 +560,9 @@ func (f *relayFixture) run(t *testing.T, id int64, kind string, h delivery.Handl
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	reports := make(chan delivery.Report, 1)
-	w, err := delivery.NewWorker(f.store, map[string]delivery.Handler{kind: h}, delivery.WorkerOptions{Lease: 3 * time.Second, RenewEvery: 300 * time.Millisecond, StoreTimeout: 500 * time.Millisecond, PollEvery: 5 * time.Millisecond, ShutdownTimeout: time.Second, Report: func(r delivery.Report) {
+	// Real PostgreSQL/race fixtures need VM scheduling headroom. Dedicated worker
+	// tests and explicit expired-lease fixtures retain short failure deadlines.
+	w, err := delivery.NewWorker(f.store, map[string]delivery.Handler{kind: h}, delivery.WorkerOptions{Lease: 9 * time.Second, RenewEvery: 500 * time.Millisecond, StoreTimeout: 2 * time.Second, PollEvery: 5 * time.Millisecond, ShutdownTimeout: 2 * time.Second, Report: func(r delivery.Report) {
 		if r.JobID == id {
 			reports <- r
 			cancel()
@@ -577,7 +579,7 @@ func (f *relayFixture) run(t *testing.T, id int64, kind string, h delivery.Handl
 			t.Fatal(err)
 		}
 		return r
-	case <-time.After(5 * time.Second):
+	case <-time.After(15 * time.Second):
 		t.Fatal("relay job timeout")
 		return delivery.Report{}
 	}

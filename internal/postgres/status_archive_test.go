@@ -35,6 +35,63 @@ func TestStatusArchiveTopicCannotBecomeAnImportedConversationRoute(t *testing.T)
 	}
 }
 
+func TestStatusArchivePreparedDeliveryKeepsManagementTargetAfterConfigChange(t *testing.T) {
+	s := newStatusFixture(t)
+	s.n.failMethod, s.n.failCode = "sendMessage", 429
+	first := s.post(t, "frozen-management", "story", "text", "Original", time.Now().Add(time.Hour))
+	if first.State != delivery.Pending {
+		t.Fatal(first)
+	}
+	c := s.c
+	c.Management = -200
+	service, err := statuses.New(s.n.f.store, s.n.waClient, s.n.tgClients["master"], s.n.native, c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.n.mu.Lock()
+	s.n.failMethod = ""
+	s.n.mu.Unlock()
+	if _, err := s.n.f.store.pool.Exec(t.Context(), "UPDATE jobs SET due=clock_timestamp() WHERE id=$1", first.JobID); err != nil {
+		t.Fatal(err)
+	}
+	if r := s.n.f.run(t, first.JobID, "wa", service.Receive); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	s.n.mu.Lock()
+	defer s.n.mu.Unlock()
+	if len(s.n.calls) != 3 || s.n.calls[2].Chat != -100 || s.n.calls[2].Thread != 99 {
+		t.Fatal("frozen archive target moved", s.n.calls)
+	}
+	var feeds int
+	if err := s.n.f.store.pool.QueryRow(t.Context(), "SELECT count(*) FROM status_feeds").Scan(&feeds); err != nil || feeds != 1 {
+		t.Fatal(feeds, err)
+	}
+}
+
+func TestStatusArchivePendingSetupCannotChangeFrozenManagement(t *testing.T) {
+	s := newStatusFixture(t)
+	s.n.dropMethod = "createForumTopic"
+	first := s.post(t, "pending-management", "story", "text", "Original", time.Now().Add(time.Hour))
+	if first.State != delivery.Uncertain {
+		t.Fatal(first)
+	}
+	if err := s.n.f.store.Review(t.Context(), first.JobID, true, true); err != nil {
+		t.Fatal(err)
+	}
+	c := s.c
+	c.Management = -200
+	if r := s.n.f.run(t, first.JobID, "wa", func(ctx context.Context, j delivery.Job, _ *delivery.Effects) error {
+		_, err := s.n.f.store.PrepareStatusTopic(ctx, j, c)
+		return err
+	}); r.State != delivery.Failed {
+		t.Fatal(r)
+	}
+	var feeds int
+	if err := s.n.f.store.pool.QueryRow(t.Context(), "SELECT count(*) FROM status_feeds").Scan(&feeds); err != nil || feeds != 1 {
+		t.Fatal("competing management setup admitted", feeds, err)
+	}
+}
+
 func TestStatusArchiveUnknownTopicSetupNeverCreatesCompetingTopic(t *testing.T) {
 	s := newStatusFixture(t)
 	s.n.dropMethod = "createForumTopic"

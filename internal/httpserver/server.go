@@ -10,6 +10,7 @@ import (
 	"sort"
 
 	"github.com/veryshyjelly/bifrost/internal/delivery"
+	"github.com/veryshyjelly/bifrost/internal/recovery"
 )
 
 // Store contains only the diagnostic and reviewed-recovery operations needed by HTTP.
@@ -107,5 +108,8 @@ func Handler(store Store, admin string, options ...Options) http.Handler {
 			write(w, 200, map[string]bool{"accepted": true})
 		}
 	}))
+	if topics, ok := store.(recovery.Topics); ok {
+		topicReviewRoutes(mux, topics, auth, write)
+	}
 	return mux
 }

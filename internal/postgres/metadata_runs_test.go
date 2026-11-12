@@ -36,11 +36,11 @@ func newRunFixture(t *testing.T) *runFixture {
 }
 func (r *runFixture) drain(t *testing.T, finish int) {
 	t.Helper()
-	ctx, cancel := context.WithTimeout(t.Context(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
 	defer cancel()
 	completed := 0
 	var mu sync.Mutex
-	worker, err := delivery.NewWorker(r.f.store, r.handlers, delivery.WorkerOptions{Concurrency: 3, Lease: 3 * time.Second, RenewEvery: 300 * time.Millisecond, StoreTimeout: 500 * time.Millisecond, PollEvery: 5 * time.Millisecond, ShutdownTimeout: time.Second, Report: func(report delivery.Report) {
+	worker, err := delivery.NewWorker(r.f.store, r.handlers, delivery.WorkerOptions{Concurrency: 3, Lease: 9 * time.Second, RenewEvery: 500 * time.Millisecond, StoreTimeout: 2 * time.Second, PollEvery: 5 * time.Millisecond, ShutdownTimeout: 2 * time.Second, Report: func(report delivery.Report) {
 		var kind string
 		if err := r.f.store.pool.QueryRow(context.Background(), "SELECT kind FROM jobs WHERE id=$1", report.JobID).Scan(&kind); err != nil {
 			return

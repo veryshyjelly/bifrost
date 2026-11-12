@@ -593,6 +593,15 @@ type TelegramSetupPlan struct {
 	Payload   []byte
 }
 
+type TopicReconciliation struct {
+	AccountID   string
+	OperationID string
+	JobID       int64
+	EffectKey   string
+	Request     []byte
+	Result      []byte
+}
+
 type WhatsappSelf struct {
 	AccountID string
 	PersonID  string

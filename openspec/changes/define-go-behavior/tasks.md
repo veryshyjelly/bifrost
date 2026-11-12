@@ -285,3 +285,12 @@
 - [x] Commit enabled failure/review notice admission with source job-state changes, preserving uncertainty and preventing recursive notices.
 - [x] Validate frozen replies, native reads, atomic rollback, diagnostic disablement and crash recovery in isolated fixtures.
 - [ ] Complete explicit topic reconciliation and runtime/import composition.
+
+## Explicit topic reconciliation
+
+- [x] Inspect supported frozen topic requests without provider calls or identity changes.
+- [x] Adopt an explicitly confirmed topic or confirm absence with exact account/request/state evidence and persistent guard checks.
+- [x] Preserve completed receipts, unrelated uncertainty, permanent reservations and later owner decisions across audit replay.
+- [x] Expose authenticated strict HTTP handling and explicit local CLI inspection/review without redirecting credentials.
+- [x] Exercise initial inbox, mirror return, native repair and Status scopes, unprepared effects, audit rollback and crash recovery in isolated fixtures.
+- [ ] Integrate legacy pending topic state and complete runtime startup recovery.

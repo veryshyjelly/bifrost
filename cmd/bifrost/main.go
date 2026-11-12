@@ -26,6 +26,8 @@ func run(ctx context.Context, args []string) error {
 		command = args[0]
 	}
 	switch command {
+	case "review", "inspect-topic", "reconcile-topic":
+		return recoveryCLI(ctx, command, args[1:], os.Stdout)
 	case "check-telegram":
 		return checkTelegram(ctx, args[1:], os.Stdout)
 	case "check-openwa":
@@ -68,7 +70,7 @@ func run(ctx context.Context, args []string) error {
 		return nil
 	case "serve":
 	default:
-		return errors.New("use serve, migrate, configure, healthcheck, check-openwa or check-telegram")
+		return errors.New("use serve, migrate, configure, healthcheck, check-openwa, check-telegram, review, inspect-topic or reconcile-topic")
 	}
 	c, err := config.Load(os.Getenv)
 	if err != nil {

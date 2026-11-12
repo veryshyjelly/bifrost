@@ -373,6 +373,41 @@ func (q *Queries) StatusTopicInUse(ctx context.Context, arg StatusTopicInUsePara
 	return exists, err
 }
 
+const statusTopicOrigins = `-- name: StatusTopicOrigins :many
+SELECT account_id, management, job_id, payload, complete FROM status_feeds WHERE account_id=$1 AND job_id=$2
+`
+
+type StatusTopicOriginsParams struct {
+	AccountID string
+	JobID     int64
+}
+
+func (q *Queries) StatusTopicOrigins(ctx context.Context, arg StatusTopicOriginsParams) ([]StatusFeed, error) {
+	rows, err := q.db.Query(ctx, statusTopicOrigins, arg.AccountID, arg.JobID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []StatusFeed{}
+	for rows.Next() {
+		var i StatusFeed
+		if err := rows.Scan(
+			&i.AccountID,
+			&i.Management,
+			&i.JobID,
+			&i.Payload,
+			&i.Complete,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateStatusControlEdit = `-- name: UpdateStatusControlEdit :exec
 UPDATE status_control_edits SET payload=$3 WHERE account_id=$1 AND job_id=$2
 `

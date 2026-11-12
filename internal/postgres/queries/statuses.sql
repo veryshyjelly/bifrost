@@ -42,3 +42,5 @@ UPDATE status_control_edits SET complete=true WHERE account_id=$1 AND job_id=$2;
 UPDATE status_control_edits SET payload=$3 WHERE account_id=$1 AND job_id=$2;
 -- name: StatusTopicInUse :one
 SELECT EXISTS(SELECT 1 FROM status_feeds WHERE account_id=sqlc.arg(account_id) AND management=sqlc.arg(management)::bigint AND complete AND (payload->'Feed'->>'ThreadID')::bigint=sqlc.arg(thread_id)::bigint);
+-- name: StatusTopicOrigins :many
+SELECT * FROM status_feeds WHERE account_id=$1 AND job_id=$2;

@@ -68,6 +68,15 @@ func (s *Store) PrepareStatusTopic(ctx context.Context, j delivery.Job, c status
 		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
 			return err
 		}
+		origins, err := q.StatusTopicOrigins(ctx, db.StatusTopicOriginsParams{AccountID: row.AccountID, JobID: row.ID})
+		if err != nil {
+			return err
+		}
+		for _, origin := range origins {
+			if origin.Management != c.Management {
+				return delivery.ErrInvalid
+			}
+		}
 		feed, err := q.StatusFeed(ctx, db.StatusFeedParams{AccountID: row.AccountID, Management: c.Management})
 		if err == nil {
 			if json.Unmarshal(feed.Payload, &result) != nil || result.Feed.Management != c.Management {
@@ -121,6 +130,13 @@ func (s *Store) CommitStatusTopic(ctx context.Context, j delivery.Job, c statuse
 			return err
 		}
 		var topic models.ForumTopic
+		var request struct {
+			ChatID int64  `json:"chat_id"`
+			Name   string `json:"name"`
+		}
+		if json.Unmarshal(effect.Request, &request) != nil || request.ChatID != p.Feed.Management || request.Name != p.Name {
+			return delivery.ErrInvalid
+		}
 		if effect.JobID != row.ID || effect.State != "done" || json.Unmarshal(effect.Result, &topic) != nil || int64(topic.MessageThreadID) != thread {
 			return delivery.ErrUncertain
 		}
@@ -390,6 +406,20 @@ func prepareNativeStatusScope(ctx context.Context, q *db.Queries, row db.Job, p 
 }
 
 var _ statuses.Store = (*Store)(nil)
+
+func (s *Store) StatusDeliveryTarget(ctx context.Context, account, id string) (statuses.Feed, bool, error) {
+	_, p, err := nativePlan(ctx, s.queries, account, relay.NativeIncomingKey(statuses.ChatID, id))
+	if errors.Is(err, pgx.ErrNoRows) {
+		return statuses.Feed{}, false, nil
+	}
+	if err != nil {
+		return statuses.Feed{}, false, err
+	}
+	if p.Origin != "status" || p.BotID != "master" || p.WhatsAppChat != statuses.ChatID || p.WhatsAppMessage != id {
+		return statuses.Feed{}, false, delivery.ErrInvalid
+	}
+	return statuses.Feed{Management: p.TelegramChat, ThreadID: p.ThreadID}, true, nil
+}
 
 // QueueStatusStartup is inert until explicit local API migration has completed.
 // Callback registration remains a separate, explicitly composed capability.

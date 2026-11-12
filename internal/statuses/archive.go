@@ -33,6 +33,7 @@ type Store interface {
 	PrepareStatusTopic(context.Context, delivery.Job, Settings) (Topic, error)
 	CommitStatusTopic(context.Context, delivery.Job, Settings, int64) (Feed, error)
 	FreezeStatusPost(context.Context, delivery.Job, Settings) (Snapshot, error)
+	StatusDeliveryTarget(context.Context, string, string) (Feed, bool, error)
 	CompleteStatusPost(context.Context, delivery.Job, string) error
 	StatusBatch(context.Context, delivery.Job) (Batch, bool, error)
 	FreezeStatusBatch(context.Context, delivery.Job, []Post) (Batch, error)
@@ -127,7 +128,13 @@ func (s *Service) Receive(ctx context.Context, j delivery.Job, e *delivery.Effec
 	if p.Skip || p.Complete {
 		return nil
 	}
-	feed, err := s.topic(ctx, j, e)
+	feed, prepared, err := s.store.StatusDeliveryTarget(ctx, j.AccountID, p.Post.ID)
+	if err != nil {
+		return local(err)
+	}
+	if !prepared {
+		feed, err = s.topic(ctx, j, e)
+	}
 	if err != nil {
 		return err
 	}

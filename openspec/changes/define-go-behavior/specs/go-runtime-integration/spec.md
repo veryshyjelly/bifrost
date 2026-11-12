@@ -2,6 +2,40 @@
 
 ## ADDED Requirements
 
+### Requirement: Explicit topic reconciliation
+
+The Go runtime SHALL provide authenticated inspection and reconciliation for interrupted initial inbox, mirror return, native delivery repair and Status topic creation. Inspection SHALL expose the permanent account, job/effect identity, frozen management target/name, request digest and current states without credentials. Generic skip SHALL retain unresolved topic ownership and route guards.
+
+#### Scenario: Adopt a topic after a lost acknowledgement
+
+- **WHEN** the operator supplies the inspected account/job/effect/request digest, expected states and exact created management topic with explicit confirmation
+- **THEN** the bridge records the original topic effect receipt, preserves its request/key, resumes the same job and retains its guard until the normal route/feed commit, without creating another topic
+
+#### Scenario: Confirm that no topic was created
+
+- **WHEN** the operator explicitly confirms absence against the unchanged inspected request and states
+- **THEN** only that unresolved topic effect is reset for the original job to retry; unrelated uncertain effects, completed receipts and permanent reservations remain protected
+
+#### Scenario: Stale or conflicting review
+
+- **WHEN** the account, request digest, expected state, route generation or topic reservation conflicts, a job is live, or another send is uncertain
+- **THEN** reconciliation is rejected without changing effects, routes, job state or guards
+
+#### Scenario: Repeated reconciliation request
+
+- **WHEN** the same reconciliation operation identifier and exact input are submitted again
+- **THEN** the recorded result is returned without reapplying the decision or resetting subsequent work
+
+#### Scenario: Crash before effect preparation
+
+- **WHEN** a supported topic guard has a frozen request but its effect was never prepared
+- **THEN** inspection reports that state and an explicitly confirmed reconciliation resumes only that original request
+
+#### Scenario: Existing confirmed receipt
+
+- **WHEN** the topic effect already has a completed receipt
+- **THEN** absence or replacement is refused and resuming that exact topic leaves the original request and receipt unchanged
+
 ### Requirement: Required provider libraries
 
 The Go bridge SHALL use github.com/veryshyjelly/OpenWA/sdk/go for WhatsApp and github.com/go-telegram/bot for Telegram, using applicable native features instead of duplicating supported provider functionality.
