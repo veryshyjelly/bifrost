@@ -200,6 +200,19 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **THEN** failure commits no partial interaction state, conflicts are refused and replay preserves later native selections/equivalents
 - **AND** projection never activates the account while remaining journals/assets are pending
 
+#### Scenario: Retained incoming reaction facts
+
+- **WHEN** incoming actor state, represented echoes and confirmed Telegram setting/refusal caches are projected
+- **THEN** their opaque hashes resolve only against retained original message/job/copy evidence and every target keeps its source, destination and private bot scope
+- **AND** actor order, refusal timing and echoes survive without inventing full-snapshot absence or identities absent from the old applied cache
+- **AND** actor aliases within one state follow their shared revision order, while conflicting independent alias caches require evidence rather than an invented ordering
+
+#### Scenario: Original reaction fallback remains unfinished
+
+- **WHEN** a saved destination cache has a pending fallback notice
+- **THEN** its original scoped reaction-job reference remains pending until job/notice compatibility is complete, without a new send, fabricated acknowledgement or early activation
+- **AND** all projected reaction facts/references roll back on failure; replay preserves later native state, while missing evidence and conflicting alias caches are refused
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

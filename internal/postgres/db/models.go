@@ -218,6 +218,11 @@ type LegacyImport struct {
 	ActivatedAt             pgtype.Timestamptz
 }
 
+type LegacyIncomingReactionProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyInteractionProjection struct {
 	AccountID string
 	Result    []byte
@@ -226,6 +231,15 @@ type LegacyInteractionProjection struct {
 type LegacyMessageProjection struct {
 	AccountID string
 	Result    []byte
+}
+
+type LegacyPendingReactionNotice struct {
+	AccountID      string
+	SourceKey      string
+	WhatsappChat   string
+	MessageID      string
+	DestinationKey string
+	LegacyJobKey   string
 }
 
 type LegacyRouteProjection struct {

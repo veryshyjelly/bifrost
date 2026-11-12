@@ -364,3 +364,10 @@
 - [x] Preserve exact selected poll options, valid custom-emoji equivalents and original scoped frozen outgoing reaction choices.
 - [x] Reuse supported/unsupported/removal resolutions without provider refetching, synthetic acknowledgements or resolving source sending effects.
 - [x] Cover malformed and alias-conflicting selections, original JavaScript key hashing, native worker handling, atomic rollback and replay without resetting new state.
+
+## Legacy incoming reaction facts
+
+- [x] Preserve actor revision/order/event keys and scoped represented echoes without inventing full-snapshot absence or applied actor identities.
+- [x] Verify hashed source/destination coordinates and confirmed setting/refusal targets against original jobs/messages/copies, including private bot scope.
+- [x] Retain pending fallback references to their original scoped reaction jobs while leaving their notice workflow pending.
+- [x] Cover missing evidence, foreign targets, malformed/conflicting state, native consumers, atomic rollback and non-resetting replay.
