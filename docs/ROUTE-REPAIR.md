@@ -1,0 +1,11 @@
+# Guarded delivery repair
+
+The native incoming capability implements the legacy missing-topic recovery and member-bot permission fallback. A definite Telegram `thread_missing` refusal on a master management topic can recreate that inbox. A definite member-bot 403 falls back to master in the same mirror or management route. A retired private inbox is restored before master sends; a newly available dedicated bot can receive a missing-topic delivery instead. The existing routing mode is preserved.
+
+Repair requires a live source plan with no source mappings and no packet effect in `done`, `sending` or `uncertain`. A confirmed label counts as a partial delivery even when its attachment was refused. History replays never move destinations. The contact-directory lock serializes admission with binding, route and retirement decisions; both the route snapshot and mirror-return generation must still match. Frozen resolved mentions, body entities, source bytes, conversion decisions and poll action IDs survive repair. A replacement gets distinct packet effect keys, and only definitely unsent former packet effects are discarded.
+
+Topic restoration freezes its request and keeps a persistent route-transition guard. A lost topic acknowledgement remains uncertain for explicit review. A confirmed receipt survives a crash before the route update: retries reuse that topic and its original effect key. Committing the topic, inbox record, new return generation, replacement plan, poll control destination and metadata event is atomic. Permanent topic reservations and other conversations prevent topic reuse. Repairs are bounded to two attempts per source plan.
+
+`bridge.Extensions.Incoming` explicitly routes both fresh text and attachments through this capability. Existing frozen text plans continue through the original text resumer with their original keys and completed receipts. Diagnostic `serve` still does not start a worker.
+
+Native SDK/PostgreSQL fixtures exercise missing topics, frozen attachments, forbidden member bots, retired private inboxes, pre-send restoration, partial-delivery refusal, stale routes, uncertain topic creation, crash recovery, poll control retargeting and existing text-plan resumption. Explicit reconciliation of abandoned transition guards and full runtime/import composition remain separate completion work.

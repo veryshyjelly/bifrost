@@ -259,4 +259,12 @@
 - [x] Preserve the authenticated direct management action surface with unique originating-job admission and frozen native requests.
 - [x] Use idempotent source mutation progress, independent refusal notices and authoritative revoke evidence before Telegram cleanup.
 - [x] Validate native payloads, replay, permission refusal and crash recovery through isolated SDK/PostgreSQL fixtures.
-- [ ] Complete route repair and runtime/import composition.
+- [ ] Complete runtime/import composition.
+
+## Guarded route repair
+
+- [x] Restore missing management topics and fall back from forbidden member bots only before any confirmed or uncertain packet.
+- [x] Preserve resolved mentions, frozen media/conversion choices, route modes and original text-plan receipts.
+- [x] Fence restoration with route generations, directory locks, permanent reservations and durable topic-creation guards.
+- [x] Validate partial-delivery refusal, stale routes, unknown creation, confirmed-topic crash recovery and unexposed poll controls in isolated fixtures.
+- [ ] Integrate complete runtime and explicit abandoned-transition reconciliation.

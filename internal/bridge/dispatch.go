@@ -38,6 +38,9 @@ type WhatsApp interface {
 type TelegramHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Update) error
 type MentionRefusalHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Message, error) (bool, error)
 type Extensions struct {
+	// Incoming replaces initial text and attachment delivery while the legacy
+	// text-plan resumer retains any already frozen packets and receipts.
+	Incoming       delivery.Handler
 	WhatsApp       map[sdk.WebhookEvent]delivery.Handler
 	Telegram       TelegramHandler
 	MentionPicker  TelegramHandler
@@ -102,6 +105,9 @@ func (d *Dispatcher) whatsApp(ctx context.Context, job delivery.Job, e *delivery
 	}
 	if native.IsStatusBroadcast || native.Kind == "channel" || native.Kind == "status" || native.Kind == "broadcast" {
 		return nil
+	}
+	if h := d.c.Extensions.Incoming; h != nil {
+		return h(ctx, job, e)
 	}
 	if native.Type != sdk.MsgText || native.Media != nil || native.Location != nil || native.Poll != nil || native.Order != nil || native.Product != nil {
 		return d.otherWhatsApp(ctx, job, e, hook.Event)

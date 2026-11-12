@@ -89,6 +89,17 @@ func (n *Native) Incoming(ctx context.Context, j delivery.Job, e *delivery.Effec
 		return delivery.ErrLocalRetry
 	}
 	key := NativeIncomingKey(source.ChatID, source.MessageID)
+	if old, found, err := n.store.RelayPlan(ctx, j.AccountID, IncomingKey(source.ChatID, source.MessageID)); err != nil {
+		return local(err)
+	} else if found {
+		if old.Complete {
+			return nil
+		}
+		if n.c.TextResume == nil {
+			return delivery.ErrInvalid
+		}
+		return n.c.TextResume.ResumeIncoming(ctx, j, e, old.Key)
+	}
 	if p, found, err := n.store.NativePlan(ctx, j.AccountID, key); err != nil {
 		return local(err)
 	} else if found {
@@ -126,6 +137,10 @@ func (n *Native) Incoming(ctx context.Context, j delivery.Job, e *delivery.Effec
 		return err
 	}
 	target, err := n.routing.SelectTarget(ctx, j.AccountID, route, source.SenderID, conversation.Flags{FromMe: source.Own})
+	if errors.Is(err, conversation.ErrInboxRequired) {
+		// Persist content before restoration; send refuses this retired target.
+		target, err = conversation.Target{BotID: "master", ChatID: route.TelegramChatID}, nil
+	}
 	if err != nil {
 		return err
 	}
@@ -266,7 +281,9 @@ func (native *Native) render(ctx context.Context, j delivery.Job, p *NativePlan)
 		}
 	}
 	body := presentation.Plain(source.Body)
-	if len(source.MentionedIDs) > 0 {
+	if p.Content != nil {
+		body = *p.Content
+	} else if len(source.MentionedIDs) > 0 {
 		if native.c.Mentions == nil {
 			return delivery.ErrUnsupported
 		}
@@ -276,6 +293,7 @@ func (native *Native) render(ctx context.Context, j delivery.Job, p *NativePlan)
 			return err
 		}
 	}
+	p.Content = &body
 	render := func(content presentation.Value) (presentation.Value, error) {
 		if format.Historical && quote == 0 && m.QuotedMessage != nil && m.QuotedMessage.Body != "" {
 			preview := []rune(m.QuotedMessage.Body)
@@ -324,7 +342,19 @@ func (native *Native) render(ctx context.Context, j delivery.Job, p *NativePlan)
 	}
 	switch m.Type {
 	case sdk.MsgImage, sdk.MsgVideo, sdk.MsgAudio, sdk.MsgVoice, sdk.MsgSticker, sdk.MsgDocument:
-		asset, err := native.sourceAsset(ctx, j, *p)
+		if p.MediaNotice != "" {
+			notice, err := annotated(p.MediaNotice)
+			if err != nil {
+				return err
+			}
+			return appendText(notice, nil)
+		}
+		var asset attachments.Asset
+		if p.SourceAsset != nil {
+			asset = *p.SourceAsset
+		} else {
+			asset, err = native.sourceAsset(ctx, j, *p)
+		}
 		if err != nil {
 			var refusal *providers.Error
 			if !errors.As(err, &refusal) || (refusal.Status != 404 && refusal.Status != 413) {
@@ -336,7 +366,8 @@ func (native *Native) render(ctx context.Context, j delivery.Job, p *NativePlan)
 			} else if refusal.Code == "MEDIA_SOURCE_UNAVAILABLE" {
 				reason = "WhatsApp cannot supply this attachment"
 			}
-			notice, err := annotated(string(m.Type) + " unavailable: " + reason)
+			p.MediaNotice = string(m.Type) + " unavailable: " + reason
+			notice, err := annotated(p.MediaNotice)
 			if err != nil {
 				return err
 			}
@@ -345,7 +376,9 @@ func (native *Native) render(ctx context.Context, j delivery.Job, p *NativePlan)
 		p.SourceAsset = &asset
 		upload := asset
 		kind := map[sdk.MessageType]string{sdk.MsgImage: "photo", sdk.MsgVideo: "video", sdk.MsgAudio: "audio", sdk.MsgVoice: "voice", sdk.MsgSticker: "sticker", sdk.MsgDocument: "document"}[m.Type]
-		if m.Type == sdk.MsgSticker {
+		if p.PreparedUpload != nil {
+			upload, kind = *p.PreparedUpload, p.PreparedKind
+		} else if m.Type == sdk.MsgSticker {
 			upload, err = native.codec.Sticker(ctx, asset, "telegram")
 		} else if m.Type == sdk.MsgVoice && !strings.Contains(asset.MIME, "ogg") {
 			upload, err = native.codec.Transcode(ctx, asset, true, native.c.MaxBytes)
@@ -364,6 +397,7 @@ func (native *Native) render(ctx context.Context, j delivery.Job, p *NativePlan)
 			}
 			kind, upload = "document", asset
 		}
+		p.PreparedUpload, p.PreparedKind = &upload, kind
 		separate := (m.Type == sdk.MsgSticker && strings.TrimSpace(text.Text) != "") || presentation.Length(text.Text) > 1000
 		if separate {
 			if err := appendText(text, nil); err != nil {
@@ -481,6 +515,15 @@ func (n *Native) send(ctx context.Context, j delivery.Job, e *delivery.Effects, 
 	if e == nil {
 		return delivery.ErrInvalid
 	}
+	if p.Repair != nil {
+		return n.resumeRepair(ctx, j, e, p)
+	}
+	if p.Origin == "live" && p.BotID == "master" && p.Route.InboxRetired {
+		if repaired, err := n.repair(ctx, j, e, p, &providers.Error{Service: "telegram", Reason: "inbox_required"}); repaired || err != nil {
+			return err
+		}
+		return conversation.ErrInboxRequired
+	}
 	for index := range p.Packets {
 		fallback := p.Packets[index].UseFallback
 		for {
@@ -505,6 +548,11 @@ func (n *Native) send(ctx context.Context, j delivery.Job, e *delivery.Effects, 
 				break
 			}
 			var refusal *providers.Error
+			if errors.As(err, &refusal) && !refusal.Retry && !refusal.Uncertain && refusal.Service == "telegram" {
+				if repaired, repairErr := n.repair(ctx, j, e, p, refusal); repaired || repairErr != nil {
+					return repairErr
+				}
+			}
 			if fallback || p.Packets[index].Fallback == nil || !errors.As(err, &refusal) || refusal.Retry || refusal.Uncertain || (refusal.Status != 400 && refusal.Status != 415) || refusal.Reason == "thread_missing" || refusal.Reason == "reply_missing" {
 				return err
 			}

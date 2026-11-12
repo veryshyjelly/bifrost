@@ -17,6 +17,30 @@ import (
 // command/media/owner guard must decide its path before touching source state.
 type noSource struct{ SourceStore }
 type noWhatsApp struct{ WhatsApp }
+
+func TestCompleteIncomingExtensionReceivesTextAndMediaAfterEnvelopeChecks(t *testing.T) {
+	text := &recordedText{}
+	count := 0
+	d, err := New(noSource{}, text, noWhatsApp{}, Options{AccountID: "account", SessionID: "session", OwnerID: 123, Extensions: Extensions{Incoming: func(_ context.Context, j delivery.Job, _ *delivery.Effects) error { count++; return nil }}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, kind := range []string{"chat", "image"} {
+		payload, _ := json.Marshal(map[string]any{"event": "message.received", "accountId": "account", "sessionId": "session", "idempotencyKey": "fixture", "data": map[string]any{"id": "fixture", "chatId": "peer@g.us", "type": kind}})
+		j := delivery.Job{Event: delivery.Event{AccountID: "account", Kind: "wa", Dedup: "ow:fixture", Payload: payload}}
+		if err := d.Handlers()["wa"](t.Context(), j, nil); err != nil {
+			t.Fatal(err)
+		}
+		j.AccountID = "foreign"
+		if err := d.Handlers()["wa"](t.Context(), j, nil); !errors.Is(err, delivery.ErrInvalid) {
+			t.Fatal(err)
+		}
+	}
+	if count != 2 || text.incoming != 0 {
+		t.Fatal(count, text.incoming)
+	}
+}
+
 type recordedText struct{ incoming, outgoing, read int }
 
 func (r *recordedText) IncomingText(context.Context, delivery.Job, *delivery.Effects, relay.Incoming) error {

@@ -11,7 +11,7 @@ The user requested completion of all remaining workflows, legacy import and runt
 - [x] Actor-specific native reactions, scoped custom emoji, retained-copy projection, fallback notices and crash-safe setters in isolated fixtures.
 - [x] Source tombstones, destination-scoped owner Delete/Keep choices, expiry and resumable cleanup in isolated fixtures.
 - [x] Explicit /react and /delete commands, authenticated management actions and idempotent source-operation recovery in isolated fixtures.
-- [ ] Route repair.
+- [x] Guarded route repair, frozen destination replacement and topic-creation crash recovery in isolated fixtures.
 - [ ] Passive Status archive, refresh, author mutes and scoped controls.
 - [ ] Remaining status/operational owner commands and explicit transition reconciliation.
 - [ ] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain sends.

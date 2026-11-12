@@ -49,11 +49,25 @@ type NativePlan struct {
 	Source                                                           identity.Source
 	Message                                                          sdk.ChatHistoryMessage
 	Presentation                                                     presentation.Options
+	Content                                                          *presentation.Value `json:",omitempty"`
+	PreparedUpload                                                   *attachments.Asset  `json:",omitempty"`
+	PreparedKind, MediaNotice                                        string              `json:",omitempty"`
+	Repairs                                                          int                 `json:",omitempty"`
+	Repair                                                           *NativeRepair       `json:",omitempty"`
 	Packets                                                          []NativePacket
 	SourceAsset                                                      *attachments.Asset
 	PollChoices                                                      []PollChoice
 	ControlTTL                                                       int
 	Complete                                                         bool `json:"-"`
+}
+
+// NativeRepair freezes a replacement destination before any packet is received.
+// Its topic creation guard survives uncertain provider acknowledgements.
+type NativeRepair struct {
+	Reason, Prefix, TopicKey, TopicName string
+	Target                              control.Target
+	Management                          int64
+	CreateTopic                         bool
 }
 
 func (p NativePlan) PartKey(part int) string { return p.Prefix + ":packet:" + strconv.Itoa(part) }
@@ -90,6 +104,7 @@ type NativeStore interface {
 	RelayEcho(context.Context, string, string, string) (Echo, error)
 	WhatsAppQuote(context.Context, string, string, string, string, int64, int64) (Mapping, bool, error)
 	NativePlan(context.Context, string, string) (NativePlan, bool, error)
+	RelayPlan(context.Context, string, string) (Plan, bool, error)
 	PrepareNative(context.Context, delivery.Job, NativePlan) (NativePlan, error)
 	RecordNative(context.Context, delivery.Job, string, int, string) error
 	CompleteNative(context.Context, delivery.Job, string) error
