@@ -12,7 +12,7 @@ The user requested completion of all remaining workflows, legacy import and runt
 - [x] Source tombstones, destination-scoped owner Delete/Keep choices, expiry and resumable cleanup in isolated fixtures.
 - [x] Explicit /react and /delete commands, authenticated management actions and idempotent source-operation recovery in isolated fixtures.
 - [x] Guarded route repair, frozen destination replacement and topic-creation crash recovery in isolated fixtures.
-- [ ] Passive Status archive, refresh, author mutes and scoped controls.
+- [x] Passive Status archive, frozen refreshes, alias-scoped author mutes and versioned controls in isolated fixtures.
 - [ ] Remaining status/operational owner commands and explicit transition reconciliation.
 - [ ] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain sends.
 - [ ] Complete runtime dependency composition, callback registration, scheduler, worker and startup recovery, gated from diagnostic serve.

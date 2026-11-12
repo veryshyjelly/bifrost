@@ -51,6 +51,15 @@ func (s *Store) CreateInbox(ctx context.Context, job delivery.Job, route convers
 		if reserved {
 			return conversation.ErrInboxRequired
 		}
+		if route.ThreadID > 0 {
+			other, err := q.OtherTopicRoute(ctx, db.OtherTopicRouteParams{AccountID: row.AccountID, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID, WhatsappChat: route.ChatID})
+			if err != nil {
+				return err
+			}
+			if other {
+				return delivery.ErrInvalid
+			}
+		}
 		r, err := q.CreateInbox(ctx, db.CreateInboxParams{AccountID: row.AccountID, WhatsappChat: route.ChatID, Name: route.Name, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID, Mode: string(route.Mode), InboxRetired: route.InboxRetired})
 		if errors.Is(err, pgx.ErrNoRows) {
 			r, err := q.ConversationRoute(ctx, db.ConversationRouteParams{AccountID: row.AccountID, WhatsappChat: route.ChatID})

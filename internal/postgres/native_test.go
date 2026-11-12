@@ -67,6 +67,8 @@ type nativeFixture struct {
 	outbound        *relay.Outbound
 	waClient        *wa.Client
 	tgClients       map[string]*tg.Client
+	statusRecords   []sdk.StatusRecord
+	statusLists     int
 }
 
 func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
@@ -91,6 +93,15 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			return
 		}
 		if strings.HasPrefix(r.URL.Path, "/api/") {
+			if r.Method == http.MethodGet && r.URL.Path == "/api/sessions/fixture-session/status" {
+				n.statusLists++
+				records := n.statusRecords
+				if records == nil {
+					records = []sdk.StatusRecord{}
+				}
+				json.NewEncoder(w).Encode(map[string]any{"statuses": records})
+				return
+			}
 			if r.Method == http.MethodPost {
 				var request map[string]json.RawMessage
 				if err := json.NewDecoder(r.Body).Decode(&request); err != nil {

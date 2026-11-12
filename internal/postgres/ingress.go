@@ -62,6 +62,13 @@ func (s *Store) PutIngressRoute(ctx context.Context, account string, route ingre
 	if reserved {
 		return conversation.ErrInboxRequired
 	}
+	status, err := q.StatusTopicInUse(ctx, db.StatusTopicInUseParams{AccountID: account, Management: route.TelegramChatID, ThreadID: route.ThreadID})
+	if err != nil {
+		return err
+	}
+	if status {
+		return delivery.ErrInvalid
+	}
 	if err := q.PutIngressRoute(ctx, db.PutIngressRouteParams{AccountID: account, WhatsappChat: route.WhatsAppChat, TelegramChatID: route.TelegramChatID, ThreadID: route.ThreadID, InboxRetired: route.InboxRetired}); err != nil {
 		return err
 	}

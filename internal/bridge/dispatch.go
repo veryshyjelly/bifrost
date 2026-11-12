@@ -38,6 +38,8 @@ type WhatsApp interface {
 type TelegramHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Update) error
 type MentionRefusalHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Message, error) (bool, error)
 type Extensions struct {
+	// PassiveTopics can consume archive guidance and controls before text relay.
+	PassiveTopics TelegramHandler
 	// Incoming replaces initial text and attachment delivery while the legacy
 	// text-plan resumer retains any already frozen packets and receipts.
 	Incoming       delivery.Handler
@@ -193,6 +195,11 @@ func (d *Dispatcher) telegram(ctx context.Context, job delivery.Job, e *delivery
 	}
 	if !ingress.AuthorizedUpdate(envelope.Update, &update, d.c.OwnerID) {
 		return nil
+	}
+	if h := d.c.Extensions.PassiveTopics; h != nil {
+		if err := h(ctx, job, e, envelope.Bot, &update); !errors.Is(err, delivery.ErrUnsupported) {
+			return err
+		}
 	}
 	m := update.Message
 	if m != nil && m.Text != "" && !hasOtherContent(envelope.Update) && !strings.HasPrefix(strings.TrimFunc(m.Text, func(r rune) bool { return r == 0xfeff || (r != 0x85 && unicode.IsSpace(r)) }), "/") {

@@ -268,3 +268,12 @@
 - [x] Fence restoration with route generations, directory locks, permanent reservations and durable topic-creation guards.
 - [x] Validate partial-delivery refusal, stale routes, unknown creation, confirmed-topic crash recovery and unexposed poll controls in isolated fixtures.
 - [ ] Integrate complete runtime and explicit abandoned-transition reconciliation.
+
+## Passive Status archive
+
+- [x] Archive native Status text/media with linked authors and native posting times through authenticated local retrieval.
+- [x] Freeze refresh batches and deduplicate webhook races without conversation creation, source publication or read/view receipts.
+- [x] Preserve archives after source expiry and persist skipped posts across unmute/refresh.
+- [x] Implement alias-scoped author preferences, ten-person pagination, expiring presented controls and stale-revision refusal.
+- [x] Exercise topic uncertainty, frozen refreshes, callback/edit recovery, passive topic guidance and explicit migration startup gates in isolated fixtures.
+- [ ] Compose runtime webhook subscription, startup refresh and legacy Status state import.

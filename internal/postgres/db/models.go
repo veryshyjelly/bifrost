@@ -480,6 +480,62 @@ type SourceActionJob struct {
 	Payload     []byte
 }
 
+type StatusControl struct {
+	AccountID string
+	ControlID string
+	PlanKey   string
+	Payload   []byte
+}
+
+type StatusControlEdit struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+	Complete  bool
+}
+
+type StatusFeed struct {
+	AccountID  string
+	Management int64
+	JobID      int64
+	Payload    []byte
+	Complete   bool
+}
+
+type StatusMute struct {
+	AccountID string
+	Author    string
+	Payload   []byte
+}
+
+type StatusMuteCounter struct {
+	AccountID string
+	Revision  int64
+}
+
+type StatusMuteOperation struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+}
+
+type StatusPost struct {
+	AccountID string
+	PostID    string
+	JobID     int64
+	Payload   []byte
+	Source    []byte
+	Skipped   bool
+	Complete  bool
+}
+
+type StatusRefresh struct {
+	AccountID string
+	JobID     int64
+	Payload   []byte
+	Complete  bool
+}
+
 type TelegramBotLifecycle struct {
 	AccountID       string
 	BotID           string

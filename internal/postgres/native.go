@@ -86,6 +86,9 @@ func prepareNativeScope(ctx context.Context, q *db.Queries, row db.Job, p *relay
 	if p.Session == "" || p.Source.ChatID != p.WhatsAppChat || p.Source.MessageID != p.WhatsAppMessage || p.Message.ID != p.WhatsAppMessage {
 		return delivery.ErrInvalid
 	}
+	if p.Origin == "status" {
+		return prepareNativeStatusScope(ctx, q, row, p)
+	}
 	if p.Origin == "live" {
 		if row.Kind != "wa" || row.Stream != "wa:"+p.WhatsAppChat || p.Key != relay.NativeIncomingKey(p.WhatsAppChat, p.WhatsAppMessage) {
 			return delivery.ErrInvalid
