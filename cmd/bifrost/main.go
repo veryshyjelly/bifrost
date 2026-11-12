@@ -26,6 +26,8 @@ func run(ctx context.Context, args []string) error {
 		command = args[0]
 	}
 	switch command {
+	case "legacy-validate":
+		return validateLegacyCLI(ctx, args[1:], os.Stdout)
 	case "review", "inspect-topic", "reconcile-topic":
 		return recoveryCLI(ctx, command, args[1:], os.Stdout)
 	case "check-telegram":
@@ -70,7 +72,7 @@ func run(ctx context.Context, args []string) error {
 		return nil
 	case "serve":
 	default:
-		return errors.New("use serve, migrate, configure, healthcheck, check-openwa, check-telegram, review, inspect-topic or reconcile-topic")
+		return errors.New("use serve, migrate, configure, healthcheck, check-openwa, check-telegram, review, inspect-topic, reconcile-topic or legacy-validate")
 	}
 	c, err := config.Load(os.Getenv)
 	if err != nil {

@@ -300,3 +300,11 @@
 - [x] Preserve new/link/bind report labels through internal durable admission while keeping public management requests as command work.
 - [x] Retain first-source coalescing, non-cron management reports and explicit notifier waiters.
 - [x] Exercise native worker reports, invalid trigger scopes, public-source overrides and producer regressions in isolated fixtures.
+
+## Legacy archive inspection
+
+- [x] Validate v1 archive checksums, bounded private extraction and complete gzip/tar streams without executing archived code.
+- [x] Read all six legacy SQLite tables in a read-only transaction including committed WAL, preserving exact integer IDs and source strings.
+- [x] Verify original account/key/credentials and scoped aliases, bot bindings, mappings, jobs and controls; retain unknown-send evidence.
+- [x] Add standalone read-only `legacy-validate` CLI and malicious archive/semantic input tests.
+- [ ] Complete transactional PostgreSQL import, active journal compatibility and round-trip/recovery acceptance.

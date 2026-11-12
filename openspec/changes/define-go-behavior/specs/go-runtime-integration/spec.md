@@ -81,6 +81,17 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** the SQLite source contains an uncertain outgoing send and completed effects
 - **THEN** PostgreSQL retains the uncertainty and completed receipts; the send still requires review
 
+#### Scenario: Inspect a frozen legacy export
+
+- **WHEN** an operator validates a legacy v1 export before import
+- **THEN** the Go reader checks component hashes, archive safety, SQLite integrity and committed WAL data, original identity/key and scoped relationships without modifying source resources or contacting providers
+- **AND** exact integer IDs, encrypted credential strings, frozen bytes and sending/running states remain source evidence, with no fabricated receipts or replay eligibility
+
+#### Scenario: Unsafe or unsupported legacy input
+
+- **WHEN** the export has unsafe paths, links, duplicate entries or JSON keys, damaged checksums, unknown durable domains, conflicting identity evidence or invalid private/group scopes
+- **THEN** validation refuses the input and removes only its owned temporary stage, leaving existing configurations, databases and volumes untouched
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.
