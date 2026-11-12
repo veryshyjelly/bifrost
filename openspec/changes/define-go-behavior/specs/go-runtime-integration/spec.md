@@ -114,6 +114,17 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** credential projection fails or its exact completed checkpoint is repeated after a subsequent credential change
 - **THEN** failure rolls back credentials and source proof together, while completed replay returns its first result without restoring old tokens over later state
 
+#### Scenario: Imported identity and copied mentions
+
+- **WHEN** explicit aliases, contact profiles/bindings, copied mention tokens and cached group rosters are projected
+- **THEN** canonical routing identities remain distinct from selected bound-name profiles, token keys/account/group scope and original roster evidence remain intact, and display numbers or cached canonical fields never create phone identities
+- **AND** confirmed native metadata can refresh the imported name preference while unconfirmed displays cannot displace it
+
+#### Scenario: Identity projection failure or replay
+
+- **WHEN** a projection lacks its bot prerequisite, meets foreign scope/native conflicts, fails during roster persistence, or is repeated after later native updates
+- **THEN** invalid/failed projection leaves no partial identity/mention writes and completed replay does not reset later names or rosters; import dispatch remains blocked
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

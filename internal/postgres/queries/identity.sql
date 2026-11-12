@@ -8,7 +8,8 @@ SELECT person_id,name,metadata_synced FROM contact_profiles WHERE account_id=$1 
 SELECT bot_id,username,started FROM bridge_bots WHERE account_id=$1 ORDER BY bot_id;
 
 -- name: IdentityBindings :many
-SELECT contact_id,bot_id FROM bridge_contact_bots WHERE account_id=$1 ORDER BY contact_id;
+SELECT COALESCE(NULLIF(source_profile,''),contact_id)::text AS contact_id,bot_id
+FROM bridge_contact_bots WHERE account_id=$1 ORDER BY contact_id;
 
 -- name: SaveContactAlias :one
 INSERT INTO contact_aliases(account_id,alias,canonical) VALUES($1,$2,$3)
@@ -16,10 +17,16 @@ ON CONFLICT(account_id,alias) DO UPDATE SET alias=EXCLUDED.alias
 RETURNING canonical;
 
 -- name: SaveContactProfile :exec
-INSERT INTO contact_profiles(account_id,person_id,name,metadata_synced) VALUES($1,$2,$3,$4)
+WITH saved AS (
+INSERT INTO contact_profiles(account_id,person_id,name,metadata_synced)
+VALUES(sqlc.arg(account_id),sqlc.arg(person_id),sqlc.arg(name),sqlc.arg(metadata_synced))
 ON CONFLICT(account_id,person_id) DO UPDATE SET
 name=CASE WHEN NOT contact_profiles.metadata_synced OR EXCLUDED.metadata_synced THEN EXCLUDED.name ELSE contact_profiles.name END,
-metadata_synced=contact_profiles.metadata_synced OR EXCLUDED.metadata_synced;
+metadata_synced=contact_profiles.metadata_synced OR EXCLUDED.metadata_synced
+RETURNING account_id,person_id
+)
+UPDATE bridge_contact_bots b SET source_profile='' FROM saved p
+WHERE b.account_id=p.account_id AND b.contact_id=p.person_id AND sqlc.arg(metadata_synced)::boolean;
 
 -- name: MentionRoster :one
 SELECT payload,fetched_at FROM mention_rosters WHERE account_id=$1 AND chat_id=$2;

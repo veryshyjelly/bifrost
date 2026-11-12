@@ -321,3 +321,9 @@
 - [x] Project original encrypted member credentials, master token, registration names and Start activation without local migration eligibility.
 - [x] Preserve scoped hosted-logout proof and require native local API verification before webhook/menu setup.
 - [x] Cover projection rollback/replay, changed credentials, cached identity/Start, refused local API checks and native setup recovery in isolated fixtures.
+
+## Legacy identity and mention projection
+
+- [x] Preserve explicit aliases, original profiles, canonical bindings and selected bound-name sources without deriving phone evidence from LID displays.
+- [x] Preserve copied token keys/account/group scope and original roster members/timestamps after credential projection.
+- [x] Cover prerequisites, conflicts, foreign scopes, atomic rollback, replay and confirmed native metadata name refresh.

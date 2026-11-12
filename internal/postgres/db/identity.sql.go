@@ -39,7 +39,8 @@ func (q *Queries) IdentityAliases(ctx context.Context, accountID string) ([]Iden
 }
 
 const identityBindings = `-- name: IdentityBindings :many
-SELECT contact_id,bot_id FROM bridge_contact_bots WHERE account_id=$1 ORDER BY contact_id
+SELECT COALESCE(NULLIF(source_profile,''),contact_id)::text AS contact_id,bot_id
+FROM bridge_contact_bots WHERE account_id=$1 ORDER BY contact_id
 `
 
 type IdentityBindingsRow struct {
@@ -198,25 +199,31 @@ func (q *Queries) SaveContactAlias(ctx context.Context, arg SaveContactAliasPara
 }
 
 const saveContactProfile = `-- name: SaveContactProfile :exec
-INSERT INTO contact_profiles(account_id,person_id,name,metadata_synced) VALUES($1,$2,$3,$4)
+WITH saved AS (
+INSERT INTO contact_profiles(account_id,person_id,name,metadata_synced)
+VALUES($2,$3,$4,$1)
 ON CONFLICT(account_id,person_id) DO UPDATE SET
 name=CASE WHEN NOT contact_profiles.metadata_synced OR EXCLUDED.metadata_synced THEN EXCLUDED.name ELSE contact_profiles.name END,
 metadata_synced=contact_profiles.metadata_synced OR EXCLUDED.metadata_synced
+RETURNING account_id,person_id
+)
+UPDATE bridge_contact_bots b SET source_profile='' FROM saved p
+WHERE b.account_id=p.account_id AND b.contact_id=p.person_id AND $1::boolean
 `
 
 type SaveContactProfileParams struct {
+	MetadataSynced bool
 	AccountID      string
 	PersonID       string
 	Name           string
-	MetadataSynced bool
 }
 
 func (q *Queries) SaveContactProfile(ctx context.Context, arg SaveContactProfileParams) error {
 	_, err := q.db.Exec(ctx, saveContactProfile,
+		arg.MetadataSynced,
 		arg.AccountID,
 		arg.PersonID,
 		arg.Name,
-		arg.MetadataSynced,
 	)
 	return err
 }

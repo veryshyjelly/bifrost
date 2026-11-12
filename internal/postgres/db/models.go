@@ -16,9 +16,10 @@ type BridgeBot struct {
 }
 
 type BridgeContactBot struct {
-	AccountID string
-	ContactID string
-	BotID     string
+	AccountID     string
+	ContactID     string
+	BotID         string
+	SourceProfile string
 }
 
 type BridgeIdentity struct {
@@ -187,6 +188,11 @@ type LegacyBotLogout struct {
 }
 
 type LegacyBotProjection struct {
+	AccountID string
+	Result    []byte
+}
+
+type LegacyDirectoryProjection struct {
 	AccountID string
 	Result    []byte
 }
