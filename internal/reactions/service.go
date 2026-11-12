@@ -228,7 +228,10 @@ func (s *Service) Outgoing(ctx context.Context, j delivery.Job, e *delivery.Effe
 			return nil
 		}
 		p = OutgoingPlan{Key: j.Dedup, Session: s.c.Session, Input: input, Supported: true, State: "pending", NoticeTTL: s.c.NoticeTTL}
-		if selected := Selected(input.Update); selected != nil {
+		if input.FrozenChoice != nil {
+			p.Emoji = input.FrozenChoice.Emoji
+			p.Supported = input.FrozenChoice.Supported
+		} else if selected := Selected(input.Update); selected != nil {
 			switch selected.Type {
 			case models.ReactionTypeTypeEmoji:
 				if selected.ReactionTypeEmoji == nil || !EmojiEquivalent(selected.ReactionTypeEmoji.Emoji) {

@@ -358,3 +358,9 @@
 - [x] Preserve latest edited content, mention presence, confirmed outbound edit hashes and explicit true revocation markers without synthetic jobs or receipts.
 - [x] Feed source/history normalization and native edit handling while preserving later native precedence and explicit mention clearing.
 - [x] Refuse unordered conflicting alias caches and cover whole-transaction rollback, scoped echo/tombstone behavior and non-resetting replay.
+
+## Legacy poll and outgoing reaction resolution state
+
+- [x] Preserve exact selected poll options, valid custom-emoji equivalents and original scoped frozen outgoing reaction choices.
+- [x] Reuse supported/unsupported/removal resolutions without provider refetching, synthetic acknowledgements or resolving source sending effects.
+- [x] Cover malformed and alias-conflicting selections, original JavaScript key hashing, native worker handling, atomic rollback and replay without resetting new state.

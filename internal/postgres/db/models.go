@@ -218,6 +218,11 @@ type LegacyImport struct {
 	ActivatedAt             pgtype.Timestamptz
 }
 
+type LegacyInteractionProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyMessageProjection struct {
 	AccountID string
 	Result    []byte
@@ -543,6 +548,13 @@ type RetainedMessageSource struct {
 	MessageID    string
 	SourceKey    string
 	Payload      []byte
+}
+
+type RetainedReactionChoice struct {
+	AccountID string
+	SourceKey string
+	Emoji     string
+	Supported bool
 }
 
 type RetiredTopic struct {

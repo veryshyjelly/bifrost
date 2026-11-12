@@ -13,6 +13,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/control"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
+	"github.com/veryshyjelly/bifrost/internal/legacy"
 	"github.com/veryshyjelly/bifrost/internal/postgres/db"
 	"github.com/veryshyjelly/bifrost/internal/presentation"
 	"github.com/veryshyjelly/bifrost/internal/reactions"
@@ -111,6 +112,12 @@ func outgoingReactionInput(ctx context.Context, q *db.Queries, row db.Job, c rea
 	} else if !errors.Is(err, pgx.ErrNoRows) {
 		return result, err
 	}
+	choice, err := q.RetainedReactionChoice(ctx, db.RetainedReactionChoiceParams{AccountID: row.AccountID, SourceKey: legacy.OutgoingReactionKey(row.AccountID, envelope.Bot, row.Dedup)})
+	if err == nil {
+		result.FrozenChoice = &reactions.FrozenChoice{Emoji: choice.Emoji, Supported: choice.Supported}
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return result, err
+	}
 	return result, nil
 }
 func (s *Store) OutgoingReactionInput(ctx context.Context, j delivery.Job, c reactions.Settings) (reactions.OutgoingInput, error) {
@@ -174,6 +181,9 @@ func (s *Store) PrepareOutgoingReaction(ctx context.Context, j delivery.Job, p r
 		}
 		if !reflect.DeepEqual(actual, p.Input) {
 			return delivery.ErrLocalRetry
+		}
+		if frozen := actual.FrozenChoice; frozen != nil && (p.Emoji != frozen.Emoji || p.Supported != frozen.Supported || p.CustomID != "") {
+			return delivery.ErrInvalid
 		}
 		if !p.Supported {
 			p.State = "unsupported"

@@ -46,6 +46,13 @@ type OutgoingInput struct {
 	TelegramMessageID                int64
 	Update                           models.MessageReactionUpdated
 	Mapped                           bool
+	FrozenChoice                     *FrozenChoice `json:",omitempty"`
+}
+
+// FrozenChoice preserves an earlier resolution independently of send state.
+type FrozenChoice struct {
+	Emoji     string
+	Supported bool
 }
 type OutgoingPlan struct {
 	Key, Session, Emoji, CustomID, State string
