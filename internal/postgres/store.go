@@ -293,9 +293,11 @@ func (s *Store) SetJobState(ctx context.Context, job delivery.Job, state deliver
 			return err
 		}
 		if state == delivery.Failed || state == delivery.Uncertain {
-			return failHistoryJob(ctx, q, row)
+			if err := failHistoryJob(ctx, q, row); err != nil {
+				return err
+			}
 		}
-		return nil
+		return queueOperationFailure(ctx, q, row, state)
 	})
 }
 
@@ -328,6 +330,9 @@ func (s *Store) RecoverExpired(ctx context.Context) (int, error) {
 		}
 		if state == delivery.Uncertain {
 			if err := failHistoryJob(ctx, q, row); err != nil {
+				return 0, err
+			}
+			if err := queueOperationFailure(ctx, q, row, state); err != nil {
 				return 0, err
 			}
 		}

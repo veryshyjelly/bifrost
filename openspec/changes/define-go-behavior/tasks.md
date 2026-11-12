@@ -277,3 +277,11 @@
 - [x] Implement alias-scoped author preferences, ten-person pagination, expiring presented controls and stale-revision refusal.
 - [x] Exercise topic uncertainty, frozen refreshes, callback/edit recovery, passive topic guidance and explicit migration startup gates in isolated fixtures.
 - [ ] Compose runtime webhook subscription, startup refresh and legacy Status state import.
+
+## Operational controls and notices
+
+- [x] Preserve owner /status snapshots, legacy latest-sync fields, command expiry and native /inbox forum guidance.
+- [x] Admit passive source session/message-failed events as independent literal management notices.
+- [x] Commit enabled failure/review notice admission with source job-state changes, preserving uncertainty and preventing recursive notices.
+- [x] Validate frozen replies, native reads, atomic rollback, diagnostic disablement and crash recovery in isolated fixtures.
+- [ ] Complete explicit topic reconciliation and runtime/import composition.

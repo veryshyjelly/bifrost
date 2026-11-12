@@ -13,7 +13,8 @@ The user requested completion of all remaining workflows, legacy import and runt
 - [x] Explicit /react and /delete commands, authenticated management actions and idempotent source-operation recovery in isolated fixtures.
 - [x] Guarded route repair, frozen destination replacement and topic-creation crash recovery in isolated fixtures.
 - [x] Passive Status archive, frozen refreshes, alias-scoped author mutes and versioned controls in isolated fixtures.
-- [ ] Remaining status/operational owner commands and explicit transition reconciliation.
+- [x] Operational status/inbox commands, passive session notices and atomic delivery-problem admission in isolated fixtures.
+- [ ] Explicit transition reconciliation.
 - [ ] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain sends.
 - [ ] Complete runtime dependency composition, callback registration, scheduler, worker and startup recovery, gated from diagnostic serve.
 - [ ] Full OpenSpec acceptance coverage, isolated PostgreSQL/concurrency/recovery tests, final image/Compose checks and safe cutover documentation.

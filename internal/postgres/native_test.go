@@ -69,6 +69,7 @@ type nativeFixture struct {
 	tgClients       map[string]*tg.Client
 	statusRecords   []sdk.StatusRecord
 	statusLists     int
+	forum           bool
 }
 
 func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
@@ -76,7 +77,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 	if f == nil {
 		f = newRelayFixture(t, nil, true)
 	}
-	n := &nativeFixture{f: f}
+	n := &nativeFixture{f: f, forum: true}
 	var imageBytes bytes.Buffer
 	img := image.NewNRGBA(image.Rect(0, 0, 8, 8))
 	img.SetNRGBA(0, 0, color.NRGBA{R: 255, A: 255})
@@ -215,6 +216,10 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 		}
 		if method == "createForumTopic" {
 			json.NewEncoder(w).Encode(map[string]any{"ok": true, "result": map[string]any{"message_thread_id": 99, "name": r.FormValue("name"), "icon_color": 0}})
+			return
+		}
+		if method == "getChat" {
+			json.NewEncoder(w).Encode(map[string]any{"ok": true, "result": map[string]any{"id": chat, "type": "supergroup", "is_forum": n.forum}})
 			return
 		}
 		result := map[string]any{"message_id": 2000 + len(n.calls), "date": 1700000000, "message_thread_id": thread, "chat": map[string]any{"id": chat, "type": "supergroup"}}

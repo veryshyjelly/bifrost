@@ -396,6 +396,11 @@ type NativePollAction struct {
 	Payload   []byte
 }
 
+type OperationNoticeSetting struct {
+	AccountID string
+	Payload   []byte
+}
+
 type OutgoingReactionPlan struct {
 	AccountID string
 	PlanKey   string
