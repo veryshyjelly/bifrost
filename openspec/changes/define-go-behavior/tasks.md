@@ -294,3 +294,9 @@
 - [x] Expose authenticated strict HTTP handling and explicit local CLI inspection/review without redirecting credentials.
 - [x] Exercise initial inbox, mirror return, native repair and Status scopes, unprepared effects, audit rollback and crash recovery in isolated fixtures.
 - [ ] Integrate legacy pending topic state and complete runtime startup recovery.
+
+## Automatic metadata trigger compatibility
+
+- [x] Preserve new/link/bind report labels through internal durable admission while keeping public management requests as command work.
+- [x] Retain first-source coalescing, non-cron management reports and explicit notifier waiters.
+- [x] Exercise native worker reports, invalid trigger scopes, public-source overrides and producer regressions in isolated fixtures.

@@ -292,8 +292,8 @@ func bindProvision(ctx context.Context, q *db.Queries, row db.Job, sourceBot str
 	if err := q.UseContactBindChoice(ctx, db.UseContactBindChoiceParams{AccountID: row.AccountID, ChoiceID: choice.ChoiceID}); err != nil {
 		return err
 	}
-	payload := map[string]any{"type": "sync_metadata", "data": map[string]string{"scope": "contact", "id": person}}
-	if _, err := metadataEnqueue(ctx, q, row.AccountID, "binding-sync:"+row.Dedup, "management:"+row.Dedup, "management", payload); err != nil {
+	payload := map[string]any{"type": "sync_metadata", "data": map[string]string{"scope": "contact", "id": person, "source": "bind"}}
+	if _, err := metadataEnqueue(ctx, q, row.AccountID, "binding-sync:"+row.Dedup, "metadata-request:"+row.Dedup, "sync-request", payload); err != nil {
 		return err
 	}
 	native, err := q.IdentityBots(ctx, row.AccountID)

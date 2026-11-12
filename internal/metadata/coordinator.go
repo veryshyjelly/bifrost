@@ -71,7 +71,7 @@ func runLocal(err error) error {
 	return local(err)
 }
 func (c *Coordinator) Handlers() map[string]delivery.Handler {
-	return map[string]delivery.Handler{"sync-start": c.Start, "sync-target": c.Target, "sync-seal": c.Seal}
+	return map[string]delivery.Handler{"sync-request": c.Admit, "sync-start": c.Start, "sync-target": c.Target, "sync-seal": c.Seal}
 }
 func (c *Coordinator) Tick(ctx context.Context, account string, now time.Time, configured bool) (string, bool, error) {
 	if !configured || !c.cron.Matches(now) {

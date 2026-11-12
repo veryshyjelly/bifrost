@@ -34,6 +34,9 @@ func validRunOptions(c metadata.RunOptions) bool {
 	return c.Session != "" && c.OwnerID > 0 && c.Management < 0
 }
 func admitMetadataRun(ctx context.Context, q *db.Queries, account, key, scope, id, source string, requestJob int64, hasNotify bool, c metadata.RunOptions) (string, error) {
+	if !metadata.ValidRunSource(source) {
+		return "", delivery.ErrInvalid
+	}
 	old, err := q.MetadataAdmission(ctx, db.MetadataAdmissionParams{AccountID: account, RequestKey: key})
 	if err == nil {
 		run, err := q.MetadataRun(ctx, db.MetadataRunParams{AccountID: account, RunID: old})
@@ -106,17 +109,25 @@ func (s *Store) AdmitMetadataRun(ctx context.Context, j delivery.Job, c metadata
 			Type string `json:"type"`
 			Data struct {
 				Scope, ID string
+				Source    string
 				Notify    json.RawMessage
 			} `json:"data"`
 		}
-		if row.Kind != "management" || json.Unmarshal(row.Payload, &source) != nil || source.Type != "sync_metadata" {
+		if (row.Kind != "management" && row.Kind != "sync-request") || json.Unmarshal(row.Payload, &source) != nil || source.Type != "sync_metadata" {
 			return delivery.ErrInvalid
 		}
 		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
 			return err
 		}
 		var err error
-		run, err = admitMetadataRun(ctx, q, row.AccountID, row.Dedup, source.Data.Scope, source.Data.ID, "command", row.ID, len(source.Data.Notify) > 0 && string(source.Data.Notify) != "null", c)
+		trigger := "command"
+		if row.Kind == "sync-request" {
+			trigger = source.Data.Source
+			if trigger != "new" && trigger != "link" && trigger != "bind" || trigger == "link" && source.Data.Scope != "group" || trigger == "bind" && source.Data.Scope != "contact" {
+				return delivery.ErrInvalid
+			}
+		}
+		run, err = admitMetadataRun(ctx, q, row.AccountID, row.Dedup, source.Data.Scope, source.Data.ID, trigger, row.ID, len(source.Data.Notify) > 0 && string(source.Data.Notify) != "null", c)
 		return err
 	})
 	return run, err

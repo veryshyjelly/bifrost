@@ -290,7 +290,7 @@ func (s *Store) CommitMirrorLink(ctx context.Context, j delivery.Job) error {
 			return err
 		}
 		payload, _ = json.Marshal(map[string]any{"id": row.Dedup + ":metadata", "type": "sync_metadata", "data": map[string]string{"scope": "group", "id": p.ChatID, "source": "link", "requestId": row.Dedup}, "at": time.Now().UnixMilli()})
-		if err := enqueueTransitionEvent(ctx, q, row.AccountID, row.Dedup+":metadata", payload); err != nil {
+		if _, err := metadataEnqueue(ctx, q, row.AccountID, row.Dedup+":metadata", "metadata-request:"+row.Dedup, "sync-request", json.RawMessage(payload)); err != nil {
 			return err
 		}
 		p.Stage = "linked"

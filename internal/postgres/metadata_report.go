@@ -25,7 +25,7 @@ func metadataReportTarget(ctx context.Context, q *db.Queries, account string, id
 
 func metadataReportInput(ctx context.Context, q *db.Queries, row db.Job, in metadata.ReportRequest, c control.SyncSettings) (metadata.ReportInput, error) {
 	out := metadata.ReportInput{Report: metadata.Report{RunID: in.RunID, Source: in.Source, FinishedAt: time.Now().UnixMilli()}}
-	if in.RunID == "" || in.Session != c.Session || in.Source != "cron" && in.Source != "command" {
+	if in.RunID == "" || in.Session != c.Session || !metadata.ValidRunSource(in.Source) {
 		return out, delivery.ErrInvalid
 	}
 	failures := map[int64]string{}
@@ -175,11 +175,11 @@ func metadataReportInput(ctx context.Context, q *db.Queries, row db.Job, in meta
 				} `json:"notify"`
 			} `json:"data"`
 		}
-		if request.Kind != "management" || json.Unmarshal(request.Payload, &event) != nil || event.Type != "sync_metadata" || event.Data.Scope != "all" && event.Data.Scope != "group" && event.Data.Scope != "contact" {
+		if (request.Kind != "management" && request.Kind != "sync-request") || json.Unmarshal(request.Payload, &event) != nil || event.Type != "sync_metadata" || event.Data.Scope != "all" && event.Data.Scope != "group" && event.Data.Scope != "contact" {
 			return out, delivery.ErrInvalid
 		}
 		if event.Data.Notify == nil {
-			if in.Source == "command" && index == 0 {
+			if in.Source != "cron" && index == 0 {
 				destinations = append(destinations, control.Target{BotID: "master", ChatID: c.Management})
 			}
 			continue
@@ -207,9 +207,9 @@ func metadataReportInput(ctx context.Context, q *db.Queries, row db.Job, in meta
 		}
 		destinations = append(destinations, control.Target{BotID: botID, ChatID: notify.Chat, ThreadID: notify.Thread})
 	}
-	// Command runs use their initial notifier, or management when absent. Cron
+	// Non-cron runs use their initial notifier, or management when absent. Cron
 	// remains quiet unless work/warnings/roster changed; manual waiters still hear.
-	if in.Source == "command" && len(destinations) == 0 || in.Source == "cron" && !out.Report.Quiet {
+	if in.Source != "cron" && len(destinations) == 0 || in.Source == "cron" && !out.Report.Quiet {
 		out.Destinations = append(out.Destinations, control.Target{BotID: "master", ChatID: c.Management})
 	}
 	out.Destinations = append(out.Destinations, destinations...)

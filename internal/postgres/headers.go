@@ -104,7 +104,7 @@ func (s *Store) PrepareTopicHeader(ctx context.Context, j delivery.Job, username
 				scope = "group"
 			}
 			b, _ := json.Marshal(map[string]any{"id": row.Dedup + ":metadata", "type": "sync_metadata", "data": map[string]string{"scope": scope, "id": route.WhatsappChat, "source": "new", "requestId": row.Dedup}, "at": time.Now().UnixMilli()})
-			if err := enqueueTransitionEvent(ctx, q, row.AccountID, row.Dedup+":metadata", b); err != nil {
+			if _, err := metadataEnqueue(ctx, q, row.AccountID, row.Dedup+":metadata", "metadata-request:"+row.Dedup, "sync-request", json.RawMessage(b)); err != nil {
 				return err
 			}
 		}
