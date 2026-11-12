@@ -11,10 +11,10 @@ func TestSnapshotPreservesExactJobEffectAndMappingEvidence(t *testing.T) {
 INSERT INTO jobs VALUES(9007199254740993,'frozen-send-key','wa:peer','wa','{"accountId":"original-account","sessionId":"old-provider-session","data":{"id":"source-id","timestamp":1700000000}}','running',4,1700000012345,'original failure',1700000000123);
 INSERT INTO effects VALUES('frozen-send-key:to:master:-100:text:0','sending',NULL);
 INSERT INTO effects VALUES('confirmed-before-crash','done','{"message_id":42,"chat":{"id":-100}}');
-INSERT INTO aliases VALUES('12345000000001@lid','912025550123@c.us');
-INSERT INTO kv VALUES('contact','12345000000001@lid','{"name":"Example","number":"12345000000001","bot":"77"}');
-INSERT INTO messages VALUES('912025550123@c.us','source-id','-100',42,'master','in',0);
-INSERT INTO messages VALUES('912025550123@c.us','private-source','123',42,'77','out',1);
+INSERT INTO aliases VALUES('999999@lid','12025550123@c.us');
+INSERT INTO kv VALUES('contact','999999@lid','{"name":"Example","number":"999999","bot":"77"}');
+INSERT INTO messages VALUES('12025550123@c.us','source-id','-100',42,'master','in',0);
+INSERT INTO messages VALUES('12025550123@c.us','private-source','123',42,'77','out',1);
 INSERT INTO telegram_messages VALUES(9007199254740993,'*','-100',42,'master',7,'chat',1700000000000,0,0,NULL);
 INSERT INTO telegram_messages VALUES(9007199254740994,'77','123',42,'77',0,'command',1700000000000,1700000060000,0,'cleanup failed');
 `)
@@ -52,7 +52,7 @@ INSERT INTO telegram_messages VALUES(9007199254740994,'77','123',42,'77',0,'comm
 	if sending.ID != "frozen-send-key:to:master:-100:text:0" || sending.State != "sending" || sending.Result != nil {
 		t.Fatal("unknown send evidence changed")
 	}
-	if mapping.TGID != 42 || mapping.Bot != "77" || mapping.Media != 1 || alias.Canonical != "912025550123@c.us" {
+	if mapping.TGID != 42 || mapping.Bot != "77" || mapping.Media != 1 || alias.Canonical != "12025550123@c.us" {
 		t.Fatal("scope or explicit alias changed")
 	}
 	if report.JobStates["running"] != 1 || report.EffectStates["sending"] != 1 || report.EffectStates["done"] != 1 || report.Rows["telegram_messages"] != 2 || report.Domains["contact"] != 1 || report.Digest != b.SQLite.Digest {

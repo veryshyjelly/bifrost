@@ -339,3 +339,10 @@
 - [x] Preserve explicit source completion markers with canonical account/chat/message scope and exact compound-key parsing.
 - [x] Prevent duplicate live native/text plans without fabricating receipts or adopting partial/uncertain delivery.
 - [x] Preserve frozen-plan precedence and explicit history-all copies; cover projection rollback, scope and replay.
+
+## Legacy retained message and observation projection
+
+- [x] Preserve scoped copies, exact observation IDs/order, real receipts/user observations, original formatting/mentions/media and cleanup metadata.
+- [x] Reject ambiguous group locations, retain absent/uncertain receipt distinctions and import only verified self phone evidence.
+- [x] Feed native caption edits, reaction ordering, revocation choices and scoped media reuse from imported copies.
+- [x] Cover whole-transaction/sequence rollback, non-rewinding counters, replay, private ID overlap and newest legacy copy behavior.

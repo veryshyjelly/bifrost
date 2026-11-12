@@ -154,7 +154,7 @@ func (q *Queries) SetMessageRevoked(ctx context.Context, arg SetMessageRevokedPa
 }
 
 const sourceMessageIsOwn = `-- name: SourceMessageIsOwn :one
-SELECT EXISTS(SELECT 1 FROM message_mappings m WHERE m.account_id=$1 AND m.whatsapp_chat=$2 AND m.whatsapp_message_id=$3 AND m.direction='out')
+SELECT EXISTS(SELECT 1 FROM message_mappings m WHERE m.account_id=$1 AND m.whatsapp_chat=$2 AND m.whatsapp_message_id=$3 AND (m.direction='out' OR m.presentation->>'Own'='true'))
 OR EXISTS(SELECT 1 FROM whatsapp_sources s WHERE s.account_id=$1 AND s.whatsapp_chat=$2 AND s.payload->>'MessageID'=$3 AND s.payload->>'Own'='true')
 OR EXISTS(SELECT 1 FROM history_items i JOIN history_runs r ON r.account_id=i.account_id AND r.run_id=i.run_id WHERE i.account_id=$1 AND r.whatsapp_chat=$2 AND i.source_id=$3 AND i.payload->'Source'->>'Own'='true') AS own
 `

@@ -147,6 +147,23 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** an existing frozen native/text plan requires recovery, or the owner explicitly requests history-all copies of a completed live source
 - **THEN** original frozen work retains precedence and history uses its separate run/copy scope; the live completion marker neither adopts unknown sends nor suppresses requested fresh history copies
 
+#### Scenario: Imported retained copies and observations
+
+- **WHEN** retained messages and Telegram cleanup observations are projected
+- **THEN** private bot scopes, physical copy order, exact integer sequence IDs, original media/format/mention evidence and cleanup state remain intact
+- **AND** actual provider receipts and original user observations remain distinct; missing receipts stay explicitly absent, unknown effects are not adopted, and group locations require consistent retained evidence
+
+#### Scenario: Imported copies feed native workflows
+
+- **WHEN** a retained legacy copy is edited, reacted to, revoked or reused as a native media source
+- **THEN** original caption/media, formatting, ownership and bot-file scope evidence govern the operation without fabricating a send acknowledgement
+- **AND** ungrouped legacy reactions use the newest retained copy, including a newer text-only copy after older media
+
+#### Scenario: Retained-message projection failure or replay
+
+- **WHEN** persistence fails after message/observation writes and sequence advancement, or a completed projection is repeated
+- **THEN** failure rolls back rows, self identity and sequence changes together; replay preserves later observations and counters never rewind
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

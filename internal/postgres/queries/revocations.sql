@@ -2,7 +2,7 @@
 INSERT INTO message_tombstones(account_id,whatsapp_chat,message_id,revoked) VALUES($1,$2,$3,true)
 ON CONFLICT(account_id,whatsapp_chat,message_id) DO UPDATE SET revoked=true;
 -- name: SourceMessageIsOwn :one
-SELECT EXISTS(SELECT 1 FROM message_mappings m WHERE m.account_id=sqlc.arg(account_id) AND m.whatsapp_chat=sqlc.arg(whatsapp_chat) AND m.whatsapp_message_id=sqlc.arg(message_id) AND m.direction='out')
+SELECT EXISTS(SELECT 1 FROM message_mappings m WHERE m.account_id=sqlc.arg(account_id) AND m.whatsapp_chat=sqlc.arg(whatsapp_chat) AND m.whatsapp_message_id=sqlc.arg(message_id) AND (m.direction='out' OR m.presentation->>'Own'='true'))
 OR EXISTS(SELECT 1 FROM whatsapp_sources s WHERE s.account_id=sqlc.arg(account_id) AND s.whatsapp_chat=sqlc.arg(whatsapp_chat) AND s.payload->>'MessageID'=sqlc.arg(message_id) AND s.payload->>'Own'='true')
 OR EXISTS(SELECT 1 FROM history_items i JOIN history_runs r ON r.account_id=i.account_id AND r.run_id=i.run_id WHERE i.account_id=sqlc.arg(account_id) AND r.whatsapp_chat=sqlc.arg(whatsapp_chat) AND i.source_id=sqlc.arg(message_id) AND i.payload->'Source'->>'Own'='true') AS own;
 -- name: RevocationTask :one

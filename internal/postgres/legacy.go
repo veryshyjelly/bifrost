@@ -214,3 +214,8 @@ func legacyConfiguration(checkpoint db.LegacyImport, key [32]byte) (legacy.Confi
 	}
 	return configuration, nil
 }
+
+func legacyKeyMatches(saved db.IdentityRow, account string, key [32]byte) bool {
+	fingerprint := sha256.Sum256(key[:])
+	return saved.AccountID == account && saved.KeyFingerprint == hex.EncodeToString(fingerprint[:])
+}

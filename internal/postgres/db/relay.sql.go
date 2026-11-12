@@ -181,7 +181,7 @@ func (q *Queries) RelayPlan(ctx context.Context, arg RelayPlanParams) (RelayPlan
 }
 
 const telegramMapping = `-- name: TelegramMapping :one
-SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt, (COALESCE(o.deleted,false) OR EXISTS(SELECT 1 FROM retired_topics r WHERE r.account_id=m.account_id AND r.telegram_chat_id=m.telegram_chat_id AND r.thread_id=m.thread_id))::boolean AS observation_deleted FROM message_mappings m LEFT JOIN telegram_observations o
+SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt, m.media, m.presentation, m.mentioned_ids, m.source_payload, m.receipt_origin, (COALESCE(o.deleted,false) OR EXISTS(SELECT 1 FROM retired_topics r WHERE r.account_id=m.account_id AND r.telegram_chat_id=m.telegram_chat_id AND r.thread_id=m.thread_id))::boolean AS observation_deleted FROM message_mappings m LEFT JOIN telegram_observations o
 ON o.account_id=m.account_id AND o.scope=m.scope AND o.chat_id=m.telegram_chat_id AND o.message_id=m.telegram_message_id
 WHERE m.account_id=$1 AND m.scope=$2 AND m.telegram_chat_id=$3 AND m.telegram_message_id=$4
 ORDER BY m.seq LIMIT 1
@@ -209,6 +209,11 @@ type TelegramMappingRow struct {
 	Part               int32
 	Deleted            bool
 	Receipt            []byte
+	Media              bool
+	Presentation       []byte
+	MentionedIds       []byte
+	SourcePayload      []byte
+	ReceiptOrigin      string
 	ObservationDeleted bool
 }
 
@@ -235,13 +240,18 @@ func (q *Queries) TelegramMapping(ctx context.Context, arg TelegramMappingParams
 		&i.Part,
 		&i.Deleted,
 		&i.Receipt,
+		&i.Media,
+		&i.Presentation,
+		&i.MentionedIds,
+		&i.SourcePayload,
+		&i.ReceiptOrigin,
 		&i.ObservationDeleted,
 	)
 	return i, err
 }
 
 const whatsAppQuote = `-- name: WhatsAppQuote :one
-SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt FROM message_mappings m LEFT JOIN telegram_observations o
+SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt, m.media, m.presentation, m.mentioned_ids, m.source_payload, m.receipt_origin FROM message_mappings m LEFT JOIN telegram_observations o
 ON o.account_id=m.account_id AND o.scope=m.scope AND o.chat_id=m.telegram_chat_id AND o.message_id=m.telegram_message_id
 WHERE m.account_id=$1 AND m.whatsapp_chat=$2 AND m.whatsapp_message_id=$3
 AND m.scope=$4 AND m.telegram_chat_id=$5 AND m.thread_id=$6
@@ -284,6 +294,11 @@ func (q *Queries) WhatsAppQuote(ctx context.Context, arg WhatsAppQuoteParams) (M
 		&i.Part,
 		&i.Deleted,
 		&i.Receipt,
+		&i.Media,
+		&i.Presentation,
+		&i.MentionedIds,
+		&i.SourcePayload,
+		&i.ReceiptOrigin,
 	)
 	return i, err
 }

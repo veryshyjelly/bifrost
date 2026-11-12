@@ -147,7 +147,7 @@ func TestSourceCompletionDoesNotSuppressExplicitHistoryAllCopies(t *testing.T) {
 	n := newNativeFixture(t, h.f)
 	wireNativeHistory(t, h, n)
 	recordFixtureCompletion(t, h.f.store, "peer@g.us", "completed-live-source")
-	h.batch.Store([]sdk.ChatHistoryMessage{{ID: "completed-live-source", ChatID: "peer@g.us", Author: "12345000000001@lid", Body: "Fresh requested history copy", Type: sdk.MsgText, Timestamp: 1700000000}})
+	h.batch.Store([]sdk.ChatHistoryMessage{{ID: "completed-live-source", ChatID: "peer@g.us", Author: "12025550123@c.us", Body: "Fresh requested history copy", Type: sdk.MsgText, Timestamp: 1700000000}})
 	ids := fetchNativeHistory(t, h, "all")
 	if len(ids) != 1 {
 		t.Fatal("explicit history request skipped completed source")

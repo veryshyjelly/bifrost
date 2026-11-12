@@ -213,6 +213,11 @@ type LegacyImport struct {
 	ActivatedAt             pgtype.Timestamptz
 }
 
+type LegacyMessageProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyRouteProjection struct {
 	AccountID string
 	Result    []byte
@@ -285,6 +290,11 @@ type MessageMapping struct {
 	Part              int32
 	Deleted           bool
 	Receipt           []byte
+	Media             bool
+	Presentation      []byte
+	MentionedIds      []byte
+	SourcePayload     []byte
+	ReceiptOrigin     string
 }
 
 type MessageOutboundEdit struct {

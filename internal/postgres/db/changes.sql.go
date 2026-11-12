@@ -116,7 +116,7 @@ func (q *Queries) PrepareChange(ctx context.Context, arg PrepareChangeParams) er
 }
 
 const retainedSourceMappings = `-- name: RetainedSourceMappings :many
-SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt,p.payload AS plan_payload FROM message_mappings m
+SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt, m.media, m.presentation, m.mentioned_ids, m.source_payload, m.receipt_origin,p.payload AS plan_payload FROM message_mappings m
 LEFT JOIN telegram_observations o ON o.account_id=m.account_id AND o.scope=m.scope AND o.chat_id=m.telegram_chat_id AND o.message_id=m.telegram_message_id
 LEFT JOIN relay_plans p ON p.account_id=m.account_id AND p.plan_key=m.plan_key
 WHERE m.account_id=$1 AND m.whatsapp_chat=$2 AND m.whatsapp_message_id=$3
@@ -146,6 +146,11 @@ type RetainedSourceMappingsRow struct {
 	Part              int32
 	Deleted           bool
 	Receipt           []byte
+	Media             bool
+	Presentation      []byte
+	MentionedIds      []byte
+	SourcePayload     []byte
+	ReceiptOrigin     string
 	PlanPayload       []byte
 }
 
@@ -173,6 +178,11 @@ func (q *Queries) RetainedSourceMappings(ctx context.Context, arg RetainedSource
 			&i.Part,
 			&i.Deleted,
 			&i.Receipt,
+			&i.Media,
+			&i.Presentation,
+			&i.MentionedIds,
+			&i.SourcePayload,
+			&i.ReceiptOrigin,
 			&i.PlanPayload,
 		); err != nil {
 			return nil, err

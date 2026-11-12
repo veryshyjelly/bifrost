@@ -27,7 +27,8 @@ func (q *Queries) ArchivedAsset(ctx context.Context, arg ArchivedAssetParams) ([
 }
 
 const archivedMedia = `-- name: ArchivedMedia :many
-SELECT m.bot_id,m.telegram_chat_id,m.telegram_message_id,m.receipt,j.payload AS source FROM message_mappings m
+SELECT m.bot_id,m.telegram_chat_id,m.telegram_message_id,m.receipt,
+COALESCE(CASE WHEN j.payload->>'bot'=m.bot_id AND jsonb_typeof(j.payload->'update'->'message')='object' THEN j.payload END,m.source_payload) AS source FROM message_mappings m
 LEFT JOIN relay_plans p ON p.account_id=m.account_id AND p.plan_key=m.plan_key LEFT JOIN jobs j ON j.id=p.job_id
 WHERE m.account_id=$1 AND m.whatsapp_chat=$2 AND m.whatsapp_message_id=$3 ORDER BY m.seq
 `
@@ -94,7 +95,7 @@ func (q *Queries) CreateNativePollAction(ctx context.Context, arg CreateNativePo
 }
 
 const historyQuote = `-- name: HistoryQuote :one
-SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt FROM history_items h JOIN message_mappings m ON m.account_id=h.account_id AND m.plan_key=h.plan_key
+SELECT m.seq, m.account_id, m.scope, m.telegram_chat_id, m.telegram_message_id, m.thread_id, m.bot_id, m.whatsapp_chat, m.whatsapp_message_id, m.direction, m.plan_key, m.part, m.deleted, m.receipt, m.media, m.presentation, m.mentioned_ids, m.source_payload, m.receipt_origin FROM history_items h JOIN message_mappings m ON m.account_id=h.account_id AND m.plan_key=h.plan_key
 LEFT JOIN telegram_observations o ON o.account_id=m.account_id AND o.scope=m.scope AND o.chat_id=m.telegram_chat_id AND o.message_id=m.telegram_message_id
 WHERE h.account_id=$1 AND h.run_id=$2 AND h.source_id=$3 AND h.state='done'
 AND m.telegram_chat_id=$4::bigint AND m.thread_id=$5::bigint AND m.scope=$6::text
@@ -136,6 +137,11 @@ func (q *Queries) HistoryQuote(ctx context.Context, arg HistoryQuoteParams) (Mes
 		&i.Part,
 		&i.Deleted,
 		&i.Receipt,
+		&i.Media,
+		&i.Presentation,
+		&i.MentionedIds,
+		&i.SourcePayload,
+		&i.ReceiptOrigin,
 	)
 	return i, err
 }

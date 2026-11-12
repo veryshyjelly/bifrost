@@ -197,7 +197,7 @@ func reactionInput(ctx context.Context, q *db.Queries, row db.Job, c reactions.S
 		if json.Unmarshal(mapping.Receipt, &receipt) != nil {
 			return result, delivery.ErrInvalid
 		}
-		media := len(receipt.Photo) > 0 || receipt.Video != nil || receipt.Animation != nil || receipt.Audio != nil || receipt.Voice != nil || receipt.Document != nil || receipt.Sticker != nil
+		media := mapping.Media || len(receipt.Photo) > 0 || receipt.Video != nil || receipt.Animation != nil || receipt.Audio != nil || receipt.Voice != nil || receipt.Document != nil || receipt.Sticker != nil
 		var plan struct {
 			Outgoing *struct{ Asset json.RawMessage }
 		}
@@ -217,6 +217,11 @@ func reactionInput(ctx context.Context, q *db.Queries, row db.Job, c reactions.S
 		selected := candidates[len(candidates)-1]
 		// Retain the freshest delivery plan, preferring its attachment over labels.
 		for i := len(candidates) - 1; i >= 0; i-- {
+			// Legacy copies did not have plan groups; their last physical row
+			// is the original reaction target, including a later text-only copy.
+			if !selected.mapping.PlanKey.Valid {
+				break
+			}
 			if candidates[i].mapping.PlanKey != selected.mapping.PlanKey {
 				break
 			}

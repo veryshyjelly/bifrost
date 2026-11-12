@@ -8,7 +8,8 @@ SELECT asset FROM message_assets WHERE account_id=$1 AND whatsapp_chat=$2 AND me
 INSERT INTO message_assets(account_id,whatsapp_chat,message_id,asset) VALUES($1,$2,$3,$4)
 ON CONFLICT(account_id,whatsapp_chat,message_id) DO UPDATE SET asset=EXCLUDED.asset;
 -- name: ArchivedMedia :many
-SELECT m.bot_id,m.telegram_chat_id,m.telegram_message_id,m.receipt,j.payload AS source FROM message_mappings m
+SELECT m.bot_id,m.telegram_chat_id,m.telegram_message_id,m.receipt,
+COALESCE(CASE WHEN j.payload->>'bot'=m.bot_id AND jsonb_typeof(j.payload->'update'->'message')='object' THEN j.payload END,m.source_payload) AS source FROM message_mappings m
 LEFT JOIN relay_plans p ON p.account_id=m.account_id AND p.plan_key=m.plan_key LEFT JOIN jobs j ON j.id=p.job_id
 WHERE m.account_id=$1 AND m.whatsapp_chat=$2 AND m.whatsapp_message_id=$3 ORDER BY m.seq;
 -- name: HistoryQuote :one

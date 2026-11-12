@@ -133,7 +133,7 @@ func (s *Store) AdmitRevocation(ctx context.Context, j delivery.Job, c revocatio
 			if json.Unmarshal(copy.Receipt, &receipt) != nil {
 				return delivery.ErrInvalid
 			}
-			media := len(receipt.Photo) > 0 || receipt.Video != nil || receipt.Animation != nil || receipt.Audio != nil || receipt.Voice != nil || receipt.Document != nil || receipt.Sticker != nil
+			media := copy.Media || len(receipt.Photo) > 0 || receipt.Video != nil || receipt.Animation != nil || receipt.Audio != nil || receipt.Voice != nil || receipt.Document != nil || receipt.Sticker != nil
 			var plan struct{ SourceAsset json.RawMessage }
 			if json.Unmarshal(copy.PlanPayload, &plan) == nil && len(plan.SourceAsset) > 0 && string(plan.SourceAsset) != "null" {
 				media = true

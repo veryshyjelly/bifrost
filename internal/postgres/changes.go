@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -221,7 +222,11 @@ func editInput(ctx context.Context, q *db.Queries, row db.Job, c changes.Setting
 		format := presentation.Options{Bot: mapping.BotID, Name: "WhatsApp", Sender: chat, Own: mapping.Direction == "out"}
 		var shape struct{ Format string }
 		json.Unmarshal(mapping.PlanPayload, &shape)
-		if shape.Format == "native-packets-v1" {
+		if len(mapping.Presentation) > 0 && !bytes.Equal(bytes.TrimSpace(mapping.Presentation), []byte("null")) {
+			if json.Unmarshal(mapping.Presentation, &format) != nil {
+				return in, delivery.ErrInvalid
+			}
+		} else if shape.Format == "native-packets-v1" {
 			var p relay.NativePlan
 			if json.Unmarshal(mapping.PlanPayload, &p) != nil {
 				return in, delivery.ErrInvalid
@@ -230,7 +235,7 @@ func editInput(ctx context.Context, q *db.Queries, row db.Job, c changes.Setting
 			if data.MentionedIDs == nil && in.MentionedIDs == nil {
 				in.MentionedIDs = p.Source.MentionedIDs
 			}
-		} else {
+		} else if len(mapping.PlanPayload) > 0 && !bytes.Equal(bytes.TrimSpace(mapping.PlanPayload), []byte("null")) {
 			var p relay.Plan
 			if json.Unmarshal(mapping.PlanPayload, &p) != nil {
 				return in, delivery.ErrInvalid
@@ -239,11 +244,16 @@ func editInput(ctx context.Context, q *db.Queries, row db.Job, c changes.Setting
 				format = *p.Presentation
 			}
 		}
+		if data.MentionedIDs == nil && in.MentionedIDs == nil && len(mapping.MentionedIds) > 0 && !bytes.Equal(bytes.TrimSpace(mapping.MentionedIds), []byte("null")) {
+			if json.Unmarshal(mapping.MentionedIds, &in.MentionedIDs) != nil {
+				return in, delivery.ErrInvalid
+			}
+		}
 		var receipt models.Message
 		if json.Unmarshal(mapping.Receipt, &receipt) != nil {
 			return in, delivery.ErrInvalid
 		}
-		caption := len(receipt.Photo) > 0 || receipt.Video != nil || receipt.Animation != nil || receipt.Audio != nil || receipt.Voice != nil || receipt.Document != nil || receipt.Sticker != nil
+		caption := mapping.Media || len(receipt.Photo) > 0 || receipt.Video != nil || receipt.Animation != nil || receipt.Audio != nil || receipt.Voice != nil || receipt.Document != nil || receipt.Sticker != nil
 		format.Bot = mapping.BotID
 		in.Destinations = append(in.Destinations, changes.Destination{Seq: mapping.Seq, Target: control.Target{BotID: mapping.BotID, ChatID: mapping.TelegramChatID, ThreadID: mapping.ThreadID}, MessageID: mapping.TelegramMessageID, Caption: caption, Format: format})
 	}
