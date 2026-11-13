@@ -30,7 +30,7 @@ CREATE TRIGGER reject_stage BEFORE INSERT ON legacy_change_projections FOR EACH 
 		t.Fatal(err)
 	}
 	result, err := s.StageLegacyImport(t.Context(), b, legacy.SQLiteOptions{}, "planned-session")
-	if err != nil || result.Ready || result.Preparation.Ready || len(result.Completed) != 9 {
+	if err != nil || result.Ready || result.Preparation.Ready || len(result.Completed) != 10 {
 		t.Fatal("staging did not resume all implemented capabilities", err)
 	}
 	replay, err := s.StageLegacyImport(t.Context(), b, legacy.SQLiteOptions{}, "planned-session")

@@ -376,3 +376,9 @@
 
 - [x] Expose implemented projections through explicit inactive `legacy-prepare` with original identity/key and fixed planned connection.
 - [x] Cover interrupted capability preparation, exact replay, privacy-safe CLI validation/errors and continued dispatch fencing.
+
+## Legacy Status state
+
+- [x] Preserve existing feed ownership, scoped mutes/revisions, original mute-operation results and permanent skip hashes.
+- [x] Suppress completed/skipped posts in native receive/refresh and retain reply-based author controls without fabricating content/jobs/receipts.
+- [x] Cover native topic reservations, old operation replay, revision advancement, atomic rollback and inactive preparation sequencing.

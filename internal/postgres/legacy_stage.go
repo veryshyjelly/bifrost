@@ -58,6 +58,7 @@ func (s *Store) StageLegacyImport(ctx context.Context, bundle *legacy.Bundle, op
 		{"changes", func() error { _, err := s.ProjectLegacyChanges(ctx, bundle.Account); return err }},
 		{"interactions", func() error { _, err := s.ProjectLegacyInteractions(ctx, bundle.Account); return err }},
 		{"incoming-reactions", func() error { _, err := s.ProjectLegacyIncomingReactions(ctx, bundle.Account); return err }},
+		{"statuses", func() error { _, err := s.ProjectLegacyStatuses(ctx, bundle.Account, key); return err }},
 	}
 	for _, stage := range stages {
 		if err := stage.run(); err != nil {

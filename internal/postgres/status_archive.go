@@ -15,6 +15,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/identity"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
+	"github.com/veryshyjelly/bifrost/internal/legacy"
 	"github.com/veryshyjelly/bifrost/internal/postgres/db"
 	"github.com/veryshyjelly/bifrost/internal/relay"
 	"github.com/veryshyjelly/bifrost/internal/statuses"
@@ -220,6 +221,11 @@ func (s *Store) FreezeStatusPost(ctx context.Context, j delivery.Job, c statuses
 		if !errors.Is(err, pgx.ErrNoRows) {
 			return err
 		}
+		if skipped, err := legacyStatusSuppressed(ctx, q, row.AccountID, id.StatusID); err != nil {
+			return err
+		} else if skipped {
+			return nil
+		}
 		post, ok := statuses.Decode(hook.Data, time.Now())
 		if !ok {
 			return nil
@@ -350,6 +356,11 @@ func (s *Store) EnqueueStatusBatch(ctx context.Context, j delivery.Job, c status
 			} else if !errors.Is(err, pgx.ErrNoRows) {
 				return err
 			}
+			if skipped, err := legacyStatusSuppressed(ctx, q, row.AccountID, p.ID); err != nil {
+				return err
+			} else if skipped {
+				continue
+			}
 			if mutes[d.Canonical(p.Author)].Active {
 				raw, _ := json.Marshal(p)
 				source, _ := json.Marshal(p.Source(d.Canonical(p.Author)))
@@ -368,6 +379,14 @@ func (s *Store) EnqueueStatusBatch(ctx context.Context, j delivery.Job, c status
 		}
 		return q.CompleteStatusRefresh(ctx, db.CompleteStatusRefreshParams{AccountID: row.AccountID, JobID: row.ID})
 	})
+}
+
+func legacyStatusSuppressed(ctx context.Context, q *db.Queries, account, id string) (bool, error) {
+	complete, err := q.MessageComplete(ctx, db.MessageCompleteParams{AccountID: account, WhatsappChat: statuses.ChatID, MessageID: id})
+	if err != nil || complete {
+		return complete, err
+	}
+	return q.RetainedStatusSkipped(ctx, db.RetainedStatusSkippedParams{AccountID: account, SourceKey: legacy.StatusSkipKey(account, id)})
 }
 
 func prepareNativeStatusScope(ctx context.Context, q *db.Queries, row db.Job, p *relay.NativePlan) error {

@@ -225,6 +225,13 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **THEN** the implemented capabilities run in dependency order with original identity/key and fixed planned connection, without provider calls, external asset restoration or activation
 - **AND** a failed capability leaves earlier checkpoints inactive and resumable; exact replay preserves their state, redacted failures name the capability and successful preparation still reports not ready
 
+#### Scenario: Restore existing Status state
+
+- **WHEN** an archive retains a Status feed, mute revisions/counter, original mute-operation results and skipped-post hashes
+- **THEN** native topic ownership and author controls use that state without a synthetic creation job, receipt or missing post body
+- **AND** receive/refresh cannot recreate completed or permanently skipped posts after unmuting; replayed mute jobs retain their original result and new revisions continue above the saved counter
+- **AND** projection rolls back all Status state on failure, preserves later native changes on replay and remains part of inactive preparation
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

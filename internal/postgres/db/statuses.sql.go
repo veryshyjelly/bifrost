@@ -250,7 +250,9 @@ func (q *Queries) StatusControlEdit(ctx context.Context, arg StatusControlEditPa
 }
 
 const statusFeed = `-- name: StatusFeed :one
-SELECT account_id, management, job_id, payload, complete FROM status_feeds WHERE account_id=$1 AND management=$2
+SELECT n.account_id,n.management,n.job_id,n.payload,n.complete FROM status_feeds n WHERE n.account_id=$1 AND n.management=$2
+UNION ALL SELECT r.account_id,r.management,0::bigint AS job_id,r.payload,true AS complete FROM retained_status_feeds r WHERE r.account_id=$1 AND r.management=$2
+AND NOT EXISTS(SELECT 1 FROM status_feeds n WHERE n.account_id=r.account_id AND n.management=r.management)
 `
 
 type StatusFeedParams struct {
@@ -357,7 +359,8 @@ func (q *Queries) StatusRefresh(ctx context.Context, arg StatusRefreshParams) (S
 }
 
 const statusTopicInUse = `-- name: StatusTopicInUse :one
-SELECT EXISTS(SELECT 1 FROM status_feeds WHERE account_id=$1 AND management=$2::bigint AND complete AND (payload->'Feed'->>'ThreadID')::bigint=$3::bigint)
+SELECT EXISTS(SELECT 1 FROM status_feeds f WHERE f.account_id=$1 AND f.management=$2::bigint AND f.complete AND (f.payload->'Feed'->>'ThreadID')::bigint=$3::bigint
+UNION ALL SELECT 1 FROM retained_status_feeds r WHERE r.account_id=$1 AND r.management=$2::bigint AND (r.payload->'Feed'->>'ThreadID')::bigint=$3::bigint)
 `
 
 type StatusTopicInUseParams struct {

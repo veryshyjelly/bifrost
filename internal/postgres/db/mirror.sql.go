@@ -129,7 +129,8 @@ func (q *Queries) OtherDestinationRoute(ctx context.Context, arg OtherDestinatio
 
 const otherTopicRoute = `-- name: OtherTopicRoute :one
 SELECT (EXISTS(SELECT 1 FROM bridge_routes b WHERE b.account_id=$1::text AND b.telegram_chat_id=$2::bigint AND b.thread_id=$3::bigint AND b.whatsapp_chat<>$4::text)
-OR EXISTS(SELECT 1 FROM status_feeds f WHERE f.account_id=$1::text AND f.management=$2::bigint AND f.complete AND (f.payload->'Feed'->>'ThreadID')::bigint=$3::bigint AND $4::text<>'status@broadcast'))::boolean
+OR EXISTS(SELECT 1 FROM status_feeds f WHERE f.account_id=$1::text AND f.management=$2::bigint AND f.complete AND (f.payload->'Feed'->>'ThreadID')::bigint=$3::bigint AND $4::text<>'status@broadcast')
+OR EXISTS(SELECT 1 FROM retained_status_feeds r WHERE r.account_id=$1::text AND r.management=$2::bigint AND (r.payload->'Feed'->>'ThreadID')::bigint=$3::bigint AND $4::text<>'status@broadcast'))::boolean
 `
 
 type OtherTopicRouteParams struct {

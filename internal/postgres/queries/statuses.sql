@@ -1,5 +1,7 @@
 -- name: StatusFeed :one
-SELECT * FROM status_feeds WHERE account_id=$1 AND management=$2;
+SELECT n.account_id,n.management,n.job_id,n.payload,n.complete FROM status_feeds n WHERE n.account_id=$1 AND n.management=$2
+UNION ALL SELECT r.account_id,r.management,0::bigint AS job_id,r.payload,true AS complete FROM retained_status_feeds r WHERE r.account_id=$1 AND r.management=$2
+AND NOT EXISTS(SELECT 1 FROM status_feeds n WHERE n.account_id=r.account_id AND n.management=r.management);
 -- name: CreateStatusFeed :exec
 INSERT INTO status_feeds(account_id,management,job_id,payload) VALUES($1,$2,$3,$4);
 -- name: CompleteStatusFeed :exec
@@ -41,6 +43,7 @@ UPDATE status_control_edits SET complete=true WHERE account_id=$1 AND job_id=$2;
 -- name: UpdateStatusControlEdit :exec
 UPDATE status_control_edits SET payload=$3 WHERE account_id=$1 AND job_id=$2;
 -- name: StatusTopicInUse :one
-SELECT EXISTS(SELECT 1 FROM status_feeds WHERE account_id=sqlc.arg(account_id) AND management=sqlc.arg(management)::bigint AND complete AND (payload->'Feed'->>'ThreadID')::bigint=sqlc.arg(thread_id)::bigint);
+SELECT EXISTS(SELECT 1 FROM status_feeds f WHERE f.account_id=sqlc.arg(account_id) AND f.management=sqlc.arg(management)::bigint AND f.complete AND (f.payload->'Feed'->>'ThreadID')::bigint=sqlc.arg(thread_id)::bigint
+UNION ALL SELECT 1 FROM retained_status_feeds r WHERE r.account_id=sqlc.arg(account_id) AND r.management=sqlc.arg(management)::bigint AND (r.payload->'Feed'->>'ThreadID')::bigint=sqlc.arg(thread_id)::bigint);
 -- name: StatusTopicOrigins :many
 SELECT * FROM status_feeds WHERE account_id=$1 AND job_id=$2;

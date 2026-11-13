@@ -30,9 +30,13 @@ type InteractionState struct {
 // including HTML characters and Unicode separators in an original account.
 // Its value identifies a saved resolution, not a confirmed provider mutation.
 func OutgoingReactionKey(account, bot, key string) string {
+	return stringTupleKey(account, bot, key)
+}
+
+func stringTupleKey(values ...string) string {
 	const digits = "0123456789abcdef"
 	raw := []byte{'['}
-	for i, value := range []string{account, bot, key} {
+	for i, value := range values {
 		if i > 0 {
 			raw = append(raw, ',')
 		}

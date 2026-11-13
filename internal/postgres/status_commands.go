@@ -67,6 +67,15 @@ func setStatusMute(ctx context.Context, q *db.Queries, row db.Job, d *identity.D
 	} else if !errors.Is(err, pgx.ErrNoRows) {
 		return statuses.Mute{}, err
 	}
+	if raw, err := q.RetainedStatusMuteOperation(ctx, db.RetainedStatusMuteOperationParams{AccountID: row.AccountID, LegacyJobKey: row.Dedup}); err == nil {
+		var result statuses.Mute
+		if json.Unmarshal(raw, &result) != nil {
+			return result, delivery.ErrInvalid
+		}
+		return result, nil
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return statuses.Mute{}, err
+	}
 	author = d.Canonical(author)
 	if !identity.IsPerson(author) {
 		return statuses.Mute{}, delivery.ErrInvalid
@@ -248,12 +257,12 @@ func (s *Store) PrepareStatusCommand(ctx context.Context, j delivery.Job, c stat
 			if inTopic && len(parsed.Args) == 0 && m.ReplyToMessage != nil {
 				mapping, err := q.TelegramMapping(ctx, db.TelegramMappingParams{AccountID: row.AccountID, Scope: "*", TelegramChatID: m.Chat.ID, TelegramMessageID: int64(m.ReplyToMessage.ID)})
 				if err == nil && !mapping.Deleted && !mapping.ObservationDeleted && mapping.WhatsappChat == statuses.ChatID && mapping.ThreadID == target.ThreadID {
-					post, err := q.StatusPost(ctx, db.StatusPostParams{AccountID: row.AccountID, PostID: mapping.WhatsappMessageID})
-					if err != nil {
+					raw, err := q.StatusReplySource(ctx, db.StatusReplySourceParams{AccountID: row.AccountID, PostID: mapping.WhatsappMessageID})
+					if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 						return err
 					}
 					var source identity.Source
-					if json.Unmarshal(post.Source, &source) != nil {
+					if err == nil && json.Unmarshal(raw, &source) != nil {
 						return delivery.ErrInvalid
 					}
 					author, name = source.SenderID, source.Name

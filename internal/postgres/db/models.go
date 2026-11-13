@@ -259,6 +259,11 @@ type LegacySourceProjection struct {
 	Result    []byte
 }
 
+type LegacyStatusProjection struct {
+	AccountID string
+	Result    []byte
+}
+
 type LegacyValue struct {
 	AccountID   string
 	Kind        string
@@ -569,6 +574,27 @@ type RetainedReactionChoice struct {
 	SourceKey string
 	Emoji     string
 	Supported bool
+}
+
+type RetainedStatusFeed struct {
+	AccountID  string
+	Management int64
+	SourceKey  string
+	Payload    []byte
+}
+
+type RetainedStatusMuteOperation struct {
+	AccountID    string
+	LegacyJobKey string
+	SourceKey    string
+	Payload      []byte
+}
+
+type RetainedStatusSkip struct {
+	AccountID string
+	SourceKey string
+	Author    string
+	SkippedAt int64
 }
 
 type RetiredTopic struct {
