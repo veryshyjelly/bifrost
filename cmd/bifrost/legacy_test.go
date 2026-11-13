@@ -27,3 +27,15 @@ func TestLegacyValidationCLIRequiresNoRuntimeConfigurationAndHidesPrivatePaths(t
 		t.Fatal("cancellation not preserved")
 	}
 }
+
+func TestLegacyPreparationCLIHelpAndValidationDoNotRequireRuntimeSecrets(t *testing.T) {
+	t.Setenv("DATABASE_URL", "")
+	var out bytes.Buffer
+	if err := prepareLegacyCLI(t.Context(), []string{"--help"}, &out); err != nil || !strings.Contains(out.String(), "never activates") {
+		t.Fatal("standalone preparation help unavailable", err)
+	}
+	out.Reset()
+	if err := prepareLegacyCLI(t.Context(), []string{"--file", "/private/source"}, &out); err == nil || out.Len() != 0 || strings.Contains(err.Error(), "/private/source") {
+		t.Fatal("missing destination exposed a path or emitted success")
+	}
+}

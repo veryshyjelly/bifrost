@@ -10,6 +10,17 @@ bifrost legacy-validate --file /private/path/bifrost-export.tar.gz
 
 This validates the archive and SQLite snapshot. It does not import, start a worker, change webhooks or perform a cutover. Transactional PostgreSQL import and active compatibility for the remaining legacy journals are still being implemented. Successful validation does not establish runtime readiness.
 
+The implemented PostgreSQL preparation stages can now be rehearsed together:
+
+```sh
+bifrost migrate
+bifrost legacy-prepare --file /private/path/bifrost-export.tar.gz --session planned-openwa-session
+```
+
+Set `DATABASE_URL` to a fresh rehearsal database before either command. Preparation uses the archive's original permanent identity and encryption key; it does not load or replace them from a newly generated runtime environment. It never migrates the schema implicitly. The optional `--session` fixes the planned provider connection; omission retains the original connection. Exact replay must keep that choice.
+
+The command composes source preparation, credentials, directory, routes, completions, retained messages/sources, edits and incoming/outgoing interaction state. Each capability commits atomically. If a later capability fails, earlier checkpoints remain inactive and repeating the exact command resumes them without resetting state. Failure output names the capability without exposing the private database/source error. Success reports completed capability names and `ready: false`: remaining journals, external asset restoration and runtime composition still prevent activation. This command is a preparation rehearsal, not a finished import or cutover command. No provider calls, worker, webhooks or scheduler start.
+
 The command prints the permanent account, archive/SQLite SHA-256 digests, row counts, durable domain counts and job/effect state counts. It omits tokens, encryption keys, provider URLs, raw payloads and errors. `sending` effects and `running` jobs remain unchanged during inspection; the report does not claim they completed or become safe to replay.
 
 Python 3.11 or newer with its standard `sqlite3` module is required; the existing codec runtime image already includes it. The reader uses embedded trusted code in an isolated interpreter, a read-only connection, a transaction, an authorizer and SQLite size limits. It never loads an archived script, runtime or environment. It includes committed WAL data and checks the complete database integrity. A callback receiving rows must wait for the reader's final digest and cross-row validation before committing anything.

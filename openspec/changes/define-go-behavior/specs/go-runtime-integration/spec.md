@@ -219,6 +219,12 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **THEN** fenced local progress clears the obsolete refusal without a provider call, so a new reaction can retry immediately
 - **AND** member refusals still used for master fallback remain cached; cleanup does not invent an applied setting or send acknowledgement
 
+#### Scenario: Rehearse implemented preparation stages together
+
+- **WHEN** an operator runs `legacy-prepare` against an explicitly migrated fresh destination and a frozen archive
+- **THEN** the implemented capabilities run in dependency order with original identity/key and fixed planned connection, without provider calls, external asset restoration or activation
+- **AND** a failed capability leaves earlier checkpoints inactive and resumable; exact replay preserves their state, redacted failures name the capability and successful preparation still reports not ready
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

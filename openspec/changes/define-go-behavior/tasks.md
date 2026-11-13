@@ -371,3 +371,8 @@
 - [x] Verify hashed source/destination coordinates and confirmed setting/refusal targets against original jobs/messages/copies, including private bot scope.
 - [x] Retain pending fallback references to their original scoped reaction jobs while leaving their notice workflow pending.
 - [x] Cover missing evidence, foreign targets, malformed/conflicting state, native consumers, atomic rollback and non-resetting replay.
+
+## Migration preparation rehearsal
+
+- [x] Expose implemented projections through explicit inactive `legacy-prepare` with original identity/key and fixed planned connection.
+- [x] Cover interrupted capability preparation, exact replay, privacy-safe CLI validation/errors and continued dispatch fencing.
