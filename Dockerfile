@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
     && python3 -m venv /opt/sticker-codec \
     && /opt/sticker-codec/bin/pip install --no-cache-dir Pillow==13.0.0 \
     && rm -rf /var/lib/apt/lists/* \
-    && useradd --uid 10001 --create-home bifrost \
+    && useradd --uid 1000 --create-home bifrost \
     && mkdir -p /media /data && chown bifrost:bifrost /media /data
 ENV STICKER_PYTHON=/opt/sticker-codec/bin/python STICKER_CHROMIUM=/usr/bin/chromium STICKER_CHROMIUM_NO_SANDBOX=true
 COPY --from=build /out/bifrost /usr/local/bin/bifrost
