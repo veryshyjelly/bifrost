@@ -1,6 +1,6 @@
 # Go port completion checklist
 
-The user requested completion of all remaining workflows, legacy import and runtime composition. Preserve the approved OpenSpec contract and checkpoint `checkpoint-typescript-baseline`; do not enable a live cutover during preparation.
+The Go runtime composes the implemented workflows. Preserve the approved OpenSpec contract and checkpoint `checkpoint-typescript-baseline`. [CUTOVER.md](CUTOVER.md) describes host-transfer and recovery precautions.
 
 The owner has approved an empty Go queue at migration: old pending/failed/history jobs do not need to resume, and group history will be imported again afterward. Keep the original archive and uncertain-send evidence without replaying or marking those sends confirmed. The critical path is retained identity/routes/bindings/confirmed state, asset restoration, complete runtime wiring, rehearsal and cutover. Original pending-job/history compatibility is no longer a cutover prerequisite under the explicit `fresh` policy.
 
@@ -17,8 +17,11 @@ The owner has approved an empty Go queue at migration: old pending/failed/histor
 - [x] Passive Status archive, frozen refreshes, alias-scoped author mutes and versioned controls in isolated fixtures.
 - [x] Operational status/inbox commands, passive session notices and atomic delivery-problem admission in isolated fixtures.
 - [x] Explicit scoped topic inspection/reconciliation and authenticated recovery CLI in isolated fixtures.
-- [ ] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain sends.
+- [x] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain-send evidence under the approved fresh-queue policy; restored assets verified before activation.
 - [x] Complete runtime dependency composition, callback registration, scheduler, worker and startup recovery, gated from diagnostic serve, in isolated native/PostgreSQL lifecycle tests.
-- [ ] Full OpenSpec acceptance coverage, isolated PostgreSQL/concurrency/recovery tests, final image/Compose checks and safe cutover documentation.
+- [x] Native OpenSpec scenario regressions, isolated PostgreSQL/concurrency/recovery tests, strict specification validation, final image/Compose/codec checks and cutover documentation.
+- [x] Final stopped-writer backups, restored shared PostgreSQL/OpenWA/Redis/Telegram state, native bot setup and confirmed incoming live relay; original services stopped and retained.
+
+Capability evidence comes from isolated native SDK/PostgreSQL and codec fixtures. Operators should verify provider readiness and message delivery on their own installation and keep those records private.
 
 Provider versions verified for this implementation: OpenWA Go SDK `v0.11.1`, go-telegram/bot `v1.28.0`. The reviewed OpenWA gateway commit remains unchanged. No private environment, legacy database, media archive or permanent Docker volume is disposable.

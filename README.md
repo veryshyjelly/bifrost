@@ -1,12 +1,12 @@
 # Bifrost
 
-A personal WhatsApp–Telegram bridge being ported to Go. The [approved OpenSpec contract](openspec/README.md) preserves existing routing, linked-name formatting, deletion choices and delivery safety, with conditional caption clearing when the released provider API permits it.
+A personal WhatsApp–Telegram bridge implemented in Go. The [approved OpenSpec contract](openspec/README.md) preserves existing routing, linked-name formatting, deletion choices and delivery safety, with conditional caption clearing when the released provider API permits it.
 
-[Metadata snapshots and resumable text updates](docs/METADATA.md) now cover preserved rosters/descriptions, inbox topic names, mirror titles and existing contact-bot text, with [content-hash picture caching/uploads](docs/METADATA-PICTURES.md) and [owner sync commands, permission advice and sealed reports](docs/METADATA-ADVICE.md). [Durable run orchestration and timezone scheduling](docs/METADATA-RUNS.md) now compose these stages through the worker in isolated fixtures; final runtime composition and legacy import remain pending.
+The Go installation has replaced the legacy runtime. PostgreSQL retains the original identity, encrypted credentials, routes, bindings, confirmed copies and interaction state; media and Telegram files were restored and verified before activation. Old pending jobs and unfinished history remain archived under the owner's approved fresh-queue policy. See [cutover evidence and operations](docs/CUTOVER.md).
 
-The first Go slices implement PostgreSQL migrations, permanent identity/key checks, durable queue claims, effect receipts, reviewed recovery, typed provider clients, authenticated durable event admission, a fenced delivery worker, initial inbox/target routing, scoped text-relay components and diagnostic HTTP/CLI checks. **Automatic forwarding integration and legacy-state import are not implemented yet.** The HTTP status deliberately reports `configured: false` until those workflows exist. The [worker and initial routing](docs/WORKER.md) are tested components; `serve` does not automatically dispatch provider work yet. [Text-relay capabilities and limits](docs/TEXT-RELAY.md) are tested through the real SDKs against isolated fixtures.
+Explicit `run` composes authenticated ingress, fenced delivery, text/media, commands, managed bots, mirrors, history, edits, reactions, polls, revocations, Status, metadata scheduling and cleanup. It verifies native provider identities and callbacks before reporting readiness or dispatching ordinary work. Diagnostic `serve` remains passive. See [runtime lifecycle](docs/RUNTIME.md), [completion checklist](docs/PORT-COMPLETION.md) and [validation evidence](docs/VALIDATION.md).
 
-The [identity and mention components](docs/IDENTITY-MENTIONS.md) preserve verified aliases, native mention entities, copied group tags and roster validation. Text plans retain resolved tags across retries; the [native event dispatcher](docs/DISPATCH.md) is tested through authenticated admission and the worker, and the [mention picker](docs/MENTION-PICKER.md) now provides scoped native copy/pagination controls. [Notice expiry and scoped clearing](docs/TELEGRAM-CLEANUP.md) and independent [former-inbox retirement](docs/INBOX-RETIREMENT.md) are tested through the worker. [Conversation preferences and explicit read commands](docs/OWNER-COMMANDS.md) use durable management plans, and [Start help and migration-gated menus](docs/STARTUP-CONTROLS.md) have tested activation/settings recovery. [Mirror linking and return](docs/MIRROR-TRANSITIONS.md) preserve frozen route/topic outcomes, with [native private group selection and scoped topic controls](docs/GROUP-PICKER.md). Final runtime composition remains pending.
+Routing supports management topics, contact bots and linked mirror groups, including `/unmirror` and intentional former-topic deletion. [Identity and mentions](docs/IDENTITY-MENTIONS.md), [history and attachments](docs/HISTORY-ATTACHMENTS.md), [metadata runs](docs/METADATA-RUNS.md) and [sticker limits](docs/STICKER-LIMITS.md) document the retained behavior and recovery rules.
 
 ## Complete Compose setup
 
@@ -26,7 +26,7 @@ make up
 | redis | OpenWA queue/cache, persistent append-only storage and noeviction policy |
 | openwa | WhatsApp gateway and dashboard, PostgreSQL message storage, Redis, persistent browser/auth/media data |
 | telegram-api | Official local Telegram Bot API server and persistent file cache |
-| bifrost | Go diagnostic runtime and delivery persistence foundation |
+| bifrost | Go bridge runtime, authenticated ingress and durable delivery |
 | migrate | Explicit one-shot Goose migration command, under the tools profile |
 
 Database bootstrap runs only on an empty PostgreSQL volume. App roles cannot connect to each other's databases and never receive the PostgreSQL administrator password. Changing an environment password later does not rotate database credentials automatically. No external Docker network, pre-existing OpenWA checkout or socket proxy is required.
@@ -45,7 +45,9 @@ On a fresh OpenWA installation, retrieve its bootstrap credential locally when n
 docker compose -p bifrost-go --env-file .go.env exec openwa cat /app/data/.api-key
 ```
 
-Pair WhatsApp through OpenWA and create a scoped API key. Record the session/key and Telegram owner/master/management fields in `.go.env` for the later provider implementation. This phase does not register callbacks or send provider operations. Do not pair the live bridge identity into a second concurrently running runtime.
+For a fresh installation, pair WhatsApp through OpenWA, create a scoped API key and fill the session/key and Telegram owner/master/management fields in `.go.env`. Set `BIFROST_COMMAND=run` and `BRIDGE_INGRESS_ENABLED=true`, then run `make up` again. The initial default `serve` lets you configure providers before enabling forwarding. Existing installations must follow [legacy import](docs/LEGACY-IMPORT.md); never generate replacement identity or keys over retained state or run two paired engines.
+
+The migrated installation overrides the default ports: OpenWA uses `http://127.0.0.1:2785`, and Bifrost readiness uses `http://127.0.0.1:3210/readyz`. Use `make logs` to follow its bridge and gateway logs.
 
 `make down` stops this project without deleting volumes. Never use `down -v` on an installation whose identity or delivery state must be preserved.
 
@@ -65,12 +67,12 @@ make generate
 BIFROST_TEST_DATABASE_URL='postgres://bifrost:YOUR_TEST_PASSWORD@localhost:5433/bifrost?sslmode=disable' go test -race ./internal/postgres
 ```
 
-Use a disposable test instance, never the live database. CI runs these tests against PostgreSQL. Without the variable, those integration tests are explicitly skipped. Go tests verify only the implemented slice; the historical 263 passing tests are reference evidence for remaining parity work.
+Use a disposable test instance, never the live database. CI runs these tests against PostgreSQL. Without the variable, those integration tests are explicitly skipped. Historical checkpoint tests and OpenSpec scenarios provide the behavior reference; native tests cover retries, concurrency, scope checks, partial delivery and recovery.
 
-The CLI also supports `migrate`, `serve`, `healthcheck` and explicit read-only `check-openwa` / `check-telegram` diagnostics. See [provider checks](docs/PROVIDER-CHECKS.md) for authorized test sends and live evidence. It reads environment variables directly; Compose supplies them from `.go.env`. It never automatically sources the legacy `.env` or `bridge.env`. HTTP implements `/healthz`, admin-protected `/v1/status` and reviewed `/v1/review`. Authenticated durable OpenWA/Telegram ingress and signed `/v1/management` are available with explicit `BRIDGE_INGRESS_ENABLED=true`; see [ingress setup and limits](docs/INGRESS.md). Admission does not enable automatic routing or register provider callbacks.
+The CLI supports `migrate`, `serve`, `run`, `healthcheck`, provider diagnostics, legacy validation/preparation/activation and authenticated recovery. See [provider checks](docs/PROVIDER-CHECKS.md), [ingress](docs/INGRESS.md) and [topic reconciliation](docs/TOPIC-RECONCILIATION.md). It reads environment variables directly; Compose supplies them from `.go.env` and never automatically sources the legacy private files. HTTP exposes liveness, readiness, admin-protected status and reviewed recovery.
 
 ## Existing installations
 
-The original TypeScript implementation and tests remain at `checkpoint-typescript-baseline`; [historical deployment/recovery docs](docs/legacy/README.md) are retained. Existing private files, SQLite state, media, backups and Docker volumes are unchanged. Do not point this partial Go runtime at a legacy installation or mint replacement identity/keys for existing state. An explicit importer and validated cutover are required before migration. See [OpenWA migration requirements](docs/OPENWA-MIGRATION.md) before moving the existing gateway’s saved settings and paired profiles.
+The original TypeScript implementation and tests remain at `checkpoint-typescript-baseline`; [historical deployment/recovery docs](docs/legacy/README.md) are retained. The completed migration keeps original containers, volumes, configuration and final backups. They must remain stopped while Go owns the live identity. See [legacy import](docs/LEGACY-IMPORT.md), [OpenWA migration](docs/OPENWA-MIGRATION.md) and [cutover operations](docs/CUTOVER.md) before attempting another move or rollback.
 
-Read [the implementation design](docs/GO-IMPLEMENTATION.md), [validation evidence](docs/VALIDATION.md) and [MCP setup](docs/MCP-SETUP.md). Python helpers under `scripts/` are retained for later codec/import work; they are not part of the Go runtime yet.
+Read [the implementation design](docs/GO-IMPLEMENTATION.md) and [MCP setup](docs/MCP-SETUP.md). The Go image includes the Python/Pillow codec environment and embedded Lottie renderer; `scripts/transfer-volume.py` supports consistent archival and restoration.

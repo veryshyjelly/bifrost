@@ -1,4 +1,4 @@
-# Legacy state preparation
+# Legacy state import
 
 Fresh history `Skip existing` recognizes surviving imported destination copies together with their original explicit completion evidence. A saved destination start still blocks the fallback unless that exact destination completed; missing/deleted/retired copies and overlapping private bot IDs do not establish completion. History `Import all` remains independent. These checks retain original source markers and create no jobs or send acknowledgements.
 
@@ -10,7 +10,7 @@ Local Telegram API archives may contain literal bot-token directory names. Extra
 
 `legacy-activate --file /private/path/bifrost-export.tar.gz` now verifies the mounted `BRIDGE_MEDIA` and `TELEGRAM_DATA_ROOT` trees against the frozen archive, then records immutable file/byte/digest evidence and releases the import gate in one PostgreSQL transaction. Run it with media and Telegram writers stopped. It requires every retained-state projection, the exact original account/key/configuration, the recorded fresh policy and an empty native queue. Changed evidence, incomplete preparation or admitted native work is refused without deletion. Exact retries retain the original receipt. Activation starts no worker and does not claim provider readiness.
 
-The explicit `run` command performs native setup and starts dispatch only afterward; diagnostic `serve` remains passive. Compose selects `serve` by default; set `BIFROST_COMMAND=run` only for the prepared cutover. Restored local Telegram paths must be visible at the same absolute `/telegram-data` mount. See [RUNTIME.md](RUNTIME.md) for startup ownership, callbacks, pacing and shutdown. Actual archive rehearsal and live cutover remain pending.
+The explicit `run` command performs native setup and starts dispatch only afterward; diagnostic `serve` remains passive. Compose selects `serve` by default; set `BIFROST_COMMAND=run` only after completing migration preparation and activation. Restored local Telegram paths must be visible at the same absolute `/telegram-data` mount. Bifrost and Telegram share UID 1000 so original private file permissions remain intact; Bifrost's Telegram mount is read-only. See [RUNTIME.md](RUNTIME.md) for startup ownership, callbacks, pacing and shutdown.
 
 The TypeScript checkpoint is `checkpoint-typescript-baseline`. Its export format includes `manifest.json`, `bridge.env`, `telegram-api.env`, `data.tar.gz`, `media.tar.gz` and `telegram-data.tar.gz`. The export contains credentials and private messages. Keep it private and retain the original source resources.
 
@@ -24,7 +24,7 @@ The Go CLI can inspect an existing, frozen export without Docker, PostgreSQL, pr
 bifrost legacy-validate --file /private/path/bifrost-export.tar.gz
 ```
 
-This validates the archive and SQLite snapshot. It does not import, start a worker, change webhooks or perform a cutover. Transactional PostgreSQL import and active compatibility for the remaining legacy journals are still being implemented. Successful validation does not establish runtime readiness.
+This validates the archive and SQLite snapshot. It does not import, start a worker, change webhooks or perform a cutover. Transactional PostgreSQL preparation and activation are separate commands. Successful validation does not establish runtime readiness; the fresh policy archives unfinished legacy journals instead of resuming them.
 
 The implemented PostgreSQL preparation stages can now be rehearsed together:
 
@@ -83,7 +83,7 @@ Migration 40 projects incoming reaction actor state, source echoes and confirmed
 
 Actor revisions/order, original event keys and represented user echoes survive. When two proven actor aliases occur within one state, their shared revision counter selects the newer reaction; independent alias caches have no shared ordering and conflicting values are refused. Imported state records only the known actors and does not invent evidence that absent actors were removed by a full snapshot. Confirmed destination signatures retain their exact message/emoji and refusal time/reason; the older cache did not retain an applied actor identity, so none is invented. Native reaction input consumes these facts and later events advance them normally. Repeating projection never resets later native state.
 
-An unfinished fallback notice remains an immutable reference to its original reaction job, source and destination. Its original job must match the saved conversation/message; projection does not send it, declare it complete or drop it. Resuming that notice still requires the remaining original job/effect/notice compatibility stage. Actor state, echoes, caches, pending references and the capability checkpoint commit or roll back together. Full activation remains blocked, and projection creates no native jobs, send effects or synthetic acknowledgements.
+An unfinished fallback notice remains an immutable reference to its original reaction job, source and destination. Its original job must match the saved conversation/message; projection does not send it, declare it complete or drop it. Under the approved fresh policy that unfinished notice remains archival and is not resumed; any future archival-resume implementation would require its original job/effect/notice compatibility. Actor state, echoes, caches, pending references and the capability checkpoint commit or roll back together. Full activation remains blocked, and projection creates no native jobs, send effects or synthetic acknowledgements.
 
 Migration 41 restores the saved Status feed topic, mute records/counter, original mute-operation results and permanent skipped-post hashes. Feed ownership is visible to native topic reservation checks without manufacturing a topic creation job or receipt. Mutes use explicit alias evidence and the latest saved revision; the global counter must cover all saved revisions. Repeating an original mute job returns its saved result without applying a second change or advancing the counter. New operations continue above the imported counter.
 

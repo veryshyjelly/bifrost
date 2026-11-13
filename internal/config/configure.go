@@ -43,7 +43,8 @@ OPENWA_API_KEY=
 TELEGRAM_MASTER_TOKEN=
 TELEGRAM_OWNER_ID=
 TELEGRAM_MANAGEMENT_CHAT_ID=
-# Admission only; enable explicitly after configuring provider identities.
+# Start passive; select run and enable ingress after configuring provider identities.
+BIFROST_COMMAND=serve
 BRIDGE_INGRESS_ENABLED=false
 COMMAND_TTL_SECONDS=60
 CONTROL_TTL_SECONDS=600
