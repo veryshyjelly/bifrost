@@ -5,7 +5,7 @@
 !.env.example
 !*.env.example
 data/
-media/
+/media/
 backups/
 *.bifrost.tar.gz
 .bifrost-export-*/

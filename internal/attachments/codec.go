@@ -92,10 +92,13 @@ func (b *boundedOutput) Write(p []byte) (int, error) {
 	return b.buffer.Write(p)
 }
 func (c *Codec) run(ctx context.Context, dir, command string, args ...string) ([]byte, error) {
+	return c.runBounded(ctx, dir, 65536, command, args...)
+}
+func (c *Codec) runBounded(ctx context.Context, dir string, limit int, command string, args ...string) ([]byte, error) {
 	cmd := exec.CommandContext(ctx, command, args...)
 	cmd.Dir = dir
 	cmd.Env = []string{"PATH=" + os.Getenv("PATH"), "LANG=C.UTF-8", "LC_ALL=C.UTF-8", "PYTHONNOUSERSITE=1"}
-	out := &boundedOutput{remaining: 65536}
+	out := &boundedOutput{remaining: limit}
 	cmd.Stdout = out
 	cmd.Stderr = io.Discard
 	if err := cmd.Run(); err != nil {
@@ -341,9 +344,19 @@ func (c *Codec) decodeVideo(ctx context.Context, dir, input string, info probeRe
 			break
 		}
 	}
-	duration, err := strconv.ParseFloat(info.Format.Duration, 64)
-	if err != nil || !finite(duration) || duration <= 0 || duration > 60 || stream == nil || stream.Width <= 0 || stream.Height <= 0 || stream.Width > 2048 || stream.Height > 2048 || (stream.CodecName != "vp8" && stream.CodecName != "vp9") {
+	if stream == nil || stream.Width <= 0 || stream.Height <= 0 || stream.Width > 2048 || stream.Height > 2048 || (stream.CodecName != "vp8" && stream.CodecName != "vp9") {
 		return Frames{}, Unsupported()
+	}
+	// Some Telegram WebMs have a millisecond-scale Segment Duration even though
+	// their packets span several seconds. Trust their playback timestamps instead
+	// of truncating a moving sticker to the container's claimed duration.
+	raw, err := c.runBounded(ctx, dir, 512<<10, c.c.FFprobe, "-v", "error", "-select_streams", "v:0", "-show_packets", "-show_entries", "packet=pts_time,duration_time", "-of", "compact=p=0", input)
+	if err != nil {
+		return Frames{}, err
+	}
+	duration, err := videoPacketDuration(raw, stream.FrameRate)
+	if err != nil {
+		return Frames{}, err
 	}
 	outputDuration := min(duration, 10)
 	decoder := "libvpx"

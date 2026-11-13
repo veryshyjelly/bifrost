@@ -123,6 +123,43 @@ a.save(sys.argv[1],format='WEBP',save_all=True,append_images=[b],duration=[100,1
 	}
 }
 
+func TestCodecVideoUsesPacketTimingWhenContainerDurationIsWrong(t *testing.T) {
+	a, c, python := codecFixture(t)
+	path := filepath.Join(t.TempDir(), "input.webm")
+	command := exec.Command(c.c.FFmpeg, "-nostdin", "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc2=size=128x128:rate=24:duration=2", "-c:v", "libvpx-vp9", "-threads", "2", path)
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("video fixture: %v\n%s", err, output)
+	}
+	// Reproduce the retained Telegram source: a tiny EBML Segment Duration,
+	// while the original packets retain their complete two-second timeline.
+	pythonFixture(t, python, `import struct,sys
+from pathlib import Path
+p=Path(sys.argv[1]);b=bytearray(p.read_bytes());marker=b'\x44\x89\x88'
+assert b.count(marker)==1
+offset=b.index(marker)+len(marker)
+b[offset:offset+8]=struct.pack('>d',2.003)
+p.write_bytes(b)
+`, path)
+	info, err := c.probe(t.Context(), filepath.Dir(path), path)
+	if err != nil || info.Format.Duration != "0.002003" {
+		t.Fatal("fixture no longer reproduces malformed duration", info.Format.Duration, err)
+	}
+	source := loadCodecAsset(t, a, path, "original.webm", "video/webm")
+	result, err := c.Sticker(t.Context(), source, "whatsapp")
+	if err != nil || result.StickerFormat != "animated" || result.Size > WhatsAppStickerBudget {
+		t.Fatal("animation conversion", result, err)
+	}
+	output, _ := a.Path(result)
+	pythonFixture(t, python, `from PIL import Image
+import hashlib,sys
+im=Image.open(sys.argv[1]);assert im.n_frames>=30
+hashes=set();duration=0
+for i in range(im.n_frames):
+    im.seek(i);hashes.add(hashlib.sha256(im.convert('RGBA').tobytes()).digest());duration+=im.info['duration']
+assert len(hashes)>20 and 1900<=duration<=2100,(len(hashes),duration)
+`, output)
+}
+
 const tgsFixture = `{"v":"5.7.4","fr":20,"ip":10,"op":70,"w":512,"h":512,"nm":"fixture","assets":[],"layers":[{"ty":4,"ind":1,"ip":10,"op":70,"st":0,"ks":{"o":{"a":0,"k":100},"r":{"a":0,"k":0},"p":{"a":1,"k":[{"t":10,"s":[75,125,0],"e":[375,125,0],"o":{"x":0.33,"y":0.33},"i":{"x":0.67,"y":0.67}},{"t":70,"s":[375,125,0]}]},"a":{"a":0,"k":[0,0,0]},"s":{"a":0,"k":[100,100,100]}},"shapes":[{"ty":"rc","p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[50,50]},"r":{"a":0,"k":0}},{"ty":"fl","c":{"a":0,"k":[1,0,0,1]},"o":{"a":0,"k":100},"r":1}]}]}`
 
 func gzipFixture(t *testing.T, data string) []byte {
