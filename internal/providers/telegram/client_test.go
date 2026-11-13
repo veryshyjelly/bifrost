@@ -59,6 +59,8 @@ func TestTelegramSDKErrorBodiesNeverEscapeAndNoSendRetries(t *testing.T) {
 	}{
 		{"rate", `{"ok":false,"error_code":429,"description":"private body","parameters":{"retry_after":4}}`, 200, true, false, ""},
 		{"missing thread", `{"ok":false,"error_code":400,"description":"private body: message thread not found"}`, 200, false, false, "thread_missing"},
+		{"native code", `{"ok":false,"error_code":400,"description":"Bad Request: ENTITY_MENTION_USER_INVALID"}`, 200, false, false, "entity_mention_user_invalid"},
+		{"private description", `{"ok":false,"error_code":400,"description":"Bad Request: private body and token"}`, 200, false, false, ""},
 		{"server", `{"ok":false,"error_code":500,"description":"private body"}`, 200, false, true, ""},
 		{"invalid success", `private body`, 200, false, true, ""},
 		{"missing receipt", `{"ok":true,"result":{}}`, 200, false, true, ""},

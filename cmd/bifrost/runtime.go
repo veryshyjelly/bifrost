@@ -143,7 +143,7 @@ func serveRuntime(ctx context.Context, store *postgres.Store, c config.Runtime, 
 			return errors.New("cannot enable operational notices")
 		}
 		paced := &runtimePacedStore{WorkerStore: store, interval: c.DeliveryInterval, now: time.Now}
-		worker, err := delivery.NewWorker(paced, services.Handlers, delivery.WorkerOptions{Concurrency: 1, PollEvery: 100 * time.Millisecond, Report: func(r delivery.Report) {
+		worker, err := delivery.NewWorker(paced, runtimeDiagnosticHandlers(services.Handlers, slog.Default()), delivery.WorkerOptions{Concurrency: 1, PollEvery: 100 * time.Millisecond, Report: func(r delivery.Report) {
 			slog.Info("delivery state", "job", r.JobID, "state", r.State, "reason", r.Reason)
 		}})
 		if err != nil {

@@ -24,6 +24,7 @@ var ErrInvalidRequest = errors.New("invalid provider request")
 // Error intentionally does not unwrap the SDK error: SDK errors can contain tokens and message bodies.
 type Error struct {
 	Service    string
+	Operation  string
 	Status     int
 	Code       string
 	Reason     string
@@ -44,6 +45,7 @@ type attemptKey struct{}
 
 // Attempt belongs to one synchronous SDK call; it is never shared between calls.
 type Attempt struct {
+	operation                string
 	started                  bool
 	streaming                bool
 	status                   int
@@ -138,6 +140,11 @@ func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 	a, _ := request.Context().Value(attemptKey{}).(*Attempt)
 	if a != nil {
 		a.started = true
+		for _, operation := range []string{"sendMessage", "getChat", "getChatMember"} {
+			if strings.HasSuffix(request.URL.Path, "/"+operation) {
+				a.operation = operation
+			}
+		}
 	}
 	response, err := t.base.RoundTrip(request)
 	if err != nil {
@@ -212,6 +219,27 @@ func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 			a.reason = "reply_missing"
 		case strings.Contains(description, "message") && strings.Contains(description, "not found"):
 			a.reason = "message_missing"
+		case strings.Contains(description, "participant_id_invalid"):
+			a.reason = "participant_invalid"
+		case strings.Contains(description, "user not found") || strings.Contains(description, "can't find user") || strings.Contains(description, "user_id_invalid"):
+			a.reason = "user_missing"
+		case strings.Contains(description, "can't parse entities") || strings.Contains(description, "entity_bounds_invalid"):
+			a.reason = "entities_invalid"
+		}
+		if a.reason == "" && strings.HasPrefix(envelope.Description, "Bad Request: ") {
+			// Telegram also returns bare MTProto error names. Retain only an
+			// entire uppercase code, never arbitrary descriptions or arguments.
+			code := strings.TrimPrefix(envelope.Description, "Bad Request: ")
+			valid := code != "" && len(code) <= 64
+			for _, r := range code {
+				if r != '_' && (r < 'A' || r > 'Z') {
+					valid = false
+					break
+				}
+			}
+			if valid {
+				a.reason = strings.ToLower(code)
+			}
 		}
 		seconds := envelope.RetryAfterSeconds
 		if seconds <= 0 {
@@ -240,7 +268,7 @@ func Outcome(service string, mutation bool, err error, a *Attempt) error {
 	if err == nil && a.status >= 200 && a.status < 300 && !a.declined {
 		return nil
 	}
-	e := &Error{Service: service, Status: a.status, Reason: a.reason, Code: "REFUSED", RetryAfter: a.retryAfter}
+	e := &Error{Service: service, Operation: a.operation, Status: a.status, Reason: a.reason, Code: "REFUSED", RetryAfter: a.retryAfter}
 	if !a.started {
 		e.Code = "INVALID_REQUEST"
 		return e
