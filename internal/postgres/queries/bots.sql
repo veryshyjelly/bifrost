@@ -1,5 +1,11 @@
 -- name: BotCredential :one
 SELECT * FROM telegram_credentials WHERE account_id=$1 AND bot_id=$2;
+
+-- name: BindingBotSetupComplete :one
+SELECT EXISTS(SELECT 1 FROM telegram_credentials c JOIN telegram_bot_lifecycle l USING(account_id,bot_id)
+ WHERE c.account_id=$1 AND c.bot_id=$2 AND EXISTS(SELECT 1 FROM telegram_setup_plans p
+ WHERE p.account_id=c.account_id AND p.payload->>'BotID'=c.bot_id
+ AND p.payload->>'Revision'=c.revision AND (p.payload->>'Step')::integer>=3));
 -- name: BotCredentials :many
 SELECT * FROM telegram_credentials WHERE account_id=$1 ORDER BY bot_id;
 -- name: SaveBotCredential :exec

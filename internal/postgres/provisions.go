@@ -32,11 +32,20 @@ func (s *Store) PrepareCreatedBotControl(ctx context.Context, j delivery.Job, c 
 		return result, delivery.ErrInvalid
 	}
 	err := s.withClaim(ctx, j, func(q *db.Queries, row db.Job) error {
-		if row.Kind != "control-bot-created" {
+		var source struct{ Bot string }
+		if row.Kind == "management" {
+			var event struct {
+				Type string
+				Data struct{ Operation, Bot string }
+			}
+			if json.Unmarshal(row.Payload, &event) != nil || event.Type != "operator_action" || event.Data.Operation != "binding_choices" {
+				return delivery.ErrInvalid
+			}
+			source.Bot = event.Data.Bot
+		} else if row.Kind != "control-bot-created" || json.Unmarshal(row.Payload, &source) != nil || row.Dedup != "created-bot:"+source.Bot {
 			return delivery.ErrInvalid
 		}
-		var source struct{ Bot string }
-		if json.Unmarshal(row.Payload, &source) != nil || source.Bot == "" || source.Bot == "master" || row.Dedup != "created-bot:"+source.Bot {
+		if source.Bot == "" || source.Bot == "master" {
 			return delivery.ErrInvalid
 		}
 		if err := q.LockContactDirectory(ctx, row.AccountID); err != nil {
@@ -59,6 +68,24 @@ func (s *Store) PrepareCreatedBotControl(ctx context.Context, j delivery.Job, c 
 		}
 		if !credential.CreatedNotice {
 			return delivery.ErrInvalid
+		}
+		if row.Kind == "management" {
+			ready, err := q.BindingBotSetupComplete(ctx, db.BindingBotSetupCompleteParams{AccountID: row.AccountID, BotID: source.Bot})
+			if err != nil {
+				return err
+			}
+			if !ready {
+				return delivery.ErrInvalid
+			}
+			bindings, err := q.IdentityBindings(ctx, row.AccountID)
+			if err != nil {
+				return err
+			}
+			for _, binding := range bindings {
+				if binding.BotID == source.Bot {
+					return delivery.ErrInvalid
+				}
+			}
 		}
 		p := control.Plan{Key: row.Dedup, Target: control.Target{BotID: "master", ChatID: c.OwnerID}, ReplyTTLSeconds: c.ControlTTL}
 		d, err := directory(ctx, q, row.AccountID)

@@ -30,6 +30,11 @@ Unqualified group commands SHALL belong to the master; member bots SHALL handle 
 
 Interactive controls SHALL validate their owner, bot, conversation, topic, identity and expiry before changing state.
 
+#### Scenario: Reissue an expired contact-binding prompt
+
+- **WHEN** an authenticated management action requests `binding_choices` for an unbound registered bot whose current credential has completed native setup
+- **THEN** a new owner-private prompt freezes fresh scoped choices and a separate delivery key, preserving old choice expiry, credentials and all bindings; retries reuse the new prompt and a bound or unready bot is refused
+
 #### Scenario: Wrong topic callback
 
 - **WHEN** a valid control is replayed from another topic

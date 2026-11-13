@@ -9,6 +9,25 @@ import (
 	"context"
 )
 
+const bindingBotSetupComplete = `-- name: BindingBotSetupComplete :one
+SELECT EXISTS(SELECT 1 FROM telegram_credentials c JOIN telegram_bot_lifecycle l USING(account_id,bot_id)
+ WHERE c.account_id=$1 AND c.bot_id=$2 AND EXISTS(SELECT 1 FROM telegram_setup_plans p
+ WHERE p.account_id=c.account_id AND p.payload->>'BotID'=c.bot_id
+ AND p.payload->>'Revision'=c.revision AND (p.payload->>'Step')::integer>=3))
+`
+
+type BindingBotSetupCompleteParams struct {
+	AccountID string
+	BotID     string
+}
+
+func (q *Queries) BindingBotSetupComplete(ctx context.Context, arg BindingBotSetupCompleteParams) (bool, error) {
+	row := q.db.QueryRow(ctx, bindingBotSetupComplete, arg.AccountID, arg.BotID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const botCredential = `-- name: BotCredential :one
 SELECT account_id, bot_id, ciphertext, revision, identity, created_notice FROM telegram_credentials WHERE account_id=$1 AND bot_id=$2
 `

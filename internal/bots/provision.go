@@ -113,6 +113,13 @@ func (p *Provisioner) Manage(ctx context.Context, j delivery.Job, e *delivery.Ef
 	if json.Unmarshal(j.Payload, &event) != nil {
 		return delivery.ErrInvalid
 	}
+	if event.Type == "operator_action" && event.Data.Operation == "binding_choices" {
+		plan, err := p.store.PrepareCreatedBotControl(ctx, j, p.settings)
+		if err != nil {
+			return local(err)
+		}
+		return p.replies.Send(ctx, j, e, plan)
+	}
 	if event.Type != "operator_action" || event.Data.Operation != "create" {
 		return delivery.ErrUnsupported
 	}
