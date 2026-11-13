@@ -190,17 +190,23 @@ LEFT JOIN telegram_observations o ON o.account_id=m.account_id AND o.scope=m.sco
 WHERE m.account_id=$1 AND m.whatsapp_chat=$2 AND m.whatsapp_message_id=$3::text
 AND m.telegram_chat_id=$4::bigint AND m.thread_id=$5::bigint AND m.scope=$6::text
 AND NOT m.deleted AND NOT COALESCE(o.deleted,false) AND COALESCE(o.thread_id,m.thread_id)=$5::bigint
-AND (m.direction='out' OR COALESCE(p.complete,false))
+AND (COALESCE(p.complete,false) OR (m.direction='out' AND m.receipt_origin='native-receipt')
+ OR (m.plan_key IS NULL AND m.receipt_origin<>'native-receipt' AND (
+  EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-complete' AND v.source_id=$7::text AND v.source_value::jsonb='true'::jsonb)
+  OR (NOT EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-start' AND v.source_id=$7::text)
+   AND (m.direction='out' OR EXISTS(SELECT 1 FROM source_completions c WHERE c.account_id=m.account_id AND c.whatsapp_chat=m.whatsapp_chat AND c.message_id=m.whatsapp_message_id)))
+ )))
 AND NOT EXISTS(SELECT 1 FROM retired_topics t WHERE t.account_id=m.account_id AND t.telegram_chat_id=m.telegram_chat_id AND t.thread_id=m.thread_id))
 `
 
 type HistoryDestinationDeliveredParams struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	ChatID       int64
-	ThreadID     int64
-	Scope        string
+	AccountID            string
+	WhatsappChat         string
+	MessageID            string
+	ChatID               int64
+	ThreadID             int64
+	Scope                string
+	LegacyDestinationKey string
 }
 
 func (q *Queries) HistoryDestinationDelivered(ctx context.Context, arg HistoryDestinationDeliveredParams) (bool, error) {
@@ -211,6 +217,7 @@ func (q *Queries) HistoryDestinationDelivered(ctx context.Context, arg HistoryDe
 		arg.ChatID,
 		arg.ThreadID,
 		arg.Scope,
+		arg.LegacyDestinationKey,
 	)
 	var exists bool
 	err := row.Scan(&exists)

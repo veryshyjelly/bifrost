@@ -1,14 +1,33 @@
 package legacy
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/veryshyjelly/bifrost/internal/identity"
 )
 
 type Completion struct{ ChatID, MessageID, SourceKey string }
+
+// HistoryDestinationKey reproduces the legacy mixed JSON tuple. An opaque
+// marker is consulted only alongside an independently located retained copy.
+func HistoryDestinationKey(account, chat, message, bot string, telegramChat, thread int64) string {
+	scope := bot
+	if telegramChat < 0 {
+		scope = "*"
+	}
+	raw := stringTupleJSON(account, chat, strconv.FormatInt(telegramChat, 10))
+	raw = append(raw[:len(raw)-1], ',')
+	raw = strconv.AppendInt(raw, thread, 10)
+	raw = append(raw, ',')
+	raw = append(raw, stringTupleJSON(scope)[1:]...)
+	sum := sha256.Sum256(raw)
+	return hex.EncodeToString(sum[:]) + ":" + message
+}
 
 // SplitMessageKey preserves device and message-ID colons. Legacy keys use a
 // complete WhatsApp JID followed by a colon, rather than an escaped tuple.

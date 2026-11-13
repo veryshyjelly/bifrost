@@ -1,5 +1,7 @@
 # Legacy state preparation
 
+Fresh history `Skip existing` recognizes surviving imported destination copies together with their original explicit completion evidence. A saved destination start still blocks the fallback unless that exact destination completed; missing/deleted/retired copies and overlapping private bot IDs do not establish completion. History `Import all` remains independent. These checks retain original source markers and create no jobs or send acknowledgements.
+
 Retained reaction echoes can reference a copy that the old runtime removed. They may retain their original main-chat reference only when the independently resolved WhatsApp source hash and a completed original Telegram reaction update from the configured owner prove the exact bot/chat/message scope in an ordinary group. This creates no mapping, send receipt or applied/refused target. Unknown owners, pending jobs, private/forum scopes without copy evidence and unresolved source hashes remain refused. Applied/refused reaction caches still require surviving retained copies. Reaction projection verifies the original encryption key before loading the retained owner configuration.
 
 Retained main-chat locations remain authoritative when a receipt contains an incidental, non-topic reply-thread ID, matching native delivery validation. A real topic marker or any mismatch with a known nonzero topic still blocks import; original receipt bytes are preserved. Telegram distinguishes [`message_thread_id` from `is_topic_message`](https://core.telegram.org/bots/api#message).

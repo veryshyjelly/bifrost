@@ -1,10 +1,28 @@
 package legacy
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"testing"
 
 	"github.com/veryshyjelly/bifrost/internal/identity"
 )
+
+func TestHistoryDestinationKeyMatchesOriginalMixedJSONTuple(t *testing.T) {
+	account := "account<&\u2028"
+	raw := "[\"account<&\u2028\",\"12345@g.us\",\"-100\",44,\"*\"]"
+	sum := sha256.Sum256([]byte(raw))
+	want := hex.EncodeToString(sum[:]) + ":message:part"
+	if got := HistoryDestinationKey(account, "12345@g.us", "message:part", "master", -100, 44); got != want {
+		t.Fatal("legacy mixed tuple encoding changed")
+	}
+	if got := HistoryDestinationKey(account, "12345@g.us", "message:part", "77", -100, 44); got != want {
+		t.Fatal("group scope became bot-specific")
+	}
+	if HistoryDestinationKey(account, "12345@g.us", "message:part", "77", 123, 0) == HistoryDestinationKey(account, "12345@g.us", "message:part", "master", 123, 0) {
+		t.Fatal("private bot scopes collapsed")
+	}
+}
 
 func TestSplitMessageKeyPreservesDeviceAndMessageIDColons(t *testing.T) {
 	for _, tc := range []struct{ key, chat, id string }{

@@ -14,6 +14,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/control"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/history"
+	"github.com/veryshyjelly/bifrost/internal/legacy"
 	"github.com/veryshyjelly/bifrost/internal/postgres/db"
 )
 
@@ -212,7 +213,7 @@ func (s *Store) PrepareHistoryItem(ctx context.Context, j delivery.Job, c histor
 		}
 		delivered := false
 		if run.Mode == "skip" {
-			delivered, err = q.HistoryDestinationDelivered(ctx, db.HistoryDestinationDeliveredParams{AccountID: row.AccountID, WhatsappChat: run.ChatID, MessageID: item.Message.ID, ChatID: run.Target.ChatID, ThreadID: run.Target.ThreadID, Scope: relayScope(run.Target.BotID, run.Target.ChatID)})
+			delivered, err = q.HistoryDestinationDelivered(ctx, db.HistoryDestinationDeliveredParams{AccountID: row.AccountID, WhatsappChat: run.ChatID, MessageID: item.Message.ID, ChatID: run.Target.ChatID, ThreadID: run.Target.ThreadID, Scope: relayScope(run.Target.BotID, run.Target.ChatID), LegacyDestinationKey: legacy.HistoryDestinationKey(row.AccountID, run.ChatID, item.Message.ID, run.Target.BotID, run.Target.ChatID, run.Target.ThreadID)})
 			if err != nil {
 				return err
 			}

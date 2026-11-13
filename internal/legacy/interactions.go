@@ -34,6 +34,11 @@ func OutgoingReactionKey(account, bot, key string) string {
 }
 
 func stringTupleKey(values ...string) string {
+	sum := sha256.Sum256(stringTupleJSON(values...))
+	return hex.EncodeToString(sum[:])
+}
+
+func stringTupleJSON(values ...string) []byte {
 	const digits = "0123456789abcdef"
 	raw := []byte{'['}
 	for i, value := range values {
@@ -66,8 +71,7 @@ func stringTupleKey(values ...string) string {
 		raw = append(raw, '"')
 	}
 	raw = append(raw, ']')
-	sum := sha256.Sum256(raw)
-	return hex.EncodeToString(sum[:])
+	return raw
 }
 
 func ProjectInteractions(values []KV, directory *identity.Directory) (InteractionState, error) {

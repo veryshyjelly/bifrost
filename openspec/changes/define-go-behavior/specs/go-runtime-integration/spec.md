@@ -271,6 +271,11 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **AND** an incidental non-topic reply-thread ID cannot replace a proven main-chat destination; real topic conflicts remain refused and original receipts remain intact
 - **AND** an echo whose copy was removed may retain only an exact ordinary-group reference proven by the original owner's completed Telegram update and independently resolved WhatsApp source, without creating a mapping, confirmed send or applied/refused cache
 
+#### Scenario: Skip completed imported history destinations
+- **WHEN** a new history run chooses Skip existing after an empty-queue migration
+- **THEN** surviving imported copies use original destination completion or the legacy source-completion fallback with exact account/chat/topic/private-bot scope
+- **AND** an incomplete original destination start, missing/deleted/retired copy or unknown source cannot be treated as completed; Import all retains its separate copy behavior
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

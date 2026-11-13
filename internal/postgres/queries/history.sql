@@ -25,7 +25,12 @@ LEFT JOIN telegram_observations o ON o.account_id=m.account_id AND o.scope=m.sco
 WHERE m.account_id=sqlc.arg(account_id) AND m.whatsapp_chat=sqlc.arg(whatsapp_chat) AND m.whatsapp_message_id=sqlc.arg(message_id)::text
 AND m.telegram_chat_id=sqlc.arg(chat_id)::bigint AND m.thread_id=sqlc.arg(thread_id)::bigint AND m.scope=sqlc.arg(scope)::text
 AND NOT m.deleted AND NOT COALESCE(o.deleted,false) AND COALESCE(o.thread_id,m.thread_id)=sqlc.arg(thread_id)::bigint
-AND (m.direction='out' OR COALESCE(p.complete,false))
+AND (COALESCE(p.complete,false) OR (m.direction='out' AND m.receipt_origin='native-receipt')
+ OR (m.plan_key IS NULL AND m.receipt_origin<>'native-receipt' AND (
+  EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-complete' AND v.source_id=sqlc.arg(legacy_destination_key)::text AND v.source_value::jsonb='true'::jsonb)
+  OR (NOT EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-start' AND v.source_id=sqlc.arg(legacy_destination_key)::text)
+   AND (m.direction='out' OR EXISTS(SELECT 1 FROM source_completions c WHERE c.account_id=m.account_id AND c.whatsapp_chat=m.whatsapp_chat AND c.message_id=m.whatsapp_message_id)))
+ )))
 AND NOT EXISTS(SELECT 1 FROM retired_topics t WHERE t.account_id=m.account_id AND t.telegram_chat_id=m.telegram_chat_id AND t.thread_id=m.thread_id));
 -- name: HistoryMessageRevoked :one
 SELECT EXISTS(SELECT 1 FROM message_tombstones WHERE account_id=$1 AND whatsapp_chat=$2 AND message_id=$3 AND revoked);

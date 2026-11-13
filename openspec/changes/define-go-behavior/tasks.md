@@ -395,3 +395,4 @@
 - [x] Compare restored assets under OS-enforced roots and atomically activate only complete fresh-queue imports with immutable receipts.
 - [x] Exercise lifecycle restart/ownership loss and activation refusals through isolated PostgreSQL/native provider fixtures.
 - [ ] Rehearse the actual legacy archive and complete the single-instance Compose deployment/cutover.
+- [x] Preserve imported history Skip completion/start semantics using surviving scoped copies without adopting unknown sends.
