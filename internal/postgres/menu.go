@@ -85,7 +85,12 @@ func menuSource(ctx context.Context, q *db.Queries, row db.Job) (string, error) 
 	var source struct {
 		Bot string `json:"bot"`
 	}
-	if row.Kind != "control-menu" || json.Unmarshal(row.Payload, &source) != nil || source.Bot == "" || row.Stream != "control-menu:"+source.Bot {
+	if row.Kind != "control-menu" || json.Unmarshal(row.Payload, &source) != nil || source.Bot == "" {
+		return "", delivery.ErrInvalid
+	}
+	// Explicit menu batches use their own stream. Native credential setup queues
+	// menus on the same bot-settings stream as setup and provisioning notices.
+	if row.Stream != "control-menu:"+source.Bot && row.Stream != "bot-settings:"+source.Bot {
 		return "", delivery.ErrInvalid
 	}
 	if _, err := q.BotLifecycle(ctx, db.BotLifecycleParams{AccountID: row.AccountID, BotID: source.Bot}); err != nil {

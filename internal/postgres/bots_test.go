@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-telegram/bot/models"
 	"github.com/veryshyjelly/bifrost/internal/bots"
+	"github.com/veryshyjelly/bifrost/internal/control"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
 	tg "github.com/veryshyjelly/bifrost/internal/providers/telegram"
@@ -63,6 +64,8 @@ func newBotFixture(t *testing.T) *botFixture {
 				}
 				return
 			}
+			fmt.Fprint(w, `{"ok":true,"result":true}`)
+		case "setMyCommands", "setChatMenuButton":
 			fmt.Fprint(w, `{"ok":true,"result":true}`)
 		case "setWebhook":
 			if r.FormValue("drop_pending_updates") == "true" || r.FormValue("secret_token") != ingress.TelegramSecret("200", strings.Repeat("a", 32)) {
@@ -167,6 +170,26 @@ func TestManagedBotRegistrationEncryptsAndCompletesExplicitNativeSetup(t *testin
 	var p bots.SetupPlan
 	if json.Unmarshal(raw, &p) != nil || p.Step != 3 || strings.Contains(string(raw), b.token) {
 		t.Fatal("invalid setup journal")
+	}
+	menus, err := control.NewMenus(b.f.store, func(ctx context.Context, account, id string) (control.MenuTelegram, error) {
+		return b.pool.Local(ctx, account, id)
+	}, b.settings.OwnerID, b.settings.Management)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var menu int64
+	if err := b.f.store.pool.QueryRow(t.Context(), "SELECT id FROM jobs WHERE kind='control-menu'").Scan(&menu); err != nil {
+		t.Fatal(err)
+	}
+	if r := b.f.run(t, menu, "control-menu", menus.Install); r.State != delivery.Done {
+		t.Fatal("native setup's menu did not install", r)
+	}
+	if b.count("setMyCommands") != 1 || b.count("setChatMenuButton") != 1 || b.count("logout") != 1 {
+		t.Fatal("native setup menus missing or migration repeated")
+	}
+	var installed int64
+	if err := b.f.store.pool.QueryRow(t.Context(), "SELECT menu_installed_at FROM telegram_bot_lifecycle WHERE bot_id='200'").Scan(&installed); err != nil || installed == 0 {
+		t.Fatal("menu completion was not recorded", err)
 	}
 }
 func TestManagedBotUnknownCloudLogoutBlocksLocalMigration(t *testing.T) {
