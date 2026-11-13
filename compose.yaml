@@ -14,6 +14,10 @@ x-bifrost: &bifrost
     BRIDGE_MEDIA: /media
     BRIDGE_CALLBACK_URL: http://bifrost:3210
     TELEGRAM_API_URL: http://telegram-api:8081
+    TELEGRAM_DATA_ROOT: /telegram-data
+    HISTORY_LIMIT: ${HISTORY_LIMIT:-20}
+    MAX_MEDIA_BYTES: ${MAX_MEDIA_BYTES:-104857600}
+    DELIVERY_INTERVAL_MS: ${DELIVERY_INTERVAL_MS:-1100}
     OPENWA_URL: http://openwa:2785
     OPENWA_WEBHOOK_SECRET: ${OPENWA_WEBHOOK_SECRET:?Run make configure}
     OPENWA_SESSION_ID: ${OPENWA_SESSION_ID:-}
@@ -63,6 +67,7 @@ services:
 
   bifrost:
     <<: *bifrost
+    command: ["${BIFROST_COMMAND:-serve}"]
     restart: unless-stopped
     ports:
       - '127.0.0.1:${BRIDGE_HTTP_PORT:-3211}:3210'
@@ -99,6 +104,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: '2785'
+      AUTO_START_SESSIONS: ${OPENWA_AUTO_START_SESSIONS:-true}
       DATABASE_TYPE: postgres
       DATABASE_HOST: postgres
       DATABASE_PORT: '5432'
@@ -108,7 +114,12 @@ services:
       DATABASE_SYNCHRONIZE: 'false'
       MAIN_DATABASE_SYNCHRONIZE: 'false'
       MAIN_DATABASE_NAME: /app/data/main.sqlite
-      API_KEY_PEPPER: ${OPENWA_API_KEY_PEPPER:?Run make configure}
+      # An existing installation may deliberately have an empty pepper;
+      # changing it invalidates every retained key. Fresh configure sets one.
+      API_KEY_PEPPER: ${OPENWA_API_KEY_PEPPER?Run make configure}
+      POSTGRES_BUILTIN: 'false'
+      REDIS_BUILTIN: 'false'
+      MINIO_BUILTIN: 'false'
       REDIS_ENABLED: 'true'
       REDIS_HOST: redis
       REDIS_PORT: '6379'
