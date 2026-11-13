@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/veryshyjelly/bifrost/internal/legacy"
 )
 
@@ -11,6 +12,7 @@ type LegacyStaging struct {
 	Preparation LegacyPreparation `json:"preparation"`
 	Completed   []string          `json:"completed"`
 	Ready       bool              `json:"ready"`
+	QueueMode   string            `json:"queue_mode,omitempty"`
 }
 
 // LegacyStageError exposes only a capability name in its printable form.
@@ -65,6 +67,14 @@ func (s *Store) StageLegacyImport(ctx context.Context, bundle *legacy.Bundle, op
 			return result, &LegacyStageError{Stage: stage.name, Cause: err}
 		}
 		result.Completed = append(result.Completed, stage.name)
+	}
+	if policy, err := s.queries.LegacyCutoverPolicy(ctx, bundle.Account); err == nil {
+		if policy.ArchiveDigest != bundle.Digest {
+			return result, &LegacyStageError{Stage: "queue-policy", Cause: legacy.ErrInvalid}
+		}
+		result.QueueMode = policy.QueueMode
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return result, &LegacyStageError{Stage: "queue-policy", Cause: err}
 	}
 	return result, nil
 }

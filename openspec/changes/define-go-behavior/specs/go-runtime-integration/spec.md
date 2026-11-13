@@ -232,6 +232,12 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **AND** receive/refresh cannot recreate completed or permanently skipped posts after unmuting; replayed mute jobs retain their original result and new revisions continue above the saved counter
 - **AND** projection rolls back all Status state on failure, preserves later native changes on replay and remains part of inactive preparation
 
+#### Scenario: Owner chooses an empty queue at cutover
+
+- **WHEN** the owner records the explicit `fresh` queue policy for the prepared archive/account
+- **THEN** old pending/failed jobs and in-progress history runs remain archived rather than enqueued in Go, and group history can be imported afresh after cutover
+- **AND** original uncertain jobs/effects retain their uncertainty without automatic replay or fabricated confirmation; the choice is immutable and cannot activate an otherwise unready import
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

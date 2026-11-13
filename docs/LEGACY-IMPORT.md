@@ -2,6 +2,8 @@
 
 The TypeScript checkpoint is `checkpoint-typescript-baseline`. Its export format includes `manifest.json`, `bridge.env`, `telegram-api.env`, `data.tar.gz`, `media.tar.gz` and `telegram-data.tar.gz`. The export contains credentials and private messages. Keep it private and retain the original source resources.
 
+The owner approved a migration with an empty Go queue. Use `legacy-prepare --file /private/path/bifrost-export.tar.gz --fresh-queue` to record this policy after the implemented preparation stages. Old pending/failed work and in-progress history remain in immutable source evidence and the original backup; they are not enqueued in Go. Source uncertainty is neither replayed nor marked confirmed. Group history can be requested afresh after cutover. This explicit archive/account-bound policy removes old job/history resumption from the remaining migration requirements; runtime composition, assets and rehearsal are still required before activation. Exact replay retains the policy and the preparation report includes `queue_mode: "fresh"`.
+
 The Go CLI can inspect an existing, frozen export without Docker, PostgreSQL, provider access or runtime configuration:
 
 ```sh

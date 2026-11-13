@@ -2,6 +2,8 @@
 
 The user requested completion of all remaining workflows, legacy import and runtime composition. Preserve the approved OpenSpec contract and checkpoint `checkpoint-typescript-baseline`; do not enable a live cutover during preparation.
 
+The owner has approved an empty Go queue at migration: old pending/failed/history jobs do not need to resume, and group history will be imported again afterward. Keep the original archive and uncertain-send evidence without replaying or marking those sends confirmed. The critical path is retained identity/routes/bindings/confirmed state, asset restoration, complete runtime wiring, rehearsal and cutover. Original pending-job/history compatibility is no longer a cutover prerequisite under the explicit `fresh` policy.
+
 - [x] Managed Telegram bot credentials, native registration, local API migration and callback setup in isolated fixtures.
 - [x] Contact provisioning, scoped binding choices and conditional inbox retirement in isolated fixtures.
 - [x] History choices, frozen ordered imports, destination receipts and scoped live holds in isolated fixtures.

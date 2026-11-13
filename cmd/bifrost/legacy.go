@@ -20,10 +20,11 @@ func prepareLegacyCLI(ctx context.Context, args []string, out io.Writer) error {
 	file := flags.String("file", "", "frozen legacy archive")
 	scratch := flags.String("scratch", "", "private temporary staging parent")
 	session := flags.String("session", "", "planned OpenWA connection (defaults to original)")
+	freshQueue := flags.Bool("fresh-queue", false, "leave legacy jobs/history runs archived and start the Go queue empty")
 	compressed := flags.Int64("max-archive-bytes", 0, "archive byte limit")
 	expanded := flags.Int64("max-expanded-bytes", 0, "expanded byte limit")
 	if err := flags.Parse(args); errors.Is(err, flag.ErrHelp) {
-		_, err := fmt.Fprintln(out, "bifrost legacy-prepare --file private-export.tar.gz [--session ID] [--scratch DIRECTORY] [--max-archive-bytes N] [--max-expanded-bytes N]; requires DATABASE_URL and an explicitly migrated empty destination; never activates delivery")
+		_, err := fmt.Fprintln(out, "bifrost legacy-prepare --file private-export.tar.gz [--fresh-queue] [--session ID] [--scratch DIRECTORY] [--max-archive-bytes N] [--max-expanded-bytes N]; requires DATABASE_URL and an explicitly migrated empty destination; never activates delivery")
 		return err
 	} else if err != nil || flags.NArg() != 0 || *file == "" {
 		return errors.New("use legacy-prepare --file private-export.tar.gz")
@@ -50,6 +51,12 @@ func prepareLegacyCLI(ctx context.Context, args []string, out io.Writer) error {
 			return errors.New(stage.Error())
 		}
 		return errors.New("legacy preparation failed; delivery remains inactive")
+	}
+	if *freshQueue {
+		if err := database.ChooseLegacyFreshQueue(ctx, bundle.Account, bundle.Digest); err != nil {
+			return errors.New("cannot record fresh-queue cutover policy; delivery remains inactive")
+		}
+		result.QueueMode = "fresh"
 	}
 	return json.NewEncoder(out).Encode(result)
 }

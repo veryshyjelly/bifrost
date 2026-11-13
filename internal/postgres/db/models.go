@@ -202,6 +202,13 @@ type LegacyCompletionProjection struct {
 	Result    []byte
 }
 
+type LegacyCutoverPolicy struct {
+	AccountID     string
+	ArchiveDigest string
+	QueueMode     string
+	RecordedAt    pgtype.Timestamptz
+}
+
 type LegacyDirectoryProjection struct {
 	AccountID string
 	Result    []byte

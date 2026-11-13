@@ -48,6 +48,8 @@ Package checks cover the implemented persistence/diagnostic slice, not full beha
 
 ## History and operational safety
 
+Retired pending/failed jobs and history runs remain archived under the account-bound fresh-queue policy; fresh group history can be imported after migration. Record this archive/account-bound choice with `legacy-prepare --fresh-queue`. Preserve source uncertainty in immutable evidence without replaying or confirming it. This approved migration policy removes old workflow resumption as a cutover requirement, but does not waive runtime wiring, retained identity/routes/bindings/confirmed state, asset restoration or rehearsal.
+
 The full TypeScript baseline, tests and original deployment exist at commit `checkpoint-typescript-baseline`. Historical operational docs and examples are in `docs/legacy/`; they require that checkout. Source and fixture links in OpenSpec point to the checkpoint. Use `git show checkpoint-typescript-baseline:<path>` before the checkpoint is pushed.
 
 Keep private environments, SQLite databases, media, backups and Docker volumes intact. Never reset permanent BIFROST_ACCOUNT_ID, encryption keys, stable delivery keys or receipts. Preserve uncertain sends for explicit review. Do not start two runtimes against the live identity or perform a live cutover as part of preparation. Follow historical MOVING/RECOVERY instructions before identity import.
