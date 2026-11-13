@@ -140,7 +140,7 @@ func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 	a, _ := request.Context().Value(attemptKey{}).(*Attempt)
 	if a != nil {
 		a.started = true
-		for _, operation := range []string{"sendMessage", "getChat", "getChatMember"} {
+		for _, operation := range []string{"sendMessage", "getChat", "getChatMember", "logout", "logOut"} {
 			if strings.HasSuffix(request.URL.Path, "/"+operation) {
 				a.operation = operation
 			}

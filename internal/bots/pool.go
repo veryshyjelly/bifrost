@@ -33,7 +33,7 @@ func NewPool(store CredentialStore, key [32]byte, account, localURL, cloudURL st
 	}
 	return &Pool{store: store, cipher: cipher, account: account, localURL: localURL, cloudURL: cloudURL, transport: transport}, nil
 }
-func (p *Pool) client(ctx context.Context, account, id, url string) (*telegram.Client, error) {
+func (p *Pool) client(ctx context.Context, account, id, url string, cloud bool) (*telegram.Client, error) {
 	if account != p.account || id == "" {
 		return nil, delivery.ErrInvalid
 	}
@@ -48,11 +48,14 @@ func (p *Pool) client(ctx context.Context, account, id, url string) (*telegram.C
 	if err != nil || !ValidToken(token, credential.Identity.ID) {
 		return nil, secrets.ErrCiphertext
 	}
+	if cloud {
+		return telegram.NewCloud(url, token, p.transport)
+	}
 	return telegram.New(url, token, p.transport)
 }
 func (p *Pool) Local(ctx context.Context, account, id string) (*telegram.Client, error) {
-	return p.client(ctx, account, id, p.localURL)
+	return p.client(ctx, account, id, p.localURL, false)
 }
 func (p *Pool) Cloud(ctx context.Context, account, id string) (*telegram.Client, error) {
-	return p.client(ctx, account, id, p.cloudURL)
+	return p.client(ctx, account, id, p.cloudURL, true)
 }

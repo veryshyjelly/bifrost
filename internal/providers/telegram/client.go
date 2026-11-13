@@ -3,6 +3,7 @@ package telegram
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
@@ -12,6 +13,15 @@ import (
 type Client struct {
 	sdk  *bot.Bot
 	http *http.Client
+}
+
+// NewCloud retains the same SDK and delivery classification, using HTTP/2
+// without sharing connections or allowing replayable mutation bodies.
+func NewCloud(baseURL, token string, transport http.RoundTripper) (*Client, error) {
+	if transport == nil && strings.HasPrefix(baseURL, "https://") {
+		transport = providers.CloudTransport()
+	}
+	return New(baseURL, token, transport)
 }
 
 // New performs no remote requests, polling, webhook registration or token migration.
