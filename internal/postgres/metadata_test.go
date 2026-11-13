@@ -30,6 +30,7 @@ type metadataFixture struct {
 	clients                  metadata.Clients
 	mu                       sync.Mutex
 	group, contact           string
+	phoneProof               string
 	groupByID, contactByID   map[string]string
 	refuseMethod             string
 	groupReads, contactReads int
@@ -58,6 +59,8 @@ func newMetadataFixture(t *testing.T, withMentions ...bool) *metadataFixture {
 					body = value
 				}
 				fmt.Fprint(w, body)
+			case strings.HasSuffix(r.URL.Path, "/phone"):
+				fmt.Fprint(w, m.phoneProof)
 			case strings.Contains(r.URL.Path, "/contacts/"):
 				m.contactReads++
 				body := m.contact

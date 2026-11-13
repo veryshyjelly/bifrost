@@ -26,6 +26,11 @@ Refresh SHALL update available group/contact metadata and existing bots, preserv
 - **WHEN** metadata lookup fails while a contact bot remains known
 - **THEN** the stored roster is preserved and other contact refreshes may continue
 
+#### Scenario: Contact lookup returns a canonical phone ID
+
+- **WHEN** a LID lookup returns a different phone-based contact ID
+- **THEN** metadata is accepted only if the native phone-resolution response names the original LID and independently matches that returned ID; the requested profile identity, routing and bot binding stay unchanged and no directory alias is created
+
 ### Requirement: Efficient metadata work
 
 Content-hash picture caching SHALL avoid duplicate uploads, shared contact bots SHALL be fetched once per run, and chat jobs SHALL have priority over metadata work.

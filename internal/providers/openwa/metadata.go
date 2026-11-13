@@ -45,8 +45,30 @@ func (c *Client) Contact(ctx context.Context, session, chat string) (*sdk.Contac
 	if err := providers.Outcome("openwa", false, err, a); err != nil {
 		return nil, err
 	}
-	if result == nil || result.ID != chat {
+	if result == nil || !identity.IsPerson(result.ID) {
 		return nil, providers.InvalidResponse("openwa", false)
+	}
+	if result.ID != chat {
+		if !strings.HasSuffix(chat, "@lid") || !strings.HasSuffix(result.ID, "@c.us") {
+			return nil, providers.InvalidResponse("openwa", false)
+		}
+		proofCtx, proof := providers.Observe(ctx)
+		resolved, err := c.sdk.Contacts.Phone(proofCtx, session, chat)
+		if err := providers.Outcome("openwa", false, err, proof); err != nil {
+			return nil, err
+		}
+		if resolved == nil || resolved.ContactID != chat || resolved.Phone == nil {
+			return nil, providers.InvalidResponse("openwa", false)
+		}
+		phone, valid := identity.PhoneID(*resolved.Phone)
+		if !valid || phone != result.ID {
+			return nil, providers.InvalidResponse("openwa", false)
+		}
+		// Keep metadata attached to its requested identity. This proof does not
+		// create a directory alias, change routing or interpret display numbers.
+		copy := *result
+		copy.ID = chat
+		result = &copy
 	}
 	return result, nil
 }

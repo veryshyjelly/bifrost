@@ -66,3 +66,61 @@ func TestMetadataContactReadsNativeRecordWithoutInferringLIDPhone(t *testing.T) 
 		t.Fatal(contact, err)
 	}
 }
+
+func TestMetadataCanonicalContactRequiresIndependentPhoneProof(t *testing.T) {
+	for _, outcome := range []string{"match", "missing", "wrong scope", "wrong phone", "phone failure", "reverse mismatch"} {
+		t.Run(outcome, func(t *testing.T) {
+			calls := 0
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				calls++
+				if r.Method != "GET" {
+					t.Error("metadata mutated source")
+				}
+				if calls == 1 {
+					fmt.Fprint(w, `{"id":"12025550123@c.us","name":"Verified","number":"12345000000001"}`)
+					return
+				}
+				if r.URL.Path != "/api/sessions/session/contacts/12345000000001@lid/phone" {
+					t.Error("proof queried a different contact")
+				}
+				switch outcome {
+				case "match":
+					fmt.Fprint(w, `{"contactId":"12345000000001@lid","phone":"12025550123"}`)
+				case "wrong scope":
+					fmt.Fprint(w, `{"contactId":"99999999999999@lid","phone":"12025550123"}`)
+				case "wrong phone":
+					fmt.Fprint(w, `{"contactId":"12345000000001@lid","phone":"12025550124"}`)
+				case "phone failure":
+					w.WriteHeader(503)
+					fmt.Fprint(w, `{}`)
+				default:
+					fmt.Fprint(w, `{"contactId":"12345000000001@lid","phone":null}`)
+				}
+			}))
+			defer server.Close()
+			c, err := New(server.URL, "fixture-key", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			id := "12345000000001@lid"
+			if outcome == "reverse mismatch" {
+				id = "12025550124@c.us"
+			}
+			record, err := c.Contact(t.Context(), "session", id)
+			if outcome == "match" {
+				if err != nil || record.ID != id || record.Name == nil || *record.Name != "Verified" {
+					t.Fatal(record, err)
+				}
+			} else if err == nil {
+				t.Fatal("unproved identity accepted")
+			}
+			want := 2
+			if outcome == "reverse mismatch" {
+				want = 1
+			}
+			if calls != want {
+				t.Fatal("unexpected lookup or replay", calls)
+			}
+		})
+	}
+}
