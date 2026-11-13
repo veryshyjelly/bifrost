@@ -213,6 +213,12 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **THEN** its original scoped reaction-job reference remains pending until job/notice compatibility is complete, without a new send, fabricated acknowledgement or early activation
 - **AND** all projected reaction facts/references roll back on failure; replay preserves later native state, while missing evidence and conflicting alias caches are refused
 
+#### Scenario: Remove a previously refused reaction
+
+- **WHEN** an actor removes a reaction whose native setting was refused and no applied reaction remains
+- **THEN** fenced local progress clears the obsolete refusal without a provider call, so a new reaction can retry immediately
+- **AND** member refusals still used for master fallback remain cached; cleanup does not invent an applied setting or send acknowledgement
+
 ### Requirement: Docker Compose setup
 
 The Go setup SHALL use Docker Compose for Bifrost, OpenWA, the local Telegram API, Redis and one PostgreSQL instance, with persistent state/media, readiness checks and private credentials. It SHALL require no existing OpenWA installation or external network.

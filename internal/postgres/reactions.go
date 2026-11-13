@@ -306,8 +306,16 @@ func (s *Store) PrepareReactions(ctx context.Context, j delivery.Job, p reaction
 		}
 		for _, step := range p.Steps {
 			group, exists := groups[step.DestinationKey]
-			if !exists || step.Kind != "set" || step.State != "pending" || step.ClearRefusal || step.BotID != step.Target.BotID || step.Target.ChatID != group.Destination.Target.ChatID || step.Target.ThreadID != group.Destination.Target.ThreadID || step.MessageID != group.Destination.MessageID {
+			if !exists || (step.Kind != "set" && step.Kind != "forget-refusal") || step.State != "pending" || step.ClearRefusal || step.BotID != step.Target.BotID || step.Target.ChatID != group.Destination.Target.ChatID || step.Target.ThreadID != group.Destination.Target.ThreadID || step.MessageID != group.Destination.MessageID {
 				return delivery.ErrInvalid
+			}
+			if step.Kind == "forget-refusal" {
+				cache := actual.Caches[step.DestinationKey]
+				_, refused := cache.Refused[step.BotID]
+				if _, wanted := group.Desired[step.BotID]; wanted || !refused || cache.Applied[step.BotID].Emoji != "" || step.Emoji != "" || step.Actor != "" || step.Order != 0 || step.Prior != nil {
+					return delivery.ErrInvalid
+				}
+				continue
 			}
 			desired, exists := group.Desired[step.BotID]
 			if exists {
@@ -372,6 +380,15 @@ func (s *Store) AdvanceReaction(ctx context.Context, j delivery.Job, index int) 
 			}
 			n := control.Notice{Target: target, Body: presentation.Plain(text), ReplyTo: step.MessageID, TTLSeconds: p.NoticeTTL}
 			if _, err := metadataEnqueue(ctx, q, row.AccountID, row.Dedup+":reaction-notice:"+step.DestinationKey, "notice:"+row.Dedup, "control-notice", n); err != nil {
+				return err
+			}
+		} else if step.Kind == "forget-refusal" {
+			cache, err := reactionCache(ctx, q, row.AccountID, p.Input.Source.ChatID, p.Input.Source.MessageID, step.DestinationKey)
+			if err != nil {
+				return err
+			}
+			delete(cache.Refused, step.BotID)
+			if err := saveReactionCache(ctx, q, row, p.Input.Source, step.DestinationKey, cache); err != nil {
 				return err
 			}
 		} else if step.Kind == "set" {

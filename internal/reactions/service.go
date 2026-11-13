@@ -20,12 +20,14 @@ func buildPlan(key string, input Input, byDestination map[string]map[string]stri
 	for _, destination := range input.Destinations {
 		desired := Desired(destination, input.State, byDestination[destination.Key])
 		cache := input.Caches[destination.Key]
+		rerouted := map[string]bool{}
 		// A member bot that cannot see this mapped message uses the master for the
 		// same refusal signature for one minute, matching the source-side cache.
 		for id, choice := range desired {
 			refused, found := cache.Refused[id]
 			if destination.Target.ChatID < 0 && id != "master" && id != destination.Target.BotID && found && refused.Reason == "message_missing" && refused.MessageID == destination.MessageID && refused.Emoji == TelegramEmoji(choice.Emoji) && now-refused.At < 60000 {
 				delete(desired, id)
+				rerouted[id] = true
 				choice.BotID = "master"
 				if prior, exists := desired["master"]; !exists || prior.Order < choice.Order {
 					desired["master"] = choice
@@ -53,6 +55,11 @@ func buildPlan(key string, input Input, byDestination map[string]map[string]stri
 			emoji := TelegramEmoji(choice.Emoji)
 			applied, exists := cache.Applied[id]
 			if emoji == "" && (!exists || applied.Emoji == "") {
+				if _, refused := cache.Refused[id]; refused && !rerouted[id] {
+					target := destination.Target
+					target.BotID = id
+					p.Steps = append(p.Steps, Step{Kind: "forget-refusal", DestinationKey: destination.Key, BotID: id, Target: target, MessageID: destination.MessageID, State: "pending"})
+				}
 				continue
 			}
 			if exists && applied.MessageID == destination.MessageID && applied.Emoji == emoji {
@@ -134,7 +141,7 @@ func (s *Service) Incoming(ctx context.Context, j delivery.Job, e *delivery.Effe
 			return local(s.store.CompleteReactions(ctx, j))
 		}
 		step := p.Steps[index]
-		if step.Kind == "notice" {
+		if step.Kind == "notice" || step.Kind == "forget-refusal" {
 			if err := s.store.AdvanceReaction(ctx, j, index); err != nil {
 				return local(err)
 			}

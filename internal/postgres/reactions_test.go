@@ -170,6 +170,43 @@ func TestReactionUnsupportedNativeUpdateQueuesAttributedIndependentNotice(t *tes
 		t.Fatal(r)
 	}
 }
+
+func TestReactionRemovalForgetsUnappliedRefusalAndAllowsImmediateRetry(t *testing.T) {
+	f := newReactionFixture(t)
+	if r := f.f.n.incoming(t, "source-image", "Caption"); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	f.f.n.failMethod = "setMessageReaction"
+	f.f.n.failCode = 400
+	if r := f.source(t, "first-refusal", "12025550123@c.us", "👍", nil); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	f.f.n.mu.Lock()
+	before := len(f.f.n.calls)
+	f.f.n.failMethod = ""
+	f.f.n.mu.Unlock()
+	if r := f.source(t, "remove-refused", "12025550123@c.us", "", nil); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	f.f.n.mu.Lock()
+	after := len(f.f.n.calls)
+	f.f.n.mu.Unlock()
+	if after != before {
+		t.Fatal("refusal cleanup called the provider")
+	}
+	cache, err := reactionCache(t.Context(), f.f.n.f.store.queries, "fixture-account", "peer@g.us", "source-image", "*:-100:44")
+	if err != nil || len(cache.Refused) != 0 || len(cache.Applied) != 0 {
+		t.Fatal("removal retained stale refusal or invented application", err)
+	}
+	if r := f.source(t, "retry-after-remove", "12025550123@c.us", "👍", nil); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	f.f.n.mu.Lock()
+	defer f.f.n.mu.Unlock()
+	if len(f.f.n.calls) != after+1 || f.f.n.calls[after].Method != "setMessageReaction" {
+		t.Fatal("stale refusal suppressed immediate retry")
+	}
+}
 func TestReactionKnownRetryAndCrashReuseFrozenMemberSetter(t *testing.T) {
 	f := newReactionFixture(t)
 	f.f.n.f.bind(t, "200", "12025550123@c.us")
