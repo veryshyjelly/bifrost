@@ -19,7 +19,10 @@ func (c *Client) SendPacket(ctx context.Context, p relay.NativePacket, data io.R
 		reply = &models.ReplyParameters{MessageID: int(p.ReplyTo), AllowSendingWithoutReply: true}
 	}
 	if p.Kind == "text" {
-		request := &bot.SendMessageParams{ChatID: p.Target.ChatID, MessageThreadID: int(p.Target.ThreadID), Text: p.Body.Text, Entities: p.Body.Entities, ReplyParameters: reply, ReplyMarkup: p.Markup}
+		request := &bot.SendMessageParams{ChatID: p.Target.ChatID, MessageThreadID: int(p.Target.ThreadID), Text: p.Body.Text, Entities: p.Body.Entities, ReplyParameters: reply}
+		if p.Markup != nil {
+			request.ReplyMarkup = p.Markup
+		}
 		for _, entity := range p.Body.Entities {
 			if entity.Type == models.MessageEntityTypeTextLink {
 				request.LinkPreviewOptions = &models.LinkPreviewOptions{IsDisabled: bot.True()}
