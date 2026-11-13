@@ -237,6 +237,39 @@ The port SHALL provide an explicit validated SQLite-to-PostgreSQL migration path
 - **WHEN** the owner records the explicit `fresh` queue policy for the prepared archive/account
 - **THEN** old pending/failed jobs and in-progress history runs remain archived rather than enqueued in Go, and group history can be imported afresh after cutover
 - **AND** original uncertain jobs/effects retain their uncertainty without automatic replay or fabricated confirmation; the choice is immutable and cannot activate an otherwise unready import
+- **AND** archived ingress deduplication keys prevent provider retries from recreating discarded backlog; fresh history uses new run keys and overlapping native work is refused rather than deleted
+
+#### Scenario: Assemble workflows without starting dispatch
+
+- **WHEN** the composition root constructs the complete workflow graph
+- **THEN** every supported job kind and specialized callback/management path is registered without provider requests, polling, token migration or scheduler startup
+- **AND** restricted bootstrap consumption cannot claim ordinary ingress; dispatch requires local identity verification for the current credential/configuration and startup refuses failed or uncertain bot setup
+
+#### Scenario: Runtime ownership is lost or duplicated
+
+- **WHEN** a second Go runtime requests the same account or its dedicated PostgreSQL session is lost
+- **THEN** duplicate ownership is refused and connection loss invalidates the original lease; unconfirmed unlock closes the session before it can return to the pool
+- **AND** diagnostic serve remains non-dispatching and legacy writer shutdown remains an explicit cutover step
+
+#### Scenario: Explicit runtime startup and restart
+- **WHEN** the operator starts `run` with the permanent account and restored credentials
+- **THEN** authenticated ingress may buffer while bot setup runs, but ordinary dispatch and cron wait for local identity verification and callback setup
+- **AND** every restart rechecks native bot identities and refreshes callback settings without dropping pending updates, replaying hosted logout or replacing retained ciphertext
+- **AND** the runtime restores the existing Status startup refresh, preserves configured pacing between queue jobs, and stops its worker/scheduler before releasing account ownership
+- **AND** readiness remains false during setup and shutdown; provider/account mismatch refuses startup without claiming ordinary jobs
+
+#### Scenario: Activate a verified fresh-queue import
+- **WHEN** all retained-state projections and the archive-bound fresh-queue policy are present and restored media/Telegram trees match the stopped-writer archive byte for byte
+- **THEN** explicit activation records immutable asset digests and releases the import gate atomically, without starting dispatch or confirming archived uncertain effects
+- **AND** changed identity/configuration, incomplete projections, mismatched assets and an already populated native queue are refused without deleting work
+- **AND** an exact activation retry preserves the original receipt while changed evidence is refused
+
+#### Scenario: Preserve real local API files and retired diagnostics
+- **WHEN** an archive contains the local Telegram API's literal bot-token directories or known retired forwarding/validation records
+- **THEN** token-directory paths are restored only beneath the Telegram archive root and those records remain exact archival evidence without native consumers
+- **AND** unsafe drive/traversal/link/alternate-stream paths and unknown domains or job types remain refused
+- **AND** an incidental non-topic reply-thread ID cannot replace a proven main-chat destination; real topic conflicts remain refused and original receipts remain intact
+- **AND** an echo whose copy was removed may retain only an exact ordinary-group reference proven by the original owner's completed Telegram update and independently resolved WhatsApp source, without creating a mapping, confirmed send or applied/refused cache
 
 ### Requirement: Docker Compose setup
 

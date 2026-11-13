@@ -51,7 +51,7 @@ Pair WhatsApp through OpenWA and create a scoped API key. Record the session/key
 
 ## Development and validation
 
-Use Go 1.27.3. PostgreSQL uses pgx/v5, explicit sqlc queries and embedded Goose migrations. Dependencies and the sqlc tool are pinned in go.mod/go.sum. Run:
+Use Go 1.27.4. PostgreSQL uses pgx/v5, explicit sqlc queries and embedded Goose migrations. Dependencies and the sqlc tool are pinned in go.mod/go.sum. Run:
 
 ```sh
 make check

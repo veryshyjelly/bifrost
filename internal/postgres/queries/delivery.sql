@@ -13,6 +13,7 @@ WITH gate AS (
 )
 INSERT INTO jobs (account_id, dedup, stream, kind, payload)
 SELECT sqlc.arg(account_id), sqlc.arg(dedup), sqlc.arg(stream), sqlc.arg(kind), sqlc.arg(payload) FROM gate
+WHERE NOT EXISTS(SELECT 1 FROM legacy_ingress_dedup old WHERE old.account_id=sqlc.arg(account_id) AND old.dedup=sqlc.arg(dedup))
 ON CONFLICT (account_id, dedup) DO NOTHING
 RETURNING id;
 
@@ -20,6 +21,7 @@ RETURNING id;
 WITH candidate AS (
   SELECT j.id FROM jobs j
   WHERE j.state = 'pending' AND j.due <= clock_timestamp()
+    AND (COALESCE(cardinality(sqlc.arg(kinds)::text[]),0)=0 OR j.kind=ANY(sqlc.arg(kinds)::text[]))
     AND NOT EXISTS (SELECT 1 FROM legacy_imports li WHERE li.account_id=j.account_id AND li.activated_at IS NULL)
     AND NOT (j.kind='wa' AND EXISTS (
       SELECT 1 FROM history_runs h WHERE h.account_id=j.account_id AND h.state IN ('queued','fetching','delivering')

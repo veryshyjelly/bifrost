@@ -23,10 +23,11 @@ type ReactionCopy struct {
 	TelegramChat, TelegramMessage, TelegramThread int64
 }
 type ReactionEvidence struct {
-	Values []KV
-	Jobs   []Job
-	Copies []ReactionCopy
-	Bots   []string
+	Values  []KV
+	Jobs    []Job
+	Copies  []ReactionCopy
+	Bots    []string
+	OwnerID int64
 }
 type RetainedReactionState struct {
 	ChatID, MessageID, SourceKey string
@@ -58,7 +59,13 @@ func reactionSourceKey(account, chat, message string) string {
 
 // ProjectIncomingReactions restores only retained facts. Opaque keys must match
 // original message/job coordinates and original Telegram copy locations.
-func ProjectIncomingReactions(account string, evidence ReactionEvidence, directory *identity.Directory) (IncomingReactionState, error) {
+func ProjectIncomingReactions(account string, evidence ReactionEvidence, directory *identity.Directory) (_ IncomingReactionState, err error) {
+	phase := "source coordinates"
+	defer func() {
+		if err != nil {
+			err = fmt.Errorf("legacy reaction %s evidence: %w", phase, err)
+		}
+	}()
 	var result IncomingReactionState
 	if !validAccount(account) || directory == nil {
 		return result, ErrInvalid
@@ -92,6 +99,7 @@ func ProjectIncomingReactions(account string, evidence ReactionEvidence, directo
 		bots[bot] = true
 	}
 	copies := map[reactionCopyKey]ReactionCopy{}
+	phase = "retained copy"
 	for _, copy := range evidence.Copies {
 		if !bots[copy.BotID] || !validTelegramChat(strconv.FormatInt(copy.TelegramChat, 10)) || !validMessageID(copy.TelegramMessage) || copy.TelegramThread < 0 || copy.TelegramThread == 1 || copy.TelegramThread > 2147483647 || (copy.TelegramChat > 0 && copy.TelegramThread != 0) {
 			return result, ErrInvalid
@@ -118,7 +126,35 @@ func ProjectIncomingReactions(account string, evidence ReactionEvidence, directo
 		}
 	}
 	pendingJobs := map[string]reactionCoordinate{}
+	phase = "source jobs"
+	observedEchoTargets := map[reactionCopyKey]control.Target{}
 	for _, job := range evidence.Jobs {
+		if job.Type == "tg" && job.State == "done" && evidence.OwnerID > 0 {
+			var source struct {
+				Bot    string
+				Update struct {
+					Reaction *struct {
+						Chat struct {
+							ID      int64
+							Type    string
+							IsForum bool `json:"is_forum"`
+						}
+						User *struct {
+							ID    int64
+							IsBot bool `json:"is_bot"`
+						}
+						MessageID int64 `json:"message_id"`
+					} `json:"message_reaction"`
+				}
+			}
+			if json.Unmarshal([]byte(job.Payload), &source) == nil {
+				r := source.Update.Reaction
+				if r != nil && bots[source.Bot] && r.User != nil && !r.User.IsBot && r.User.ID == evidence.OwnerID && r.Chat.ID < 0 && !r.Chat.IsForum && (r.Chat.Type == "group" || r.Chat.Type == "supergroup") && validMessageID(r.MessageID) {
+					key := reactionCopyKey{source.Bot, r.Chat.ID, r.MessageID}
+					observedEchoTargets[key] = control.Target{BotID: source.Bot, ChatID: r.Chat.ID}
+				}
+			}
+		}
 		if job.Type != "wa" {
 			continue
 		}
@@ -179,9 +215,24 @@ func ProjectIncomingReactions(account string, evidence ReactionEvidence, directo
 		chat, _ := strconv.ParseInt(saved.Chat, 10, 64)
 		copy, found := copies[reactionCopyKey{saved.Bot, chat, saved.Message}]
 		if !found {
-			return reactions.Echo{}, ErrReactionEvidence
+			// Original owner reaction updates prove the scope of a retained
+			// reference after its copy was removed. They prove no send or
+			// mapping and are sufficient only for an ordinary main chat.
+			target, ok := observedEchoTargets[reactionCopyKey{saved.Bot, chat, saved.Message}]
+			if !ok {
+				return reactions.Echo{}, ErrReactionEvidence
+			}
+			return reactions.Echo{ActorID: directory.Canonical(saved.Sender), Emoji: saved.Emoji, Target: target, MessageID: saved.Message, At: saved.At}, nil
 		}
 		return reactions.Echo{ActorID: directory.Canonical(saved.Sender), Emoji: saved.Emoji, Target: control.Target{BotID: saved.Bot, ChatID: chat, ThreadID: copy.TelegramThread}, MessageID: saved.Message, At: saved.At}, nil
+	}
+	echoSourceMatches := func(echo reactions.Echo, coordinate reactionCoordinate) bool {
+		key := reactionCopyKey{echo.Target.BotID, echo.Target.ChatID, echo.MessageID}
+		if copy, found := copies[key]; found {
+			return directory.Canonical(copy.RawChatID) == coordinate.chat && copy.MessageID == coordinate.message
+		}
+		_, observed := observedEchoTargets[key]
+		return observed
 	}
 	ordered := append([]KV(nil), evidence.Values...)
 	sort.Slice(ordered, func(i, j int) bool {
@@ -204,23 +255,28 @@ func ProjectIncomingReactions(account string, evidence ReactionEvidence, directo
 		}
 		seen[key] = true
 		if value.Kind == "tg-reaction-state" {
+			phase = "destination coordinates"
 			destination, found := destinations[value.ID]
 			if !found {
 				return IncomingReactionState{}, ErrReactionEvidence
 			}
+			phase = "destination cache"
 			cache, pending, err := projectReactionCache([]byte(value.Value), bots)
 			if err != nil {
 				return IncomingReactionState{}, err
 			}
+			phase = "pending fallback reference"
 			if pending != "" && pendingJobs[pending] != destination.coordinate {
 				return IncomingReactionState{}, ErrReactionEvidence
 			}
 			for bot, applied := range cache.Applied {
+				phase = "applied target"
 				if !targets[destination][applied.MessageID] || (destination.key[0] != '*' && !strings.HasPrefix(destination.key, bot+":")) {
 					return IncomingReactionState{}, ErrReactionEvidence
 				}
 			}
 			for bot, refused := range cache.Refused {
+				phase = "refused target"
 				if !targets[destination][refused.MessageID] || (destination.key[0] != '*' && !strings.HasPrefix(destination.key, bot+":")) {
 					return IncomingReactionState{}, ErrReactionEvidence
 				}
@@ -237,17 +293,19 @@ func ProjectIncomingReactions(account string, evidence ReactionEvidence, directo
 			result.Caches = append(result.Caches, RetainedReactionCache{ChatID: destination.coordinate.chat, MessageID: destination.coordinate.message, SourceKey: value.ID, DestinationKey: destination.key, PendingFallback: pending, Cache: cache})
 			continue
 		}
+		phase = "source hash"
 		coordinate, found := bySource[value.ID]
 		if !found {
 			return IncomingReactionState{}, ErrReactionEvidence
 		}
 		if value.Kind == "reaction-echo" {
+			phase = "echo target"
 			echo, err := resolveEcho([]byte(value.Value))
 			if err != nil {
 				return IncomingReactionState{}, err
 			}
-			copy := copies[reactionCopyKey{echo.Target.BotID, echo.Target.ChatID, echo.MessageID}]
-			if directory.Canonical(copy.RawChatID) != coordinate.chat || copy.MessageID != coordinate.message {
+			phase = "echo source association"
+			if !echoSourceMatches(echo, coordinate) {
 				return IncomingReactionState{}, ErrReactionEvidence
 			}
 			if i, exists := echoes[coordinate]; exists {
@@ -265,6 +323,7 @@ func ProjectIncomingReactions(account string, evidence ReactionEvidence, directo
 			Revision *int64
 			Event    string
 		}
+		phase = "actor state"
 		if json.Unmarshal([]byte(value.Value), &saved) != nil || saved.Senders == nil || saved.Revision == nil || *saved.Revision < 0 || *saved.Revision > 9007199254740991 || (saved.Event != "" && !validText(saved.Event, 8192)) {
 			return IncomingReactionState{}, ErrInvalid
 		}
@@ -286,8 +345,7 @@ func ProjectIncomingReactions(account string, evidence ReactionEvidence, directo
 				if err != nil {
 					return IncomingReactionState{}, err
 				}
-				copy := copies[reactionCopyKey{echo.Target.BotID, echo.Target.ChatID, echo.MessageID}]
-				if directory.Canonical(copy.RawChatID) != coordinate.chat || copy.MessageID != coordinate.message {
+				if !echoSourceMatches(echo, coordinate) {
 					return IncomingReactionState{}, ErrReactionEvidence
 				}
 				item.Echo = &echo

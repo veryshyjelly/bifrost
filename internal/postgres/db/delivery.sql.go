@@ -13,6 +13,7 @@ const claim = `-- name: Claim :one
 WITH candidate AS (
   SELECT j.id FROM jobs j
   WHERE j.state = 'pending' AND j.due <= clock_timestamp()
+    AND (COALESCE(cardinality($3::text[]),0)=0 OR j.kind=ANY($3::text[]))
     AND NOT EXISTS (SELECT 1 FROM legacy_imports li WHERE li.account_id=j.account_id AND li.activated_at IS NULL)
     AND NOT (j.kind='wa' AND EXISTS (
       SELECT 1 FROM history_runs h WHERE h.account_id=j.account_id AND h.state IN ('queued','fetching','delivering')
@@ -38,10 +39,11 @@ FROM candidate WHERE jobs.id = candidate.id RETURNING jobs.id, jobs.account_id, 
 type ClaimParams struct {
 	Token        string
 	LeaseSeconds int32
+	Kinds        []string
 }
 
 func (q *Queries) Claim(ctx context.Context, arg ClaimParams) (Job, error) {
-	row := q.db.QueryRow(ctx, claim, arg.Token, arg.LeaseSeconds)
+	row := q.db.QueryRow(ctx, claim, arg.Token, arg.LeaseSeconds, arg.Kinds)
 	var i Job
 	err := row.Scan(
 		&i.ID,
@@ -121,6 +123,7 @@ WITH gate AS (
 )
 INSERT INTO jobs (account_id, dedup, stream, kind, payload)
 SELECT $1, $2, $3, $4, $5 FROM gate
+WHERE NOT EXISTS(SELECT 1 FROM legacy_ingress_dedup old WHERE old.account_id=$1 AND old.dedup=$2)
 ON CONFLICT (account_id, dedup) DO NOTHING
 RETURNING id
 `

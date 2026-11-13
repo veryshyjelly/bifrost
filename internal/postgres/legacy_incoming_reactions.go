@@ -22,7 +22,7 @@ type LegacyIncomingReactionProjection struct {
 
 // ProjectLegacyIncomingReactions preserves confirmed settings and source actor
 // facts independently of unfinished original reaction/notice job orchestration.
-func (s *Store) ProjectLegacyIncomingReactions(ctx context.Context, account string) (LegacyIncomingReactionProjection, error) {
+func (s *Store) ProjectLegacyIncomingReactions(ctx context.Context, account string, key [32]byte) (LegacyIncomingReactionProjection, error) {
 	var result LegacyIncomingReactionProjection
 	if account == "" {
 		return result, legacy.ErrInvalid
@@ -40,10 +40,14 @@ func (s *Store) ProjectLegacyIncomingReactions(ctx context.Context, account stri
 	if err != nil {
 		return result, err
 	}
-	if saved.AccountID != account {
+	if !legacyKeyMatches(saved, account, key) {
 		return result, ErrLegacyDestination
 	}
 	checkpoint, err := q.LockLegacyImport(ctx, account)
+	if err != nil {
+		return result, err
+	}
+	configuration, err := legacyConfiguration(checkpoint, key)
 	if err != nil {
 		return result, err
 	}
@@ -81,6 +85,7 @@ func (s *Store) ProjectLegacyIncomingReactions(ctx context.Context, account stri
 		return result, err
 	}
 	var evidence legacy.ReactionEvidence
+	evidence.OwnerID = configuration.OwnerID()
 	values, err := q.LegacyIncomingReactionValues(ctx, account)
 	if err != nil {
 		return result, err

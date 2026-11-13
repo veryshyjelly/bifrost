@@ -181,6 +181,13 @@ type Job struct {
 	Created    pgtype.Timestamptz
 }
 
+type LegacyAssetVerification struct {
+	AccountID     string
+	ArchiveDigest string
+	Receipt       []byte
+	VerifiedAt    pgtype.Timestamptz
+}
+
 type LegacyBotLogout struct {
 	AccountID          string
 	BotID              string
@@ -228,6 +235,11 @@ type LegacyImport struct {
 type LegacyIncomingReactionProjection struct {
 	AccountID string
 	Result    []byte
+}
+
+type LegacyIngressDedup struct {
+	AccountID string
+	Dedup     string
 }
 
 type LegacyInteractionProjection struct {

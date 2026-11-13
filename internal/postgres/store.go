@@ -123,6 +123,19 @@ func jobFrom(row db.Job) delivery.Job {
 }
 
 func (s *Store) Claim(ctx context.Context, lease time.Duration) (delivery.Job, error) {
+	return s.claimKinds(ctx, lease, nil)
+}
+
+// ClaimKinds limits bootstrap consumption without claiming ordinary ingress.
+// Empty filters are refused; ordinary workers use Claim explicitly.
+func (s *Store) ClaimKinds(ctx context.Context, lease time.Duration, kinds []string) (delivery.Job, error) {
+	if len(kinds) == 0 {
+		return delivery.Job{}, delivery.ErrInvalid
+	}
+	return s.claimKinds(ctx, lease, kinds)
+}
+
+func (s *Store) claimKinds(ctx context.Context, lease time.Duration, kinds []string) (delivery.Job, error) {
 	n, err := seconds(lease, true)
 	if err != nil {
 		return delivery.Job{}, err
@@ -136,7 +149,7 @@ func (s *Store) Claim(ctx context.Context, lease time.Duration) (delivery.Job, e
 	if err := q.LockQueueTopology(ctx); err != nil {
 		return delivery.Job{}, err
 	}
-	row, err := q.Claim(ctx, db.ClaimParams{Token: rand.Text(), LeaseSeconds: n})
+	row, err := q.Claim(ctx, db.ClaimParams{Token: rand.Text(), LeaseSeconds: n, Kinds: kinds})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return delivery.Job{}, delivery.ErrNoJob
 	}

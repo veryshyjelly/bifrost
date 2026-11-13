@@ -129,6 +129,20 @@ func TestProjectMessagesRefusesWrongBotReceiptsAndConflictingThreadEvidence(t *t
 	}
 }
 
+func TestProjectMessagesPreservesMainChatWithIncidentalReplyThread(t *testing.T) {
+	c, d := messageConfiguration(t)
+	raw := `{"message_id":42,"chat":{"id":-100,"type":"supergroup"},"message_thread_id":9001,"text":"Reply in the main chat"}`
+	input := MessageEvidence{Mappings: []Message{{WAChat: "12025550123@c.us", WAID: "source", TGChat: "-100", TGID: 42, Bot: "master", Direction: "in"}}, Observations: []TelegramMessage{{Seq: 1, Scope: "*", Chat: "-100", Message: 42, Bot: "master", Thread: 0, Kind: "chat"}}, Values: []KV{receiptValue("master", -100, 42, raw)}}
+	r, err := ProjectMessages(c, "original-account", d, input)
+	if err != nil || r.Mappings[0].Thread != 0 || string(r.Mappings[0].Receipt) != raw {
+		t.Fatal("incidental reply thread replaced proven main-chat scope or original receipt", err)
+	}
+	input.Values = []KV{receiptValue("master", -100, 42, strings.Replace(raw, `"message_thread_id":9001`, `"is_topic_message":true,"message_thread_id":9001`, 1))}
+	if _, err = ProjectMessages(c, "original-account", d, input); !errors.Is(err, ErrMappingEvidence) {
+		t.Fatal("real forum topic conflict accepted", err)
+	}
+}
+
 func TestProjectMessagesPreservesFallbackHistoryAndPermanentSelfIdentity(t *testing.T) {
 	c, d := messageConfiguration(t)
 	// A saved account can differ from the provider connection even when an old

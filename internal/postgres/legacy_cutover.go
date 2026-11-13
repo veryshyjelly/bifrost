@@ -53,7 +53,20 @@ func (s *Store) ChooseLegacyFreshQueue(ctx context.Context, account, digest stri
 	if _, err = q.LegacyStatusProjection(ctx, account); err != nil {
 		return err
 	}
+	if _, err = tx.Exec(ctx, "LOCK TABLE jobs IN SHARE ROW EXCLUSIVE MODE NOWAIT"); err != nil {
+		return err
+	}
+	overlap, err := q.LegacyIngressOverlap(ctx, account)
+	if err != nil {
+		return err
+	}
+	if overlap {
+		return ErrLegacyDestination
+	}
 	if err = q.SaveLegacyCutoverPolicy(ctx, db.SaveLegacyCutoverPolicyParams{AccountID: account, ArchiveDigest: digest}); err != nil {
+		return err
+	}
+	if err = q.SaveLegacyIngressDedup(ctx, account); err != nil {
 		return err
 	}
 	return tx.Commit(ctx)

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/legacy"
 )
 
@@ -31,6 +32,9 @@ func TestFreshQueuePolicyArchivesOriginalWorkWithoutResolvingOrActivatingIt(t *t
 	}
 	if !errors.Is(s.LegacyRuntimeReady(t.Context(), b.Account), ErrLegacyPending) {
 		t.Fatal("queue policy activated unfinished import")
+	}
+	if accepted, err := s.Enqueue(t.Context(), delivery.Event{AccountID: b.Account, Dedup: "original", Stream: "wa:12345@g.us", Kind: "wa", Payload: []byte(`{}`)}); err != nil || accepted {
+		t.Fatal("archived backlog was re-enqueued by duplicate ingress", err)
 	}
 	if err := s.ChooseLegacyFreshQueue(t.Context(), b.Account, "different-archive"); !errors.Is(err, ErrLegacyDestination) {
 		t.Fatal("policy changed archive", err)

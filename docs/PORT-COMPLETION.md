@@ -18,7 +18,7 @@ The owner has approved an empty Go queue at migration: old pending/failed/histor
 - [x] Operational status/inbox commands, passive session notices and atomic delivery-problem admission in isolated fixtures.
 - [x] Explicit scoped topic inspection/reconciliation and authenticated recovery CLI in isolated fixtures.
 - [ ] Read-only legacy SQLite export/validation and transactional PostgreSQL import preserving identity, keys, receipts, mappings and uncertain sends.
-- [ ] Complete runtime dependency composition, callback registration, scheduler, worker and startup recovery, gated from diagnostic serve.
+- [x] Complete runtime dependency composition, callback registration, scheduler, worker and startup recovery, gated from diagnostic serve, in isolated native/PostgreSQL lifecycle tests.
 - [ ] Full OpenSpec acceptance coverage, isolated PostgreSQL/concurrency/recovery tests, final image/Compose checks and safe cutover documentation.
 
 Provider versions verified for this implementation: OpenWA Go SDK `v0.11.1`, go-telegram/bot `v1.28.0`. The reviewed OpenWA gateway commit remains unchanged. No private environment, legacy database, media archive or permanent Docker volume is disposable.

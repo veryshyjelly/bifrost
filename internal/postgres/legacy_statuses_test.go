@@ -29,7 +29,7 @@ INSERT INTO jobs VALUES(201,'tg:master:201','tg:master:-100:60','tg','{"bot":"ma
 func prepareStatusFixture(t *testing.T, s *Store) *legacy.Bundle {
 	t.Helper()
 	b := prepareIncomingReactionFixture(t, s, legacyStatusSQL())
-	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account); err != nil {
+	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account, [32]byte{}); err != nil {
 		t.Fatal(err)
 	}
 	return b

@@ -25,6 +25,18 @@ func (q *Queries) LegacyCutoverPolicy(ctx context.Context, accountID string) (Le
 	return i, err
 }
 
+const legacyIngressOverlap = `-- name: LegacyIngressOverlap :one
+SELECT EXISTS(SELECT 1 FROM jobs j JOIN legacy_rows r ON r.account_id=j.account_id AND r.source_table='jobs'
+WHERE j.account_id=$1 AND j.dedup=convert_from(r.raw_row,'UTF8')::jsonb->>'dedup')
+`
+
+func (q *Queries) LegacyIngressOverlap(ctx context.Context, accountID string) (bool, error) {
+	row := q.db.QueryRow(ctx, legacyIngressOverlap, accountID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const saveLegacyCutoverPolicy = `-- name: SaveLegacyCutoverPolicy :exec
 INSERT INTO legacy_cutover_policies(account_id,archive_digest,queue_mode) VALUES($1,$2,'fresh')
 `
@@ -36,5 +48,16 @@ type SaveLegacyCutoverPolicyParams struct {
 
 func (q *Queries) SaveLegacyCutoverPolicy(ctx context.Context, arg SaveLegacyCutoverPolicyParams) error {
 	_, err := q.db.Exec(ctx, saveLegacyCutoverPolicy, arg.AccountID, arg.ArchiveDigest)
+	return err
+}
+
+const saveLegacyIngressDedup = `-- name: SaveLegacyIngressDedup :exec
+INSERT INTO legacy_ingress_dedup(account_id,dedup)
+SELECT r.account_id,convert_from(r.raw_row,'UTF8')::jsonb->>'dedup' FROM legacy_rows r
+WHERE r.account_id=$1 AND r.source_table='jobs'
+`
+
+func (q *Queries) SaveLegacyIngressDedup(ctx context.Context, accountID string) error {
+	_, err := q.db.Exec(ctx, saveLegacyIngressDedup, accountID)
 	return err
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/veryshyjelly/bifrost/internal/identity"
@@ -64,6 +65,39 @@ func TestLegacyIncomingReactionsPreserveFactsOrderingAndPrivateCopyScope(t *test
 	for _, echo := range got.Echoes {
 		if echo.ChatID == "12025550123@c.us" && (echo.Echo.Target.BotID != "77" || echo.Echo.Target.ThreadID != 0) {
 			t.Fatal("private echo borrowed the master copy")
+		}
+	}
+}
+
+func TestLegacyReactionEchoWithoutSurvivingCopyRequiresOriginalOwnerMainChatObservation(t *testing.T) {
+	d, _ := identity.New(nil, nil, nil, nil)
+	job := `{"bot":"master","update":{"message_reaction":{"chat":{"id":-100,"type":"supergroup"},"user":{"id":123,"is_bot":false},"message_id":10,"new_reaction":[{"type":"emoji","emoji":"👍"}]}}}`
+	e := ReactionEvidence{OwnerID: 123, Bots: []string{"master"}, Jobs: []Job{{Type: "tg", State: "done", Payload: job}}, Values: []KV{
+		{Kind: "wa-complete", ID: "12345@g.us:source", Value: "true"},
+		{Kind: "reaction-echo", ID: reactionSourceKey("account", "12345@g.us", "source"), Value: `{"sender":"12025550999@c.us","bot":"master","chat":"-100","message":10,"emoji":"👍","at":1700000000000}`},
+	}}
+	r, err := ProjectIncomingReactions("account", e, d)
+	if err != nil || len(r.Echoes) != 1 || r.Echoes[0].Echo.Target.ThreadID != 0 || r.Echoes[0].Echo.MessageID != 10 || len(r.Caches) != 0 {
+		t.Fatal("retained owner reference lost or converted into applied settings", err)
+	}
+	for _, mutate := range []func(*ReactionEvidence){
+		func(v *ReactionEvidence) { v.OwnerID = 999 },
+		func(v *ReactionEvidence) { v.Jobs[0].State = "pending" },
+		func(v *ReactionEvidence) {
+			v.Jobs[0].Payload = strings.Replace(job, `"type":"supergroup"`, `"type":"supergroup","is_forum":true`, 1)
+		},
+		func(v *ReactionEvidence) { v.Jobs[0].Payload = strings.Replace(job, `"bot":"master"`, `"bot":"77"`, 1) },
+		func(v *ReactionEvidence) {
+			v.Jobs[0].Payload = strings.Replace(job, `"message_id":10`, `"message_id":11`, 1)
+		},
+		func(v *ReactionEvidence) { v.Values = v.Values[1:] },
+	} {
+		changed := e
+		changed.Jobs = append([]Job(nil), e.Jobs...)
+		changed.Values = append([]KV(nil), e.Values...)
+		mutate(&changed)
+		if _, err := ProjectIncomingReactions("account", changed, d); err == nil {
+			t.Fatal("unproven reaction reference accepted")
 		}
 	}
 }

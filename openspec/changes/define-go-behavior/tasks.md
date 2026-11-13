@@ -382,3 +382,16 @@
 - [x] Preserve existing feed ownership, scoped mutes/revisions, original mute-operation results and permanent skip hashes.
 - [x] Suppress completed/skipped posts in native receive/refresh and retain reply-based author controls without fabricating content/jobs/receipts.
 - [x] Cover native topic reservations, old operation replay, revision advancement, atomic rollback and inactive preparation sequencing.
+
+## Explicit runtime foundation
+
+- [x] Compose supported workflows and specialized management/callback chains without construction-time provider activity.
+- [x] Exercise native bootstrap and relay through the assembled graph against isolated PostgreSQL/local SDK fixtures.
+- [x] Restrict bootstrap claims and require current-credential local API verification before dispatch clients become available.
+- [x] Cover exclusive runtime ownership, connection loss and explicit private runtime configuration.
+- [x] Preserve archived ingress keys under the approved fresh-queue policy without recreating old jobs.
+- [x] Compose explicit run startup/shutdown, authenticated ingress buffering, native callback refresh, paced worker, cron and Status startup under exclusive ownership.
+- [x] Verify native identities on restart without replacing original master ciphertext or replaying hosted logout.
+- [x] Compare restored assets under OS-enforced roots and atomically activate only complete fresh-queue imports with immutable receipts.
+- [x] Exercise lifecycle restart/ownership loss and activation refusals through isolated PostgreSQL/native provider fixtures.
+- [ ] Rehearse the actual legacy archive and complete the single-instance Compose deployment/cutover.

@@ -10,9 +10,58 @@ import (
 	"os"
 	"time"
 
+	"github.com/veryshyjelly/bifrost/internal/config"
 	"github.com/veryshyjelly/bifrost/internal/legacy"
 	"github.com/veryshyjelly/bifrost/internal/postgres"
 )
+
+func activateLegacyCLI(ctx context.Context, args []string, out io.Writer) error {
+	flags := flag.NewFlagSet("legacy-activate", flag.ContinueOnError)
+	flags.SetOutput(io.Discard)
+	file := flags.String("file", "", "frozen legacy archive")
+	scratch := flags.String("scratch", "", "private temporary staging parent")
+	if err := flags.Parse(args); errors.Is(err, flag.ErrHelp) {
+		_, err := fmt.Fprintln(out, "bifrost legacy-activate --file private-export.tar.gz [--scratch DIRECTORY]; requires restored runtime environment and stopped media/Telegram writers; verifies assets and the fresh queue before releasing the import gate; starts no runtime")
+		return err
+	} else if err != nil || flags.NArg() != 0 || *file == "" {
+		return errors.New("use legacy-activate --file private-export.tar.gz")
+	}
+	c, err := config.LoadRuntime(os.Getenv)
+	if err != nil {
+		return err
+	}
+	bundle, err := legacy.OpenBundle(ctx, *file, legacy.BundleOptions{Scratch: *scratch})
+	if err != nil {
+		return err
+	}
+	defer bundle.Close()
+	if bundle.Account != c.AccountID || bundle.Configuration().EncryptionKey() != c.EncryptionKey {
+		return errors.New("activation requires the original permanent account and key")
+	}
+	receipt, err := legacy.VerifyRestoredAssets(ctx, bundle, c.MediaRoot, c.TelegramRoot)
+	if err != nil {
+		return err
+	}
+	connect, cancel := context.WithTimeout(ctx, 15*time.Second)
+	store, err := postgres.Open(connect, c.DatabaseURL)
+	cancel()
+	if err != nil {
+		return errors.New("cannot connect to legacy activation destination")
+	}
+	defer store.Close()
+	if err = validateRuntimeIdentity(ctx, store, c); err != nil {
+		return err
+	}
+	if err = store.ActivateLegacyImport(ctx, bundle, receipt); err != nil {
+		return errors.New("legacy activation refused; verify preparation, fresh queue and restored assets")
+	}
+	return json.NewEncoder(out).Encode(struct {
+		Account       string `json:"account"`
+		ArchiveDigest string `json:"archive_digest"`
+		ImportReady   bool   `json:"import_ready"`
+		Dispatching   bool   `json:"dispatching"`
+	}{bundle.Account, bundle.Digest, true, false})
+}
 
 func prepareLegacyCLI(ctx context.Context, args []string, out io.Writer) error {
 	flags := flag.NewFlagSet("legacy-prepare", flag.ContinueOnError)

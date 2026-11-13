@@ -45,7 +45,7 @@ func prepareIncomingReactionFixture(t *testing.T, s *Store, source string) *lega
 func TestLegacyIncomingReactionProjectionFeedsNativeStateEchoAndDestinationCaches(t *testing.T) {
 	s := testStore(t)
 	b := prepareIncomingReactionFixture(t, s, legacyIncomingReactionSQL())
-	result, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account)
+	result, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account, [32]byte{})
 	if err != nil || result.States != 1 || result.Echoes != 1 || result.Caches != 3 || result.PendingFallback != 1 {
 		t.Fatal("incoming reaction projection incomplete", err)
 	}
@@ -82,7 +82,7 @@ func TestLegacyIncomingReactionProjectionFeedsNativeStateEchoAndDestinationCache
 		t.Fatal("native handling lost confirmed setting/refusal facts")
 	}
 	finish(t, s, job)
-	replay, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account)
+	replay, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account, [32]byte{})
 	if err != nil || !reflect.DeepEqual(result, replay) {
 		t.Fatal("reaction projection replay changed its result", err)
 	}
@@ -101,7 +101,7 @@ CREATE TRIGGER reject_incoming_reaction_projection BEFORE INSERT ON legacy_incom
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account); err == nil {
+	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account, [32]byte{}); err == nil {
 		t.Fatal("failed incoming reaction checkpoint committed")
 	}
 	for _, table := range []string{"message_reactions", "reaction_destinations", "reaction_echoes", "legacy_pending_reaction_notices", "legacy_incoming_reaction_projections"} {
@@ -116,10 +116,10 @@ CREATE TRIGGER reject_incoming_reaction_projection BEFORE INSERT ON legacy_incom
 	if err := s.queries.SaveReactionState(t.Context(), db.SaveReactionStateParams{AccountID: b.Account, WhatsappChat: "12345@g.us", MessageID: "other", Payload: []byte(`{}`)}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account); !errors.Is(err, ErrLegacyDestination) {
+	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account, [32]byte{}); !errors.Is(err, ErrLegacyDestination) {
 		t.Fatal("incoming projection overwrote native state", err)
 	}
-	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), "foreign-account"); !errors.Is(err, ErrLegacyDestination) {
+	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), "foreign-account", [32]byte{}); !errors.Is(err, ErrLegacyDestination) {
 		t.Fatal("foreign account accepted", err)
 	}
 }
@@ -127,7 +127,7 @@ CREATE TRIGGER reject_incoming_reaction_projection BEFORE INSERT ON legacy_incom
 func TestLegacyIncomingReactionProjectionRefusesUnprovenCoordinates(t *testing.T) {
 	s := testStore(t)
 	b := prepareIncomingReactionFixture(t, s, legacyInteractionSQL()+legacyValueSQL("wa-reaction-state", legacy.OutgoingReactionKey("fixture-account", "77777@g.us", "unproven-source"), `{"revision":1,"senders":{"888888@lid":{"emoji":"👍","order":1}}}`))
-	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account); !errors.Is(err, legacy.ErrReactionEvidence) {
+	if _, err := s.ProjectLegacyIncomingReactions(t.Context(), b.Account, [32]byte{}); !errors.Is(err, legacy.ErrReactionEvidence) {
 		t.Fatal("opaque hash invented source coordinates", err)
 	}
 	var n int

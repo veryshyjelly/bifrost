@@ -26,7 +26,7 @@ Versions resolved through `go list -m -json <module>@latest` on 2026-11-10:
 
 | Module/tool | Latest resolved version |
 | --- | --- |
-| Go | 1.27.3 (also installed) |
+| Go | 1.27.4 (also installed; [release history](https://go.dev/doc/devel/release)) |
 | OpenWA SDK (maintained fork) | v0.11.1 |
 | go-telegram/bot | v1.28.0 |
 | pgx/v5 | v5.12.0 |

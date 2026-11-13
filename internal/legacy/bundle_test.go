@@ -76,7 +76,7 @@ func fixtureComponents(t *testing.T, savedAccount string, extra ...string) (map[
 		"telegram-api.env":     []byte("TELEGRAM_API_ID=12345\nTELEGRAM_API_HASH=" + strings.Repeat("a", 32) + "\n"),
 		"data.tar.gz":          fixtureTar(t, []fixtureEntry{{name: ".", kind: tar.TypeDir}, {name: "./bridge.db", body: db}}, nil),
 		"media.tar.gz":         fixtureTar(t, []fixtureEntry{{name: ".", kind: tar.TypeDir}, {name: "./nested/source.webp", body: []byte("original frozen bytes")}}, nil),
-		"telegram-data.tar.gz": fixtureTar(t, []fixtureEntry{{name: ".", kind: tar.TypeDir}, {name: "42/cache/file", body: []byte("retained local API file")}}, nil),
+		"telegram-data.tar.gz": fixtureTar(t, []fixtureEntry{{name: ".", kind: tar.TypeDir}, {name: "42:original-master-token/cache/file", body: []byte("retained local API file")}}, nil),
 	}, sealed
 }
 
@@ -190,6 +190,15 @@ func TestBundleRejectsTamperingAndUnsafeArchivesWithoutLeakingStages(t *testing.
 		{name: "entry limit", opts: BundleOptions{MaxEntries: 7}},
 		{name: "archive byte limit", opts: BundleOptions{MaxArchiveBytes: 10}},
 		{name: "per-file limit", opts: BundleOptions{MaxFileBytes: 512}},
+		{name: "Windows drive", edit: func(c map[string][]byte) {
+			c["telegram-data.tar.gz"] = fixtureTar(t, []fixtureEntry{{name: "C:outside", body: []byte("escape")}}, nil)
+		}},
+		{name: "alternate stream", edit: func(c map[string][]byte) {
+			c["telegram-data.tar.gz"] = fixtureTar(t, []fixtureEntry{{name: "42:original-master-token/cache/file:stream", body: []byte("escape")}}, nil)
+		}},
+		{name: "token directory in media", edit: func(c map[string][]byte) {
+			c["media.tar.gz"] = fixtureTar(t, []fixtureEntry{{name: "42:original-master-token/cache/file", body: []byte("escape")}}, nil)
+		}},
 	}
 	for _, entry := range []fixtureEntry{
 		{name: "../outside", body: []byte("escape")},

@@ -73,8 +73,10 @@ type SnapshotReport struct {
 	Digest       string           `json:"sqlite_digest"`
 }
 
-var durableDomains = stringSet(`action bot chat-request contact control-clear control-index custom-reaction-emoji delivery-target destination-complete destination-start edit-refusal formatted-packets history-choice history-copy history-copy-complete history-day history-plan history-run identity inbox-return latest-edit mention-render mention-token message-presentation migrated outbound-edit outbound-mentions outbound-sticker outgoing-reaction poll-selection provision reaction-echo reaction-self retired-topic revocation revoked route status-feed status-mute status-mute-counter status-mute-op status-skipped sync-group sync-photo sync-result sync-run sync-status sync-waiter telegram-identity telegram-menu telegram-receipt tg-reaction-state wa-complete wa-reaction-state wamessage`)
-var durableJobs = stringSet(`wa tg management control-retire-inbox control-reaction-notice control-edit-notice control-expire control-menu control-clear control-revoke history history-message history-finish status-startup status-refresh sync-start sync-target sync-finish`)
+// Validation checkpoints and retired n8n forwarding jobs are retained only as
+// original evidence. Recognizing them does not install a native consumer.
+var durableDomains = stringSet(`action bot chat-request contact control-clear control-index controls-validation custom-reaction-emoji delivery-target destination-complete destination-start edit-refusal formatted-packets history-choice history-copy history-copy-complete history-day history-plan history-run identity inbox-return latest-edit mention-render mention-token message-presentation migrated outbound-edit outbound-mentions outbound-sticker outgoing-reaction poll-selection presentation-validation provision reaction-echo reaction-self retired-topic revocation revoked route status-feed status-mute status-mute-counter status-mute-op status-skipped sync-group sync-photo sync-result sync-run sync-status sync-waiter telegram-identity telegram-menu telegram-receipt tg-reaction-state wa-complete wa-reaction-state wamessage`)
+var durableJobs = stringSet(`wa tg management n8n control-retire-inbox control-reaction-notice control-edit-notice control-expire control-menu control-clear control-revoke history history-message history-finish status-startup status-refresh sync-start sync-target sync-finish`)
 
 func stringSet(text string) map[string]bool {
 	set := make(map[string]bool)

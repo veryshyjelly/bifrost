@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -99,7 +100,13 @@ func decodeReceipt(raw []byte) (receiptEvidence, bool) {
 // Mapping-only evidence has a null provider receipt. Group copies without a
 // consistent retained location block projection rather than borrowing the
 // current route's thread. The source mapping order is retained.
-func ProjectMessages(c Configuration, account string, directory *identity.Directory, input MessageEvidence) (MessageProjection, error) {
+func ProjectMessages(c Configuration, account string, directory *identity.Directory, input MessageEvidence) (_ MessageProjection, err error) {
+	phase := "configuration"
+	defer func() {
+		if err != nil {
+			err = fmt.Errorf("legacy message %s evidence: %w", phase, err)
+		}
+	}()
 	var result MessageProjection
 	if directory == nil || c.master <= 0 {
 		return result, ErrInvalid
@@ -110,6 +117,7 @@ func ProjectMessages(c Configuration, account string, directory *identity.Direct
 	cache := map[string]KV{}
 	targets := map[string]targetEvidence{}
 	senderBots := map[int64][]string{c.master: {"master"}}
+	phase = "frozen target"
 	for _, v := range input.Values {
 		if _, duplicate := cache[v.Kind+"\x00"+v.ID]; duplicate {
 			return result, ErrInvalid
@@ -144,6 +152,7 @@ func ProjectMessages(c Configuration, account string, directory *identity.Direct
 		targets[prefix] = targetEvidence{prefix: prefix, bot: target.Bot, chat: chat, thread: target.Thread}
 	}
 	scope := sha256.Sum256([]byte(account))
+	phase = "self identity"
 	if v, exists := cache["reaction-self\x00"+hex.EncodeToString(scope[:])]; exists {
 		var self struct{ Sender string }
 		if validateJSON([]byte(v.Value), true) != nil || json.Unmarshal([]byte(v.Value), &self) != nil {
@@ -158,6 +167,7 @@ func ProjectMessages(c Configuration, account string, directory *identity.Direct
 	// A logical master can have historical credentials. A frozen target prefix
 	// or exact cached receipt retains that scope without guessing its old ID.
 	effectReceipts := map[telegramKey]receiptEvidence{}
+	phase = "confirmed receipt"
 	for _, effect := range input.Effects {
 		if effect.State != "done" || effect.Result == nil {
 			continue
@@ -198,6 +208,7 @@ func ProjectMessages(c Configuration, account string, directory *identity.Direct
 		}
 	}
 	jobs := append([]Job(nil), input.Jobs...)
+	phase = "source snapshot"
 	sort.Slice(jobs, func(i, j int) bool { return jobs[i].ID < jobs[j].ID })
 	userMessages := map[telegramKey]json.RawMessage{}
 	userSources := map[telegramKey]json.RawMessage{}
@@ -242,6 +253,7 @@ func ProjectMessages(c Configuration, account string, directory *identity.Direct
 		}
 	}
 	observed := map[observationKey]TelegramMessage{}
+	phase = "observation"
 	for _, o := range input.Observations {
 		chat, err := strconv.ParseInt(o.Chat, 10, 64)
 		if err != nil {
@@ -272,6 +284,7 @@ func ProjectMessages(c Configuration, account string, directory *identity.Direct
 		result.Observations = append(result.Observations, ImportedObservation{Observation: o, Payload: payload})
 	}
 	for _, mapping := range input.Mappings {
+		phase = "mapping receipt"
 		chat, err := strconv.ParseInt(mapping.TGChat, 10, 64)
 		if err != nil {
 			return result, ErrInvalid
@@ -284,10 +297,12 @@ func ProjectMessages(c Configuration, account string, directory *identity.Direct
 		if !hasReceipt {
 			receipt, hasReceipt = effectReceipts[key]
 		}
+		phase = "mapping location"
 		thread, err := mappingThread(chat, observed[observationKey{scope: telegramScope(mapping.Bot, chat), chat: chat, id: mapping.TGID}], receipt, hasReceipt, userMessages[key])
 		if err != nil {
 			return result, err
 		}
+		phase = "mapping presentation"
 		format, mentioned, err := mappingPresentation(result.SelfID, directory, mapping, cache, historical)
 		if err != nil {
 			return result, err
@@ -356,6 +371,12 @@ func mappingThread(chat int64, observation TelegramMessage, receipt receiptEvide
 		}
 		_, explicit := fields["message_thread_id"]
 		if explicit || !known {
+			// Telegram can return an incidental reply-thread ID in an
+			// ordinary supergroup. As native delivery does, retain a proven
+			// main-chat destination unless this is a real topic message.
+			if known && thread == 0 && !receipt.message.IsTopicMessage {
+				explicit = false
+			}
 			if err := check(int64(receipt.message.MessageThreadID), explicit); err != nil {
 				return 0, err
 			}
@@ -366,7 +387,7 @@ func mappingThread(chat int64, observation TelegramMessage, receipt receiptEvide
 		if json.Unmarshal(userRaw, &message) != nil {
 			return 0, ErrMappingEvidence
 		}
-		if err := check(int64(message.MessageThreadID), true); err != nil {
+		if err := check(int64(message.MessageThreadID), !(known && thread == 0 && !message.IsTopicMessage)); err != nil {
 			return 0, err
 		}
 	}

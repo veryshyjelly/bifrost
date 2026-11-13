@@ -121,10 +121,25 @@ func (s *Store) SeedMasterCredential(ctx context.Context, account string, c bots
 	if err := q.LockContactDirectory(ctx, account); err != nil {
 		return err
 	}
+	// Startup must retain imported ciphertext and identity snapshots. Replacing
+	// the master token belongs to an explicit credential change, not a restart.
+	if saved, err := q.BotCredential(ctx, db.BotCredentialParams{AccountID: account, BotID: "master"}); err == nil {
+		previous, err := decodeCredential(saved)
+		if err != nil || previous.Revision != c.Revision || previous.Identity.ID != c.Identity.ID {
+			return delivery.ErrInvalid
+		}
+		return queueMasterSetup(ctx, tx, q, account, previous, settings)
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return err
+	}
 	c.CreatedNotice = true
 	if err := saveCredential(ctx, q, account, c); err != nil {
 		return err
 	}
+	return queueMasterSetup(ctx, tx, q, account, c, settings)
+}
+
+func queueMasterSetup(ctx context.Context, tx pgx.Tx, q *db.Queries, account string, c bots.Credential, settings bots.Settings) error {
 	if err := queueBotSetup(ctx, q, account, c, settings); err != nil {
 		return err
 	}

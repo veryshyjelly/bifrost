@@ -13,8 +13,11 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/veryshyjelly/bifrost/internal/bots"
 )
 
 var componentNames = []string{"bridge.env", "telegram-api.env", "data.tar.gz", "media.tar.gz", "telegram-data.tar.gz"}
@@ -159,7 +162,7 @@ func OpenBundle(ctx context.Context, filename string, options BundleOptions) (_ 
 		if err != nil {
 			return nil, ErrInvalid
 		}
-		err = extractGzipTar(ctx, f, destination, &budget, nil)
+		err = extractGzipTar(ctx, f, destination, &budget, nil, role == "telegram-data")
 		_ = f.Close()
 		if err != nil {
 			return nil, err
@@ -221,7 +224,7 @@ type extractionBudget struct{ bytes, entries, file int64 }
 
 // extractGzipTar fully consumes the gzip member, verifies its checksum and
 // rejects a second member or hidden nonzero data after the tar terminator.
-func extractGzipTar(ctx context.Context, source io.Reader, destination string, budget *extractionBudget, allowed map[string]bool) error {
+func extractGzipTar(ctx context.Context, source io.Reader, destination string, budget *extractionBudget, allowed map[string]bool, telegramPaths ...bool) error {
 	compressed := bufio.NewReader(source)
 	z, err := gzip.NewReader(compressed)
 	if err != nil {
@@ -248,7 +251,10 @@ func extractGzipTar(ctx context.Context, source io.Reader, destination string, b
 			return ErrInvalid
 		}
 		name := path.Clean(h.Name)
-		if h.Name == "" || strings.ContainsAny(h.Name, "\\\x00") || path.IsAbs(h.Name) || strings.Contains(h.Name, ":") {
+		if h.Name == "" || strings.ContainsAny(h.Name, "\\\x00") || path.IsAbs(h.Name) {
+			return ErrInvalid
+		}
+		if strings.Contains(h.Name, ":") && (len(telegramPaths) != 1 || !telegramPaths[0] || !telegramArchivePath(name)) {
 			return ErrInvalid
 		}
 		for _, part := range strings.Split(h.Name, "/") {
@@ -329,6 +335,20 @@ func extractGzipTar(ctx context.Context, source io.Reader, destination string, b
 		}
 	}
 	return nil
+}
+
+// The local Bot API stores files beneath a literal bot-token directory on
+// Linux. Permit that one colon-bearing component only in its own archive;
+// drive prefixes, alternate streams and colons in later components remain
+// invalid. Paths are never installed on a different filesystem here.
+func telegramArchivePath(name string) bool {
+	first, rest, _ := strings.Cut(name, "/")
+	if strings.Contains(rest, ":") {
+		return false
+	}
+	prefix, _, _ := strings.Cut(first, ":")
+	id, err := strconv.ParseInt(prefix, 10, 64)
+	return err == nil && bots.ValidToken(first, id)
 }
 
 func archiveError(ctx context.Context) error {

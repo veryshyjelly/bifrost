@@ -60,6 +60,29 @@ INSERT INTO telegram_messages VALUES(9007199254740994,'77','123',42,'77',0,'comm
 	}
 }
 
+func TestSnapshotArchivesKnownDiagnosticsAndRetiredForwarding(t *testing.T) {
+	components, _ := fixtureComponents(t, "original-account", `
+INSERT INTO kv VALUES('controls-validation','latest','{"key":"fixture","seq":12,"startedAt":1700000000000}');
+INSERT INTO kv VALUES('presentation-validation','latest','{"seq":13,"at":1700000000000}');
+INSERT INTO jobs VALUES(1,'retired-forwarding','legacy-control','n8n','{"type":"new_conversation"}','pending',1,0,NULL,1700000000000);
+`)
+	b, err := OpenBundle(t.Context(), writeFixtureBundle(t, components, nil, nil), BundleOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+	var archived *Job
+	r, err := ReadSnapshot(t.Context(), b, SQLiteOptions{}, func(record Record) error {
+		if record.Job != nil {
+			archived = record.Job
+		}
+		return nil
+	})
+	if err != nil || archived == nil || archived.Type != "n8n" || archived.State != "pending" || r.Domains["controls-validation"] != 1 || r.Domains["presentation-validation"] != 1 {
+		t.Fatal("known archival evidence lost or converted", err)
+	}
+}
+
 func TestSnapshotRejectsAmbiguousIdentityScopeAndUnsupportedWork(t *testing.T) {
 	cases := []struct {
 		name, sql   string
