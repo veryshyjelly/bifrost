@@ -553,6 +553,16 @@ func (n *Native) send(ctx context.Context, j delivery.Job, e *delivery.Effects, 
 				break
 			}
 			var refusal *providers.Error
+			if !fallback && errors.As(err, &refusal) && refusal.Service == "telegram" && refusal.Status == 400 && !refusal.Retry && !refusal.Uncertain && refusal.Reason == "bot_access_restricted" && refusal.Operation == "sendMessage" {
+				prepared, changed, prepareErr := n.mentionFallback(ctx, j, e, p, index)
+				if prepareErr != nil {
+					return prepareErr
+				}
+				if changed {
+					p, fallback = prepared, true
+					continue
+				}
+			}
 			if errors.As(err, &refusal) && !refusal.Retry && !refusal.Uncertain && refusal.Service == "telegram" {
 				if repaired, repairErr := n.repair(ctx, j, e, p, refusal); repaired || repairErr != nil {
 					return repairErr

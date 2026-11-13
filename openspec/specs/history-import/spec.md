@@ -62,6 +62,25 @@ A partial import SHALL resume its frozen batch, receipts, media and presentation
 - **WHEN** an import stops after an attachment is delivered
 - **THEN** restart resumes remaining parts using saved receipts
 
+#### Scenario: Definitive item refusal is repaired
+
+- **WHEN** an item is definitively refused and the original failed job is reviewed for retry after repair
+- **THEN** the saved batch resumes with the original effect requests and keys, completed items are not posted again, and no new source fetch occurs
+
+### Requirement: Restricted native bot mentions
+
+A definitive Telegram `BOT_ACCESS_RESTRICTED` refusal of a native bot mention in a text packet SHALL permit a verified public bot-link fallback while retaining the exact text, sender, destination and all other entities. The saved username SHALL still belong to the frozen bot ID. The original request SHALL remain immutable and the fallback SHALL use a separate durable effect key. Bot access settings SHALL remain unchanged.
+
+#### Scenario: Restricted mention in a saved batch
+
+- **WHEN** Telegram definitively refuses the text packet and the master verifies the original bot ID and username in the destination
+- **THEN** the refused effect is retained as discarded, the verified link packet is frozen independently, and history continues after confirmed delivery
+
+#### Scenario: Unknown or unverified fallback
+
+- **WHEN** a fallback acknowledgement is unknown, the username no longer matches, or the original operation is rate limited
+- **THEN** unknown sends require review, mismatched identities are refused and rate limits retry the original packet without changing it
+
 ### Requirement: History presentation
 
 New imports SHALL retain daily date headings and compact native-time messages, use the configured timezone for day boundaries, identify owner messages as You, and omit empty sections for skipped messages.

@@ -12,6 +12,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -43,33 +44,36 @@ type nativeSend struct {
 	Request     map[string]json.RawMessage
 }
 type nativeFixture struct {
-	f               *relayFixture
-	native          *relay.Native
-	assets          *attachments.Assets
-	mu              sync.Mutex
-	data            []byte
-	calls           []nativeCall
-	reads           int
-	failMethod      string
-	failCode        int
-	failDescription string
-	failBot         string
-	failThread      int64
-	customEmoji     string
-	perBotNativeIDs bool
-	nativeSequences map[string]int
-	dropMethod      string
-	sends           []nativeSend
-	fileReads       int
-	sendFailure     int
-	dropSend        bool
-	sendFailMethod  string
-	outbound        *relay.Outbound
-	waClient        *wa.Client
-	tgClients       map[string]*tg.Client
-	statusRecords   []sdk.StatusRecord
-	statusLists     int
-	forum           bool
+	f                      *relayFixture
+	native                 *relay.Native
+	assets                 *attachments.Assets
+	mu                     sync.Mutex
+	data                   []byte
+	calls                  []nativeCall
+	reads                  int
+	failMethod             string
+	failCode               int
+	failDescription        string
+	failOnlyNativeMentions bool
+	dropMentionLinks       bool
+	mentionUsername        string
+	failBot                string
+	failThread             int64
+	customEmoji            string
+	perBotNativeIDs        bool
+	nativeSequences        map[string]int
+	dropMethod             string
+	sends                  []nativeSend
+	fileReads              int
+	sendFailure            int
+	dropSend               bool
+	sendFailMethod         string
+	outbound               *relay.Outbound
+	waClient               *wa.Client
+	tgClients              map[string]*tg.Client
+	statusRecords          []sdk.StatusRecord
+	statusLists            int
+	forum                  bool
 }
 
 func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
@@ -151,6 +155,15 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 		}
 		botID := strings.Split(strings.TrimPrefix(r.URL.Path, "/bot"), "/")[0]
 		chat, _ := strconv.ParseInt(r.FormValue("chat_id"), 10, 64)
+		if method == "getChatMember" {
+			user, _ := strconv.ParseInt(r.FormValue("user_id"), 10, 64)
+			username := n.mentionUsername
+			if username == "" {
+				username = "alice_bot"
+			}
+			fmt.Fprintf(w, `{"ok":true,"result":{"status":"member","user":{"id":%d,"is_bot":true,"first_name":"Fixture","username":%q}}}`, user, username)
+			return
+		}
 		thread, _ := strconv.ParseInt(r.FormValue("message_thread_id"), 10, 64)
 		call := nativeCall{Method: method, Bot: botID, Chat: chat, Thread: thread, Text: r.FormValue("text"), Reply: r.FormValue("reply_parameters")}
 		call.MessageID, _ = strconv.Atoi(r.FormValue("message_id"))
@@ -181,7 +194,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			}
 		}
 		n.calls = append(n.calls, call)
-		if method == n.dropMethod {
+		if method == n.dropMethod || (n.dropMentionLinks && strings.Contains(r.FormValue("entities"), "https://t.me/alice_bot")) {
 			conn, _, err := w.(http.Hijacker).Hijack()
 			if err != nil {
 				t.Error(err)
@@ -190,7 +203,7 @@ func newNativeFixture(t *testing.T, f *relayFixture) *nativeFixture {
 			}
 			return
 		}
-		if method == n.failMethod && (n.failBot == "" || n.failBot == botID) && (n.failThread == 0 || n.failThread == thread) {
+		if method == n.failMethod && (n.failBot == "" || n.failBot == botID) && (n.failThread == 0 || n.failThread == thread) && (!n.failOnlyNativeMentions || strings.Contains(r.FormValue("entities"), "text_mention")) {
 			description := n.failDescription
 			if description == "" {
 				description = "fixture native refusal"
@@ -663,6 +676,70 @@ func TestHistorySkipResumesPartialNativePlanWithoutRepeatingLabel(t *testing.T) 
 		t.Fatal("fresh plan replaced frozen delivery", plans)
 	}
 }
+func TestHistoryDefiniteItemFailureReviewResumesFrozenBatchWithoutDuplicates(t *testing.T) {
+	h := newHistoryFixture(t)
+	n := newNativeFixture(t, h.f)
+	wireNativeHistory(t, h, n)
+	ids := fetchNativeHistory(t, h, "all")
+	if len(ids) != 2 {
+		t.Fatal(ids)
+	}
+	if r := h.f.run(t, ids[0], "history-message", h.service.Item); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	n.mu.Lock()
+	n.failMethod, n.failCode = "sendMessage", 400
+	n.mu.Unlock()
+	if r := h.f.run(t, ids[1], "history-message", h.service.Item); r.State != delivery.Failed {
+		t.Fatal(r)
+	}
+	var state string
+	if err := h.f.store.pool.QueryRow(t.Context(), "SELECT state FROM history_runs").Scan(&state); err != nil || state != "failed" {
+		t.Fatal("failed item did not release history hold", state, err)
+	}
+	live := h.f.enqueue(t, "wa", "live-after-history-refusal", "wa:peer@g.us", "")
+	if r := h.f.run(t, live, "wa", func(context.Context, delivery.Job, *delivery.Effects) error { return nil }); r.State != delivery.Done {
+		t.Fatal("history refusal blocked live delivery", r)
+	}
+	var frozen []byte
+	if err := h.f.store.pool.QueryRow(t.Context(), "SELECT request FROM effects WHERE job_id=$1", ids[1]).Scan(&frozen); err != nil {
+		t.Fatal(err)
+	}
+	n.mu.Lock()
+	n.failMethod = ""
+	n.mu.Unlock()
+	h.failure.Store(true) // Recovery must use the original available batch.
+	if err := h.f.store.Review(t.Context(), ids[1], true, false); err != nil {
+		t.Fatal(err)
+	}
+	if r := h.f.run(t, ids[1], "history-message", h.service.Item); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	var retained []byte
+	if err := h.f.store.pool.QueryRow(t.Context(), "SELECT request FROM effects WHERE job_id=$1", ids[1]).Scan(&retained); err != nil || !bytes.Equal(frozen, retained) {
+		t.Fatal("review replaced the frozen send", err)
+	}
+	var finishID int64
+	if err := h.f.store.pool.QueryRow(t.Context(), "SELECT id FROM jobs WHERE kind='history-finish'").Scan(&finishID); err != nil {
+		t.Fatal(err)
+	}
+	if r := h.f.run(t, finishID, "history-finish", h.service.Finish); r.State != delivery.Done {
+		t.Fatal(r)
+	}
+	if err := h.f.store.pool.QueryRow(t.Context(), "SELECT state FROM history_runs").Scan(&state); err != nil || state != "complete" || h.reads.Load() != 1 {
+		t.Fatal(state, h.reads.Load(), err)
+	}
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	if len(n.calls) != 4 || !reflect.DeepEqual(n.calls[2], n.calls[3]) {
+		t.Fatal("review repeated completed packets or changed the refused packet", n.calls)
+	}
+	var copies int
+	if err := h.f.store.pool.QueryRow(t.Context(), "SELECT count(*) FROM message_mappings WHERE direction='in'").Scan(&copies); err != nil || copies != 2 {
+		t.Fatal("history created duplicate mappings", copies, err)
+	}
+}
+
 func TestHistorySkipDoesNotAdoptUnknownNativeSendAndReleasesLiveHold(t *testing.T) {
 	h := newHistoryFixture(t)
 	n := newNativeFixture(t, h.f)

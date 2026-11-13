@@ -70,8 +70,16 @@ func nativePacketValid(p relay.NativePlan, v relay.NativePacket) bool {
 	}
 	if v.Fallback != nil {
 		copy := *v.Fallback
-		if copy.Fallback != nil || copy.FallbackLabel != nil || copy.Kind != "document" || !nativePacketValid(p, copy) {
+		if copy.Fallback != nil || copy.FallbackLabel != nil || !nativePacketValid(p, copy) {
 			return false
+		}
+		if copy.Kind != "document" {
+			original := v
+			original.Fallback = nil
+			expected, ok := relay.BotMentionLinkFallback(original)
+			if !ok || !reflect.DeepEqual(copy, expected) {
+				return false
+			}
 		}
 	}
 	if v.FallbackLabel != nil {

@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-Bifrost is being ported to Go on `port/golang`. The approved behavior contract is in `openspec/`. Preserve every current behavior except the approved conditional caption-clearing change and larger outgoing WhatsApp sticker budget. Linked-name formatting, source deletion choices and former-topic deletion are intentional.
+Bifrost is being ported to Go on `port/golang`. The approved behavior contract is in `openspec/`. Preserve every current behavior except the specified conditional caption clearing, larger outgoing WhatsApp sticker budget and verified-link fallback for definitively refused restricted native bot mentions. Linked-name formatting, source deletion choices and former-topic deletion are intentional.
 
 ## Structure and design
 
@@ -59,3 +59,5 @@ The full TypeScript baseline, tests and original deployment exist at commit `che
 Keep private environments, SQLite databases, media, backups and Docker volumes intact. Never reset permanent BIFROST_ACCOUNT_ID, encryption keys, stable delivery keys or receipts. Preserve uncertain sends for explicit review. Do not start two runtimes against the live identity. A rollback or host transfer requires quiescing writers and reconciling the latest paired-session and delivery state. Follow historical MOVING/RECOVERY instructions before identity import.
 
 Keep commits focused with plain imperative subjects. Describe behavior, validation and remaining integration limits in PRs. Do not introduce new behavior without an OpenSpec change.
+
+Restricted native bot mentions use a fenced text-link fallback only after Telegram sendMessage returns definitive BOT_ACCESS_RESTRICTED. Verify the saved bot ID and username through the master in the original destination; never change bot access settings, sender, text or other entities. Keep the original request discarded and immutable, freeze a separate fallback effect and preserve unknown fallback sends for review. History review resumes its saved batch and original completed receipts. See docs/HISTORY-ATTACHMENTS.md.
