@@ -17,10 +17,6 @@ The setup guides describe installation and operation on either type of host.
 - Caches successful sticker conversions by source content and destination, including
   across restarts. New stickers need one conversion; repeats reuse verified bytes.
 
-The runtime verifies native identities and callbacks before dispatching ordinary
-work. PostgreSQL ownership fencing prevents a second runtime from using the same
-account database. Unknown sends remain unresolved for explicit review.
-
 ## Docker Compose installation
 
 Install Docker with Compose, then run:
