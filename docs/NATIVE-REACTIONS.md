@@ -16,4 +16,24 @@ Reaction setters use frozen plans and fenced idempotent progress, as command-men
 
 Custom equivalents require exactly one grapheme and a Unicode pictograph, regional indicator or keycap component. The latest stable `github.com/clipperhouse/uax29/v2` release, v2.7.0, supplies Unicode 17 grapheme segmentation. Pictograph ranges come from the matching official Unicode 17 data, with its SHA-256 and license retained beside the generated table. This preserves the baseline's emoji validation rather than guessing from custom sticker IDs.
 
+## Group visibility troubleshooting
+
+Each participant bot needs Bot-to-Bot Communication enabled to receive ordinary
+messages from other bots, together with disabled Group Privacy or administrator
+status. Check each participant bot individually.
+
+After disabling Group Privacy, remove and re-add the affected bot to an existing
+group. Telegram requires this for the change to take effect. A global
+`getMe.can_read_all_group_messages=true` value alone does not establish that an
+existing group has picked up the change. Re-adding as an ordinary member is
+sufficient when privacy is disabled; administrator privileges are not required.
+See Telegram's [privacy-mode documentation](https://core.telegram.org/bots/features#privacy-mode)
+and [bot-to-bot communication rules](https://core.telegram.org/bots/features#bot-to-bot-communication).
+
+If a valid mapped message returns `message to react not found` for one bot but
+another bot can react to it, investigate that bot's visibility before changing
+stored mappings. Verify the updated access with a fresh message and a supported
+standard reaction. Unsupported emoji can separately return `REACTION_INVALID`;
+the existing fallback-notice behavior still applies.
+
 Acceptance fixtures cover actor removal/full snapshots, retained actors sharing a bot, member fallback/refusal caching, attributed notices, attachment primaries, missing targets, overlapping private IDs, unresolved custom emoji, frozen equivalents, equivalent deduplication, source echoes and recovery after provider acceptance before progress persistence. Adapter fixtures verify native setter/removal/custom-emoji payloads and safe transport retries. The provider releases were rechecked on 12 November 2026: OpenWA Go SDK v0.11.1 and go-telegram/bot v1.28.0 remain current stable releases.
