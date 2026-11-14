@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestLegacyCronGrammarAndTimezone(t *testing.T) {
+func TestBaselineCronGrammarAndTimezone(t *testing.T) {
 	for _, tc := range []struct {
 		expr, zone, at string
 		want           bool
@@ -41,7 +41,7 @@ func TestLegacyCronGrammarAndTimezone(t *testing.T) {
 	}
 	for _, expr := range []string{"* * * *", "* * * * * *", "@hourly", "? * * * *", "0 24 * * *", "60 * * * *", "*/0 * * * *", "0 0 * * MON", "0 0 0 * *", "0 0 * 13 *", "0 0 * * 8", "1,,2 * * * *", "10-2 * * * *", " off "} {
 		if _, err := New(expr, "UTC"); err == nil {
-			t.Fatal("invalid legacy cron accepted", expr)
+			t.Fatal("invalid baseline cron accepted", expr)
 		}
 	}
 	if _, err := New("* * * * *", "Local"); err == nil {

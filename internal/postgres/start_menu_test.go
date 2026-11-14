@@ -251,7 +251,7 @@ func migratedMenuBot(t *testing.T, f *relayFixture, bot string, nativeID int64) 
 		t.Fatal(r)
 	}
 }
-func TestMenuStartupSelectsOnlyMigratedBotsAndInstallsLegacyScopes(t *testing.T) {
+func TestMenuStartupSelectsOnlyMigratedBotsAndInstallsBaselineScopes(t *testing.T) {
 	f := newRelayFixture(t, nil, true)
 	migratedMenuBot(t, f, "master", 999)
 	migratedMenuBot(t, f, "200", 200)

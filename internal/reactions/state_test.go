@@ -62,7 +62,7 @@ func TestReactionSnapshotPreservesProviderOrderAndRejectsMalformedObjects(t *tes
 		}
 	}
 	if list, err := Snapshot(json.RawMessage(`[]`)); err != nil || list != nil {
-		t.Fatal("legacy list became authoritative", list, err)
+		t.Fatal("baseline list became authoritative", list, err)
 	}
 	if object, err := Snapshot(json.RawMessage(`{"a":3}`)); err != nil || object == nil || len(*object) != 0 {
 		t.Fatal("invalid emoji values were not filtered", object, err)

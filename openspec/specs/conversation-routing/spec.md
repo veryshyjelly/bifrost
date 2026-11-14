@@ -4,7 +4,7 @@
 
 Route owner conversations between WhatsApp, management topics, private member bots and linked groups.
 
-Current TypeScript baseline at `checkpoint-go-contract-baseline`; target changes belong in change specs.
+The current Go runtime implements this contract; proposed behavior changes belong in change specs.
 
 ## Requirements
 

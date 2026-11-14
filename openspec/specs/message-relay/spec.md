@@ -4,7 +4,7 @@
 
 Preserve message meaning, identity, quotes and edits across the bridge.
 
-Current TypeScript baseline at `checkpoint-go-contract-baseline`; target changes belong in change specs.
+The current Go runtime implements this contract; proposed behavior changes belong in change specs.
 
 ## Requirements
 
@@ -45,14 +45,34 @@ Untrusted text SHALL remain literal; native Telegram entities SHALL preserve UTF
 - **THEN** it cannot inject formatting or links
 
 ### Requirement: Telegram edits
-
-Owner text and nonempty caption edits SHALL update the mapped WhatsApp message; definitive refusal SHALL produce a temporary notice and permit later sends. Clearing a caption SHALL remain unsupported in the baseline.
-
+Owner text and caption edits SHALL update only the mapped WhatsApp message. Caption clearing SHALL use an explicit empty caption when the released provider API supports it. Unsupported or definitively refused edits SHALL preserve existing content, give a temporary notice and permit later sends. Clearing SHALL preserve media/mappings, never send a new message or change unrelated text, and retain frozen retry and uncertainty rules.
 #### Scenario: Refused edit
 
 - **WHEN** WhatsApp refuses an owner edit
 - **THEN** the owner sees that it was not applied and the next message proceeds
 
+#### Scenario: Clear a supported caption
+
+- **WHEN** the owner removes the caption from a mapped outgoing media message in Telegram and the latest released provider API supports clearing that caption
+- **THEN** the bridge sends an explicit empty-caption edit for the existing WhatsApp message
+- **AND** the media and existing message mappings remain intact without creating a new message
+
+#### Scenario: Caption clearing unsupported
+
+- **WHEN** the owner removes a mapped outgoing caption but the selected provider does not support clearing it
+- **THEN** the existing WhatsApp caption remains and a temporary notice explains that clearing was not applied
+- **AND** later conversation sends continue
+
+#### Scenario: Retry a rate-limited clear
+
+- **WHEN** a prepared empty-caption edit receives a known rate-limit refusal
+- **THEN** retry honors the provider delay and reuses the original target, explicit empty caption, mention-removal payload and stable edit effect identity
+
+#### Scenario: Ambiguous clear outcome
+
+- **WHEN** an empty-caption edit may have reached WhatsApp before a transport failure
+- **THEN** the effect remains uncertain and requires explicit review under the existing delivery contract
+- **AND** the bridge does not claim that the caption was preserved or cleared without confirmation
 ### Requirement: WhatsApp edits
 
 WhatsApp edits SHALL update retained mapped Telegram copies with their sender presentation and mentions, without recreating explicitly cleared copies.

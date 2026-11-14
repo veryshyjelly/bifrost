@@ -75,7 +75,7 @@ func (p Plan) PacketKey(part int) string {
 	return prefix + ":text:" + strconv.Itoa(part)
 }
 
-// Keep integer serialization in one place for native and legacy effect keys.
+// Keep integer serialization in one place for native and baseline effect keys.
 func (p Plan) FrozenPacket(part int) (string, json.RawMessage, error) {
 	if part < 0 || part >= len(p.Packets) {
 		return "", nil, delivery.ErrInvalid

@@ -11,7 +11,7 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
-func TestLegacyRenderingAndSplittingGoldenFixtures(t *testing.T) {
+func TestBaselineRenderingAndSplittingGoldenFixtures(t *testing.T) {
 	var cases []struct {
 		Options  Options
 		Body     string
@@ -19,7 +19,7 @@ func TestLegacyRenderingAndSplittingGoldenFixtures(t *testing.T) {
 		Rendered Value
 		Parts    []Value
 	}
-	b, err := os.ReadFile("testdata/legacy.json")
+	b, err := os.ReadFile("testdata/rendering.json")
 	if err != nil {
 		t.Fatal(err)
 	}

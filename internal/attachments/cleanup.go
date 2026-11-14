@@ -9,7 +9,7 @@ import (
 )
 
 // Cleanup removes abandoned work only inside this implementation's owned
-// directory. Frozen content-addressed assets and legacy media remain intact.
+// directory. Frozen content-addressed assets and retained media remain intact.
 func (a *Assets) Cleanup(ctx context.Context, now time.Time) error {
 	entries, err := os.ReadDir(a.root)
 	if err != nil {

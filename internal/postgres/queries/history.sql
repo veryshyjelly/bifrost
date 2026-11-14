@@ -27,8 +27,8 @@ AND m.telegram_chat_id=sqlc.arg(chat_id)::bigint AND m.thread_id=sqlc.arg(thread
 AND NOT m.deleted AND NOT COALESCE(o.deleted,false) AND COALESCE(o.thread_id,m.thread_id)=sqlc.arg(thread_id)::bigint
 AND (COALESCE(p.complete,false) OR (m.direction='out' AND m.receipt_origin='native-receipt')
  OR (m.plan_key IS NULL AND m.receipt_origin<>'native-receipt' AND (
-  EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-complete' AND v.source_id=sqlc.arg(legacy_destination_key)::text AND v.source_value::jsonb='true'::jsonb)
-  OR (NOT EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-start' AND v.source_id=sqlc.arg(legacy_destination_key)::text)
+  EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-complete' AND v.source_id=sqlc.arg(retained_destination_key)::text AND v.source_value::jsonb='true'::jsonb)
+  OR (NOT EXISTS(SELECT 1 FROM legacy_values v WHERE v.account_id=m.account_id AND v.kind='destination-start' AND v.source_id=sqlc.arg(retained_destination_key)::text)
    AND (m.direction='out' OR EXISTS(SELECT 1 FROM source_completions c WHERE c.account_id=m.account_id AND c.whatsapp_chat=m.whatsapp_chat AND c.message_id=m.whatsapp_message_id)))
  )))
 AND NOT EXISTS(SELECT 1 FROM retired_topics t WHERE t.account_id=m.account_id AND t.telegram_chat_id=m.telegram_chat_id AND t.thread_id=m.thread_id));

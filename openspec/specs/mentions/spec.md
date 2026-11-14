@@ -4,7 +4,7 @@
 
 Convert explicit tagged identities while preserving validation, identity and rendering across retries.
 
-Current TypeScript baseline at `checkpoint-go-contract-baseline`; target changes belong in change specs.
+The current Go runtime implements this contract; proposed behavior changes belong in change specs.
 
 ## Requirements
 

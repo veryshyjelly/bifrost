@@ -200,13 +200,13 @@ AND NOT EXISTS(SELECT 1 FROM retired_topics t WHERE t.account_id=m.account_id AN
 `
 
 type HistoryDestinationDeliveredParams struct {
-	AccountID            string
-	WhatsappChat         string
-	MessageID            string
-	ChatID               int64
-	ThreadID             int64
-	Scope                string
-	LegacyDestinationKey string
+	AccountID              string
+	WhatsappChat           string
+	MessageID              string
+	ChatID                 int64
+	ThreadID               int64
+	Scope                  string
+	RetainedDestinationKey string
 }
 
 func (q *Queries) HistoryDestinationDelivered(ctx context.Context, arg HistoryDestinationDeliveredParams) (bool, error) {
@@ -217,7 +217,7 @@ func (q *Queries) HistoryDestinationDelivered(ctx context.Context, arg HistoryDe
 		arg.ChatID,
 		arg.ThreadID,
 		arg.Scope,
-		arg.LegacyDestinationKey,
+		arg.RetainedDestinationKey,
 	)
 	var exists bool
 	err := row.Scan(&exists)

@@ -85,7 +85,7 @@ func TestOperatorPreferencesSuppressAndResumeRelaysWithoutReadingWhatsApp(t *tes
 	}
 }
 
-func TestOperatorKeepPreservesLegacyModeSelection(t *testing.T) {
+func TestOperatorKeepPreservesBaselineModeSelection(t *testing.T) {
 	for _, tc := range []struct{ old, want string }{{"group", "group"}, {"dedicated", "inbox"}, {"muted", "inbox"}, {"ignored", "inbox"}} {
 		t.Run(tc.old, func(t *testing.T) {
 			f := newRelayFixture(t, nil, true)

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMirrorEventPreservesLegacyStringAndNativeIntegerIDs(t *testing.T) {
+func TestMirrorEventPreservesBaselineStringAndNativeIntegerIDs(t *testing.T) {
 	for _, raw := range []string{`{"type":"link_group","data":{"chatId":"group@g.us","tgChat":"-9007199254740993"}}`, `{"type":"link_group","data":{"chatId":"group@g.us","tgChat":-9007199254740993}}`} {
 		var e MirrorEvent
 		if err := json.Unmarshal([]byte(raw), &e); err != nil || e.Data.TelegramChat != -9007199254740993 {

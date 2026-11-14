@@ -25,18 +25,12 @@ func run(ctx context.Context, args []string) error {
 		command = args[0]
 	}
 	switch command {
-	case "legacy-activate":
-		return activateLegacyCLI(ctx, args[1:], os.Stdout)
 	case "run":
 		c, err := config.LoadRuntime(os.Getenv)
 		if err != nil {
 			return err
 		}
 		return runRuntime(ctx, c)
-	case "legacy-prepare":
-		return prepareLegacyCLI(ctx, args[1:], os.Stdout)
-	case "legacy-validate":
-		return validateLegacyCLI(ctx, args[1:], os.Stdout)
 	case "review", "inspect-topic", "reconcile-topic":
 		return recoveryCLI(ctx, command, args[1:], os.Stdout)
 	case "check-telegram":
@@ -91,7 +85,7 @@ func run(ctx context.Context, args []string) error {
 		return nil
 	case "serve":
 	default:
-		return errors.New("use run, serve, migrate, configure, healthcheck, check-openwa, check-telegram, review, inspect-topic, reconcile-topic, legacy-validate, legacy-prepare or legacy-activate")
+		return errors.New("use run, serve, migrate, configure, healthcheck, check-openwa, check-telegram, review, inspect-topic, reconcile-topic")
 	}
 	c, err := config.Load(os.Getenv)
 	if err != nil {

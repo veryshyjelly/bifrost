@@ -178,7 +178,7 @@ func serveRuntime(ctx context.Context, store *postgres.Store, c config.Runtime, 
 }
 
 func validateRuntimeIdentity(ctx context.Context, store *postgres.Store, c config.Runtime) error {
-	retained, found, err := store.LegacyRuntimeConfiguration(ctx, c.AccountID, c.EncryptionKey)
+	retained, found, err := store.RetainedRuntimeConfiguration(ctx, c.AccountID, c.EncryptionKey)
 	if err != nil {
 		return errors.New("cannot verify retained runtime configuration")
 	}
@@ -186,7 +186,7 @@ func validateRuntimeIdentity(ctx context.Context, store *postgres.Store, c confi
 		return nil
 	}
 	if retained.OwnerID() != c.OwnerID || retained.ManagementChatID() != c.ManagementChatID || retained.MasterID() != c.MasterBotID || retained.Value("TELEGRAM_MASTER_TOKEN") != c.MasterToken || retained.Value("BRIDGE_ADMIN_TOKEN") != c.AdminToken || retained.Value("OPENWA_WEBHOOK_SECRET") != c.WebhookSecret {
-		return errors.New("runtime identity credentials differ from the retained legacy configuration")
+		return errors.New("runtime identity credentials differ from the retained account configuration")
 	}
 	return nil
 }

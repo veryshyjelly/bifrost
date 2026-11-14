@@ -8,26 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type BridgeBot struct {
-	AccountID string
-	BotID     string
-	Username  string
-	Started   bool
-}
-
-type BridgeContactBot struct {
-	AccountID     string
-	ContactID     string
-	BotID         string
-	SourceProfile string
-}
-
-type BridgeIdentity struct {
-	Singleton      bool
-	AccountID      string
-	KeyFingerprint string
-}
-
 type BridgeRoute struct {
 	AccountID      string
 	WhatsappChat   string
@@ -36,18 +16,6 @@ type BridgeRoute struct {
 	InboxRetired   bool
 	Name           string
 	Mode           string
-}
-
-type CleanupStep struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-}
-
-type ContactAlias struct {
-	AccountID string
-	Alias     string
-	Canonical string
 }
 
 type ContactBindChoice struct {
@@ -62,59 +30,12 @@ type ContactBindChoice struct {
 	Used      bool
 }
 
-type ContactProfile struct {
-	AccountID      string
-	PersonID       string
-	Name           string
-	MetadataSynced bool
-}
-
 type ContactProvision struct {
 	AccountID string
 	PersonID  string
 	SessionID string
 	ChatID    string
 	State     string
-}
-
-type ControlAction struct {
-	AccountID string
-	ActionID  string
-	PlanKey   string
-	Payload   []byte
-}
-
-type ControlClear struct {
-	AccountID string
-	ClearID   string
-	Payload   []byte
-}
-
-type ControlClearItem struct {
-	AccountID      string
-	ClearID        string
-	ObservationSeq int64
-}
-
-type ControlPlan struct {
-	AccountID string
-	PlanKey   string
-	JobID     int64
-	Payload   []byte
-	Complete  bool
-}
-
-type ConversationInbox struct {
-	AccountID      string
-	WhatsappChat   string
-	TelegramChatID int64
-	ThreadID       int64
-}
-
-type CustomReactionEmoji struct {
-	AccountID string
-	CustomID  string
-	Emoji     string
 }
 
 type Effect struct {
@@ -126,19 +47,6 @@ type Effect struct {
 	Result    []byte
 }
 
-type HistoryActivity struct {
-	AccountID    string
-	WhatsappChat string
-	RunID        string
-	Status       string
-}
-
-type HistoryChoice struct {
-	AccountID string
-	ChoiceID  string
-	Payload   []byte
-}
-
 type HistoryItem struct {
 	AccountID string
 	RunID     string
@@ -148,22 +56,6 @@ type HistoryItem struct {
 	State     string
 	Payload   []byte
 	PlanKey   pgtype.Text
-}
-
-type HistoryRun struct {
-	AccountID    string
-	RunID        string
-	SessionID    string
-	WhatsappChat string
-	State        string
-	Payload      []byte
-}
-
-type InboxRetirement struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-	Complete  bool
 }
 
 type Job struct {
@@ -179,136 +71,6 @@ type Job struct {
 	ClaimToken string
 	LeaseUntil pgtype.Timestamptz
 	Created    pgtype.Timestamptz
-}
-
-type LegacyAssetVerification struct {
-	AccountID     string
-	ArchiveDigest string
-	Receipt       []byte
-	VerifiedAt    pgtype.Timestamptz
-}
-
-type LegacyBotLogout struct {
-	AccountID          string
-	BotID              string
-	CredentialRevision string
-}
-
-type LegacyBotProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyChangeProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyCompletionProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyCutoverPolicy struct {
-	AccountID     string
-	ArchiveDigest string
-	QueueMode     string
-	RecordedAt    pgtype.Timestamptz
-}
-
-type LegacyDirectoryProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyImport struct {
-	AccountID               string
-	ArchiveDigest           string
-	SqliteDigest            string
-	Manifest                []byte
-	ConfigurationCiphertext string
-	Report                  []byte
-	PreparedAt              pgtype.Timestamptz
-	ActivatedAt             pgtype.Timestamptz
-}
-
-type LegacyIncomingReactionProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyIngressDedup struct {
-	AccountID string
-	Dedup     string
-}
-
-type LegacyInteractionProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyMessageProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyPendingReactionNotice struct {
-	AccountID      string
-	SourceKey      string
-	WhatsappChat   string
-	MessageID      string
-	DestinationKey string
-	LegacyJobKey   string
-}
-
-type LegacyRouteProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyRow struct {
-	AccountID   string
-	Ordinal     int64
-	SourceTable string
-	RawRow      []byte
-}
-
-type LegacySourceProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyStatusProjection struct {
-	AccountID string
-	Result    []byte
-}
-
-type LegacyValue struct {
-	AccountID   string
-	Kind        string
-	SourceID    string
-	SourceValue string
-}
-
-type MentionRoster struct {
-	AccountID string
-	ChatID    string
-	Payload   []byte
-	FetchedAt int64
-}
-
-type MentionToken struct {
-	AccountID string
-	Token     string
-	ChatID    string
-	PersonID  string
-}
-
-type MessageAsset struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	Asset        []byte
 }
 
 type MessageChangePlan struct {
@@ -350,80 +112,6 @@ type MessageMapping struct {
 	ReceiptOrigin     string
 }
 
-type MessageOutboundEdit struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	BodyHash     string
-}
-
-type MessageReaction struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	Payload      []byte
-}
-
-type MessageTombstone struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	Revoked      bool
-}
-
-type MetadataAdmission struct {
-	AccountID  string
-	RequestKey string
-	RunID      string
-}
-
-type MetadataCronTick struct {
-	AccountID  string
-	SessionID  string
-	Expression string
-	Minute     int64
-	RunID      string
-}
-
-type MetadataInspection struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-}
-
-type MetadataPermission struct {
-	AccountID string
-	ActionID  string
-	Payload   []byte
-}
-
-type MetadataPictureAsset struct {
-	AccountID string
-	AssetHash string
-	Jpeg      []byte
-}
-
-type MetadataPictureCache struct {
-	AccountID  string
-	ScopeKey   string
-	SourceHash string
-	PhotoID    string
-	JobID      int64
-}
-
-type MetadataPicturePlan struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-}
-
-type MetadataReport struct {
-	AccountID string
-	RunID     string
-	JobID     int64
-	Payload   []byte
-}
-
 type MetadataRun struct {
 	Ordinal   int64
 	AccountID string
@@ -433,13 +121,6 @@ type MetadataRun struct {
 	SourceID  string
 	Source    string
 	State     string
-}
-
-type MetadataRunRequest struct {
-	Ordinal   int64
-	AccountID string
-	RunID     string
-	JobID     int64
 }
 
 type MetadataRunTarget struct {
@@ -453,66 +134,10 @@ type MetadataRunTarget struct {
 	Details   []byte
 }
 
-type MetadataSnapshot struct {
-	AccountID string
-	SessionID string
-	SourceID  string
-	JobID     int64
-	FetchedAt int64
-	Payload   []byte
-}
-
-type MetadataTextPlan struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-}
-
-type MetadataTopicName struct {
-	AccountID string
-	SessionID string
-	SourceID  string
-	ChatID    int64
-	ThreadID  int64
-	ReturnKey string
-	Name      string
-}
-
-type MirrorChatRequest struct {
-	AccountID    string
-	RequestID    int32
-	Payload      []byte
-	UsedJobID    pgtype.Int8
-	SelectedChat pgtype.Int8
-}
-
-type MirrorChoice struct {
-	AccountID string
-	ChoiceID  string
-	Payload   []byte
-}
-
-type MirrorReturn struct {
-	AccountID    string
-	WhatsappChat string
-	ReturnKey    string
-}
-
-type MirrorTransition struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-}
-
 type NativePollAction struct {
 	AccountID string
 	ActionID  string
 	PlanKey   string
-	Payload   []byte
-}
-
-type OperationNoticeSetting struct {
-	AccountID string
 	Payload   []byte
 }
 
@@ -523,34 +148,12 @@ type OutgoingReactionPlan struct {
 	Payload   []byte
 }
 
-type PollSelection struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	Options      []byte
-}
-
 type PollVoteJob struct {
 	AccountID   string
 	JobID       int64
 	SourceJobID int64
 	Payload     []byte
 	Plan        []byte
-}
-
-type ReactionDestination struct {
-	AccountID      string
-	WhatsappChat   string
-	MessageID      string
-	DestinationKey string
-	Payload        []byte
-}
-
-type ReactionEcho struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	Payload      []byte
 }
 
 type ReactionPlan struct {
@@ -571,71 +174,12 @@ type RelayPlan struct {
 	Complete     bool
 }
 
-type RetainedMessageEdit struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	SourceKey    string
-	Body         string
-	MentionedIds []byte
-}
-
-type RetainedMessageSource struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	SourceKey    string
-	Payload      []byte
-}
-
-type RetainedReactionChoice struct {
-	AccountID string
-	SourceKey string
-	Emoji     string
-	Supported bool
-}
-
-type RetainedStatusFeed struct {
-	AccountID  string
-	Management int64
-	SourceKey  string
-	Payload    []byte
-}
-
-type RetainedStatusMuteOperation struct {
-	AccountID    string
-	LegacyJobKey string
-	SourceKey    string
-	Payload      []byte
-}
-
-type RetainedStatusSkip struct {
-	AccountID string
-	SourceKey string
-	Author    string
-	SkippedAt int64
-}
-
-type RetiredTopic struct {
-	AccountID      string
-	TelegramChatID int64
-	ThreadID       int64
-	WhatsappChat   string
-	Deleted        bool
-}
-
 type RevocationTask struct {
 	AccountID    string
 	TaskID       string
 	WhatsappChat string
 	MessageID    string
 	Payload      []byte
-}
-
-type RouteTransitionLock struct {
-	AccountID    string
-	WhatsappChat string
-	JobID        int64
 }
 
 type SourceActionJob struct {
@@ -645,50 +189,12 @@ type SourceActionJob struct {
 	Payload     []byte
 }
 
-type SourceCompletion struct {
-	AccountID    string
-	WhatsappChat string
-	MessageID    string
-	SourceKey    string
-}
-
-type StatusControl struct {
-	AccountID string
-	ControlID string
-	PlanKey   string
-	Payload   []byte
-}
-
-type StatusControlEdit struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-	Complete  bool
-}
-
 type StatusFeed struct {
 	AccountID  string
 	Management int64
 	JobID      int64
 	Payload    []byte
 	Complete   bool
-}
-
-type StatusMute struct {
-	AccountID string
-	Author    string
-	Payload   []byte
-}
-
-type StatusMuteCounter struct {
-	AccountID string
-	Revision  int64
-}
-
-type StatusMuteOperation struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
 }
 
 type StatusPost struct {
@@ -708,14 +214,6 @@ type StatusRefresh struct {
 	Complete  bool
 }
 
-type TelegramBotLifecycle struct {
-	AccountID       string
-	BotID           string
-	Identity        []byte
-	MigratedAt      int64
-	MenuInstalledAt int64
-}
-
 type TelegramCredential struct {
 	AccountID     string
 	BotID         string
@@ -723,12 +221,6 @@ type TelegramCredential struct {
 	Revision      string
 	Identity      []byte
 	CreatedNotice bool
-}
-
-type TelegramMenuPlan struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
 }
 
 type TelegramObservation struct {
@@ -745,38 +237,4 @@ type TelegramObservation struct {
 	Deleted      bool
 	ExpiresAt    int64
 	CleanupError string
-}
-
-type TelegramRegistration struct {
-	AccountID string
-	JobID     int64
-	BotID     string
-	Revision  string
-}
-
-type TelegramSetupPlan struct {
-	AccountID string
-	JobID     int64
-	Payload   []byte
-}
-
-type TopicReconciliation struct {
-	AccountID   string
-	OperationID string
-	JobID       int64
-	EffectKey   string
-	Request     []byte
-	Result      []byte
-}
-
-type WhatsappSelf struct {
-	AccountID string
-	PersonID  string
-}
-
-type WhatsappSource struct {
-	AccountID    string
-	JobID        int64
-	WhatsappChat string
-	Payload      []byte
 }

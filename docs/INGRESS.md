@@ -8,7 +8,7 @@ Complete native WhatsApp messages now receive an immutable source snapshot and s
 
 `BRIDGE_INGRESS_ENABLED` defaults to `false`, preserving diagnostic startup for a fresh Compose setup. Enabling it requires a current `OPENWA_SESSION_ID`, a minimum 32-character `OPENWA_WEBHOOK_SECRET`, a positive safe-integer `TELEGRAM_OWNER_ID`, a negative safe-integer `TELEGRAM_MANAGEMENT_CHAT_ID`, and a `TELEGRAM_MASTER_TOKEN` identifying the master bot. Existing account, encryption and admin settings remain required. Errors identify setting names without disclosing values.
 
-Apply embedded migrations with the normal explicit migration step before starting admission. For an isolated development instance, add `BRIDGE_INGRESS_ENABLED=true` to its private `.go.env` after filling provider settings. Do not register the live bridge's callbacks against this partial Go runtime or run a second consumer against its identity. Workflow execution and legacy-state import still need implementation and validation.
+Apply embedded migrations with the normal explicit migration step before starting admission. For an isolated development instance, add `BRIDGE_INGRESS_ENABLED=true` to its private `.go.env` after filling provider settings. Do not register the live bridge's callbacks against this partial Go runtime or run a second consumer against its identity. Workflow execution and existing-state import still need implementation and validation.
 
 Health/status JSON retains `configured: false` until the complete bridge exists and separately reports `ingress: true` when admission is installed. With admission disabled, its endpoints return JSON 404 responses.
 

@@ -1,6 +1,6 @@
 # Private mirror selection and topic controls
 
-`internal/control.Groups` implements `/group`, private `mirror_…` Start links, native `chat_shared` selection and conversation topic headers through the dispatcher in isolated fixtures. The existing mirror transition performs the final private-group/admin checks and commits the link. Metadata work, history execution, contact-bot creation, credential/import workflows and final runtime composition remain pending.
+`internal/control.Groups` implements `/group`, private `mirror_…` Start links, native `chat_shared` selection and conversation topic headers through the dispatcher in isolated fixtures. The existing mirror transition performs the final private-group/admin checks and commits the link. Explicit `run` composes these capabilities after native identity and callback verification; diagnostic `serve` remains passive.
 
 ## Native selection and durable requests
 

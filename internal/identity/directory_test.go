@@ -51,7 +51,7 @@ func TestConflictingEvidenceCannotMergeTwoBotBindings(t *testing.T) {
 	}
 }
 
-func TestBoundProfileKeepsLegacyNamePrecedence(t *testing.T) {
+func TestBoundProfileKeepsBaselineNamePrecedence(t *testing.T) {
 	d, err := New([]Alias{{ID: "987654321@lid", Canonical: "12025550123@c.us"}}, []Profile{{ID: "12025550123@c.us", Name: "Canonical Alice", Synced: true}, {ID: "987654321@lid", Name: "Bound Alice"}}, []Bot{{ID: "42"}}, []Binding{{PersonID: "987654321@lid", BotID: "42"}})
 	if err != nil {
 		t.Fatal(err)

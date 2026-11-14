@@ -1,59 +1,99 @@
 # Bifrost
 
-A personal WhatsApp–Telegram bridge implemented in Go. The [approved OpenSpec contract](openspec/README.md) preserves existing routing, linked-name formatting, deletion choices and delivery safety, with conditional caption clearing when the released provider API permits it.
+A self-hosted WhatsApp–Telegram bridge written in Go. Bifrost connects OpenWA and a
+local Telegram Bot API server with durable routing, delivery and recovery state
+in PostgreSQL.
 
-The Go installation has replaced the legacy runtime. PostgreSQL retains the original identity, encrypted credentials, routes, bindings, confirmed copies and interaction state; media and Telegram files were restored and verified before activation. Old pending jobs and unfinished history remain archived under the owner's approved fresh-queue policy. See [cutover evidence and operations](docs/CUTOVER.md).
+Bifrost supports Docker Compose and optional Android hosting through Termux.
+The setup guides describe installation and operation on either type of host.
 
-Explicit `run` composes authenticated ingress, fenced delivery, text/media, commands, managed bots, mirrors, history, edits, reactions, polls, revocations, Status, metadata scheduling and cleanup. It verifies native provider identities and callbacks before reporting readiness or dispatching ordinary work. Diagnostic `serve` remains passive. See [runtime lifecycle](docs/RUNTIME.md), [completion checklist](docs/PORT-COMPLETION.md) and [validation evidence](docs/VALIDATION.md).
+## What it does
 
-Routing supports management topics, contact bots and linked mirror groups, including `/unmirror` and intentional former-topic deletion. [Identity and mentions](docs/IDENTITY-MENTIONS.md), [history and attachments](docs/HISTORY-ATTACHMENTS.md), [metadata runs](docs/METADATA-RUNS.md) and [sticker limits](docs/STICKER-LIMITS.md) document the retained behavior and recovery rules.
+- Relays text, images, video, voice, documents and static or animated stickers.
+- Routes conversations through management topics, contact bots and mirror groups.
+- Supports replies, mentions, edits, reactions, polls, deletion choices and history.
+- Archives Status posts and schedules resumable metadata refreshes.
+- Freezes delivery requests and receipts so retries preserve their original scope.
+- Caches successful sticker conversions by source content and destination, including
+  across restarts. New stickers need one conversion; repeats reuse verified bytes.
 
-## Complete Compose setup
+The runtime verifies native identities and callbacks before dispatching ordinary
+work. PostgreSQL ownership fencing prevents a second runtime from using the same
+account database. Unknown sends remain unresolved for explicit review.
+
+## Docker Compose installation
+
+Install Docker with Compose, then run:
 
 ```sh
 make configure
-# Fill TELEGRAM_API_ID and TELEGRAM_API_HASH in private .go.env.
+# Fill TELEGRAM_API_ID and TELEGRAM_API_HASH in the private .go.env file.
 make up
 ```
 
-`make configure` creates `.go.env` with mode 0600, independent database credentials, encryption/admin/webhook secrets and a permanent account ID. Repeating it preserves the existing file. It does not read or modify the old installation's private files. Obtain Telegram API credentials from my.telegram.org.
+Obtain Telegram API credentials from [my.telegram.org](https://my.telegram.org).
+`make configure` creates `.go.env` with owner-only permissions, independent database
+credentials, encryption and webhook secrets, and a permanent account ID. Repeating
+it preserves the existing file. Keep that identity and its keys with every backup.
 
-`make up` builds the images, starts PostgreSQL/Redis, explicitly applies Bifrost migrations, then starts Bifrost, OpenWA and the local Telegram API. Everything is owned by the `bifrost-go` Compose project:
+The stack contains PostgreSQL, Redis, OpenWA, Telegram API and Bifrost. PostgreSQL
+uses separate databases and application roles for the bridge and gateway. OpenWA's
+browser/authentication configuration also requires its persistent `/app/data`
+directory. Redis keeps its queue in append-only persistence.
 
-| Service | Role |
-| --- | --- |
-| postgres | One PostgreSQL instance, separate `bifrost` and `openwa` databases and non-superuser accounts |
-| redis | OpenWA queue/cache, persistent append-only storage and noeviction policy |
-| openwa | WhatsApp gateway and dashboard, PostgreSQL message storage, Redis, persistent browser/auth/media data |
-| telegram-api | Official local Telegram Bot API server and persistent file cache |
-| bifrost | Go bridge runtime, authenticated ingress and durable delivery |
-| migrate | Explicit one-shot Goose migration command, under the tools profile |
+| Endpoint | Compose default | Phone host |
+| --- | --- | --- |
+| OpenWA dashboard | `http://127.0.0.1:2786` | `http://127.0.0.1:2785` |
+| Bridge readiness | `http://127.0.0.1:3211/readyz` | `http://127.0.0.1:3210/readyz` |
+| PostgreSQL | `127.0.0.1:5433` | `127.0.0.1:5432` |
 
-Database bootstrap runs only on an empty PostgreSQL volume. App roles cannot connect to each other's databases and never receive the PostgreSQL administrator password. Changing an environment password later does not rotate database credentials automatically. No external Docker network, pre-existing OpenWA checkout or socket proxy is required.
+Host listeners bind loopback. Applications inside Compose use their service names
+and internal ports. Database initialization runs only for an empty volume;
+changing an environment password does not rotate existing database credentials.
 
-OpenWA builds [your maintained fork](https://github.com/veryshyjelly/OpenWA) at reviewed commit `6ef0ab6e9` (upstream 0.30.0 plus media/mention fixes), using a full commit pin for reproducible builds. To use the sibling checkout during development, put `OPENWA_SOURCE=../OpenWa` in `.go.env`; this explicitly builds that checkout, including its local changes. OpenWA's upstream release still requires SQLite for boot/auth configuration even when message storage uses PostgreSQL; its entire `/app/data` directory remains persistent. Bifrost runtime state uses PostgreSQL only.
-
-Default host endpoints bind loopback and avoid the legacy bridge/OpenWA ports:
-
-- OpenWA dashboard: `http://127.0.0.1:2786`
-- Bifrost diagnostics: `http://127.0.0.1:3211/healthz`
-- PostgreSQL: `127.0.0.1:5433` (applications use the internal service address)
-
-On a fresh OpenWA installation, retrieve its bootstrap credential locally when needed:
+For a new installation, retrieve the dashboard bootstrap key locally:
 
 ```sh
 docker compose -p bifrost-go --env-file .go.env exec openwa cat /app/data/.api-key
 ```
 
-For a fresh installation, pair WhatsApp through OpenWA, create a scoped API key and fill the session/key and Telegram owner/master/management fields in `.go.env`. Set `BIFROST_COMMAND=run` and `BRIDGE_INGRESS_ENABLED=true`, then run `make up` again. The initial default `serve` lets you configure providers before enabling forwarding. Existing installations must follow [legacy import](docs/LEGACY-IMPORT.md); never generate replacement identity or keys over retained state or run two paired engines.
+Pair WhatsApp in the dashboard and create a scoped API key. Fill the session/key
+and Telegram owner, master bot and management destination fields in `.go.env`.
+Set `BIFROST_COMMAND=run` and `BRIDGE_INGRESS_ENABLED=true`, then run `make up`
+again. The initial `serve` mode provides passive diagnostics while configuring
+providers. Explicit `run` starts the relay, scheduler and cleanup workflows.
 
-The migrated installation overrides the default ports: OpenWA uses `http://127.0.0.1:2785`, and Bifrost readiness uses `http://127.0.0.1:3210/readyz`. Use `make logs` to follow its bridge and gateway logs.
+OpenWA builds the [maintained fork](https://github.com/veryshyjelly/OpenWA) at a
+reviewed full commit pin, retaining its media and mention fixes. Set
+`OPENWA_SOURCE=../OpenWa` only when deliberately building a sibling checkout.
 
-`make down` stops this project without deleting volumes. Never use `down -v` on an installation whose identity or delivery state must be preserved.
+Use `make logs` to follow the bridge and gateway. `make down` retains volumes.
+Keep paired engines stopped on any retired host; separate database copies cannot
+coordinate runtime ownership with each other.
 
-## Development and validation
+## Termux phone hosting
 
-Use Go 1.27.4. PostgreSQL uses pgx/v5, explicit sqlc queries and embedded Goose migrations. Dependencies and the sqlc tool are pinned in go.mod/go.sum. Run:
+Follow the [Termux setup and operations guide](docs/PHONE-HOST.md) for Android
+prerequisites, Debian/provider artifacts, automatic startup, backups and recovery.
+It includes USB and wireless ADB access, SSH into Termux, dashboard login and the
+Android 12 process-limit setting needed for the service stack.
+
+With USB debugging authorized on the phone, forward the dashboard to the Mac:
+
+```sh
+adb devices
+adb forward tcp:12785 tcp:2785
+```
+
+Open [localhost:12785](http://127.0.0.1:12785), log in with the private OpenWA key
+and select the Bifrost session. Its live page refreshes pairing QR codes. The relay
+runs independently of USB; the forwarded dashboard needs the debugging connection.
+
+## Development
+
+Use the Go version pinned in [go.mod](go.mod), currently 1.27.4. The project uses
+pgx/v5, explicit SQL/sqlc and embedded Goose migrations. Provider clients, codec
+dependencies and tools are pinned.
 
 ```sh
 make check
@@ -61,18 +101,21 @@ make spec-check
 make generate
 ```
 
-`make check` includes formatting, vet, race-enabled tests, repository auditing, Compose validation and generated-query drift detection. PostgreSQL integration tests require an explicitly isolated URL and create/drop unique test schemas:
+`make check` runs formatting, vet, race-enabled Go tests, the private-file audit,
+Compose validation and generated-query drift checks. Database integration tests
+need an isolated PostgreSQL instance and create/drop unique test schemas:
 
 ```sh
-BIFROST_TEST_DATABASE_URL='postgres://bifrost:YOUR_TEST_PASSWORD@localhost:5433/bifrost?sslmode=disable' go test -race ./internal/postgres
+BIFROST_TEST_DATABASE_URL='postgres://test_user:TEST_PASSWORD@localhost:5433/test_db?sslmode=disable' go test -race ./internal/postgres
 ```
 
-Use a disposable test instance, never the live database. CI runs these tests against PostgreSQL. Without the variable, those integration tests are explicitly skipped. Historical checkpoint tests and OpenSpec scenarios provide the behavior reference; native tests cover retries, concurrency, scope checks, partial delivery and recovery.
+Never point tests at the live database. Without that variable, database integration
+tests skip explicitly. Codec tests additionally require
+`BIFROST_TEST_CODECS=1`, the pinned Pillow/ffmpeg environment and Chromium; see
+[sticker behavior and limits](docs/STICKER-LIMITS.md).
 
-The CLI supports `migrate`, `serve`, `run`, `healthcheck`, provider diagnostics, legacy validation/preparation/activation and authenticated recovery. See [provider checks](docs/PROVIDER-CHECKS.md), [ingress](docs/INGRESS.md) and [topic reconciliation](docs/TOPIC-RECONCILIATION.md). It reads environment variables directly; Compose supplies them from `.go.env` and never automatically sources the legacy private files. HTTP exposes liveness, readiness, admin-protected status and reviewed recovery.
-
-## Existing installations
-
-The original TypeScript implementation and tests remain at `checkpoint-typescript-baseline`; [historical deployment/recovery docs](docs/legacy/README.md) are retained. The completed migration keeps original containers, volumes, configuration and final backups. They must remain stopped while Go owns the live identity. See [legacy import](docs/LEGACY-IMPORT.md), [OpenWA migration](docs/OPENWA-MIGRATION.md) and [cutover operations](docs/CUTOVER.md) before attempting another move or rollback.
-
-Read [the implementation design](docs/GO-IMPLEMENTATION.md) and [MCP setup](docs/MCP-SETUP.md). The Go image includes the Python/Pillow codec environment and embedded Lottie renderer; `scripts/transfer-volume.py` supports consistent archival and restoration.
+Read the [behavior contract](openspec/README.md), [runtime lifecycle](docs/RUNTIME.md),
+[CLI commands](cmd/bifrost/README.md), [identity and mentions](docs/IDENTITY-MENTIONS.md),
+[history and attachments](docs/HISTORY-ATTACHMENTS.md) and
+[recovery controls](docs/TOPIC-RECONCILIATION.md). Private environments, databases,
+media, credentials and backups do not belong in Git.

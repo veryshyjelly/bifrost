@@ -43,7 +43,7 @@ func PhoneID(number string) (string, bool) {
 }
 func Local(id string) string { return strings.Split(Normalize(id), "@")[0] }
 
-// CleanName matches the legacy mention label sanitizer and its 48-codepoint cap.
+// CleanName matches the baseline mention label sanitizer and its 48-codepoint cap.
 func CleanName(name string) string {
 	runes := []rune(strings.Map(func(r rune) rune {
 		if r < 32 || strings.ContainsRune("{}|", r) {

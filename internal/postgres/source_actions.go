@@ -145,7 +145,7 @@ func (s *Store) AdmitSourceManagement(ctx context.Context, j delivery.Job, c sou
 			return err
 		}
 		// Management ingress is owner-authenticated and explicitly names the source
-		// message. It retains the legacy direct action surface without requiring a
+		// message. It retains the baseline direct action surface without requiring a
 		// Telegram reply in this separate transport.
 		d, err := directory(ctx, q, row.AccountID)
 		if err != nil {

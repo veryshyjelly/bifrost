@@ -2,7 +2,7 @@ package metadata
 
 import "testing"
 
-func TestClipPreservesLegacyUTF16BudgetAndAllowedWhitespace(t *testing.T) {
+func TestClipPreservesBaselineUTF16BudgetAndAllowedWhitespace(t *testing.T) {
 	for _, tc := range []struct {
 		in   string
 		n    int

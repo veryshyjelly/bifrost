@@ -1,6 +1,6 @@
 # Delivery worker and initial conversation routing
 
-`internal/delivery` now provides a runnable worker over the PostgreSQL claim/effect protocol. `internal/conversation` implements the first inbox creation and delivery-target decisions. These are tested components; `serve` still exposes diagnostic/review/opt-in admission endpoints and does not start a worker, register callbacks or forward live messages. Full workflow handlers and the validated legacy importer must exist before cutover.
+`internal/delivery` now provides a runnable worker over the PostgreSQL claim/effect protocol. `internal/conversation` implements the first inbox creation and delivery-target decisions. These are tested components; `serve` still exposes diagnostic/review/opt-in admission endpoints and does not start a worker, register callbacks or forward live messages. Explicit `run` composes these capabilities after native identity and callback verification; diagnostic `serve` remains passive.
 
 The [native dispatcher](DISPATCH.md) now connects admitted text events and independent read jobs to this worker in integration tests. Complete source admission uses canonical conversation queues; fenced recovery can requeue older unsnapshotted jobs without changing their IDs, delivery keys or retry budget.
 

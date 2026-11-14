@@ -13,10 +13,10 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/control"
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 	"github.com/veryshyjelly/bifrost/internal/ingress"
-	"github.com/veryshyjelly/bifrost/internal/legacy"
 	"github.com/veryshyjelly/bifrost/internal/postgres/db"
 	"github.com/veryshyjelly/bifrost/internal/presentation"
 	"github.com/veryshyjelly/bifrost/internal/reactions"
+	"github.com/veryshyjelly/bifrost/internal/retained"
 )
 
 func outgoingReactionPlan(ctx context.Context, q *db.Queries, account, key string) (db.OutgoingReactionPlan, reactions.OutgoingPlan, error) {
@@ -112,7 +112,7 @@ func outgoingReactionInput(ctx context.Context, q *db.Queries, row db.Job, c rea
 	} else if !errors.Is(err, pgx.ErrNoRows) {
 		return result, err
 	}
-	choice, err := q.RetainedReactionChoice(ctx, db.RetainedReactionChoiceParams{AccountID: row.AccountID, SourceKey: legacy.OutgoingReactionKey(row.AccountID, envelope.Bot, row.Dedup)})
+	choice, err := q.RetainedReactionChoice(ctx, db.RetainedReactionChoiceParams{AccountID: row.AccountID, SourceKey: retained.OutgoingReactionKey(row.AccountID, envelope.Bot, row.Dedup)})
 	if err == nil {
 		result.FrozenChoice = &reactions.FrozenChoice{Emoji: choice.Emoji, Supported: choice.Supported}
 	} else if !errors.Is(err, pgx.ErrNoRows) {

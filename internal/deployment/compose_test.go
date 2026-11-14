@@ -44,7 +44,7 @@ func TestComposeContainsCompleteIsolatedStack(t *testing.T) {
 		t.Fatal(err)
 	}
 	if stack.Name != "bifrost-go" {
-		t.Fatal("stack can collide with legacy project")
+		t.Fatal("stack can collide with baseline project")
 	}
 	for _, name := range []string{"bifrost", "postgres", "openwa", "redis", "telegram-api"} {
 		service, ok := stack.Services[name]

@@ -26,8 +26,7 @@ func (p MenuPlan) Steps() int {
 	return 2
 }
 
-// Commands preserves the ordered legacy menus, including entries whose full
-// workflows are still pending. Only fully composed runtimes may install them.
+// Commands preserves the ordered menus. Only fully composed runtimes may install them.
 func Commands(master, management bool) []models.BotCommand {
 	rows := [][2]string{{"start", "Show bridge help"}, {"sync", "Refresh WhatsApp metadata"}, {"history", "Import messages here: /history <n>"}, {"mention", "Find a WhatsApp group member and copy their tag"}, {"status", "Show bridge and queue status"}, {"clear", "Clear bot notices in this chat or topic"}, {"clear_log", "Clear bot notices in this chat or topic"}}
 	if master {

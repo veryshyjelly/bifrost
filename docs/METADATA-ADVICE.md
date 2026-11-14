@@ -1,6 +1,6 @@
 # Metadata commands, permission guidance and reports
 
-`control.Sync` implements owner `/sync` and master group permission Start links through native admission/dispatch in isolated fixtures. `metadata.Inspector` freezes missing-contact-bot and permission advice after the text/picture stages. `metadata.Reports` validates sealed completion inputs and delivers frozen summaries through the existing durable control replies. The [durable run coordinator](METADATA-RUNS.md) now supplies admission, discovery, retries/partial outcomes, source serialization, shared-contact fan-out/coalescing and persistent cron. Complete refresh/report workflows run in isolated fixtures; final runtime composition remains pending and `serve` remains diagnostic/ingress-only.
+`control.Sync` implements owner `/sync` and master group permission Start links through native admission/dispatch in isolated fixtures. `metadata.Inspector` freezes missing-contact-bot and permission advice after the text/picture stages. `metadata.Reports` validates sealed completion inputs and delivers frozen summaries through the existing durable control replies. The [durable run coordinator](METADATA-RUNS.md) now supplies admission, discovery, retries/partial outcomes, source serialization, shared-contact fan-out/coalescing and persistent cron. Explicit `run` composes these capabilities after native identity and callback verification; diagnostic `serve` remains passive.
 
 ## Commands and grants
 

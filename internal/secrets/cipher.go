@@ -1,4 +1,4 @@
-// Package secrets seals private tokens using the legacy AES-256-GCM wire format.
+// Package secrets seals private tokens using the baseline AES-256-GCM wire format.
 package secrets
 
 import (

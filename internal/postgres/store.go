@@ -57,7 +57,7 @@ func rollback(tx pgx.Tx) {
 }
 
 // InitializeIdentity binds an empty PostgreSQL database to an identity and key.
-// Legacy SQLite adoption belongs to the explicit importer, not connection startup.
+// Connection startup never adopts or rewrites external state.
 func (s *Store) InitializeIdentity(ctx context.Context, account string, key [32]byte) (string, error) {
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {

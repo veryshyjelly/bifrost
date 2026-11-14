@@ -17,7 +17,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
-func TestPickerPresentationMatchesLegacyNodeGolden(t *testing.T) {
+func TestPickerPresentationMatchesBaselineNodeGolden(t *testing.T) {
 	var fixture struct {
 		Locale string
 		Cases  []struct {
@@ -90,7 +90,7 @@ func TestPickerPresentationMatchesLegacyNodeGolden(t *testing.T) {
 				}
 			}
 			if got.Text != tc.Expected.Text || !reflect.DeepEqual(got.Entities, tc.Expected.Entities) || !reflect.DeepEqual(*got.Markup, tc.Expected.Markup) {
-				t.Fatalf("legacy picker changed\ngot text: %s\nwant text: %s\ngot entities: %+v\nwant entities: %+v\ngot keyboard: %+v\nwant keyboard: %+v", got.Text, tc.Expected.Text, got.Entities, tc.Expected.Entities, *got.Markup, tc.Expected.Markup)
+				t.Fatalf("baseline picker changed\ngot text: %s\nwant text: %s\ngot entities: %+v\nwant entities: %+v\ngot keyboard: %+v\nwant keyboard: %+v", got.Text, tc.Expected.Text, got.Entities, tc.Expected.Entities, *got.Markup, tc.Expected.Markup)
 			}
 		})
 	}

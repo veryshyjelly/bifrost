@@ -1,6 +1,6 @@
 # Telegram notice expiry and manual clearing
 
-`internal/control.Cleaner` implements durable notice expiry and `/clear`, `/clear log`, `/clear_log`, `/clear all` and `/clear_all`. Its command handler and background job handlers connect through the dispatcher registry. They are tested components; complete runtime composition, credentials and legacy import still precede live cutover.
+`internal/control.Cleaner` implements durable notice expiry and `/clear`, `/clear log`, `/clear_log`, `/clear all` and `/clear_all`. Its command handler and background job handlers connect through the dispatcher registry. They are tested components; complete runtime composition, credentials and existing import still precede live cutover.
 
 ## Durable expiry
 
@@ -28,4 +28,4 @@ Each step verifies its PostgreSQL claim and checks the worker's local lease befo
 
 Real isolated PostgreSQL tests combine authenticated commands, the worker and the native Telegram SDK against loopback providers. They cover recreated expiry consumers over a reopened database, deadline backfill, response loss, local commit failure, scope isolation, fixed membership under late commits, batch fallback, permission notices, relay receipt gaps and retained mappings/deletion markers. SDK tests verify bounded native batches and read-safe deletion failure classification.
 
-The legacy importer must still preserve existing observation classifications, dates, deadlines, mappings, unfinished cleanup runs and keys. [Former-inbox retirement](INBOX-RETIREMENT.md) now has its own fenced handler and reservation journal. Other owner commands, menus, media/edit/history workflows and final runtime composition remain pending. These checks do not delete live messages or change the existing deployment.
+Explicit `run` composes these capabilities after native identity and callback verification; diagnostic `serve` remains passive. [Former-inbox retirement](INBOX-RETIREMENT.md) now has its own fenced handler and reservation journal. Explicit `run` composes these capabilities after native identity and callback verification; diagnostic `serve` remains passive. These checks do not delete live messages or change the existing deployment.

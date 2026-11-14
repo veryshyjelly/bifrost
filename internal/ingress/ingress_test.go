@@ -272,7 +272,7 @@ func TestTelegramNativeOwnerUpdateTypesAndCrossBotSecrets(t *testing.T) {
 	}
 }
 
-func TestManagementUsesLegacyJavaScriptSignatureAndTimestampWindow(t *testing.T) {
+func TestManagementUsesBaselineJavaScriptSignatureAndTimestampWindow(t *testing.T) {
 	var fixtures []struct{ Raw, Canonical, Signature string }
 	data, err := os.ReadFile("testdata/management.json")
 	if err != nil {
@@ -321,7 +321,7 @@ func TestTelegramCaseAliasesCannotReplaceActorIdentity(t *testing.T) {
 	}
 }
 
-func TestDirectedCommandParsingMatchesLegacyUnicodeWhitespace(t *testing.T) {
+func TestDirectedCommandParsingMatchesBaselineUnicodeWhitespace(t *testing.T) {
 	var fixtures []struct {
 		Value, Recipient string
 		Match            bool
@@ -336,7 +336,7 @@ func TestDirectedCommandParsingMatchesLegacyUnicodeWhitespace(t *testing.T) {
 	for _, f := range fixtures {
 		parts := commandParts(&models.Message{Text: f.Value})
 		if (parts != nil) != f.Match || (parts != nil && parts[2] != f.Recipient) {
-			t.Fatalf("legacy command mismatch %q: %v", f.Value, parts)
+			t.Fatalf("baseline command mismatch %q: %v", f.Value, parts)
 		}
 	}
 }

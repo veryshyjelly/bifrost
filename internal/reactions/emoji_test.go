@@ -14,6 +14,6 @@ func TestCustomEmojiEquivalentRequiresOneUnicodePictographGrapheme(t *testing.T)
 		}
 	}
 	if EmojiKey("❤️") != "❤" || TelegramEmoji("😂") != "🤣" || TelegramEmoji("👍") != "👍" {
-		t.Fatal("legacy emoji equivalence changed")
+		t.Fatal("baseline emoji equivalence changed")
 	}
 }

@@ -4,13 +4,13 @@
 
 Preserve permanent identity and private state across configuration changes, setup and machine transfer.
 
-Current TypeScript baseline at `checkpoint-go-contract-baseline`; target changes belong in change specs.
+The current Go runtime implements this contract; proposed behavior changes belong in change specs.
 
 ## Requirements
 
 ### Requirement: Permanent account identity
 
-BIFROST_ACCOUNT_ID SHALL remain independent of OpenWA transport credentials, adopt legacy stored identity, and reject conflicts with existing state.
+BIFROST_ACCOUNT_ID SHALL remain independent of OpenWA transport credentials, adopt retained stored identity, and reject conflicts with existing state.
 
 #### Scenario: Session rotates
 

@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestCipherPreservesLegacyLayoutAndAuthenticates(t *testing.T) {
+func TestCipherPreservesBaselineLayoutAndAuthenticates(t *testing.T) {
 	var key [32]byte
 	key[0] = 42
 	c, err := New(key)
@@ -33,9 +33,9 @@ func TestCipherPreservesLegacyLayoutAndAuthenticates(t *testing.T) {
 	block, _ := aes.NewCipher(key[:])
 	aead, _ := cipher.NewGCM(block)
 	nonce := make([]byte, 12)
-	legacy := base64.StdEncoding.EncodeToString(aead.Seal(nonce, nonce, []byte("legacy token"), nil))
-	if plain, err := c.Open(legacy); err != nil || plain != "legacy token" {
-		t.Fatal("legacy token unreadable")
+	baseline := base64.StdEncoding.EncodeToString(aead.Seal(nonce, nonce, []byte("baseline token"), nil))
+	if plain, err := c.Open(baseline); err != nil || plain != "baseline token" {
+		t.Fatal("baseline token unreadable")
 	}
 	bytes, _ := base64.StdEncoding.DecodeString(first)
 	bytes[len(bytes)-1] ^= 1

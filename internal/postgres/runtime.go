@@ -70,7 +70,7 @@ func (s *Store) AcquireRuntimeLease(ctx context.Context, account string) (*Runti
 	if identity.AccountID != account {
 		return nil, delivery.ErrInvalid
 	}
-	if err = s.LegacyRuntimeReady(ctx, account); err != nil {
+	if err = s.RetainedStateReady(ctx, account); err != nil {
 		return nil, err
 	}
 	conn, err := s.pool.Acquire(ctx)

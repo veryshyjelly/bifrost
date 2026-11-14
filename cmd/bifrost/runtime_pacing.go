@@ -8,7 +8,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 )
 
-// Pace admissions between jobs, as the legacy queue tick did. Never sleep
+// Pace admissions between jobs, as the baseline queue tick did. Never sleep
 // after a claim or beneath a provider attempt: that would consume its lease
 // or turn cancellation before transmission into an uncertain send.
 type runtimePacedStore struct {

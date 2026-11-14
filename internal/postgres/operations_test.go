@@ -57,7 +57,7 @@ func TestOperationsNoticeInsertFailureRollsBackSourceState(t *testing.T) {
 	}
 }
 
-func TestOperationsStatusKeepsLegacyLatestSyncShape(t *testing.T) {
+func TestOperationsStatusKeepsBaselineLatestSyncShape(t *testing.T) {
 	f := newOperationFixture(t)
 	job := f.n.f.enqueue(t, "control-sync-report", "completed-report", "report:fixture", "")
 	if _, err := f.n.f.store.pool.Exec(t.Context(), "UPDATE jobs SET state='done' WHERE id=$1", job); err != nil {

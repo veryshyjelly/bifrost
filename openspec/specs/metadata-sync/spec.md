@@ -4,7 +4,7 @@
 
 Refresh Telegram metadata from WhatsApp without writing to WhatsApp or blocking chat work.
 
-Current TypeScript baseline at `checkpoint-go-contract-baseline`; target changes belong in change specs.
+The current Go runtime implements this contract; proposed behavior changes belong in change specs.
 
 ## Requirements
 

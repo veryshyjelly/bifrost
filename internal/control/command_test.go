@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestCommandParsingPreservesLegacyCasingCaptionAndUnicodeWhitespace(t *testing.T) {
+func TestCommandParsingPreservesBaselineCasingCaptionAndUnicodeWhitespace(t *testing.T) {
 	for _, tc := range []struct {
 		text string
 		want ParsedCommand

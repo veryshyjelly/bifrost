@@ -269,7 +269,7 @@ func digest(text string) string {
 	return hex.EncodeToString(sum[:])
 }
 
-// Token uses the legacy account digest and collision-extension algorithm. The
+// Token uses the baseline account digest and collision-extension algorithm. The
 // label is cosmetic: only the stored account/group/person tuple grants meaning.
 func (s *Service) Token(ctx context.Context, job delivery.Job, chat, id string) (string, error) {
 	if !strings.HasSuffix(chat, "@g.us") || !identity.IsPerson(id) {

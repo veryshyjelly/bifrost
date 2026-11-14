@@ -67,7 +67,7 @@ func setStatusMute(ctx context.Context, q *db.Queries, row db.Job, d *identity.D
 	} else if !errors.Is(err, pgx.ErrNoRows) {
 		return statuses.Mute{}, err
 	}
-	if raw, err := q.RetainedStatusMuteOperation(ctx, db.RetainedStatusMuteOperationParams{AccountID: row.AccountID, LegacyJobKey: row.Dedup}); err == nil {
+	if raw, err := q.RetainedStatusMuteOperation(ctx, db.RetainedStatusMuteOperationParams{AccountID: row.AccountID, RetainedJobKey: row.Dedup}); err == nil {
 		var result statuses.Mute
 		if json.Unmarshal(raw, &result) != nil {
 			return result, delivery.ErrInvalid

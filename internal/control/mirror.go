@@ -36,7 +36,7 @@ type MirrorEvent struct {
 	At int64 `json:"at"`
 }
 
-// UnmarshalJSON accepts the legacy string form of Telegram IDs without a
+// UnmarshalJSON accepts the baseline string form of Telegram IDs without a
 // floating-point conversion, as well as the native integer form.
 func (e *MirrorEvent) UnmarshalJSON(b []byte) error {
 	type wire MirrorEvent

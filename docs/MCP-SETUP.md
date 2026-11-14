@@ -1,6 +1,6 @@
-# MCP verification for the Go port
+# MCP verification for Bifrost
 
-Verified 2026-11-10 before legacy removal. This checks the six configured local MCP servers; unrelated hosted apps are not language servers and were not exercised or reconfigured.
+Verified 2026-11-10 before existing removal. This checks the six configured local MCP servers; unrelated hosted apps are not language servers and were not exercised or reconfigured.
 
 | Server | Result | Go setup |
 | --- | --- | --- |

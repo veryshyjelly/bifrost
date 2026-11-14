@@ -1,6 +1,6 @@
 # Durable metadata runs and scheduling
 
-`internal/metadata.Coordinator` composes the existing snapshot/text, picture and advisory stages into a complete metadata run. Isolated native ingress/dispatcher/worker fixtures exercise owner `/sync` through admission, target discovery, refresh and completion delivery. The coordinator and scheduler are available for runtime composition; `serve` remains diagnostic/opt-in ingress until the remaining workflows and legacy import are ready.
+`internal/metadata.Coordinator` composes the existing snapshot/text, picture and advisory stages into a complete metadata run. Isolated native ingress/dispatcher/worker fixtures exercise owner `/sync` through admission, target discovery, refresh and completion delivery. The coordinator and scheduler are available for runtime composition; `serve` remains diagnostic/opt-in ingress until the remaining workflows and existing import are ready.
 
 ## Admission and discovery
 

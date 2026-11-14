@@ -676,7 +676,7 @@ func TestWholeGroupQuotesAndOutgoingReadAreIndependent(t *testing.T) {
 	}
 	sum := sha256.Sum256([]byte("send:-200:7"))
 	if f.waCalls[0].Key != hex.EncodeToString(sum[:]) {
-		t.Fatal("legacy stable key changed")
+		t.Fatal("baseline stable key changed")
 	}
 	f.mu.Unlock()
 	if f.reads.Load() != 0 {

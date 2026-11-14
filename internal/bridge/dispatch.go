@@ -40,8 +40,8 @@ type MentionRefusalHandler func(context.Context, delivery.Job, *delivery.Effects
 type Extensions struct {
 	// PassiveTopics can consume archive guidance and controls before text relay.
 	PassiveTopics TelegramHandler
-	// Incoming replaces initial text and attachment delivery while the legacy
-	// text-plan resumer retains any already frozen packets and receipts.
+	// Incoming handles native text and attachments; the text-plan resumer keeps
+	// previously frozen packets and receipts recoverable.
 	Incoming       delivery.Handler
 	WhatsApp       map[sdk.WebhookEvent]delivery.Handler
 	Telegram       TelegramHandler

@@ -1,7 +1,15 @@
 # PostgreSQL migrations
 
-Goose migrations are embedded and applied only by `bifrost migrate`. `make up` invokes that explicit command after database readiness. Application startup never applies schema changes or resets another worker's claims.
+Goose migrations are embedded and applied explicitly by `bifrost migrate`.
+`make up` runs that command after database readiness. Application startup does not
+apply schema changes or reset another worker's claims.
 
-Migration 00001 establishes permanent identity/key fingerprint, jobs and effect receipts. There is deliberately no destructive Down migration. This is the first implementation slice, not the complete legacy import schema. Preserve original SQLite snapshots until a separately tested importer/cutover exists.
+Applied files are immutable history. Retain their table, column, trigger and
+constraint names even when the tooling that first populated them has been retired.
+The runtime's read-only retained-state adapters still use scoped activation,
+credential, deduplication, completion and suppression evidence. Do not drop those
+records, rewrite receipts or rename identifiers to match presentation terminology.
 
-SQL changes require regenerating sqlc queries with `make generate`; `make check` detects generated-code drift.
+There are no destructive Down migrations. Add new schema changes as forward
+migrations, regenerate SQL adapters with `make generate` and run isolated
+PostgreSQL tests. `make check` verifies generated-query drift.

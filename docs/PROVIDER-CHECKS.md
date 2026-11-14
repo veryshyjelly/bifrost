@@ -37,6 +37,6 @@ The owner explicitly authorized the test group and their second phone/account. T
 
 Receipts and stable keys are retained privately under ignored `data/provider-checks/`. No real test destinations, phone numbers or API keys are embedded in source fixtures or this document. These checks exercised the SDK/OpenWA/WhatsApp path through the existing live gateway, not end-to-end Go-to-Telegram conversation routing. The old bridge may still archive these test messages normally.
 
-See [OpenWA migration](OPENWA-MIGRATION.md) before moving paired state or replacing the running gateway.
+See [OpenWA migration](RUNTIME.md) before moving paired state or replacing the running gateway.
 
 The owner-authorized [sticker size experiment](STICKER-LIMITS.md) measured the current WhatsApp Web upload boundary separately from receiver hashes and phone rendering. Properly structured static and animated WebPs worked at 1,048,558 bytes; 1,048,560 bytes was rejected by WhatsApp upload. This evidence does not change encoder policy or establish a limit for other provider APIs.

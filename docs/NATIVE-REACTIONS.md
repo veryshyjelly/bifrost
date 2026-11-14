@@ -1,8 +1,8 @@
 # Native reactions
 
-Actor-specific WhatsApp reactions and owner Telegram reaction updates are implemented through isolated native SDK/PostgreSQL worker fixtures. Explicit `/react` and `/delete` source commands, source revocation choices and runtime composition remain in [PORT-COMPLETION.md](PORT-COMPLETION.md).
+Actor-specific WhatsApp reactions and owner Telegram reaction updates are implemented through isolated native SDK/PostgreSQL worker fixtures. Explicit `/react` and `/delete` source commands, source revocation choices and runtime composition remain in [RUNTIME.md](RUNTIME.md).
 
-Source reaction state preserves each canonical actor, its emoji, revision and any represented owner echo. A full object snapshot removes absent actors; a partial update changes only its sender. Snapshot object order remains deterministic, including aliases. As in the baseline, non-object snapshot values are ignored and non-string emoji values are filtered. FE0F variation selectors do not create different stored reaction identities. The small legacy mapping of clear Unicode equivalents to Telegram reactions remains in place.
+Source reaction state preserves each canonical actor, its emoji, revision and any represented owner echo. A full object snapshot removes absent actors; a partial update changes only its sender. Snapshot object order remains deterministic, including aliases. As in the baseline, non-object snapshot values are ignored and non-string emoji values are filtered. FE0F variation selectors do not create different stored reaction identities. The small existing mapping of clear Unicode equivalents to Telegram reactions remains in place.
 
 Projection groups retained mappings by private bot scope or group/topic. It prefers the freshest delivery and its attachment over split labels. Available member bots represent their actors; the newest actor assigned to a shared bot determines that bot's reaction. Actor departure clears only the bot reaction that no longer has a desired actor. Private message IDs never cross bot scopes.
 

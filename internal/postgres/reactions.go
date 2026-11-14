@@ -227,7 +227,7 @@ func reactionInput(ctx context.Context, q *db.Queries, row db.Job, c reactions.S
 		selected := candidates[len(candidates)-1]
 		// Retain the freshest delivery plan, preferring its attachment over labels.
 		for i := len(candidates) - 1; i >= 0; i-- {
-			// Legacy copies did not have plan groups; their last physical row
+			// Baseline copies did not have plan groups; their last physical row
 			// is the original reaction target, including a later text-only copy.
 			if !selected.mapping.PlanKey.Valid {
 				break

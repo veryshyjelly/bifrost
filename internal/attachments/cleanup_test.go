@@ -18,7 +18,7 @@ func TestCleanupRemovesOnlyAbandonedOwnedWork(t *testing.T) {
 		t.Fatal(err)
 	}
 	old := time.Now().Add(-25 * time.Hour)
-	for _, name := range []string{".codec-old", ".codec-active", "legacy-private"} {
+	for _, name := range []string{".codec-old", ".codec-active", "baseline-private"} {
 		if err := os.Mkdir(filepath.Join(a.root, name), 0700); err != nil {
 			t.Fatal(err)
 		}
@@ -32,7 +32,7 @@ func TestCleanupRemovesOnlyAbandonedOwnedWork(t *testing.T) {
 	if err := os.Symlink(outside, filepath.Join(a.root, ".codec-symlink")); err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{".codec-old", ".incoming-old", "legacy-private", asset.Hash} {
+	for _, name := range []string{".codec-old", ".incoming-old", "baseline-private", asset.Hash} {
 		if err := os.Chtimes(filepath.Join(a.root, name), old, old); err != nil {
 			t.Fatal(err)
 		}
@@ -45,7 +45,7 @@ func TestCleanupRemovesOnlyAbandonedOwnedWork(t *testing.T) {
 			t.Fatal("abandoned work retained", name, err)
 		}
 	}
-	for _, name := range []string{".codec-active", ".incoming-active", "legacy-private", ".codec-symlink", asset.Hash} {
+	for _, name := range []string{".codec-active", ".incoming-active", "baseline-private", ".codec-symlink", asset.Hash} {
 		if _, err := os.Lstat(filepath.Join(a.root, name)); err != nil {
 			t.Fatal("retained object removed", name, err)
 		}

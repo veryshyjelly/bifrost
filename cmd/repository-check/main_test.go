@@ -11,7 +11,7 @@ func TestForbiddenPaths(t *testing.T) {
 			t.Errorf("private path allowed: %s", name)
 		}
 	}
-	for _, name := range []string{".go.env.example", "docs/legacy/bridge.env.example", "internal/postgres/doc.go", "testdata/message.json", "openspec/specs/media/spec.md", "openspec/changes/cache-sticker-conversions/specs/media/spec.md"} {
+	for _, name := range []string{".go.env.example", "docs/bridge.env.example", "internal/postgres/doc.go", "testdata/message.json", "openspec/specs/media/spec.md", "openspec/changes/cache-sticker-conversions/specs/media/spec.md"} {
 		if forbiddenPath(name) {
 			t.Errorf("source/example path refused: %s", name)
 		}
