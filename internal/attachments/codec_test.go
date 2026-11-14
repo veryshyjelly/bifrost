@@ -30,6 +30,17 @@ func codecFixture(t *testing.T) (*Assets, *Codec, string) {
 	}
 	return a, c, python
 }
+
+func assertStickerCacheReuse(t *testing.T, assets *Assets, source, result Asset, target string) {
+	t.Helper()
+	restarted, err := NewCodec(assets, CodecOptions{Python: "/missing/python", FFmpeg: "/missing/ffmpeg", FFprobe: "/missing/ffprobe", Chromium: "/missing/chromium"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cached, err := restarted.Sticker(t.Context(), source, target); err != nil || cached != result {
+		t.Fatal("cached format/motion changed or conversion ran again", cached, err)
+	}
+}
 func pythonFixture(t *testing.T, python, script string, args ...string) {
 	t.Helper()
 	command := exec.Command(python, append([]string{"-c", script}, args...)...)
@@ -117,6 +128,7 @@ a.save(sys.argv[1],format='WEBP',save_all=True,append_images=[b],duration=[100,1
 	if result.StickerFormat != "video" || result.Size > 256000 {
 		t.Fatal(result.StickerFormat, result.Size)
 	}
+	assertStickerCacheReuse(t, a, source, result, "telegram")
 	again, err := c.Sticker(t.Context(), result, "telegram")
 	if err != nil || again.Hash != result.Hash {
 		t.Fatal("valid archived video changed", err)
@@ -149,6 +161,7 @@ p.write_bytes(b)
 	if err != nil || result.StickerFormat != "animated" || result.Size > WhatsAppStickerBudget {
 		t.Fatal("animation conversion", result, err)
 	}
+	assertStickerCacheReuse(t, a, source, result, "whatsapp")
 	output, _ := a.Path(result)
 	pythonFixture(t, python, `from PIL import Image
 import hashlib,sys
@@ -187,6 +200,7 @@ func TestCodecTGSUsesValidatedLottieMotionAndTransparentCanvas(t *testing.T) {
 	if result.StickerFormat != "animated" || result.Size > WhatsAppStickerBudget {
 		t.Fatal(result.StickerFormat, result.Size)
 	}
+	assertStickerCacheReuse(t, a, asset, result, "whatsapp")
 	path, _ := a.Path(result)
 	script := `from PIL import Image
 import json,sys

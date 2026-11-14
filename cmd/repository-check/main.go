@@ -17,9 +17,10 @@ var databaseFile = regexp.MustCompile(`\.(db|sqlite)(?:$|[.-])`)
 var envFile = regexp.MustCompile(`\.env(?:\.|$)`)
 
 func forbiddenPath(name string) bool {
-	// This is the media behavior contract, not runtime media. Its contents still
+	// These are media behavior contracts, not runtime media. Their contents still
 	// pass the same credential checks as every other tracked document.
-	if filepath.ToSlash(name) == "openspec/specs/media/spec.md" {
+	switch filepath.ToSlash(name) {
+	case "openspec/specs/media/spec.md", "openspec/changes/cache-sticker-conversions/specs/media/spec.md":
 		return false
 	}
 	for _, part := range strings.Split(filepath.ToSlash(name), "/") {

@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/veryshyjelly/bifrost/internal/providers"
@@ -32,8 +33,10 @@ type CodecOptions struct {
 	Timeout                           time.Duration
 }
 type Codec struct {
-	assets *Assets
-	c      CodecOptions
+	assets         *Assets
+	c              CodecOptions
+	mu             sync.Mutex
+	stickerFlights map[string]*stickerFlight
 }
 type Frames struct {
 	Width          int       `json:"width"`
@@ -223,12 +226,7 @@ func (c *Codec) Transcode(ctx context.Context, input Asset, voice bool, maxBytes
 	}
 	return c.saveOutput(ctx, output, name, mime, "", maxBytes)
 }
-func (c *Codec) Sticker(ctx context.Context, input Asset, target string) (Asset, error) {
-	if target != "whatsapp" && target != "telegram" {
-		return Asset{}, Unsupported()
-	}
-	ctx, cancel := context.WithTimeout(ctx, c.c.Timeout)
-	defer cancel()
+func (c *Codec) convertSticker(ctx context.Context, input Asset, target string) (Asset, error) {
 	file, err := c.assets.Open(ctx, input)
 	if err != nil {
 		return Asset{}, err
