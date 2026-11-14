@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -37,7 +36,7 @@ func runRuntime(ctx context.Context, c config.Runtime) error {
 	if _, err := store.InitializeIdentity(ctx, c.AccountID, c.EncryptionKey); err != nil {
 		return errors.New("runtime identity/key verification failed; migrate explicitly before startup")
 	}
-	listener, err := net.Listen("tcp", net.JoinHostPort("", strconv.Itoa(c.Port)))
+	listener, err := net.Listen("tcp", c.ListenAddress())
 	if err != nil {
 		return errors.New("cannot bind bridge HTTP port")
 	}

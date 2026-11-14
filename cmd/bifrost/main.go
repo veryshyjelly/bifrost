@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -59,8 +58,18 @@ func run(ctx context.Context, args []string) error {
 		if port == "" {
 			port = "3210"
 		}
+		host := os.Getenv("BRIDGE_BIND_HOST")
+		switch host {
+		case "", "0.0.0.0":
+			host = "127.0.0.1"
+		case "::":
+			host = "::1"
+		}
+		if net.ParseIP(host) == nil {
+			return errors.New("BRIDGE_BIND_HOST must be an IP address")
+		}
 		client := http.Client{Timeout: 3 * time.Second}
-		response, err := client.Get("http://127.0.0.1:" + port + "/healthz")
+		response, err := client.Get("http://" + net.JoinHostPort(host, port) + "/healthz")
 		if err != nil {
 			return errors.New("bridge health check failed")
 		}
@@ -106,7 +115,7 @@ func run(ctx context.Context, args []string) error {
 			return err
 		}
 	}
-	server := &http.Server{Addr: net.JoinHostPort("", strconv.Itoa(c.Port)), Handler: httpserver.Handler(database, c.AdminToken, httpserver.Options{Ingress: input}), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 60 * time.Second}
+	server := &http.Server{Addr: c.ListenAddress(), Handler: httpserver.Handler(database, c.AdminToken, httpserver.Options{Ingress: input}), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 60 * time.Second}
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
 		return errors.New("cannot bind bridge HTTP port")

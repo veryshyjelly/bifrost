@@ -15,6 +15,8 @@ func TestLoadRejectsInvalidSettingsWithoutLeakingValues(t *testing.T) {
 		{"BRIDGE_ENCRYPTION_KEY", strings.Repeat("xz", 32)},
 		{"BRIDGE_PORT", "65536"},
 		{"BRIDGE_PORT", "NaN"},
+		{"BRIDGE_BIND_HOST", "private-invalid-bind-host"},
+		{"BRIDGE_BIND_HOST", "127.0.0.1:3210"},
 		{"COMMAND_TTL_SECONDS", "0004"},
 		{"CONTROL_TTL_SECONDS", "86401"},
 		{"CONTROL_TTL_SECONDS", "private-invalid-duration"},
@@ -41,5 +43,29 @@ func TestLoadRejectsInvalidSettingsWithoutLeakingValues(t *testing.T) {
 	c, err := Load(func(k string) string { return valid[k] })
 	if err != nil || c.Port != 3210 || c.CommandTTL != 60*time.Second || c.ControlTTL != 600*time.Second {
 		t.Fatalf("valid settings: port=%d error=%v", c.Port, err)
+	}
+}
+
+func TestLoadExplicitBindIPAndDefaultListener(t *testing.T) {
+	for _, tc := range []struct{ host, address string }{
+		{"", ":53210"},
+		{"127.0.0.1", "127.0.0.1:53210"},
+		{"::1", "[::1]:53210"},
+	} {
+		t.Run(tc.address, func(t *testing.T) {
+			values := map[string]string{
+				"DATABASE_URL":          "postgres://fixture@localhost/bifrost",
+				"BRIDGE_ADMIN_TOKEN":    strings.Repeat("a", 32),
+				"BRIDGE_ENCRYPTION_KEY": strings.Repeat("ab", 32),
+				"BRIDGE_PORT":           "53210", "BRIDGE_BIND_HOST": tc.host,
+			}
+			c, err := Load(func(name string) string { return values[name] })
+			if err != nil {
+				t.Fatal(err)
+			}
+			if c.ListenAddress() != tc.address {
+				t.Fatalf("listen address = %q; want %q", c.ListenAddress(), tc.address)
+			}
+		})
 	}
 }

@@ -1,5 +1,12 @@
 # Runtime composition
 
+Native deployments can set `BRIDGE_BIND_HOST=127.0.0.1` to restrict the HTTP
+listener to loopback. Both `run` and passive `serve` use this optional IP literal;
+omitting it preserves the existing wildcard listener used inside Compose.
+
+Optional Termux setup and recovery guidance is documented in
+[PHONE-HOST.md](PHONE-HOST.md).
+
 The workflow graph is now composed in `cmd/bifrost/runtime_services.go`: native text/media delivery, commands and callbacks, bot registration/provisioning, route transitions/retirement, mentions, history, metadata/cron, Status, reactions/polls/edits/revocations, notices and cleanup. Construction starts no provider requests, worker or scheduler. Duplicate job-handler registrations fail rather than replace another workflow.
 
 The isolated PostgreSQL fixture exercises the assembled graph through hosted logout, local identity verification, webhook settings, topic creation and a native incoming message. Repeated ingress keeps one copy. Management actions dispatch through their specialized handlers before generic preference commands, including history and contact creation; reports use the native `control-sync-report` kind.

@@ -4,6 +4,7 @@ package config
 import (
 	"encoding/hex"
 	"errors"
+	"net"
 	"net/url"
 	"strconv"
 	"strings"
@@ -20,11 +21,17 @@ type Config struct {
 	AdminToken                             string
 	AccountID                              string
 	Port                                   int
+	BindHost                               string
 	IngressEnabled                         bool
 	OpenWASession, WebhookSecret           string
 	OwnerID, ManagementChatID, MasterBotID int64
 	CommandTTL, ControlTTL                 time.Duration
 	SyncCron, SyncTimezone                 string
+}
+
+// ListenAddress preserves the default wildcard listener unless a bind IP is set.
+func (c Config) ListenAddress() string {
+	return net.JoinHostPort(c.BindHost, strconv.Itoa(c.Port))
 }
 
 func Load(getenv func(string) string) (Config, error) {
@@ -66,6 +73,10 @@ func Load(getenv func(string) string) (Config, error) {
 		if err != nil || c.Port < 1 || c.Port > 65535 {
 			return Config{}, errors.New("BRIDGE_PORT must be between 1 and 65535")
 		}
+	}
+	c.BindHost = getenv("BRIDGE_BIND_HOST")
+	if c.BindHost != "" && net.ParseIP(c.BindHost) == nil {
+		return Config{}, errors.New("BRIDGE_BIND_HOST must be an IP address")
 	}
 	if flag := getenv("BRIDGE_INGRESS_ENABLED"); flag != "" {
 		c.IngressEnabled, err = strconv.ParseBool(flag)
