@@ -1,0 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/sh
+/data/data/com.termux/files/usr/bin/termux-wake-lock || exit 1
+export PATH=/data/data/com.termux/files/usr/bin:/system/bin
+umask 077
+exec /data/data/com.termux/files/usr/bin/python "$HOME/bifrost-phone/phone-boot.py"
