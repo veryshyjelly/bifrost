@@ -119,3 +119,11 @@ Read the [behavior contract](openspec/README.md), [runtime lifecycle](docs/RUNTI
 [history and attachments](docs/HISTORY-ATTACHMENTS.md) and
 [recovery controls](docs/TOPIC-RECONCILIATION.md). Private environments, databases,
 media, credentials and backups do not belong in Git.
+
+For full-history privacy checks and repository publication, see
+[public repository checks](docs/PUBLISHING.md).
+
+## License
+
+Bifrost is available under the [MIT License](LICENSE). Bundled third-party code
+retains its accompanying license notices.

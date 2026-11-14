@@ -1,0 +1,28 @@
+title = "Bifrost public history checks"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "Reviewed Telegram API source commit pin"
+condition = "AND"
+paths = ['''^(deploy/)?telegram-api\.Dockerfile$''']
+regexTarget = "match"
+regexes = ['''^TELEGRAM_BOT_API_REF=[0-9a-f]{40}$''']
+
+[[rules.allowlists]]
+description = "Nonfunctional encryption-key example"
+condition = "AND"
+paths = ['''^\.go\.env\.example$''']
+regexTarget = "match"
+regexes = ['''^BRIDGE_ENCRYPTION_KEY=replace-with-generated-64-character-hex-key$''']
+
+[[rules.allowlists]]
+description = "Historical evidence contains source-file SHA-256 hashes"
+condition = "AND"
+paths = ['''^docs/rewrite/evidence/(baseline|checks/(privacy|linux|baseline-linux|local))\.json$''']
+regexTarget = "line"
+regexes = ['''"([a-zA-Z0-9_./-]+\.(ts|cljs)|telegram-api\.Dockerfile)": "[0-9a-f]{64}"''']
