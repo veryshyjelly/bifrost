@@ -18,6 +18,11 @@ Review both author and committer identities, commit messages, filenames and
 historical file contents. Scanner success alone does not establish that personal
 information is absent. `.gitleaks.toml` allows only reviewed build pins, source
 hashes and one nonfunctional example, scoped to their specific files and lines.
+It also checks for common forms of personal operational narrative in Markdown.
+Keep actual host devices, operating timelines, account inventories, host-transfer
+results and personal performance records private. Setup guides should describe
+supported configurations and verification steps without identifying anyone's
+installation.
 
 Historical source references use `checkpoint-*` tags so links survive the privacy
 rewrite. Preserve these tags when pushing or cloning the documented checkpoints.

@@ -26,3 +26,9 @@ condition = "AND"
 paths = ['''^docs/rewrite/evidence/(baseline|checks/(privacy|linux|baseline-linux|local))\.json$''']
 regexTarget = "line"
 regexes = ['''"([a-zA-Z0-9_./-]+\.(ts|cljs)|telegram-api\.Dockerfile)": "[0-9a-f]{64}"''']
+
+[[rules]]
+id = "personal-operational-narrative"
+description = "Keep personal operating records out of public documentation"
+path = '''(?i)\.md$'''
+regex = '''(?i)(?:(?:the (?:current|live) deployment|the production host) (?:runs|uses|is)|spare.phone deployment|(?:actual )?phone (?:deployment|codec suite) (?:has passed|passed)|owner.confirmed (?:message relay|relay)|verified deployment evidence|source Mac containers remain|existing home deployment|the existing running deployment|the live containers are|the (?:Git repository root|Bifrost Git checkout) (?:is currently|remains at))'''
