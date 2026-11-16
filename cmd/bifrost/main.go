@@ -19,6 +19,9 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/postgres"
 )
 
+// run selects an explicit operational command; the default is passive serve.
+// Only runRuntime composes dispatch, so health and recovery tooling cannot
+// accidentally start a second worker against the saved account.
 func run(ctx context.Context, args []string) error {
 	command := "serve"
 	if len(args) > 0 {

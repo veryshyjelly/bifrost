@@ -10,6 +10,8 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/relay"
 )
 
+// SendPacket translates a frozen relay packet into one native send. The caller
+// supplies the saved asset bytes through data and journals the returned receipt.
 func (c *Client) SendPacket(ctx context.Context, p relay.NativePacket, data io.Reader) (*models.Message, error) {
 	if p.Target.ChatID == 0 || p.Target.ThreadID < 0 {
 		return nil, providers.ErrInvalidRequest

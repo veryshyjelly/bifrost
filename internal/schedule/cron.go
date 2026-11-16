@@ -1,4 +1,6 @@
 // Package schedule preserves Bifrost's numeric five-field cron contract.
+// It evaluates due minutes only; durable scheduling, deduplication and dispatch
+// are responsibilities of the metadata coordinator and its store.
 package schedule
 
 import (
@@ -13,6 +15,8 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+// Cron retains the configured expression and timezone alongside its parsed form.
+// An off schedule has no parsed matcher and never matches a minute.
 type Cron struct {
 	expression, zone string
 	schedule         cron.Schedule
@@ -21,6 +25,9 @@ type Cron struct {
 var cronField = regexp.MustCompile(`^(?:\*|[0-9]+(?:-[0-9]+)?)(?:/[0-9]+)?$`)
 var ErrInvalid = errors.New("invalid numeric five-field cron expression or timezone")
 
+// New accepts numeric five-field expressions or "off". Empty settings default to
+// hourly execution in Asia/Kolkata. Enabled schedules reject invalid timezones
+// and Local so host configuration cannot change their meaning.
 func New(expression, zone string) (*Cron, error) {
 	if expression == "" {
 		expression = "0 * * * *"
@@ -119,6 +126,9 @@ func New(expression, zone string) (*Cron, error) {
 	c.schedule = parsed
 	return c, nil
 }
+
+// Matches tests the minute containing now, ignoring seconds and nanoseconds.
+// It is safe on nil and disabled schedules.
 func (c *Cron) Matches(now time.Time) bool {
 	minute := now.Truncate(time.Minute)
 	return c != nil && c.schedule != nil && c.schedule.Next(minute.Add(-time.Nanosecond)).Equal(minute)

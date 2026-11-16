@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/sh
+# Boot restores administrative access; phone-boot.py owns production gating.
 /data/data/com.termux/files/usr/bin/termux-wake-lock || exit 1
 export PATH=/data/data/com.termux/files/usr/bin:/system/bin
 umask 077

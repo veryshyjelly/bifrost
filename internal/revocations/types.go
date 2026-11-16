@@ -16,11 +16,16 @@ type Settings struct {
 	OwnerID               int64
 	ControlTTL, NoticeTTL int
 }
+
+// Copy identifies a delivered destination message that an owner may keep or delete.
 type Copy struct {
 	Target    control.Target
 	MessageID int64
 	Media     bool
 }
+
+// Task retains the owner-facing choice and frozen destination copies for one
+// revocation. Cursor and Blocked preserve partial deletion progress across jobs.
 type Task struct {
 	ID, Scope, SourceSession, ChatID, MessageID, Status, Mode, NoticeBot string
 	OwnerID, ExpiresAt, PromptMessageID                                  int64
@@ -39,6 +44,9 @@ type Job struct {
 	ID, Stage string
 	Cursor    int
 }
+
+// Store admits source tombstones and destination choices separately, then advances
+// presentation, deletion and expiry under the current worker claim.
 type Store interface {
 	NormalizeChange(context.Context, delivery.Job, string) error
 	AdmitRevocation(context.Context, delivery.Job, Settings) error

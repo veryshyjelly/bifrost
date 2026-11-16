@@ -1,5 +1,7 @@
 name: bifrost-go
 
+# Shared bridge image/settings also serve the explicit migration tools profile.
+# Persistent account identity and encryption material must survive recreation.
 x-bifrost: &bifrost
   build: .
   image: local/bifrost-go:development
@@ -31,6 +33,7 @@ x-bifrost: &bifrost
     SYNC_TIMEZONE: ${SYNC_TIMEZONE:-Asia/Kolkata}
   volumes:
     - bridge-media:/media
+    # Read provider-frozen files without granting the bridge archive write access.
     - telegram-data:/telegram-data:ro
   networks: [bridge]
 
@@ -67,6 +70,7 @@ services:
 
   bifrost:
     <<: *bifrost
+    # Passive diagnostics are the default; configure run to enable dispatch.
     command: ["${BIFROST_COMMAND:-serve}"]
     restart: unless-stopped
     ports:

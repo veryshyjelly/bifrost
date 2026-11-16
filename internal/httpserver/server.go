@@ -19,6 +19,8 @@ type Store interface {
 	Review(context.Context, int64, bool, bool) error
 }
 
+// Options injects optional ingress and readiness without starting dispatch.
+// A nil Ready callback reports unconfigured; only the first Options is used.
 type Options struct {
 	Ingress http.Handler
 	Ready   func() bool

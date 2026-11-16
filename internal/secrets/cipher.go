@@ -11,8 +11,11 @@ import (
 
 var ErrCiphertext = errors.New("invalid encrypted token or encryption key")
 
+// Cipher encrypts and authenticates saved tokens with one permanent account key.
+// It retains compatibility with previously stored nonce/ciphertext/tag bytes.
 type Cipher struct{ aead cipher.AEAD }
 
+// New constructs a cipher from an existing key; it does not generate or rotate it.
 func New(key [32]byte) (*Cipher, error) {
 	block, err := aes.NewCipher(key[:])
 	if err != nil {
@@ -34,6 +37,8 @@ func (c *Cipher) Seal(plaintext string) (string, error) {
 	return base64.StdEncoding.EncodeToString(c.aead.Seal(nonce, nonce, []byte(plaintext), nil)), nil
 }
 
+// Open authenticates the stored base64 representation before returning plaintext.
+// Malformed data and authentication failures both return ErrCiphertext.
 func (c *Cipher) Open(encoded string) (string, error) {
 	data, err := base64.StdEncoding.DecodeString(encoded)
 	n := c.aead.NonceSize()

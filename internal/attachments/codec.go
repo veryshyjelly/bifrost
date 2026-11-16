@@ -25,8 +25,10 @@ var webpHelper []byte
 //go:embed lottie_light.min.js
 var lottiePlayer string
 
+// WhatsAppStickerBudget bounds the complete outgoing WebP, including container metadata.
 const WhatsAppStickerBudget int64 = 1_000_000
 
+// CodecOptions selects external conversion tools and bounds each conversion runtime.
 type CodecOptions struct {
 	Python, FFmpeg, FFprobe, Chromium string
 	NoSandbox                         bool
@@ -38,6 +40,8 @@ type Codec struct {
 	mu             sync.Mutex
 	stickerFlights map[string]*stickerFlight
 }
+
+// Frames records decoded geometry and per-frame timing used to validate sticker output.
 type Frames struct {
 	Width          int       `json:"width"`
 	Height         int       `json:"height"`

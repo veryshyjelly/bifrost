@@ -13,6 +13,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
+// Settings fixes the session, owner scope and lifetimes used to prepare controls.
 type Settings struct {
 	Session, SyncCron, SyncTimezone   string
 	OwnerID, Management               int64
@@ -56,6 +57,9 @@ type Status struct {
 	} `json:"telegramControls"`
 	Jobs []JobCount `json:"jobs"`
 }
+
+// Store prepares durable reply plans and admits passive session notices under
+// the current delivery job's account and claim.
 type Store interface {
 	PrepareOperationCommand(context.Context, delivery.Job, Settings, *bool) (control.Plan, error)
 	PrepareOperationNotice(context.Context, delivery.Job, Settings) (control.Plan, error)
@@ -65,6 +69,9 @@ type Telegram interface {
 	Chat(context.Context, *bot.GetChatParams) (*models.ChatFullInfo, error)
 }
 type Clients func(context.Context, string, string) (Telegram, error)
+
+// Service handles owner operational commands and reuses persisted reply plans
+// on retries so status notices retain their original destinations and controls.
 type Service struct {
 	store   Store
 	replies *control.Service
@@ -88,6 +95,9 @@ func local(err error) error {
 	}
 	return delivery.ErrLocalRetry
 }
+
+// Handle admits addressed owner /status and master /inbox commands. Edited
+// commands are ignored; existing frozen plans resume before fresh inspection.
 func (s *Service) Handle(ctx context.Context, j delivery.Job, e *delivery.Effects, botID string, u *models.Update) error {
 	if j.Kind != "tg" || e == nil || u == nil {
 		return delivery.ErrInvalid
@@ -159,6 +169,9 @@ func (s *Service) Management(ctx context.Context, j delivery.Job, e *delivery.Ef
 	}
 	return s.replies.Send(ctx, j, e, p)
 }
+
+// SessionEvent queues passive operational evidence; it never changes pairing
+// or starts a provider session in response to a status event.
 func (s *Service) SessionEvent(ctx context.Context, j delivery.Job, e *delivery.Effects) error {
 	if j.Kind != "wa" || e == nil {
 		return delivery.ErrInvalid

@@ -6,6 +6,8 @@ ROLES={'media':'/media','openwa-data':'/app/data','telegram-data':'/telegram-dat
 TOKEN=re.compile(r'^[1-9][0-9]*:[A-Za-z0-9_-]+$')
 
 def safe_name(name,role):
+    # A colon is allowed only in the Telegram role's top-level token directory;
+    # other positions remain forbidden drive or alternate-stream syntax.
     p=PurePosixPath(name)
     if p.is_absolute() or '..' in p.parts or '\\' in name or '\0' in name:raise ValueError('Unsafe archive path')
     for index,part in enumerate(p.parts):
@@ -27,6 +29,8 @@ def digest(path):
     with Path(path).open('rb') as source:return hashlib.file_digest(source,'sha256').hexdigest()
 
 def pack(role,source,out):
+    # The operator must quiesce source writers first. Capture per-entry hashes
+    # and detect observed size/mtime changes without following directory links.
     source=Path(source);out=Path(out);out.mkdir(parents=True,exist_ok=True,mode=0o700)
     target=out/(role+'.tar.gz')
     if target.exists():raise ValueError('Refusing an existing frozen asset archive')
@@ -59,6 +63,9 @@ def pack(role,source,out):
     print(json.dumps({'role':role,'entries':len(entries),'bytes':sum(e.get('size',0) for e in entries.values()),'archive_bytes':target.stat().st_size}),flush=True)
 
 def restore(role,archive_path,manifest_path,destination):
+    # Restore only into a new destination. Validate the archive against its
+    # manifest before and during extraction, then independently rehash files.
+    # A refused partial destination is retained for inspection, not overwritten.
     archive_path=Path(archive_path);destination=Path(destination)
     receipt=json.loads(Path(manifest_path).read_text())
     if receipt['role']!=role or digest(archive_path)!=receipt['archive_sha256']:raise ValueError('Asset archive checksum mismatch')

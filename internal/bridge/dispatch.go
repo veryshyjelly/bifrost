@@ -18,6 +18,8 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/relay"
 )
 
+// SourceStore supplies account-scoped normalization, route and frozen-plan
+// evidence. Mutating methods receive the worker claim that fences their writes.
 type SourceStore interface {
 	NormalizeIncoming(context.Context, delivery.Job) (identity.Source, error)
 	SelfIdentity(context.Context, string) (string, bool, error)
@@ -26,6 +28,9 @@ type SourceStore interface {
 	RelayEcho(context.Context, string, string, string) (relay.Echo, error)
 	ConversationRoute(context.Context, string, string) (conversation.Route, bool, error)
 }
+
+// TextRelay resumes typed text delivery and separate read-receipt work through
+// the current job's effect journal.
 type TextRelay interface {
 	IncomingText(context.Context, delivery.Job, *delivery.Effects, relay.Incoming) error
 	OutgoingText(context.Context, delivery.Job, *delivery.Effects, relay.Outgoing) error
@@ -37,6 +42,9 @@ type WhatsApp interface {
 }
 type TelegramHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Update) error
 type MentionRefusalHandler func(context.Context, delivery.Job, *delivery.Effects, string, *models.Message, error) (bool, error)
+
+// Extensions connects optional capabilities at the dispatch points that preserve
+// source ordering and existing plans. Nil hooks leave the base text path active.
 type Extensions struct {
 	// PassiveTopics can consume archive guidance and controls before text relay.
 	PassiveTopics TelegramHandler
@@ -56,6 +64,9 @@ type Options struct {
 	OwnerID              int64
 	Extensions           Extensions
 }
+
+// Dispatcher selects capabilities for durable native events. Its handlers are
+// invoked by the delivery worker after ingress has committed the source event.
 type Dispatcher struct {
 	store SourceStore
 	text  TextRelay

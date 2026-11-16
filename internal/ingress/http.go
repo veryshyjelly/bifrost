@@ -16,15 +16,19 @@ import (
 	sdk "github.com/veryshyjelly/OpenWA/sdk/go"
 )
 
+// MaxBody bounds every admitted HTTP body before parsing or durable storage.
 const MaxBody = 2 << 20
 
 var botPath = regexp.MustCompile(`^/webhooks/telegram/([a-zA-Z0-9_-]+)$`)
 
+// Service authenticates and admits callbacks through Store. It implements
+// http.Handler but does not bind a listener or start delivery itself.
 type Service struct {
 	c Options
 	s Store
 }
 
+// New validates account and authentication settings without accepting traffic.
 func New(c Options, store Store) (*Service, error) {
 	if store == nil || c.AccountID == "" || c.SessionID == "" || len(c.WebhookSecret) < 32 || len(c.AdminToken) < 32 || c.OwnerID <= 0 || c.ManagementChatID >= 0 || c.MasterBotID <= 0 {
 		return nil, errors.New("invalid ingress configuration")

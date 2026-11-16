@@ -19,11 +19,17 @@ type Settings struct {
 	OwnerID, Management   int64
 	CommandTTL, NoticeTTL int
 }
+
+// Action freezes an admitted owner mutation and the original reply destination.
+// It targets the WhatsApp source message independently of Telegram copy cleanup.
 type Action struct {
 	Key, Session, Operation, ChatID, MessageID, Emoji, State string
 	Target                                                   control.Target
 	NoticeTTL                                                int
 }
+
+// Store atomically admits source commands and exposes their saved action to the
+// worker. Completion records success or a definitive provider refusal.
 type Store interface {
 	PrepareSourceCommand(context.Context, delivery.Job, Settings) (control.Plan, error)
 	AdmitSourceManagement(context.Context, delivery.Job, Settings) error
@@ -111,6 +117,9 @@ func (s *Service) Manage(ctx context.Context, j delivery.Job, _ *delivery.Effect
 	}
 	return local(s.store.AdmitSourceManagement(ctx, j, s.c))
 }
+
+// Run resumes an admitted source mutation. Already terminal actions are skipped;
+// retryable or uncertain provider errors remain unresolved for worker handling.
 func (s *Service) Run(ctx context.Context, j delivery.Job, e *delivery.Effects) error {
 	if j.Kind != "control-source-action" || e == nil {
 		return delivery.ErrInvalid

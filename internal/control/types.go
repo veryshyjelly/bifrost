@@ -13,6 +13,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 )
 
+// Target scopes a Telegram destination to a sender bot, chat and optional forum thread.
 type Target struct {
 	BotID            string
 	ChatID, ThreadID int64
@@ -22,12 +23,16 @@ type Context struct {
 	Route  conversation.Route
 	Known  bool
 }
+
+// Action binds a presented callback to its owner, destination, operation and expiry.
 type Action struct {
 	ID, Kind, BotID, WhatsAppChat, Search string
 	OwnerID, ChatID, ThreadID, ExpiresAt  int64
 	Page                                  int
 	Operation, AccountID, ReturnKey       string `json:",omitempty"`
 }
+
+// Packet freezes one owner-facing reply, including entity formatting and optional destination override.
 type Packet struct {
 	Text           string
 	Entities       []models.MessageEntity
@@ -42,6 +47,9 @@ type Command struct {
 	MessageID, Date int64
 	TTLSeconds      int
 }
+
+// Plan persists replies and associated control intent before any Telegram effects execute.
+// Packet keys remain stable when a partially completed reply resumes.
 type Plan struct {
 	Key             string
 	Prefix          string
@@ -60,6 +68,7 @@ type Plan struct {
 	Complete        bool `json:"-"`
 }
 
+// PacketTarget applies a per-packet destination override when one was frozen in the plan.
 func (p Plan) PacketTarget(part int) Target {
 	if p.Packets[part].Target != nil {
 		return *p.Packets[part].Target
@@ -87,6 +96,7 @@ func (p Plan) FrozenPacket(part int) (string, json.RawMessage, error) {
 	return p.PacketKey(part), b, err
 }
 
+// Store admits and resumes owner reply plans independently of provider send attempts.
 type Store interface {
 	ControlContext(context.Context, string, string, *models.Message, int64) (Context, error)
 	ControlPlan(context.Context, string, string) (Plan, bool, error)

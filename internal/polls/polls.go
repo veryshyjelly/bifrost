@@ -21,6 +21,8 @@ type Settings struct {
 	OwnerID   int64
 	NoticeTTL int
 }
+
+// Vote freezes the authorized selection and original poll action for a durable vote job.
 type Vote struct {
 	Key, Session, State string
 	NoticeTTL           int
@@ -28,6 +30,7 @@ type Vote struct {
 	Request             sdk.VotePollRequest
 }
 
+// Frozen returns the stable effect key and request bytes for this admitted vote.
 func (v Vote) Frozen() (string, json.RawMessage, error) {
 	if v.Key == "" || v.Session == "" || v.Request.ChatID == "" || v.Request.PollMessageID == "" {
 		return "", nil, delivery.ErrInvalid
@@ -39,6 +42,7 @@ func (v Vote) Frozen() (string, json.RawMessage, error) {
 	return v.Key + ":vote", request, err
 }
 
+// Store separates callback admission, vote delivery and source vote observations.
 type Store interface {
 	PreparePollCallback(context.Context, delivery.Job, Settings) (control.Plan, error)
 	PreparePollVote(context.Context, delivery.Job, Settings) (Vote, error)

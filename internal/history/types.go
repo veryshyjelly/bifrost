@@ -21,6 +21,8 @@ type Settings struct {
 	OwnerID, Management                  int64
 	DefaultCount, CommandTTL, ControlTTL int
 }
+
+// Choice freezes a scoped import prompt, its selected route and the owner decision deadline.
 type Choice struct {
 	ID, Session, ChatID, State, Mode, RunID, PlanKey, ReturnKey, BoundContact string
 	Target                                                                    control.Target
@@ -28,12 +30,16 @@ type Choice struct {
 	Count                                                                     int
 	OwnerID, ExpiresAt                                                        int64
 }
+
+// Run retains the original destination and presentation settings for an admitted history import.
 type Run struct {
 	ID, Session, ChatID, Mode, State, Timezone, ReturnKey, LastDay string
 	Target                                                         control.Target
 	Route                                                          conversation.Route
 	Count, Available                                               int
 }
+
+// Item checkpoints one saved history message and its relay plan within the original batch.
 type Item struct {
 	Index          int
 	Message        sdk.ChatHistoryMessage
@@ -41,6 +47,8 @@ type Item struct {
 	State, PlanKey string
 	AdoptedFormat  string
 }
+
+// Store persists history choices, fetched batches and item progress independently of notices.
 type Store interface {
 	PrepareHistoryControl(context.Context, delivery.Job, Settings) (control.Plan, error)
 	PrepareHistoryPrompt(context.Context, delivery.Job, Settings) (control.Plan, error)
@@ -53,10 +61,13 @@ type Store interface {
 type WhatsApp interface {
 	History(context.Context, string, string, int) ([]sdk.ChatHistoryMessage, error)
 }
+
+// Delivery sends one saved history item through the relay effect journal.
 type Delivery interface {
 	DeliverHistory(context.Context, delivery.Job, *delivery.Effects, Run, Item) error
 }
 
+// Count accepts one decimal count in the inclusive range 1..2000, or uses def when omitted.
 func Count(args []string, def int) (int, bool) {
 	if len(args) == 0 {
 		return def, true

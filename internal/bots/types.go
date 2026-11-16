@@ -16,11 +16,15 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 )
 
+// Credential retains encrypted token material together with its observed native bot identity.
 type Credential struct {
 	BotID, Ciphertext, Revision string
 	Identity                    models.User
 	CreatedNotice               bool
 }
+
+// SetupPlan checkpoints hosted logout, local identity verification and webhook configuration.
+// Revision and Configuration bind progress to the credential and requested setup.
 type SetupPlan struct {
 	BotID, Revision, Configuration string
 	Identity                       models.User
@@ -31,6 +35,8 @@ type Settings struct {
 	OwnerID, Management              int64
 	CommandTTL, ControlTTL           int
 }
+
+// Store persists account-scoped credentials, registration receipts and resumable setup progress.
 type Store interface {
 	Credential(context.Context, string, string) (Credential, bool, error)
 	ManagedRegistration(context.Context, delivery.Job) (bool, error)
@@ -50,6 +56,7 @@ type Clients func(context.Context, string, string) (Telegram, error)
 
 var tokenPattern = regexp.MustCompile(`^[1-9][0-9]*:[A-Za-z0-9_-]+$`)
 
+// ValidToken checks token syntax and its numeric bot ID prefix; it does not authenticate the token.
 func ValidToken(token string, id int64) bool {
 	return tokenPattern.MatchString(token) && strings.HasPrefix(token, strconv.FormatInt(id, 10)+":")
 }
@@ -58,6 +65,8 @@ func Digest(v any) string {
 	sum := sha256.Sum256(b)
 	return hex.EncodeToString(sum[:])
 }
+
+// ManagedIdentity accepts managed-bot identities only from updates attributed to the configured owner.
 func ManagedIdentity(u *models.Update, owner int64) (models.User, bool) {
 	if u == nil {
 		return models.User{}, false

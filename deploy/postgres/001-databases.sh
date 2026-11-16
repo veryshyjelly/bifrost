@@ -1,5 +1,7 @@
 #!/bin/sh
 # The official PostgreSQL entrypoint runs this only for a fresh data directory.
+# Keep application owners separate. Existing volumes retain their roles and
+# databases; changing this script is not a migration of an installed instance.
 set -eu
 : "${BIFROST_DB_PASSWORD:?Set the Bifrost database password}"
 : "${OPENWA_DB_PASSWORD:?Set the OpenWA database password}"

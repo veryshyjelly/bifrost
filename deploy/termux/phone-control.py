@@ -1,4 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/python
+# Control the supervised native stack; startup requires the reviewed transfer
+# proof and waits for each dependency before enabling its consumer.
 import importlib.util
 import json
 import os
@@ -68,6 +70,8 @@ def start():
     print('All native services ready; inspect receipts before declaring cutover complete.')
 
 def stop():
+    # Stop consumers before their dependencies. Keep runit down markers so a
+    # surviving supervisor cannot restart writers during transfer or recovery.
     if not supervisor_running():
         print('Supervisor is not running.');return
     for name in reversed(runtime.ROLES):

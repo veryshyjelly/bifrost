@@ -14,6 +14,9 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/recovery"
 )
 
+// ReconcileTopic journals an explicit topic decision under topology and job
+// locks. Identical operation replays reuse their saved result; changed inspection
+// evidence is refused before modifying reservations or recovery state.
 func (s *Store) ReconcileTopic(ctx context.Context, d recovery.TopicDecision) (recovery.TopicResult, error) {
 	var result recovery.TopicResult
 	if !d.Valid() || int64(int(d.ThreadID)) != d.ThreadID {

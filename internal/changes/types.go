@@ -22,6 +22,8 @@ type Settings struct {
 	OwnerID, Management int64
 	NoticeTTL           int
 }
+
+// Destination identifies an existing delivery copy and its frozen text-versus-caption presentation.
 type Destination struct {
 	Seq       int64
 	Target    control.Target
@@ -44,6 +46,8 @@ type Step struct {
 	Refusal     *control.Notice
 	State       string
 }
+
+// Plan freezes mapped edit steps and their original input so retries do not create new copies.
 type Plan struct {
 	Key      string
 	Input    Input
@@ -52,6 +56,8 @@ type Plan struct {
 }
 
 func (p Plan) StepKey(i int) string { return p.Key + ":change:" + strconv.Itoa(i) }
+
+// Request serializes a step without mutable progress or refusal fields for effect-journal comparison.
 func (p Plan) Request(i int) (string, json.RawMessage, error) {
 	if i < 0 || i >= len(p.Steps) {
 		return "", nil, delivery.ErrInvalid
@@ -63,6 +69,7 @@ func (p Plan) Request(i int) (string, json.RawMessage, error) {
 	return p.StepKey(i), raw, err
 }
 
+// Store separates change admission, frozen plans, per-step receipts and terminal completion.
 type Store interface {
 	NormalizeChange(context.Context, delivery.Job, string) error
 	ChangePlan(context.Context, string, string) (Plan, bool, error)

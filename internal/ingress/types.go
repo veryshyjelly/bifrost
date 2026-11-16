@@ -1,5 +1,7 @@
 // Package ingress authenticates provider events and admits durable work without
 // executing provider operations or acknowledging an uncommitted event.
+// Provider-specific validation selects an account-scoped ordered stream; the
+// delivery worker performs the resulting work after admission commits.
 package ingress
 
 import (
@@ -10,6 +12,8 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/delivery"
 )
 
+// Options binds ingress to one permanent account, provider session and owner.
+// WebhookSecret and AdminToken authenticate separate ingress surfaces.
 type Options struct {
 	AccountID, SessionID, WebhookSecret, AdminToken string
 	OwnerID, ManagementChatID, MasterBotID          int64

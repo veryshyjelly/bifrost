@@ -9,6 +9,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
+// Client wraps one gateway configuration; each operation supplies its session.
 type Client struct{ sdk *sdk.Client }
 
 // MarkRead is idempotent and retries as a read-state update, never as a send.
@@ -27,6 +28,7 @@ func (c *Client) MarkRead(ctx context.Context, session, chat string) error {
 	return nil
 }
 
+// New validates gateway configuration without contacting the gateway.
 func New(baseURL, apiKey string, transport http.RoundTripper) (*Client, error) {
 	if !providers.ValidURL(baseURL) || apiKey == "" {
 		return nil, providers.ErrInvalidRequest
@@ -53,6 +55,8 @@ func (c *Client) Session(ctx context.Context, session string) (*sdk.SessionRespo
 	return result, nil
 }
 
+// SendText sends with the saved effect key and requires a native message receipt.
+// A missing receipt is an uncertain mutation, even after a successful HTTP status.
 func (c *Client) SendText(ctx context.Context, session string, request sdk.SendTextRequest, key string) (*sdk.MessageResponse, error) {
 	if session == "" || request.ChatID == "" || !providers.ValidKey(key) {
 		return nil, providers.ErrInvalidRequest

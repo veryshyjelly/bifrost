@@ -7,6 +7,8 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
+// A repeated edit may return not_modified instead of a message receipt. Other
+// successful responses must identify the original message before being accepted.
 func editOutcome(err error, a *providers.Attempt, m *models.Message, id int) error {
 	outcome := providers.Outcome("telegram", true, err, a)
 	if e, ok := outcome.(*providers.Error); ok && e.Status == 400 && e.Reason == "not_modified" {

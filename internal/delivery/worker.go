@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+// WorkerStore owns claim acquisition, renewal and terminal job transitions.
+// Recovery must preserve abandoned sends as uncertain rather than replay them.
 type WorkerStore interface {
 	EffectStore
 	Claim(context.Context, time.Duration) (Job, error)
@@ -16,6 +18,8 @@ type WorkerStore interface {
 	RecoverExpired(context.Context) (int, error)
 }
 
+// Handler resumes one claimed job. External mutations must use the supplied
+// Effects so retries retain original requests and completed receipts.
 type Handler func(context.Context, Job, *Effects) error
 
 // Report contains only safe execution metadata, never payloads, tokens or errors.
@@ -26,6 +30,8 @@ type Report struct {
 	Delay  time.Duration
 }
 
+// WorkerOptions bounds concurrency, claim renewal, persistence and retry delays.
+// Zero fields receive defaults in NewWorker; invalid timing relationships fail.
 type WorkerOptions struct {
 	Concurrency                                                 int
 	Lease, RenewEvery, PollEvery, StoreTimeout, ShutdownTimeout time.Duration
@@ -34,12 +40,15 @@ type WorkerOptions struct {
 	Report                                                      func(Report)
 }
 
+// Worker dispatches claimed jobs by event kind and renews their leases while
+// handlers run. Constructing one does not start queue consumption.
 type Worker struct {
 	store    WorkerStore
 	handlers map[string]Handler
 	c        WorkerOptions
 }
 
+// NewWorker validates options and copies the handler map before use.
 func NewWorker(store WorkerStore, handlers map[string]Handler, c WorkerOptions) (*Worker, error) {
 	if c.Concurrency == 0 {
 		c.Concurrency = 1

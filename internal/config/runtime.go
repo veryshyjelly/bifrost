@@ -23,6 +23,8 @@ type Runtime struct {
 func (Runtime) String() string   { return "runtime configuration (private)" }
 func (Runtime) GoString() string { return "config.Runtime{private}" }
 
+// LoadRuntime validates dispatch settings on top of Load. It reads through the
+// supplied environment lookup without starting providers or background workers.
 func LoadRuntime(getenv func(string) string) (Runtime, error) {
 	base, err := Load(func(k string) string {
 		if k == "BRIDGE_INGRESS_ENABLED" {

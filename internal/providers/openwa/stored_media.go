@@ -8,6 +8,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
+// StoredMedia contains bounded gateway archive bytes and observed file metadata.
 type StoredMedia struct {
 	Data           []byte
 	MIME, Filename string

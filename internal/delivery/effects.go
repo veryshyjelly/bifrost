@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// EffectStore persists a job's frozen requests and outcomes under its claim.
+// BeginEffect must distinguish replayable pending work from an unresolved send;
+// ResolveEffect must reject writes from a stale worker.
 type EffectStore interface {
 	BeginEffect(context.Context, Job, string, json.RawMessage) (Effect, error)
 	ResolveEffect(context.Context, Job, string, State, json.RawMessage) error
@@ -48,11 +51,16 @@ func (e *Effects) Permit() error {
 }
 
 func (e *Effects) persistedContext() (context.Context, context.CancelFunc) {
+	// Cancellation after a provider call must not prevent recording its outcome.
+	// The store timeout bounds this write, and the claim still fences ownership.
 	return context.WithTimeout(context.WithoutCancel(e.ctx), e.timeout)
 }
 
 // Do returns an immutable receipt when complete. The callback must use its
 // supplied context and must return a validated JSON receipt after remote success.
+// The callback receives the saved request even when this invocation supplied new
+// bytes for the same key. Unknown outcomes and failed receipt writes stop the job's
+// remaining effects instead of authorizing another send.
 func (e *Effects) Do(key string, request json.RawMessage, action func(context.Context, json.RawMessage) (json.RawMessage, error)) (json.RawMessage, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()

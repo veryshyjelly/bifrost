@@ -27,6 +27,7 @@ const (
 	Ignored   Mode = "ignored"
 )
 
+// Route records the conversation mode and its Telegram archive destination.
 type Route struct {
 	ChatID, Name             string
 	TelegramChatID, ThreadID int64
@@ -37,11 +38,15 @@ type Binding struct {
 	BotID   string
 	Started bool
 }
+
+// Target is a routing decision; Suppressed means the selected mode forbids live forwarding.
 type Target struct {
 	BotID                                    string
 	ChatID, ThreadID                         int64
 	Suppressed, ShowSender, PhoneOriginOwner bool
 }
+
+// Flags describes source properties that constrain which bot may represent a message.
 type Flags struct{ FromMe, Status, ForceMaster bool }
 
 var ErrInboxRequired = errors.New("restore the management inbox before delivering through master")

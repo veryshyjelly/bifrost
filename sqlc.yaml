@@ -1,3 +1,5 @@
+# Handwritten query contracts live in internal/postgres/queries; generated Go
+# belongs in internal/postgres/db. Validate regeneration with make generate-check.
 version: '2'
 sql:
   - engine: postgresql

@@ -59,6 +59,9 @@ type RuntimeLease struct {
 	closed  bool
 }
 
+// AcquireRuntimeLease verifies saved identity and retained-state readiness, then
+// takes the account's session lock on a dedicated pooled connection. The caller
+// must keep the returned lease until all active runtime work has stopped.
 func (s *Store) AcquireRuntimeLease(ctx context.Context, account string) (*RuntimeLease, error) {
 	if account == "" {
 		return nil, delivery.ErrInvalid
@@ -88,6 +91,8 @@ func (s *Store) AcquireRuntimeLease(ctx context.Context, account string) (*Runti
 	return &RuntimeLease{conn: conn, account: account}, nil
 }
 
+// Check detects a closed lease or lost owning database session. It does not
+// reacquire ownership after a connection failure.
 func (l *RuntimeLease) Check(ctx context.Context) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()

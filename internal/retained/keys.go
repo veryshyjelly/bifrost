@@ -6,6 +6,9 @@ import (
 	"strconv"
 )
 
+// HistoryDestinationKey preserves the saved destination identity for one message.
+// Group destinations share a bot-independent scope; private destinations retain
+// the bot ID. Changing this encoding would disconnect existing history evidence.
 func HistoryDestinationKey(account, chat, message, bot string, telegramChat, thread int64) string {
 	scope := bot
 	if telegramChat < 0 {
@@ -20,6 +23,7 @@ func HistoryDestinationKey(account, chat, message, bot string, telegramChat, thr
 	return hex.EncodeToString(sum[:]) + ":" + message
 }
 
+// OutgoingReactionKey uses the retained JSON tuple encoding for reaction identity.
 func OutgoingReactionKey(account, bot, key string) string {
 	return stringTupleKey(account, bot, key)
 }

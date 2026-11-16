@@ -1,4 +1,6 @@
 // Package deployment checks the self-contained stack without starting live accounts.
+// Fixtures inspect Compose configuration and use isolated databases when available;
+// they do not pair sessions or launch a second bridge for the live identity.
 package deployment
 
 import (

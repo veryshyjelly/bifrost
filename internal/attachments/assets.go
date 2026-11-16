@@ -14,10 +14,13 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
+// Asset identifies immutable bytes by SHA-256; Name and MIME describe upload presentation.
 type Asset struct {
 	Hash, Name, MIME, StickerFormat string
 	Size                            int64
 }
+
+// Assets owns the hash-addressed media directory used by frozen delivery plans.
 type Assets struct{ root string }
 
 var hashPattern = regexp.MustCompile(`^[0-9a-f]{64}$`)
@@ -63,6 +66,9 @@ func (r contextReader) Read(p []byte) (int, error) {
 func TooLarge() error {
 	return &providers.Error{Service: "media", Status: 413, Code: "MEDIA_TOO_LARGE"}
 }
+
+// Save streams at most max bytes into the archive and verifies the durable hash-addressed file.
+// Existing content with the same hash is reused without overwriting it.
 func (a *Assets) Save(ctx context.Context, r io.Reader, name, mime string, max int64) (Asset, error) {
 	if ctx == nil || r == nil || max <= 0 || max > 1<<53-1 {
 		return Asset{}, ErrAsset
@@ -115,12 +121,17 @@ func (a *Assets) Save(ctx context.Context, r io.Reader, name, mime string, max i
 	verify.Close()
 	return asset, nil
 }
+
+// Path validates an asset reference and derives its archive path without opening the file.
 func (a *Assets) Path(v Asset) (string, error) {
 	if !hashPattern.MatchString(v.Hash) || v.Size <= 0 {
 		return "", ErrAsset
 	}
 	return filepath.Join(a.root, v.Hash), nil
 }
+
+// Open verifies size, file type and SHA-256 before returning a file positioned at its start.
+// The caller owns the returned file and must close it.
 func (a *Assets) Open(ctx context.Context, v Asset) (*os.File, error) {
 	path, err := a.Path(v)
 	if err != nil {

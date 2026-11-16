@@ -18,6 +18,8 @@ var (
 	ErrPersistence = errors.New("delivery persistence unavailable")
 )
 
+// State describes durable job progress or a resolved effect outcome. Uncertain
+// means delivery may have happened and requires review before another attempt.
 type State string
 
 const (

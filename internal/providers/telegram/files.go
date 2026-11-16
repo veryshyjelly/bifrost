@@ -26,6 +26,9 @@ func (c *Client) File(ctx context.Context, id string) (*models.File, error) {
 	}
 	return out, nil
 }
+
+// FileBody downloads a relative API file path with a byte limit. Absolute local
+// API paths are handled by the archive role instead. The caller must close the body.
 func (c *Client) FileBody(ctx context.Context, file *models.File, max int64) (io.ReadCloser, error) {
 	if file == nil || file.FilePath == "" || strings.HasPrefix(file.FilePath, "/") || max <= 0 {
 		return nil, providers.ErrInvalidRequest

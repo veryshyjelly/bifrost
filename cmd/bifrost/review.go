@@ -47,6 +47,9 @@ func reviewRequest(ctx context.Context, base, token, method, path string, body [
 	return raw, nil
 }
 
+// recoveryCLI validates the operator's decision before calling the bridge and
+// checks returned scope before printing evidence. It does not write persistence
+// directly or infer absence of delivery from a missing response.
 func recoveryCLI(ctx context.Context, command string, args []string, out io.Writer) error {
 	port := os.Getenv("BRIDGE_PORT")
 	if port == "" {

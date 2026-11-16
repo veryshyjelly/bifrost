@@ -21,6 +21,9 @@ var (
 	ErrEncryptionKey    = errors.New("encryption key does not match the saved identity")
 )
 
+// Store implements capability-specific persistence over one connection pool.
+// Lifecycle operations are explicit; callers must retain the permanent account
+// identity and hold runtime ownership before composing active provider work.
 type Store struct {
 	pool    *pgxpool.Pool
 	queries *db.Queries
@@ -94,6 +97,8 @@ func (s *Store) InitializeIdentity(ctx context.Context, account string, key [32]
 	return account, nil
 }
 
+// Enqueue inserts a durable event, returning false without error for a duplicate.
+// Callers needing atomic observations or source preparation use Admit instead.
 func (s *Store) Enqueue(ctx context.Context, event delivery.Event) (bool, error) {
 	if event.AccountID == "" || event.Dedup == "" || event.Stream == "" || event.Kind == "" || !json.Valid(event.Payload) {
 		return false, delivery.ErrInvalid
@@ -122,6 +127,8 @@ func jobFrom(row db.Job) delivery.Job {
 	}}
 }
 
+// Claim acquires the next eligible job with a fresh lease token. Later writes
+// must use that claim rather than relying on job ID alone.
 func (s *Store) Claim(ctx context.Context, lease time.Duration) (delivery.Job, error) {
 	return s.claimKinds(ctx, lease, nil)
 }
@@ -159,6 +166,7 @@ func (s *Store) claimKinds(ctx context.Context, lease time.Duration, kinds []str
 	return jobFrom(row), tx.Commit(ctx)
 }
 
+// Renew extends a live matching claim or returns delivery.ErrClaimLost.
 func (s *Store) Renew(ctx context.Context, job delivery.Job, lease time.Duration) error {
 	n, err := seconds(lease, true)
 	if err != nil {

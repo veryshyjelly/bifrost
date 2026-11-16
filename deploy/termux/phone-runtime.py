@@ -18,6 +18,8 @@ def private_json(path):
     return json.loads(path.read_text())
 
 def verified(root):
+    # Bind activation to this boot (when temporary), permanent account and exact
+    # configuration bytes. Merely installing launchers must not enable writers.
     android=private_json(root/'state/ANDROID-PROCESS-CONTROL.json')
     if android.get('max_phantom_processes',0)<256 or android.get('scope') not in ['until-reboot','persistent']:
         raise RuntimeError('Android process limit has not been verified for this server')
@@ -42,6 +44,8 @@ def proc_info(pid):
     return int(fields[1]),fields[19]
 
 def record_pid(root,role):
+    # Save start ticks with the PID: Android can reuse a numeric PID before a
+    # later stop request, so PID alone is insufficient evidence for signalling.
     directory=root/'state/run';directory.mkdir(parents=True,exist_ok=True,mode=0o700)
     pid=os.getpid();_,ticks=proc_info(pid)
     target=directory/(role+'.json');temporary=directory/(role+f'.{pid}.tmp')
@@ -83,6 +87,8 @@ def role(root,name):
     os.execve(args[0],args,env)
 
 def guest(name):
+    # Recheck the proof inside the guest before applying literal service settings
+    # and replacing this launcher with the provider process.
     root=Path('/control');envs=verified(root)
     settings=envs.get(name,{})
     if not isinstance(settings,dict) or not all(isinstance(k,str) and isinstance(v,str) for k,v in settings.items()):

@@ -60,6 +60,9 @@ type WhatsAppRequest struct {
 	Contact         *sdk.SendContactRequest  `json:"contact,omitempty"`
 	Poll            *sdk.SendPollRequest     `json:"poll,omitempty"`
 }
+
+// Plan freezes a route and exact provider requests before text delivery. Stored
+// plans retain their original parts and effect-key prefix across retries.
 type Plan struct {
 	Key                                     string `json:"key"`
 	Direction                               string `json:"direction"`
@@ -76,6 +79,9 @@ type Plan struct {
 	SourceAsset                             *attachments.Asset `json:"SourceAsset,omitempty"`
 	Complete                                bool               `json:"-"`
 }
+
+// Mapping identifies one delivered copy within its sender bot, chat and thread.
+// Deleted copies remain evidence instead of being reused as active reply targets.
 type Mapping struct {
 	WhatsAppChat, WhatsAppMessage, BotID, Direction string
 	TelegramChat, TelegramMessage, ThreadID         int64
@@ -83,6 +89,9 @@ type Mapping struct {
 }
 type Echo struct{ Recognized, Pending bool }
 
+// Store persists scoped relay plans, copy mappings and completion evidence.
+// Writes receive the job claim; reads distinguish recognized echoes from pending
+// sends so an unfinished outgoing delivery is not mistaken for new source text.
 type Store interface {
 	MessageRevoked(context.Context, string, string, string) (bool, error)
 	MessageComplete(context.Context, string, string, string) (bool, error)

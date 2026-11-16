@@ -25,6 +25,8 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/statuses"
 )
 
+// runRuntime verifies persistent identity and opens the listener before handing
+// ownership of the active lifecycle to serveRuntime. It never applies migrations.
 func runRuntime(ctx context.Context, c config.Runtime) error {
 	call, finish := context.WithTimeout(ctx, 15*time.Second)
 	store, err := postgres.Open(call, c.DatabaseURL)
@@ -98,6 +100,8 @@ func serveRuntime(ctx context.Context, store *postgres.Store, c config.Runtime, 
 			}
 		})
 	}
+	// Accept durable ingress during bootstrap while readiness remains false.
+	// Ordinary delivery starts only after bot verification and callback setup.
 	launch(func(context.Context) error {
 		if err := server.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
 			return errors.New("runtime HTTP server failed")
@@ -159,6 +163,8 @@ func serveRuntime(ctx context.Context, store *postgres.Store, c config.Runtime, 
 	} else {
 		<-work.Done()
 	}
+	// Stop advertising readiness before draining HTTP and joining all tasks;
+	// the deferred ownership release must remain after this shutdown sequence.
 	ready.Store(false)
 	cancel(nil)
 	shutdown, done := context.WithTimeout(context.Background(), 10*time.Second)

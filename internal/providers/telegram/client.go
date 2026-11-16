@@ -10,6 +10,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
+// Client binds native API operations and media downloads to one bot token.
 type Client struct {
 	sdk  *bot.Bot
 	http *http.Client
@@ -50,6 +51,8 @@ func (c *Client) Me(ctx context.Context) (*models.User, error) {
 	return result, nil
 }
 
+// SendText preserves explicit keyboard privacy flags and requires a message ID.
+// Durable admission, authorization and fallback decisions belong to callers.
 func (c *Client) SendText(ctx context.Context, request *bot.SendMessageParams) (*models.Message, error) {
 	if request == nil {
 		return nil, providers.ErrInvalidRequest

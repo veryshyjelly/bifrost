@@ -11,6 +11,8 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/postgres"
 )
 
+// runtimeBootstrapStore fences startup consumption to bot setup and menus.
+// Other authenticated jobs stay buffered until the full worker is launched.
 type runtimeBootstrapStore struct{ *postgres.Store }
 
 func (s runtimeBootstrapStore) Claim(ctx context.Context, lease time.Duration) (delivery.Job, error) {

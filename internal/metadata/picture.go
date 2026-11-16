@@ -13,6 +13,7 @@ import (
 	"github.com/veryshyjelly/bifrost/internal/providers"
 )
 
+// PicturePlan binds a photo update to frozen source and upload assets, target and prior photo ID.
 type PicturePlan struct {
 	Key                                     string
 	JobID                                   int64
@@ -22,6 +23,8 @@ type PicturePlan struct {
 	SourceHash, AssetHash, PreviousID, Skip string
 	Complete                                bool
 }
+
+// PictureRequest contains the immutable photo-update fields used by the effect ledger.
 type PictureRequest struct {
 	Target                Target
 	Kind, BotID           string
@@ -47,6 +50,7 @@ func (p PicturePlan) CacheKey() string {
 	return PictureHash(b)
 }
 
+// PictureCache pairs source bytes with the observed native photo ID after a confirmed update.
 type PictureCache struct{ SourceHash, PhotoID string }
 type PictureStore interface {
 	MetadataPlan(context.Context, delivery.Job) (Plan, bool, error)

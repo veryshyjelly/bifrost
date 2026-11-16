@@ -1,4 +1,6 @@
 // Package retained reads immutable state needed by the current runtime.
+// It validates saved configuration without executing environment-file content
+// and preserves established identity keys used by imported delivery evidence.
 package retained
 
 import (
@@ -14,6 +16,8 @@ import (
 
 var ErrInvalid = errors.New("invalid retained account state")
 
+// Configuration holds validated private settings and copies of their original
+// bytes. Its formatting methods redact values; explicit accessors expose secrets.
 type Configuration struct {
 	bridge, telegram          map[string]string
 	bridgeRaw, telegramRaw    []byte
@@ -35,6 +39,9 @@ func (c Configuration) OwnerID() int64 { return c.owner }
 
 func (c Configuration) ManagementChatID() int64 { return c.management }
 
+// ParseConfiguration checks literal environment entries, matching Telegram API
+// credentials and permanent owner/master identity fields. It does not source a
+// shell file, expand variables or repair inconsistent saved values.
 func ParseConfiguration(bridge, telegram []byte) (Configuration, error) {
 	c := Configuration{bridgeRaw: bytes.Clone(bridge), telegramRaw: bytes.Clone(telegram)}
 	var err error

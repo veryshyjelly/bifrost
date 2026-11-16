@@ -17,6 +17,9 @@ import (
 )
 
 type NativeContact struct{ Name, Number, VCard string }
+
+// NativePacket freezes a Telegram destination, presentation and optional media
+// reference. Fallback packets are saved alternatives with separate effect keys.
 type NativePacket struct {
 	Kind          string
 	Target        control.Target
@@ -38,6 +41,10 @@ type PollAction struct {
 	OwnerID, ExpiresAt                     int64
 	Multiple                               bool
 }
+
+// NativePlan retains source content, selected route and prepared upload bytes
+// for native delivery. History and Status use the same packet receipt machinery
+// while retaining their own origin and batch identity.
 type NativePlan struct {
 	Key                                                              string `json:"key"`
 	Direction                                                        string `json:"direction"`
@@ -71,6 +78,9 @@ type NativeRepair struct {
 }
 
 func (p NativePlan) PartKey(part int) string { return p.Prefix + ":packet:" + strconv.Itoa(part) }
+
+// FrozenPacket serializes only the chosen packet, removing fallback bookkeeping
+// before effect comparison. The saved alternative uses the :original key suffix.
 func (p NativePlan) FrozenPacket(part int, fallback bool) (string, json.RawMessage, error) {
 	if part < 0 || part >= len(p.Packets) {
 		return "", nil, delivery.ErrInvalid

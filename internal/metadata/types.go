@@ -20,6 +20,7 @@ type Group struct {
 	Description *string `json:"description"`
 }
 
+// Snapshot freezes source metadata and membership before destination updates are planned.
 type Snapshot struct {
 	ID, Scope, Name string
 	Description     *string
@@ -59,6 +60,7 @@ type Plan struct {
 	TextRefusals  map[int]string `json:",omitempty"`
 }
 
+// Store freezes metadata text plans and records their per-change refusals and stage completion.
 type Store interface {
 	MetadataPlan(context.Context, delivery.Job) (Plan, bool, error)
 	MetadataTarget(context.Context, delivery.Job, string, int64) (Target, error)

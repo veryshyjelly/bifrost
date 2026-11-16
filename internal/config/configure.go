@@ -15,7 +15,8 @@ func randomHex() (string, error) {
 	return hex.EncodeToString(data[:]), nil
 }
 
-// Configure creates a fresh private Compose environment exclusively; existing keys are never rotated.
+// Configure creates a private installation environment exclusively: an existing
+// file is never replaced, preserving account identity and encryption material.
 func Configure(path string) error {
 	values := make([]string, 8)
 	for i := range values {

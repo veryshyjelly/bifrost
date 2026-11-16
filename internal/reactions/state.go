@@ -19,6 +19,9 @@ type Actor struct {
 	Order int64
 	Echo  *Echo
 }
+
+// State tracks each actor independently; Revision orders changed reactions while
+// Known retains actor evidence even after an emoji is removed.
 type State struct {
 	Event    string
 	Revision int64
@@ -27,6 +30,9 @@ type State struct {
 	Full     bool
 }
 type Pair struct{ Actor, Emoji string }
+
+// Event carries an optional complete snapshot followed by a sender-specific
+// update. A nil Snapshot means no snapshot was supplied, rather than an empty one.
 type Event struct {
 	Session, ChatID, MessageID, SenderID, Reaction string
 	Snapshot                                       *[]Pair

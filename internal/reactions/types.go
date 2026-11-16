@@ -17,6 +17,9 @@ type Settings struct {
 	OwnerID   int64
 	NoticeTTL int
 }
+
+// Input captures actor state, destination caches and bot bindings used to build
+// one incoming reaction plan without resolving them again during delivery.
 type Input struct {
 	Source             Event
 	State              State
@@ -32,6 +35,9 @@ type Step struct {
 	Prior                                            *Applied
 	ClearRefusal                                     bool
 }
+
+// Plan freezes destination groups and ordered reaction steps. Saved per-step
+// progress lets a retry resume the same actor-to-bot choices.
 type Plan struct {
 	Key       string
 	Input     Input
@@ -60,6 +66,9 @@ type OutgoingPlan struct {
 	NoticeTTL                            int
 	Input                                OutgoingInput
 }
+
+// Store separates frozen incoming/outgoing reaction choices from delivery
+// progress and keeps all mutation methods bound to the current worker claim.
 type Store interface {
 	NormalizeChange(context.Context, delivery.Job, string) error
 	ReactionPlan(context.Context, string, string) (Plan, bool, error)

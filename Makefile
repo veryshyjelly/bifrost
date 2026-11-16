@@ -1,4 +1,5 @@
 .PHONY: check fmt-check fmt vet test audit spec-check compose-check generate generate-check configure up down logs update-providers
+# Static checks, race tests and generation validation do not start a live bridge.
 check: fmt-check vet test audit compose-check generate-check
 fmt-check:
 	@test -z "$$(gofmt -l cmd internal migrations)" || { gofmt -l cmd internal migrations; exit 1; }
@@ -24,6 +25,7 @@ configure:
 # Explicit project/env selection avoids inheriting the existing installation's .env.
 COMPOSE = docker compose -p bifrost-go --env-file .go.env
 up:
+# Bring storage up and apply schema before starting provider/bridge processes.
 	$(COMPOSE) build
 	$(COMPOSE) up -d postgres redis
 	$(COMPOSE) --profile tools run --rm migrate

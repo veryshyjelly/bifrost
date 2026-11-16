@@ -23,6 +23,8 @@ type MessageEvent struct {
 	Message                                     sdk.ChatHistoryMessage
 }
 
+// DecodeSource validates a message envelope against its durable job account and dedup key.
+// Status, channel and broadcast events require separate handlers.
 func DecodeSource(job delivery.Job) (MessageEvent, error) {
 	var envelope struct {
 		Event          string          `json:"event"`

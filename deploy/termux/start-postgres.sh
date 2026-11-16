@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 umask 077
+# Record the launcher identity before exec so graceful shutdown can identify the
+# PostgreSQL process without signalling a later process that reused its PID.
 mkdir -p /state/run
 pid=$$
 ticks=$(awk '{print $22}' /proc/$$/stat)

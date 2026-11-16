@@ -23,6 +23,8 @@ func (conflict) DeliveryOutcome() (bool, bool, time.Duration) { return false, fa
 var person = regexp.MustCompile(`^([0-9]+)(?::[0-9]+)?@(c\.us|s\.whatsapp\.net|lid)$`)
 var phone = regexp.MustCompile(`^[0-9]{5,15}$`)
 
+// Normalize removes person device suffixes and unifies phone JID domains.
+// LID addresses keep their domain; normalization supplies no phone-identity evidence.
 func Normalize(id string) string {
 	m := person.FindStringSubmatch(id)
 	if m == nil {
@@ -35,6 +37,8 @@ func Normalize(id string) string {
 	return m[1] + "@" + domain
 }
 func IsPerson(id string) bool { return person.MatchString(id) }
+
+// PhoneID constructs a phone JID only from an explicitly supplied valid phone number.
 func PhoneID(number string) (string, bool) {
 	if !phone.MatchString(number) {
 		return "", false
@@ -70,6 +74,7 @@ func display(name string) string {
 	return name
 }
 
+// Alias records an evidenced mapping from a provider identifier to its canonical identity.
 type Alias struct{ ID, Canonical string }
 type Profile struct {
 	ID, Name string
@@ -79,6 +84,8 @@ type Bot struct {
 	ID, Username string
 	Started      bool
 }
+
+// Binding associates a verified person identity with a managed Telegram bot.
 type Binding struct{ PersonID, BotID string }
 type Member struct {
 	ID, Name              string

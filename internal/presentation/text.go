@@ -16,10 +16,13 @@ import (
 
 var ErrInvalid = errors.New("invalid formatted text or entity boundary")
 
+// Value carries literal text and native Telegram entities with UTF-16 offsets.
 type Value struct {
 	Text     string                 `json:"text"`
 	Entities []models.MessageEntity `json:"entities"`
 }
+
+// Options freezes sender labels and history/status context used to compose a relay header.
 type Options struct {
 	Bot, Sender, Name                     string
 	Own, Historical, Status, EditedNotice bool
@@ -28,6 +31,7 @@ type Options struct {
 	Now                                   time.Time
 }
 
+// Length returns the number of UTF-16 code units used by Telegram entity offsets and limits.
 func Length(text string) int {
 	n := 0
 	for _, r := range text {
@@ -46,6 +50,8 @@ func Styled(text string, kind models.MessageEntityType) Value {
 	}
 	return v
 }
+
+// Concat joins values and shifts entity offsets by preceding UTF-16 text lengths.
 func Concat(values ...Value) Value {
 	out := Plain("")
 	offset := 0
@@ -233,6 +239,8 @@ func slice(v Value, start, end int, index []int) Value {
 	}
 	return out
 }
+
+// Slice extracts the half-open UTF-16 range [start, end), rejecting invalid input entities or rune boundaries.
 func Slice(v Value, start, end int) (Value, error) {
 	index, err := indices(v.Text)
 	if err != nil {
@@ -243,6 +251,9 @@ func Slice(v Value, start, end int) (Value, error) {
 	}
 	return slice(v, start, end, index), nil
 }
+
+// Split partitions text within a UTF-16 budget while preserving rune boundaries and whole date-time entities.
+// It rejects a budget too small to hold the next indivisible fragment.
 func Split(v Value, limit int) ([]Value, error) {
 	if limit <= 0 {
 		return nil, ErrInvalid

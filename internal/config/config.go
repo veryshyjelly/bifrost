@@ -14,7 +14,7 @@ import (
 )
 
 // Config contains the settings needed by the persistence and diagnostic runtime.
-// Provider configuration is added with the provider adapters.
+// Runtime adds the provider and codec settings required by explicit dispatch.
 type Config struct {
 	DatabaseURL                            string
 	EncryptionKey                          [32]byte
@@ -34,6 +34,8 @@ func (c Config) ListenAddress() string {
 	return net.JoinHostPort(c.BindHost, strconv.Itoa(c.Port))
 }
 
+// Load validates persistence, diagnostic and optional ingress settings. Provider
+// identity fields are required only when ingress is explicitly enabled.
 func Load(getenv func(string) string) (Config, error) {
 	c := Config{DatabaseURL: getenv("DATABASE_URL"), AdminToken: getenv("BRIDGE_ADMIN_TOKEN"), AccountID: getenv("BIFROST_ACCOUNT_ID"), Port: 3210}
 	u, err := url.Parse(c.DatabaseURL)

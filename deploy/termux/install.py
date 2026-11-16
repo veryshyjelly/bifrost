@@ -13,6 +13,8 @@ def directory(path):
 
 
 def write(path, content, mode=0o700):
+    # Exclusive temporary creation avoids following a pre-planted link; publish
+    # the fully written launcher by rename after flushing its contents.
     if path.is_symlink():
         raise RuntimeError('Refusing a symlink deployment file')
     temporary = path.with_name(path.name + '.install-tmp')

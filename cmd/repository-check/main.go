@@ -55,6 +55,8 @@ func git(root string, args ...string) ([]byte, error) {
 	return cmd.Output()
 }
 
+// privateValues reads known local configuration only to detect accidental copies
+// in repository files. Callers must never include these values in diagnostics.
 func privateValues(root string) ([][]byte, error) {
 	names := map[string]bool{
 		"BRIDGE_ENCRYPTION_KEY": true, "BRIDGE_ADMIN_TOKEN": true,
@@ -82,6 +84,8 @@ func privateValues(root string) ([][]byte, error) {
 	return secrets, nil
 }
 
+// run scans either the worktree or staged blobs. Staged content must come from
+// the index: inspecting a cleaned worktree could hide a secret still staged.
 func run(staged bool) error {
 	location, err := git("", "rev-parse", "--show-toplevel")
 	if err != nil {

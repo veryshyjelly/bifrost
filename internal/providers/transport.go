@@ -92,6 +92,8 @@ func (b *cappedMediaBody) Read(p []byte) (int, error) {
 	return n, err
 }
 
+// Observe attaches evidence for one synchronous request. Pass the returned
+// context to the SDK and the returned Attempt to Outcome after the call.
 func Observe(ctx context.Context) (context.Context, *Attempt) {
 	a := &Attempt{}
 	return context.WithValue(ctx, attemptKey{}, a), a
@@ -313,6 +315,8 @@ func Outcome(service string, mutation bool, err error, a *Attempt) error {
 	return e
 }
 
+// InvalidResponse classifies a successful HTTP response lacking a usable native
+// receipt. A mutation may already have happened, so it must not be blindly retried.
 func InvalidResponse(service string, mutation bool) error {
 	return &Error{Service: service, Status: 200, Code: "INVALID_RESPONSE", Uncertain: mutation, Retry: !mutation}
 }

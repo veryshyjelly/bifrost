@@ -20,15 +20,24 @@ type Topic struct {
 	Key, Name string
 	Complete  bool
 }
+
+// Snapshot freezes a post's normalized author and skip/completion decision before
+// archive delivery. Retrying a skipped snapshot does not reconsider eligibility.
 type Snapshot struct {
 	Post           Post
 	Source         identity.Source
 	Skip, Complete bool
 }
+
+// Batch is the saved ordered refresh result, reused instead of listing live
+// Status again when the refresh job resumes.
 type Batch struct {
 	Posts    []Post
 	Complete bool
 }
+
+// Store freezes Status topic, post and batch state under worker claims. Delivery
+// completion is distinct from admitting the refresh batch's individual posts.
 type Store interface {
 	PrepareStatusTopic(context.Context, delivery.Job, Settings) (Topic, error)
 	CommitStatusTopic(context.Context, delivery.Job, Settings, int64) (Feed, error)
@@ -143,6 +152,9 @@ func (s *Service) Receive(ctx context.Context, j delivery.Job, e *delivery.Effec
 	}
 	return local(s.store.CompleteStatusPost(ctx, j, p.Post.ID))
 }
+
+// Refresh freezes the provider list once, then resumes durable batch admission.
+// Listing Status is passive and does not send read or view receipts.
 func (s *Service) Refresh(ctx context.Context, j delivery.Job, e *delivery.Effects) error {
 	if (j.Kind != "status-refresh" && j.Kind != "status-startup") || e == nil {
 		return delivery.ErrInvalid

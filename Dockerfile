@@ -1,3 +1,4 @@
+# Build the bridge and embed schema/codec assets without copying private host state.
 FROM golang:1.27.4-bookworm AS build
 WORKDIR /src
 COPY go.mod go.sum ./
@@ -7,6 +8,8 @@ COPY internal ./internal
 COPY migrations ./migrations
 RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /out/bifrost ./cmd/bifrost
 
+# Runtime media conversion uses ffmpeg, pinned Pillow and the embedded Lottie
+# renderer in Chromium. Keep those tools available to the unprivileged process.
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates ffmpeg chromium python3 python3-venv \
     && python3 -m venv /opt/sticker-codec \
@@ -19,4 +22,5 @@ COPY --from=build /out/bifrost /usr/local/bin/bifrost
 USER bifrost
 WORKDIR /app
 ENTRYPOINT ["bifrost"]
+# Active dispatch requires the explicit run command and complete runtime settings.
 CMD ["serve"]
